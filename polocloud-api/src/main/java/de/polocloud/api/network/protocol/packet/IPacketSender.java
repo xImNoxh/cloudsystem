@@ -1,0 +1,7 @@
+package de.polocloud.api.network.protocol.packet;
+
+public interface IPacketSender {
+
+    void sendPacket(Object object);
+
+}

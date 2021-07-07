@@ -1,4 +1,4 @@
-package de.polocloud.master.protocol;
+package de.polocloud.bootstrap.protocol;
 
 import com.esotericsoftware.kryonetty.ThreadedServerEndpoint;
 import com.esotericsoftware.kryonetty.kryo.KryoNetty;

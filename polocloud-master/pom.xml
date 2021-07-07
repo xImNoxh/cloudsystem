@@ -18,12 +18,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -43,12 +37,6 @@
             <artifactId>polocloud-logger</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.EsotericSoftware</groupId>
-            <artifactId>kryonetty</artifactId>
-            <version>d1a78098fe</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
