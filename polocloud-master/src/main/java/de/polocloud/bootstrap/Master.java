@@ -10,15 +10,26 @@ import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.protocol.packet.TestPacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
+import de.polocloud.api.template.ITemplateService;
+import de.polocloud.bootstrap.template.SimpleTemplateService;
+import de.polocloud.bootstrap.template.TemplateStorage;
 
 public class Master implements IStartable, ITerminatable {
 
-    private CloudAPI cloudAPI;
+    private final CloudAPI cloudAPI;
 
     private SimpleNettyServer nettyServer;
 
+    private final ITemplateService templateService;
+
     public Master() {
         this.cloudAPI = new PoloCloudAPI();
+
+        //load templateStorage from config
+        this.templateService = new SimpleTemplateService(this.cloudAPI, TemplateStorage.SQL);
+
+        this.templateService.getTemplateLoader().loadTemplates();
+
     }
 
     @Override

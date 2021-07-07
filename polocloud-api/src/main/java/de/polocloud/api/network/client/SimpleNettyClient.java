@@ -35,8 +35,8 @@ public class SimpleNettyClient implements INettyClient {
     }
 
     @Override
-    public void sendPacket(IPacket object) {
-        this.clientEndpoint.send(object);
+    public void sendPacket(IPacket packet) {
+        this.clientEndpoint.send(packet);
     }
 
     @Override
@@ -44,3 +44,4 @@ public class SimpleNettyClient implements INettyClient {
         this.clientEndpoint.getEventHandler().register(networkListener);
     }
 }
+

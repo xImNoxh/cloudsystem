@@ -5,7 +5,7 @@ import com.google.inject.name.Names;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.SimpleProtocol;
 
-public class PoloGuiceModule extends AbstractModule {
+public class PoloAPIGuiceModule extends AbstractModule {
 
     //load from config/sql
     private int serverStartPort = 8869;
