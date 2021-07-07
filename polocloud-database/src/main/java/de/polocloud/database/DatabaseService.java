@@ -1,11 +1,11 @@
 package de.polocloud.database;
 
-import de.polocloud.database.exeuctes.DatabaseAdd;
-import de.polocloud.database.exeuctes.DatabaseRemove;
-import de.polocloud.database.exeuctes.DatabaseUpdate;
-import de.polocloud.database.exeuctes.pull.DatabaseExist;
-import de.polocloud.database.exeuctes.pull.DatabaseGet;
-import de.polocloud.database.exeuctes.table.DatabaseTable;
+import de.polocloud.database.executes.DatabaseAdd;
+import de.polocloud.database.executes.DatabaseRemove;
+import de.polocloud.database.executes.DatabaseUpdate;
+import de.polocloud.database.executes.pull.DatabaseExist;
+import de.polocloud.database.executes.pull.DatabaseGet;
+import de.polocloud.database.executes.table.DatabaseTable;
 public class DatabaseService {
 
     private final DatabaseExist databaseExist;

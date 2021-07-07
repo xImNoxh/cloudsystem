@@ -1,4 +1,4 @@
-package de.polocloud.database.exeuctes.table;
+package de.polocloud.database.executes.table;
 
 import de.polocloud.database.DatabaseExecutor;
 import de.polocloud.database.emurations.DataType;

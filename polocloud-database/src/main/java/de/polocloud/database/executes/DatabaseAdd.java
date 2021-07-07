@@ -1,4 +1,4 @@
-package de.polocloud.database.exeuctes;
+package de.polocloud.database.executes;
 
 import de.polocloud.database.DatabaseExecutor;
 
