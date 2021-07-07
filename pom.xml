@@ -13,6 +13,8 @@
         <module>polocloud-master</module>
         <module>polocloud-api</module>
         <module>polocloud-logger</module>
+        <module>polocloud-wrapper</module>
+      <module>polocloud-bootstrap</module>
     </modules>
 
     <properties>
