@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap;
 
 import de.polocloud.bootstrap.logger.LogBootstrapService;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.wrapper.Wrapper;
 
 public class CloudInit {
@@ -25,5 +27,7 @@ public class CloudInit {
             Wrapper wrapper = new Wrapper();
             wrapper.start();
         }
+
+        new ConsoleReadThread(Logger.getConsoleReader());
     }
 }
