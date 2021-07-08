@@ -1,5 +1,7 @@
 package de.polocloud.api.guice;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import de.polocloud.api.network.protocol.IProtocol;
@@ -14,10 +16,14 @@ public class PoloAPIGuiceModule extends AbstractModule {
     private String clientHost = "127.0.0.1";
     private int clientPort = 8869;
 
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
     @Override
     protected void configure() {
 
         bind(IProtocol.class).toInstance(new SimpleProtocol());
+
+        bind(Gson.class).toInstance(gson);
 
         bind(int.class).annotatedWith(Names.named("setting_server_start_port")).toInstance(this.serverStartPort);
         bind(int.class).annotatedWith(Names.named("setting_protocol_threadSize")).toInstance(this.protocolThreadSize);

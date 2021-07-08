@@ -9,6 +9,12 @@ public class SimpleTemplate implements ITemplate {
     private int maxServerCount;
     private int minServerCount;
 
+    public SimpleTemplate(String name, int maxServerCount, int minServerCount){
+        this.name = name;
+        this.maxServerCount = maxServerCount;
+        this.minServerCount = minServerCount;
+    }
+
     @Override
     public int getMinServerCount() {
         return this.minServerCount;
