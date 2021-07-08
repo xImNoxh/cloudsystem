@@ -15,6 +15,7 @@ import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.bootstrap.commands.StopCommand;
 import de.polocloud.bootstrap.template.SimpleTemplate;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
@@ -40,6 +41,7 @@ public class Master implements IStartable, ITerminatable {
 
         this.templateService.getTemplateSaver().save(new SimpleTemplate("Lobby", 1, 8));
 
+        CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
     }
 
     @Override
