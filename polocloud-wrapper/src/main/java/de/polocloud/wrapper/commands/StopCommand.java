@@ -2,6 +2,7 @@ package de.polocloud.wrapper.commands;
 
 import de.polocloud.api.commands.CloudCommand;
 
+@CloudCommand.Info(name = "stop", aliases = "", description = "")
 public class StopCommand extends CloudCommand {
 
     @Override
