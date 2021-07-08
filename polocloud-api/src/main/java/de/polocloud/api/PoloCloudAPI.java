@@ -1,5 +1,6 @@
 package de.polocloud.api;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.commands.CommandPool;
@@ -9,8 +10,8 @@ public class PoloCloudAPI extends CloudAPI {
 
     private Injector inector;
 
-    public PoloCloudAPI() {
-        this.inector = Guice.createInjector(new PoloAPIGuiceModule());
+    public PoloCloudAPI(AbstractModule... modules) {
+        this.inector = Guice.createInjector(modules);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonetty.network.handler.NetworkHandler;
 import com.esotericsoftware.kryonetty.network.handler.NetworkListener;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
@@ -17,7 +18,7 @@ public class Wrapper implements IStartable, ITerminatable {
     private SimpleNettyClient nettyClient;
 
     public Wrapper() {
-        this.cloudAPI = new PoloCloudAPI();
+        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule());
     }
 
     @Override
