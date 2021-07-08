@@ -1,7 +1,7 @@
 package de.polocloud.api;
 
 import com.google.inject.Injector;
-import de.polocloud.api.commands.CommandPool;
+import de.polocloud.api.commands.ICommandPool;
 
 public abstract class CloudAPI {
 
@@ -11,7 +11,7 @@ public abstract class CloudAPI {
         instance = this;
     }
 
-    public abstract CommandPool getCommandPool();
+    public abstract ICommandPool getCommandPool();
 
     public abstract Injector getGuice();
 

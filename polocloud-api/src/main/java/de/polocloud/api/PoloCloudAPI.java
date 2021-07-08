@@ -4,19 +4,21 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.commands.CommandPool;
-import de.polocloud.api.guice.PoloAPIGuiceModule;
+import de.polocloud.api.commands.ICommandPool;
 
 public class PoloCloudAPI extends CloudAPI {
 
     private Injector inector;
+    private ICommandPool commandPool;
 
     public PoloCloudAPI(AbstractModule... modules) {
         this.inector = Guice.createInjector(modules);
+        commandPool = new CommandPool();
     }
 
     @Override
-    public CommandPool getCommandPool() {
-        return null;
+    public ICommandPool getCommandPool() {
+        return commandPool;
     }
 
     @Override

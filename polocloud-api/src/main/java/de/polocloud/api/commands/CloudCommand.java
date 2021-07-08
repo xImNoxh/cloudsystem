@@ -8,13 +8,11 @@ public abstract class CloudCommand {
     private String name;
     private String[] aliases;
     private String description;
-    private CloudCommandType commandType;
 
     public CloudCommand() {
         name = getClass().getAnnotation(Info.class).name();
         aliases = getClass().getAnnotation(Info.class).aliases();
         description = getClass().getAnnotation(Info.class).description();
-        commandType = getClass().getAnnotation(Info.class).commandTyp();
     }
 
     public abstract void execute(String[] args);
@@ -35,14 +33,6 @@ public abstract class CloudCommand {
         this.aliases = aliases;
     }
 
-    public void setCommandType(CloudCommandType commandType) {
-        this.commandType = commandType;
-    }
-
-    public CloudCommandType getCommandType() {
-        return commandType;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -57,7 +47,5 @@ public abstract class CloudCommand {
         String name();
         String description();
         String[] aliases();
-        CloudCommandType commandTyp();
-
     }
 }

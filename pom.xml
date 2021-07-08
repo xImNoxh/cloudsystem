@@ -41,7 +41,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.polocloud.bootstrap.bootstrap.Bootstrap</mainClass>
+                            <mainClass>de.polocloud.bootstrap.Bootstrap</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,13 +1,22 @@
 package de.polocloud.api.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface CommandPool {
+public class CommandPool extends ArrayList<CloudCommand> implements ICommandPool {
 
-    void registerCommand(CloudCommand cloudCommand);
+    @Override
+    public void registerCommand(CloudCommand cloudCommand) {
+        add(cloudCommand);
+    }
 
-    List<CloudCommand> getAllCachedCommands();
+    @Override
+    public List<CloudCommand> getAllCachedCommands() {
+        return this;
+    }
 
-    void unregisterCommand(CloudCommand cloudCommand);
-
+    @Override
+    public void unregisterCommand(CloudCommand cloudCommand) {
+        remove(cloudCommand);
+    }
 }

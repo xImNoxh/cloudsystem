@@ -27,14 +27,14 @@ public class ConsoleReadThread extends Thread {
             try {
                 this.consoleReader.setPrompt("");
                 this.consoleReader.resetPromptLine("", "", 0);
-                while ((line = this.consoleReader.readLine(colorString("§b" + "PoloCloud" + " §7» "))) != null && !line.trim().isEmpty()) {
+                while ((line = this.consoleReader.readLine(colorString("PoloCloud" + " §7» "))) != null && !line.trim().isEmpty()) {
                     this.consoleReader.setPrompt("");
-                    String finalLine = line;
 
+                    String[] args = line.split(" ");
+                    CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).forEach(key -> {
+                        key.execute(args);
+                    });
 
-
-                    CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key ->
-                            key.getName().equalsIgnoreCase(finalLine.split(" ")[0])).forEach(commands -> commands.execute(finalLine.split(" ")));
                 }
             } catch (IOException throwable) {
                 throwable.printStackTrace();
