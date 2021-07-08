@@ -33,7 +33,9 @@ public class FileTemplateLoader implements ITemplateLoader {
 
         for (File file : baseDir.listFiles()) {
             try {
-                templates.add(loadTemplate(file));
+                if(file.isFile()){
+                    templates.add(loadTemplate(file));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

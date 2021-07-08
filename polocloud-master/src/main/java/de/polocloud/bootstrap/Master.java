@@ -14,6 +14,7 @@ import de.polocloud.api.network.protocol.packet.TestPacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.template.SimpleTemplate;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
@@ -50,7 +51,9 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.registerListener(new NetworkListener() {
             @NetworkHandler
             public void handle(ConnectEvent event) {
-                System.out.println("Client connected! " + event.getCtx().channel().toString());
+                WrapperClient client = new WrapperClient(event.getCtx());
+
+                client.startServer(templateService.getTemplateByName("Lobby"));
             }
 
             @NetworkHandler

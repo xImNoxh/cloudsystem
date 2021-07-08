@@ -2,6 +2,7 @@ package de.polocloud.api.network.protocol;
 
 import com.esotericsoftware.kryonetty.kryo.KryoNetty;
 import com.google.inject.Inject;
+import de.polocloud.api.network.protocol.packet.StartServerPacket;
 import de.polocloud.api.network.protocol.packet.TestPacket;
 
 import javax.inject.Named;
@@ -25,6 +26,7 @@ public class SimpleProtocol implements IProtocol {
 
     private void registerPackets(KryoNetty kryoNetty) {
         kryoNetty.register(100, TestPacket.class);
+        kryoNetty.register(101, StartServerPacket.class);
     }
 
     @Override

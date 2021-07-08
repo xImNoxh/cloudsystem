@@ -6,4 +6,8 @@ public interface ITemplateService {
 
     ITemplateSaver getTemplateSaver();
 
+    ITemplate getTemplateByName(String name);
+
+    void reloadTemplates();
+
 }
