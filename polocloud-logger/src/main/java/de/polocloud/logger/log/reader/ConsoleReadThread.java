@@ -5,10 +5,12 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class ConsoleReadThread extends Thread {
 
     private ConsoleReader consoleReader;
+    private static Consumer<String> INPUT;
 
     public ConsoleReadThread(ConsoleReader consoleReader) {
         this.consoleReader = consoleReader;
@@ -28,6 +30,9 @@ public class ConsoleReadThread extends Thread {
                 while ((line = this.consoleReader.readLine(colorString("§b" + "PoloCloud" + " §7» "))) != null && !line.trim().isEmpty()) {
                     this.consoleReader.setPrompt("");
                     String finalLine = line;
+
+
+
                     CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key ->
                             key.getName().equalsIgnoreCase(finalLine.split(" ")[0])).forEach(commands -> commands.execute(finalLine.split(" ")));
                 }
