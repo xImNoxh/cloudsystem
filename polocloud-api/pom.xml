@@ -28,16 +28,18 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.github.EsotericSoftware</groupId>
-      <artifactId>kryonetty</artifactId>
-      <version>d1a78098fe</version>
-      <scope>compile</scope>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>4.1.6.Final</version>
     </dependency>
+
     <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
+
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>5.0.1</version>
+      <version>4.2.3</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>

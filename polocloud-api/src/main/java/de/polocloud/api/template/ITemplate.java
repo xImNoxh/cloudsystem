@@ -8,4 +8,6 @@ public interface ITemplate extends INamable {
 
     int getMaxServerCount();
 
+    TemplateType getTemplateType();
+
 }

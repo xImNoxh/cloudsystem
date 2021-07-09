@@ -10,7 +10,7 @@ public class SimpleWrapperClientManager implements IWrapperClientManager{
 
 
     @Override
-    public Collection<WrapperClient> getWrapperClients() {
+    public List<WrapperClient> getWrapperClients() {
         return this.clientList;
     }
 

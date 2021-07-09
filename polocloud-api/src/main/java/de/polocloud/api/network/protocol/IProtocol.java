@@ -1,11 +1,12 @@
 package de.polocloud.api.network.protocol;
 
-import com.esotericsoftware.kryonetty.kryo.KryoNetty;
+import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.channel.ChannelHandlerContext;
 
 public interface IProtocol {
 
-    KryoNetty getProtocol();
+    void registerPacketHandler(IPacketHandler packetHandler);
 
-    KryoNetty create();
+    void firePacketHandlers(ChannelHandlerContext ctx, IPacket packet);
 
 }

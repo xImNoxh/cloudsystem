@@ -6,6 +6,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.SimpleProtocol;
+import de.polocloud.api.util.Snowflake;
 
 public class PoloAPIGuiceModule extends AbstractModule {
 
@@ -16,10 +17,14 @@ public class PoloAPIGuiceModule extends AbstractModule {
     private String clientHost = "127.0.0.1";
     private int clientPort = 8869;
 
+    private Snowflake snowflake = new Snowflake();
+
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
     protected void configure() {
+
+        bind(Snowflake.class).toInstance(snowflake);
 
         bind(IProtocol.class).toInstance(new SimpleProtocol());
 

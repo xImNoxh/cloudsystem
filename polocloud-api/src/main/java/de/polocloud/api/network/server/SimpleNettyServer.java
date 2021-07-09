@@ -1,9 +1,20 @@
 package de.polocloud.api.network.server;
 
-import com.esotericsoftware.kryonetty.ThreadedServerEndpoint;
-import com.esotericsoftware.kryonetty.network.handler.NetworkListener;
 import com.google.inject.Inject;
+import de.polocloud.api.CloudAPI;
+import de.polocloud.api.network.client.handler.ClientHandler;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.server.handler.ServerHandler;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 
 import javax.inject.Named;
 
@@ -16,23 +27,43 @@ public class SimpleNettyServer implements INettyServer {
     @Inject
     private IProtocol protocol;
 
-    private ThreadedServerEndpoint threadedServerEndpoint;
-
     @Override
     public void start() {
-        this.threadedServerEndpoint = new ThreadedServerEndpoint(this.protocol.getProtocol());
-        this.threadedServerEndpoint.start(this.port);
+
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap serverBootstrap = new ServerBootstrap();
+            (serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)).childHandler(new ChannelInitializer<SocketChannel>(){
+
+                @Override
+                protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    socketChannel.pipeline().addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
+                    socketChannel.pipeline().addLast(new ObjectEncoder());
+                    socketChannel.pipeline().addLast(new ClientHandler(protocol));
+                }
+            }).option(ChannelOption.SO_BACKLOG, 128);
+            ChannelFuture channelFuture = serverBootstrap.bind(this.port).sync();
+            channelFuture.channel().closeFuture().sync();
+        }
+        catch (Exception exc) {
+            exc.printStackTrace();
+            System.out.println(exc.getLocalizedMessage());
+        }
+
+
         System.out.println("starting server on port " + this.port);
     }
 
     @Override
     public boolean terminate() {
-        this.threadedServerEndpoint.close();
         return true;
     }
 
+
     @Override
-    public void registerListener(NetworkListener networkListener) {
-        this.threadedServerEndpoint.getEventHandler().register(networkListener);
+    public IProtocol getProtocol() {
+        return protocol;
     }
 }
