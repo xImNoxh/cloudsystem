@@ -14,6 +14,7 @@ import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.StartServerPacket;
 import de.polocloud.api.network.protocol.packet.TestPacket;
+import de.polocloud.wrapper.commands.StopCommand;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -33,6 +34,8 @@ public class Wrapper implements IStartable, ITerminatable {
 
     public Wrapper() {
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule());
+
+        CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
     }
 
     @Override

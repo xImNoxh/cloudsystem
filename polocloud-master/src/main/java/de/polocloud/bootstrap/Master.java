@@ -14,9 +14,8 @@ import de.polocloud.api.network.protocol.packet.TestPacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.bootstrap.commands.StopCommand;
 import de.polocloud.bootstrap.command.GameServerCloudCommand;
 import de.polocloud.bootstrap.command.TemplateCloudCommand;
 import de.polocloud.bootstrap.template.SimpleTemplate;
@@ -47,6 +46,7 @@ public class Master implements IStartable, ITerminatable {
 
         this.templateService.getTemplateSaver().save(new SimpleTemplate("Lobby", 1, 8));
 
+        CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCloudCommand(this.templateService, this.wrapperClientManager));
 
