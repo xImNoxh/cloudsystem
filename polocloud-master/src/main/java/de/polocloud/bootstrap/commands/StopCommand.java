@@ -1,8 +1,13 @@
 package de.polocloud.bootstrap.commands;
 
+
 import de.polocloud.api.commands.CloudCommand;
 
-@CloudCommand.Info(name = "stop", aliases = "", description = "")
+@CloudCommand.Info(
+    name = "stop",
+    description = "stop the server",
+    aliases = ""
+)
 public class StopCommand extends CloudCommand {
 
     @Override

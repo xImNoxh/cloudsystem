@@ -23,8 +23,8 @@ public class LogBootstrapService {
             " |_|   \\___/|_|\\___/ \\_____|_|\\___/ \\__,_|\\__,_|\n" +
             "                                                \n");
         Logger.log("#This cloud was developed by " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "HttpMarco");
-        Logger.log(ConsoleColors.WHITE.getAnsiCode() + "#Version of cloud - " + ConsoleColors.CYAN.getAnsiCode() + "v1.0.1 " +
-            ConsoleColors.WHITE.getAnsiCode() + "(@Alpha) | ©opyright by PoloCloud.");
+        Logger.log(ConsoleColors.GRAY.getAnsiCode() + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "v1.0.1 " +
+            ConsoleColors.GRAY.getAnsiCode() + "(@Alpha) | ©opyright by PoloCloud.");
         Logger.newLine();
     }
 

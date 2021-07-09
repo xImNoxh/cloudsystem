@@ -9,9 +9,11 @@ import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
+import de.polocloud.bootstrap.client.SimpleWrapperClientManager
 import de.polocloud.bootstrap.commands.StopCommand;
+import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.commands.GameServerCloudCommand;
+import de.polocloud.bootstrap.commands.StopCommand;
 import de.polocloud.bootstrap.commands.TemplateCloudCommand;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
@@ -47,7 +49,11 @@ public class Master implements IStartable, ITerminatable {
         this.templateService.getTemplateLoader().loadTemplates();
 
         CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+
+
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCloudCommand(this.templateService, this.wrapperClientManager));
 
         Thread runnerThread = new Thread(PoloCloudAPI.getInstance().getGuice().getInstance(ServerCreatorRunner.class));
