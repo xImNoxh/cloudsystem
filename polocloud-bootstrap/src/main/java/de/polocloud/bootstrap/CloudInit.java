@@ -16,6 +16,7 @@ public class CloudInit {
         logBootstrapService.printSymbol();
 
         new ConsoleReadThread(Logger.getConsoleReader());
+        //new ServiceTypeSetup().sendSetup();
 
         if (args[0].equalsIgnoreCase("master")) {
             //start master

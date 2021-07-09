@@ -21,29 +21,29 @@ public class LogFileService {
     }
 
     public void createLogDirectory() {
-        new File("de/polocloud/logger/log").mkdirs();
+        new File("log").mkdirs();
     }
 
     public void createCurrentLatestLog() {
         try {
-            new File("de/polocloud/logger/log/latest.log").createNewFile();
+            new File("log/latest.log").createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void removeLatestLog() {
-        File file = new File("de/polocloud/logger/log/latest.log");
+        File file = new File("log/latest.log");
         if (file.exists()) file.delete();
     }
 
     public File getLatestLog() {
-        return new File("de/polocloud/logger/log/latest.log");
+        return new File("log/latest.log");
     }
 
     public File getCurrentDayLog() {
-        new File("de/polocloud/logger/log/" + Logger.getSimpleDate()).mkdirs();
-        File file = new File("de/polocloud/logger/log/" + Logger.getSimpleDate() + "/services.log");
+        new File("log/" + Logger.getSimpleDate()).mkdirs();
+        File file = new File("log/" + Logger.getSimpleDate() + "/services.log");
         if (!file.exists()) {
             try {
                 file.createNewFile();

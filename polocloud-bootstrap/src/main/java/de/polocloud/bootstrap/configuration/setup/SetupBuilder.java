@@ -41,6 +41,8 @@ public class SetupBuilder {
         String answer = null;
         try {
             answer = consoleReader.readLine();
+            consoleReader.drawLine();
+            consoleReader.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,12 +65,12 @@ public class SetupBuilder {
     public void sendQuestion(Step step) {
         Logger.log(LoggerType.INFO, step.getQuestion());
         if (step.getDefaultAnswers().length > 0) {
-            Logger.log(LoggerType.INFO, "[" + getAnswerKeys(step) + "]");
+            Logger.log(LoggerType.INFO, "Possible Answers : " + getAnswerKeys(step));
         }
     }
 
     public String getAnswerKeys(Step step) {
-        return String.join(",", step.getDefaultAnswers());
+        return String.join(", ", step.getDefaultAnswers());
     }
 
     public boolean hasNextStep(Step step) {

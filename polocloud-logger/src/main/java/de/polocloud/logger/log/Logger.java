@@ -24,7 +24,7 @@ public class Logger {
 
     public static void log(LoggerType loggerType, String message) {
         try {
-            consoleReader.println(ConsoleColors.GRAY.getAnsiCode() + message);
+            consoleReader.println(ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.WHITE.getAnsiCode() + "» " + ConsoleColors.GRAY.getAnsiCode() + message);
             consoleReader.drawLine();
             consoleReader.flush();
         } catch (IOException e) {
