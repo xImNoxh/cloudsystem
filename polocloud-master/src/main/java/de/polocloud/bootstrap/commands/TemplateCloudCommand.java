@@ -1,4 +1,4 @@
-package de.polocloud.bootstrap.command;
+package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.template.ITemplate;

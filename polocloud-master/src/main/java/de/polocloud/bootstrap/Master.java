@@ -4,7 +4,6 @@ import com.esotericsoftware.kryonetty.network.ConnectEvent;
 import com.esotericsoftware.kryonetty.network.ReceiveEvent;
 import com.esotericsoftware.kryonetty.network.handler.NetworkHandler;
 import com.esotericsoftware.kryonetty.network.handler.NetworkListener;
-import com.google.common.collect.Lists;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
@@ -12,18 +11,16 @@ import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.protocol.packet.TestPacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
-import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.bootstrap.client.IWrapperClientManager;
+import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.commands.StopCommand;
-import de.polocloud.bootstrap.command.GameServerCloudCommand;
-import de.polocloud.bootstrap.command.TemplateCloudCommand;
+import de.polocloud.bootstrap.commands.GameServerCloudCommand;
+import de.polocloud.bootstrap.commands.TemplateCloudCommand;
 import de.polocloud.bootstrap.template.SimpleTemplate;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 public class Master implements IStartable, ITerminatable {
 
