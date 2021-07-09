@@ -1,10 +1,13 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.util.Snowflake;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 
 import java.util.Optional;
 
@@ -14,6 +17,8 @@ import java.util.Optional;
     aliases = "gs"
 )
 public class GameServerCloudCommand extends CloudCommand {
+
+    private Snowflake snowflake;
 
     private ITemplateService templateService;
     private IWrapperClientManager wrapperClientManager;
@@ -46,7 +51,9 @@ public class GameServerCloudCommand extends CloudCommand {
                 }
 
                 WrapperClient wrapperClient = optionalWrapperClient.get();
-                wrapperClient.startServer(template);
+
+                long id = snowflake.nextId();
+                //wrapperClient.startServer(new SimpleGameServer(new SimpleGameServer(template.getName() + "-" + id, GameServerStatus.PENDING, null, id, template, System.currentTimeMillis())));
                 System.out.println("starting...");
 
 

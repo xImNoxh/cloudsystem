@@ -5,7 +5,7 @@ import de.polocloud.api.commands.ICommandPool;
 
 public abstract class CloudAPI {
 
-    private static CloudAPI instance;
+    protected static CloudAPI instance;
 
     public CloudAPI() {
         instance = this;

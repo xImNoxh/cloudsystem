@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.template;
 
 import de.polocloud.api.CloudAPI;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateLoader;
 import de.polocloud.api.template.ITemplateSaver;
@@ -18,13 +19,18 @@ public class SimpleTemplateService implements ITemplateService {
 
     private Collection<ITemplate> templateList = new ArrayList<>();
 
-    public SimpleTemplateService(CloudAPI cloudAPI, TemplateStorage templateStorage) {
+    public SimpleTemplateService() {
 
+
+
+    }
+
+
+    public void load(CloudAPI cloudAPI, TemplateStorage templateStorage){
         this.templateLoader = cloudAPI.getGuice().getInstance(templateStorage.getTemplateLoader());
         this.templateSaver = cloudAPI.getGuice().getInstance(templateStorage.getTemplateServer());
 
         this.reloadTemplates();
-
     }
 
     @Override
@@ -45,6 +51,11 @@ public class SimpleTemplateService implements ITemplateService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Collection<ITemplate> getLoadedTemplates() {
+        return this.templateList;
     }
 
     @Override

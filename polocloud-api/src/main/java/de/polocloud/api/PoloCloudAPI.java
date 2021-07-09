@@ -12,6 +12,7 @@ public class PoloCloudAPI extends CloudAPI {
     private ICommandPool commandPool;
 
     public PoloCloudAPI(AbstractModule... modules) {
+        instance = this;
         this.inector = Guice.createInjector(modules);
         commandPool = new CommandPool();
     }
@@ -25,4 +26,5 @@ public class PoloCloudAPI extends CloudAPI {
     public Injector getGuice() {
         return this.inector;
     }
+
 }
