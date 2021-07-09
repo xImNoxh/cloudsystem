@@ -14,7 +14,11 @@ import de.polocloud.api.network.protocol.packet.TestPacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.bootstrap.client.IWrapperClientManager;
+import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.bootstrap.command.GameServerCloudCommand;
+import de.polocloud.bootstrap.command.TemplateCloudCommand;
 import de.polocloud.bootstrap.template.SimpleTemplate;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
@@ -29,9 +33,12 @@ public class Master implements IStartable, ITerminatable {
     private SimpleNettyServer nettyServer;
 
     private final ITemplateService templateService;
+    private final IWrapperClientManager wrapperClientManager;
 
     public Master() {
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule());
+
+        this.wrapperClientManager = new SimpleWrapperClientManager();
 
         //load templateStorage from config
         this.templateService = new SimpleTemplateService(this.cloudAPI, TemplateStorage.FILE);
@@ -39,6 +46,9 @@ public class Master implements IStartable, ITerminatable {
         this.templateService.getTemplateLoader().loadTemplates();
 
         this.templateService.getTemplateSaver().save(new SimpleTemplate("Lobby", 1, 8));
+
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCloudCommand(this.templateService, this.wrapperClientManager));
 
     }
 
@@ -52,8 +62,7 @@ public class Master implements IStartable, ITerminatable {
             @NetworkHandler
             public void handle(ConnectEvent event) {
                 WrapperClient client = new WrapperClient(event.getCtx());
-
-                client.startServer(templateService.getTemplateByName("Lobby"));
+                Master.this.wrapperClientManager.registerWrapperClient(client);
             }
 
             @NetworkHandler
