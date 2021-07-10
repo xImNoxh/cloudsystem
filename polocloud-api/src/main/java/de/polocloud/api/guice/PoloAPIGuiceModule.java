@@ -33,6 +33,8 @@ public class PoloAPIGuiceModule extends AbstractModule {
         bind(int.class).annotatedWith(Names.named("setting_server_start_port")).toInstance(this.serverStartPort);
         bind(int.class).annotatedWith(Names.named("setting_protocol_threadSize")).toInstance(this.protocolThreadSize);
 
+
+
         bind(String.class).annotatedWith(Names.named("setting_client_host")).toInstance(this.clientHost);
         bind(int.class).annotatedWith(Names.named("setting_client_port")).toInstance(this.clientPort);
     }

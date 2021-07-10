@@ -2,20 +2,23 @@ package de.polocloud.plugin.bungee;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.ServerConnectRequest;
-import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
-import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.event.EventHandler;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class PoloCloudPlugin extends Plugin {
+
+    public static Map<UUID, LoginEvent> loginEvents = new HashMap<>();
+    public static Map<UUID, String> loginServers = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -44,7 +47,26 @@ public class PoloCloudPlugin extends Plugin {
             }
         });
 
-        getProxy().getPluginManager().registerListener(this, new TestListener());
+        bootstrap.registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+
+                MasterPlayerRequestResponsePacket packet = (MasterPlayerRequestResponsePacket) obj;
+
+                LoginEvent loginEvent = loginEvents.remove(packet.getUuid());
+                loginServers.put(loginEvent.getConnection().getUniqueId(), packet.getSnowflake() + "");
+
+                loginEvent.completeIntent(PoloCloudPlugin.this);
+
+            }
+
+            @Override
+            public Class<? extends IPacket> getPacketClass() {
+                return MasterPlayerRequestResponsePacket.class;
+            }
+        });
+
+        getProxy().getPluginManager().registerListener(this, new BungeeConnectListener(this, bootstrap));
 
 
     }

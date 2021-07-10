@@ -48,7 +48,7 @@ public class Wrapper implements IStartable, ITerminatable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.nettyClient.sendPacket(new WrapperLoginPacket("xXxPoloxXxCloudxXx"));
+        this.nettyClient.sendPacket(new WrapperLoginPacket("--Polo--"));
         //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
 
         this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
