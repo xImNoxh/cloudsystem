@@ -1,4 +1,4 @@
-package de.polocloud.bootstrap.configuration.setup;
+package de.polocloud.bootstrap.setup;
 
 public interface Setup {
 

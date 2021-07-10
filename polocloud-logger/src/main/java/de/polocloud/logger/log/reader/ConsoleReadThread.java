@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 public class ConsoleReadThread extends Thread {
 
     private ConsoleReader consoleReader;
-    private static Consumer<String> INPUT;
 
     public ConsoleReadThread(ConsoleReader consoleReader) {
         this.consoleReader = consoleReader;

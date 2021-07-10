@@ -5,6 +5,7 @@ import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.bootstrap.setup.executes.CreateTemplateSetup;
 import de.polocloud.bootstrap.template.SimpleTemplate;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -25,6 +26,11 @@ public class TemplateCloudCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
+
+        new CreateTemplateSetup(templateService).sendSetup();
+        return;
+
+        /*
         if(args.length >= 8) {
             if (args[1].equalsIgnoreCase("create")) {
                 String name = args[2];
@@ -52,5 +58,8 @@ public class TemplateCloudCommand extends CloudCommand {
         }
         Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template versions");
         Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY> <version> <WrapperNames...>");
+
+
+         */
     }
 }

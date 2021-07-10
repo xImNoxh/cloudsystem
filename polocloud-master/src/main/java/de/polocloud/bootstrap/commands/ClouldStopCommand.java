@@ -12,6 +12,6 @@ public class ClouldStopCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
-        System.exit(0);
+        System.exit(-1);
     }
 }
