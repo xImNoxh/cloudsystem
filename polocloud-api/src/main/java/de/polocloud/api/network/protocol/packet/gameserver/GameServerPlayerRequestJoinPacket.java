@@ -8,9 +8,8 @@ public class GameServerPlayerRequestJoinPacket implements IPacket {
 
     private UUID uuid;
 
+    public GameServerPlayerRequestJoinPacket() { }
 
-    public GameServerPlayerRequestJoinPacket() {
-    }
     public GameServerPlayerRequestJoinPacket(UUID uuid) {
         this.uuid = uuid;
     }

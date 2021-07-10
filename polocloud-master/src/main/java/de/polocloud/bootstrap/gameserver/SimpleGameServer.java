@@ -3,6 +3,7 @@ package de.polocloud.bootstrap.gameserver;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.template.ITemplate;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -75,16 +76,14 @@ public class SimpleGameServer implements IGameServer {
         return 0;
     }
 
-
     @Override
     public int getOnlinePlayers() {
         return 0;
     }
 
-
     @Override
     public void stop() {
-        //TODO implement stop
+        sendPacket(new GameServerShutdownPacket());
     }
 
     public ChannelHandlerContext getCtx() {

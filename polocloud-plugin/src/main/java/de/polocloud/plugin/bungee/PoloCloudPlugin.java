@@ -2,6 +2,7 @@ package de.polocloud.plugin.bungee;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
@@ -40,10 +41,20 @@ public class PoloCloudPlugin extends Plugin {
 
 
             }
-
             @Override
             public Class<? extends IPacket> getPacketClass() {
                 return MasterRequestServerListUpdatePacket.class;
+            }
+        });
+
+        bootstrap.registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+                ProxyServer.getInstance().stop();
+            }
+            @Override
+            public Class<? extends IPacket> getPacketClass() {
+                return GameServerShutdownPacket.class;
             }
         });
 

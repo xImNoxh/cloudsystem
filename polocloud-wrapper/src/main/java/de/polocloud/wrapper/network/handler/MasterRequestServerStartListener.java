@@ -81,6 +81,8 @@ public class MasterRequestServerStartListener extends IPacketHandler {
                 File config = new File(serverDirectory + "/config.yml");
                 FileUtils.writeStringToFile(config, "ip_forward: true\n");
 
+//TODO
+               // FileUtils.writeStringToFile(config, "listeners:\n max_players: " + maxPlayers + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();

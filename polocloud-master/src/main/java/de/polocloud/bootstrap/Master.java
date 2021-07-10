@@ -65,6 +65,7 @@ public class Master implements IStartable, ITerminatable {
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ClouldStopCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownGameServerCommand(gameServerManager));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudHelpCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudInfoCommand(this.templateService, this.gameServerManager));
 

@@ -25,7 +25,7 @@ public class WrapperClient implements IPacketSender {
             gameServer.getTemplate().getName(),
             gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
             gameServer.getTemplate().getTemplateType() == TemplateType.PROXY,  gameServer.getTemplate().getMaxMemory(),
-            gameServer.getTemplate().getMaxMemory()));
+            gameServer.getTemplate().getMaxPlayers()));
     }
 
     public String getName() {
