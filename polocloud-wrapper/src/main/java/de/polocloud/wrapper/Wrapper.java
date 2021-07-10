@@ -7,16 +7,11 @@ import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.commands.StopCommand;
 import de.polocloud.wrapper.network.handler.MasterLoginResponsePacketHandler;
 import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.URISyntaxException;
-import java.util.UUID;
 
 
 public class Wrapper implements IStartable, ITerminatable {
@@ -35,6 +30,9 @@ public class Wrapper implements IStartable, ITerminatable {
 
     @Override
     public void start() {
+
+        Logger.log(LoggerType.INFO, "bootstrapping Wrapper");
+
         this.nettyClient = this.cloudAPI.getGuice().getInstance(SimpleNettyClient.class);
         System.out.println("connecting");
         new Thread(() -> {
