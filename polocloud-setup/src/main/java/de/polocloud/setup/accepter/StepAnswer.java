@@ -1,6 +1,6 @@
-package de.polocloud.bootstrap.setup.accepter;
+package de.polocloud.setup.accepter;
 
-import de.polocloud.bootstrap.setup.Step;
+import de.polocloud.setup.Step;
 
 import java.util.List;
 

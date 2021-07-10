@@ -1,4 +1,4 @@
-package de.polocloud.bootstrap.setup.accepter;
+package de.polocloud.setup.accepter;
 
 import java.util.function.Predicate;
 

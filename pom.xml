@@ -16,6 +16,7 @@
         <module>polocloud-wrapper</module>
       <module>polocloud-bootstrap</module>
         <module>polocloud-plugin</module>
+        <module>polocloud-setup</module>
     </modules>
 
     <properties>

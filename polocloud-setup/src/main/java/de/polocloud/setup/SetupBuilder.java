@@ -1,9 +1,9 @@
-package de.polocloud.bootstrap.setup;
+package de.polocloud.setup;
 
-import de.polocloud.bootstrap.setup.accepter.StepAnswer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.setup.accepter.StepAnswer;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class SetupBuilder {
     public void sendQuestion(Step step) {
         Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» " + step.getQuestion());
         if (step.getDefaultAnswers().length > 0) {
-            Logger.log(LoggerType.INFO, "Possible Answers : " + getAnswerKeys(step));
+            Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» Possible Answers : " + getAnswerKeys(step));
         }
     }
 

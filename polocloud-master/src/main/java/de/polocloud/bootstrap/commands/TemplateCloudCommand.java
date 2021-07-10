@@ -1,15 +1,8 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.template.GameServerVersion;
-import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.api.template.TemplateType;
-import de.polocloud.bootstrap.setup.executes.CreateTemplateSetup;
-import de.polocloud.bootstrap.template.SimpleTemplate;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.bootstrap.setup.CreateTemplateSetup;
 
 @CloudCommand.Info(
     name = "template",
