@@ -55,7 +55,7 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
 
                 ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, templateType, gameServerVersion, maxPlayers, memory, wrappers);
                 templateService.getTemplateSaver().save(template);
-                Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» You " +
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "You " +
                     ConsoleColors.GREEN.getAnsiCode() + "complete " + ConsoleColors.GRAY.getAnsiCode() + "the setup.");
             }
         });

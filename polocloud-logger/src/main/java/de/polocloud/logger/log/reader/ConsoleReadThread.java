@@ -1,6 +1,7 @@
 package de.polocloud.logger.log.reader;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import jline.console.ConsoleReader;
 
@@ -26,7 +27,7 @@ public class ConsoleReadThread extends Thread {
             try {
                 this.consoleReader.setPrompt("");
                 this.consoleReader.resetPromptLine("", "", 0);
-                while ((line = this.consoleReader.readLine(colorString(ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud" + " §7» "))) != null && !line.trim().isEmpty()) {
+                while ((line = this.consoleReader.readLine(colorString(Logger.PREFIX))) != null && !line.trim().isEmpty()) {
                     this.consoleReader.setPrompt("");
 
                     String[] args = line.split(" ");

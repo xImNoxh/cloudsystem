@@ -46,8 +46,6 @@ public class CloudBootstrap {
     }
 
     private void register(int port) {
-        System.out.println("try to register myself");
-
         try {
             String path = new File(CloudBootstrap.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getPath();
@@ -59,10 +57,7 @@ public class CloudBootstrap {
             e.printStackTrace();
         }
     }
-
     public void sendPacket(IPacket packet) {
         this.client.sendPacket(packet);
     }
-
-
 }

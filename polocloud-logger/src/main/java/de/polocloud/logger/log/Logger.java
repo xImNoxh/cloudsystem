@@ -12,6 +12,7 @@ import java.util.Date;
 public class Logger {
 
     private static ConsoleReader consoleReader;
+    public static String PREFIX = ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» ";
 
     public static void boot() {
         try {

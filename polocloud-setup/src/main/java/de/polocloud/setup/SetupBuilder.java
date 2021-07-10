@@ -41,7 +41,7 @@ public class SetupBuilder {
         sendQuestion(currentStep);
         String answer = null;
         try {
-            answer = consoleReader.readLine(ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud" + ConsoleColors.GRAY.getAnsiCode() + " » ");
+            answer = consoleReader.readLine(Logger.PREFIX);
             consoleReader.drawLine();
             consoleReader.flush();
             consoleReader.setPrompt("");
@@ -66,9 +66,9 @@ public class SetupBuilder {
     }
 
     public void sendQuestion(Step step) {
-        Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» " + step.getQuestion());
+        Logger.log(LoggerType.INFO, Logger.PREFIX + step.getQuestion());
         if (step.getDefaultAnswers().length > 0) {
-            Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» Possible Answers : " + getAnswerKeys(step));
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Possible Answers : " + getAnswerKeys(step));
         }
     }
 

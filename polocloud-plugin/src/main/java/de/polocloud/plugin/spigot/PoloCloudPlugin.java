@@ -28,7 +28,5 @@ public class PoloCloudPlugin extends JavaPlugin {
                 return GameServerShutdownPacket.class;
             }
         });
-
-        System.out.println("PoloCloudPlugin enalbing");
     }
 }

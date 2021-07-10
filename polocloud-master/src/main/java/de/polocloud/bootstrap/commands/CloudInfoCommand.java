@@ -66,6 +66,6 @@ public class CloudInfoCommand extends CloudCommand {
                 return;
             }
         }
-        Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» info <template/wrapper/service> <name-id>");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "info <template/wrapper/service> <name-id>");
     }
 }

@@ -45,7 +45,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("done.");
+            Logger.log(LoggerType.INFO, "done");
         }
 
         createDefaultTemplateDirectory(templateName);

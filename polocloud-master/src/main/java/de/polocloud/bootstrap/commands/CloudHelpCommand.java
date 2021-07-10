@@ -12,7 +12,7 @@ public class CloudHelpCommand extends CloudCommand {
     @Override
     public void execute(String[] args) {
         CloudAPI.getInstance().getCommandPool().getAllCachedCommands().forEach(key ->
-            Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud "+ ConsoleColors.GRAY.getAnsiCode() + "» " + ConsoleColors.CYAN.getAnsiCode() + key.getName() + ConsoleColors.GRAY.getAnsiCode() +
+            Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.CYAN.getAnsiCode() + key.getName() + ConsoleColors.GRAY.getAnsiCode() +
                 " » " + ConsoleColors.GRAY.getAnsiCode() + key.getDescription()));
         Logger.newLine();
         Logger.log(LoggerType.INFO, ConsoleColors.GRAY.getAnsiCode() + "Founded " + CloudAPI.getInstance().getCommandPool().getAllCachedCommands().size()

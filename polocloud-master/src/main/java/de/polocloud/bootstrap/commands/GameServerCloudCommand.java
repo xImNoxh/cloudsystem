@@ -34,7 +34,7 @@ public class GameServerCloudCommand extends CloudCommand {
     @Override
     public void execute(String[] args) {
         if (args.length == 1) {
-            System.out.println("gameserver start <template>");
+            Logger.log(LoggerType.INFO, "gameserver start <template>");
         } else if (args.length == 3) {
             if (args[1].equals("start")) {
                 String templateName = args[2];
