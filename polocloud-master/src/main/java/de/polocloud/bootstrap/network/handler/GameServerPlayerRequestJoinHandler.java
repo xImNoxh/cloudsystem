@@ -9,6 +9,8 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerReque
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
 
         ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, iGameServer.getSnowflake()));
 
-        System.out.println("sending player to " + iGameServer.getName() + " / " + iGameServer.getSnowflake());
+        Logger.log(LoggerType.INFO, "sending player to " + iGameServer.getName() + " / " + iGameServer.getSnowflake());
 
 
     }

@@ -10,6 +10,8 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPac
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -50,8 +52,7 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
 
         }
 
-        System.out.println("server " + packet.getSnowflake() + " registered!");
-
+        Logger.log(LoggerType.INFO, "server " + packet.getSnowflake() + " registered!");
     }
 
     @Override

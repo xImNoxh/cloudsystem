@@ -30,7 +30,6 @@ public class EntityProcessor {
         for (Class<?> aClass : classes) {
             try {
                 initEntity(aClass);
-                System.out.println("[Scanner] Found entity: " + aClass.getSimpleName());
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {

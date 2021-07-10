@@ -15,7 +15,7 @@ public class SimpleWrapperNetworkListener implements NetworkListener {
 
     @NetworkHandler
     public void handle(ConnectEvent event){
-        System.out.println("connection established");
+
         event.getCtx().writeAndFlush(new WrapperLoginPacket("xXxPoloxXxCloudxXx"));
     }
 
@@ -24,7 +24,6 @@ public class SimpleWrapperNetworkListener implements NetworkListener {
         if (event.getObject() instanceof IPacket) {
             protocol.firePacketHandlers(event.getCtx(), (IPacket) event.getObject());
         }
-        System.out.println("< " + event.getObject().getClass().getSimpleName());
     }
 
 

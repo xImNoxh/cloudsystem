@@ -37,7 +37,6 @@ public class RepositoryProcessor {
         for (Class<?> aClass : classes) {
             try {
                 RepositoryPool.list.add(instantiateRepository(aClass));
-                System.out.println("[Scanner] Found repository: " + aClass.getSimpleName());
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }

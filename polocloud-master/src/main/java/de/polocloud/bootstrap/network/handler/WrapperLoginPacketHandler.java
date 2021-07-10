@@ -12,6 +12,7 @@ import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperLoginPacketHandler extends IPacketHandler {
@@ -29,7 +30,7 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
 
         boolean response = config.getLoginKey().equals(packet.getKey());
 
-        Logger.log("Wrapper Login attempt > " + response);
+        Logger.log(LoggerType.INFO, "Wrapper Login attempt > " + response);
 
         MasterLoginResponsePacket responsePacket = new MasterLoginResponsePacket(response, response ? "Ok" : "Wrong LOGIN_KEY!");
         WrapperClient wrapperClient = new WrapperClient(ctx);

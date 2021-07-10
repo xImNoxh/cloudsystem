@@ -10,14 +10,12 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.commands.*;
-import de.polocloud.bootstrap.client.WrapperClient;
-import de.polocloud.bootstrap.commands.StopCommand;
+import de.polocloud.bootstrap.commands.ClouldStopCommand;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
@@ -64,8 +62,9 @@ public class Master implements IStartable, ITerminatable {
 
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new HelpCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ClouldStopCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudHelpCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudInfoCommand(this.templateService, this.gameServerManager));
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCloudCommand(this.templateService, this.wrapperClientManager));
 
@@ -98,8 +97,6 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerRegisterPacketHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerRequestJoinHandler.class));
 
-
-        System.out.println("starting...");
         new Thread(() -> nettyServer.start()).start();
 
         if(this.templateService.getLoadedTemplates().size() > 0) {

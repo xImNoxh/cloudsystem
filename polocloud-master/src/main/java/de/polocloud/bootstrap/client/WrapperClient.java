@@ -5,6 +5,8 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperClient implements IPacketSender {
@@ -16,7 +18,7 @@ public class WrapperClient implements IPacketSender {
     }
 
     public void startServer(IGameServer gameServer) {
-        System.out.println("start server " + gameServer.getName());
+        Logger.log(LoggerType.INFO, "Start server " + gameServer.getName());
         sendPacket(new MasterRequestServerStartPacket(
             gameServer.getTemplate().getName(),
             gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
@@ -25,7 +27,6 @@ public class WrapperClient implements IPacketSender {
 
     @Override
     public void sendPacket(IPacket object) {
-        System.out.println("> " + object.getClass().getSimpleName());
         this.chx.writeAndFlush(object);
     }
 }

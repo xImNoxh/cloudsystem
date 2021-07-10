@@ -7,7 +7,7 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 @CloudCommand.Info(name = "help", description = "", aliases = "")
-public class HelpCommand extends CloudCommand {
+public class CloudHelpCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {

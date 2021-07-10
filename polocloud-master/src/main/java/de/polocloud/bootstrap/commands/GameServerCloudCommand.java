@@ -8,6 +8,8 @@ import de.polocloud.api.util.Snowflake;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.Optional;
 
@@ -39,14 +41,14 @@ public class GameServerCloudCommand extends CloudCommand {
 
                 ITemplate template = this.templateService.getTemplateByName(templateName);
                 if (template == null) {
-                    System.out.println("Template nicht gefunden");
+                    Logger.log(LoggerType.INFO, "No template founded!");
                     return;
                 }
 
                 Optional<WrapperClient> optionalWrapperClient = this.wrapperClientManager.getWrapperClients().stream().findAny();
 
                 if (!optionalWrapperClient.isPresent()) {
-                    System.out.println("Kein Wrapper gefunden!");
+                    Logger.log(LoggerType.INFO, "No wrapper founded!");
                     return;
                 }
 
@@ -54,7 +56,7 @@ public class GameServerCloudCommand extends CloudCommand {
 
                 long id = snowflake.nextId();
                 //wrapperClient.startServer(new SimpleGameServer(new SimpleGameServer(template.getName() + "-" + id, GameServerStatus.PENDING, null, id, template, System.currentTimeMillis())));
-                System.out.println("starting...");
+                Logger.log(LoggerType.INFO, "starting...");
 
 
             }

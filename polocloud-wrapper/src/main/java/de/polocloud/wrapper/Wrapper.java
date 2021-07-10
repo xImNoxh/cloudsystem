@@ -68,13 +68,13 @@ public class Wrapper implements IStartable, ITerminatable {
         Logger.log(LoggerType.INFO, "bootstrapping Wrapper");
 
         this.nettyClient = this.cloudAPI.getGuice().getInstance(SimpleNettyClient.class);
-        System.out.println("connecting");
+        Logger.log(LoggerType.INFO, "connecting");
         new Thread(() -> {
             this.nettyClient.start();
 
         }).start();
-        System.out.println("connected!");
 
+        Logger.log(LoggerType.INFO, "connected!");
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

@@ -25,7 +25,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
-        System.out.println("< " + o.getClass().getSimpleName());
         if (o instanceof IPacket) {
             protocol.firePacketHandlers(channelHandlerContext, (IPacket) o);
         }

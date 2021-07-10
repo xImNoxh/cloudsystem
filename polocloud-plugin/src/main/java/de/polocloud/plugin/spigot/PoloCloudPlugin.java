@@ -14,6 +14,5 @@ public class PoloCloudPlugin extends JavaPlugin {
         bootstrap.connect(Bukkit.getPort());
 
         System.out.println("PoloCloudPlugin enalbing");
-
     }
 }

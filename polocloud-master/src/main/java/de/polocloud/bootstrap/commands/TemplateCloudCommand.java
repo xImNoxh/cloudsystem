@@ -6,6 +6,9 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.template.SimpleTemplate;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.logger.log.types.LoggerType;
 
 @CloudCommand.Info(
     name = "template",
@@ -22,10 +25,7 @@ public class TemplateCloudCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
-        if (args.length == 1) {
-            System.out.println("template versions");
-            System.out.println("template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY> <version>");
-        } else if (args.length == 7) {
+        if(args.length == 7) {
             if (args[1].equalsIgnoreCase("create")) {
                 String name = args[2];
                 int minServerCount = Integer.parseInt(args[3]);
@@ -34,16 +34,18 @@ public class TemplateCloudCommand extends CloudCommand {
                 ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, TemplateType.valueOf(args[5]), GameServerVersion.getVersion(args[6]));
 
                 this.templateService.getTemplateSaver().save(template);
-
-                System.out.println("Template created!");
-
+                Logger.log(LoggerType.INFO, "Template created.");
+                return;
             }
         } else if (args.length == 2) {
             if (args[1].equalsIgnoreCase("versions")) {
                 for (GameServerVersion value : GameServerVersion.values()) {
-                    System.out.println(value.getTitle());
+                    Logger.log(LoggerType.INFO, value.getTitle());
                 }
+                return;
             }
         }
+        Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template versions");
+        Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY> <version>");
     }
 }

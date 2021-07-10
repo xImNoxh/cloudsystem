@@ -4,6 +4,9 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.api.template.GameServerVersion;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.io.FileUtils;
 
@@ -26,11 +29,12 @@ public class MasterRequestServerStartListener extends IPacketHandler {
         MasterRequestServerStartPacket packet = (MasterRequestServerStartPacket) obj;
         String templateName = packet.getTemplate();
         long snowFlake = packet.getSnowflake();
-        System.out.println("starting server with template: " + templateName + " / " + snowFlake);
+
+        Logger.log(LoggerType.INFO, "starting server with template: " + templateName + " / " + snowFlake);
 
         File serverFile = new File("storage/version/" + packet.getVersion().getTitle() + ".jar");
         if (!serverFile.exists()) {
-            System.out.println("downloading " + packet.getVersion().getTitle() + "....");
+            Logger.log(LoggerType.INFO, "downloading follwing jar (" + packet.getVersion().getTitle() + ")...");
             serverFile.getParentFile().mkdirs();
             try {
                 FileUtils.copyURLToFile(new URL(packet.getVersion().getUrl()), serverFile);
@@ -83,12 +87,12 @@ public class MasterRequestServerStartListener extends IPacketHandler {
         ProcessBuilder processBuilder;
         if (isProxy) {
             processBuilder = new ProcessBuilder(("java -jar proxy.jar").split(" "));
-            System.out.println("start server on default port");
+            Logger.log(LoggerType.INFO, "Starting server on " +  ConsoleColors.GREEN.getAnsiCode()  + "default " + ConsoleColors.GRAY.getAnsiCode() + "port");
 
         } else {
             int port = generatePort();
             processBuilder = new ProcessBuilder(("java -jar -Dcom.mojang.eula.agree=true spigot.jar --online-mode false --max-players 100 --noconsole --port " + port).split(" "));
-            System.out.println("start server on port " + port);
+            Logger.log(LoggerType.INFO, "Starting server on port " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + port);
 
         }
 
