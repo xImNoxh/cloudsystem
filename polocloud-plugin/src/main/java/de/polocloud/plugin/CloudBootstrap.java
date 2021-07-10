@@ -23,10 +23,10 @@ public class CloudBootstrap {
         this.client = new SimpleNettyClient("localhost", 8869, new SimpleProtocol());
 
         new Thread(() -> {
-
-
-
             this.client.start();
+
+            System.exit(-1);
+
 
         }).start();
 
