@@ -16,9 +16,10 @@ import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.commands.StopCommand;
+import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.commands.GameServerCloudCommand;
+import de.polocloud.bootstrap.commands.StopCommand;
 import de.polocloud.bootstrap.commands.TemplateCloudCommand;
-import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
@@ -27,6 +28,9 @@ import de.polocloud.bootstrap.network.handler.GameServerRegisterPacketHandler;
 import de.polocloud.bootstrap.network.handler.WrapperLoginPacketHandler;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
 
@@ -40,6 +44,7 @@ public class Master implements IStartable, ITerminatable {
     private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
 
+    public static final String LOGIN_KEY = "xXxPoloxXxCloudxXx";
 
     private boolean running = false;
 
@@ -58,8 +63,10 @@ public class Master implements IStartable, ITerminatable {
         ((SimpleTemplateService) this.templateService).load(this.cloudAPI, TemplateStorage.FILE);
         this.templateService.getTemplateLoader().loadTemplates();
 
+
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new HelpCommand());
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCloudCommand(this.templateService, this.wrapperClientManager));
 
@@ -84,6 +91,8 @@ public class Master implements IStartable, ITerminatable {
     @Override
     public void start() {
         running = true;
+        Logger.log(LoggerType.INFO, "Trying to start master...");
+
         this.nettyServer = this.cloudAPI.getGuice().getInstance(SimpleNettyServer.class);
 
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(WrapperLoginPacketHandler.class));
@@ -94,7 +103,16 @@ public class Master implements IStartable, ITerminatable {
         System.out.println("starting...");
         new Thread(() -> nettyServer.start()).start();
 
-        System.out.println("started");
+        if(this.templateService.getLoadedTemplates().size() > 0) {
+            StringBuilder builder = new StringBuilder();
+            this.templateService.getLoadedTemplates().forEach(key -> builder.append(key.getName()).append(","));
+            Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length()-1));
+        }else{
+            Logger.log(LoggerType.INFO, "No templates founded.");
+        }
+
+
+        Logger.log(LoggerType.INFO, "The master is " + ConsoleColors.GREEN.getAnsiCode() + "successfully" + ConsoleColors.GRAY.getAnsiCode() + " started.");
     }
 
 
