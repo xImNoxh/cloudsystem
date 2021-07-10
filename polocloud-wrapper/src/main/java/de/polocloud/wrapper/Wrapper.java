@@ -2,6 +2,10 @@ package de.polocloud.wrapper;
 
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.loader.IConfigLoader;
+import de.polocloud.api.config.loader.SimpleConfigLoader;
+import de.polocloud.api.config.saver.IConfigSaver;
+import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
@@ -10,6 +14,8 @@ import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.commands.StopCommand;
+import de.polocloud.wrapper.config.WrapperConfig;
+import de.polocloud.wrapper.guice.WrapperGuiceModule;
 import de.polocloud.wrapper.network.handler.MasterLoginResponsePacketHandler;
 import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
 import org.apache.commons.io.FileUtils;
@@ -24,6 +30,8 @@ public class Wrapper implements IStartable, ITerminatable {
 
     private SimpleNettyClient nettyClient;
 
+    private WrapperConfig config;
+
     public Wrapper() {
 
         try {
@@ -32,9 +40,26 @@ public class Wrapper implements IStartable, ITerminatable {
             e.printStackTrace();
         }
 
-        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule());
+        config = loadConfig();
+
+        String[] masterAddress = config.getMasterAddress().split(":");
+        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
+
 
         CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+    }
+
+    private WrapperConfig loadConfig() {
+
+        File configFile = new File("config.json");
+        IConfigLoader configLoader = new SimpleConfigLoader();
+
+        WrapperConfig wrapperConfig = configLoader.load(WrapperConfig.class, configFile);
+
+        IConfigSaver configSaver = new SimpleConfigSaver();
+        configSaver.save(wrapperConfig, configFile);
+
+        return wrapperConfig;
     }
 
     @Override
@@ -55,7 +80,7 @@ public class Wrapper implements IStartable, ITerminatable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.nettyClient.sendPacket(new WrapperLoginPacket("--Polo--"));
+        this.nettyClient.sendPacket(new WrapperLoginPacket(config.getLoginKey()));
         //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
 
         this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());

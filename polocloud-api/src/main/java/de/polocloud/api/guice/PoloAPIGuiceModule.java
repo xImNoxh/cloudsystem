@@ -14,9 +14,6 @@ public class PoloAPIGuiceModule extends AbstractModule {
     private int serverStartPort = 8869;
     private int protocolThreadSize = 8;
 
-    private String clientHost = "127.0.0.1";
-    private int clientPort = 8869;
-
     private Snowflake snowflake = new Snowflake();
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -34,8 +31,5 @@ public class PoloAPIGuiceModule extends AbstractModule {
         bind(int.class).annotatedWith(Names.named("setting_protocol_threadSize")).toInstance(this.protocolThreadSize);
 
 
-
-        bind(String.class).annotatedWith(Names.named("setting_client_host")).toInstance(this.clientHost);
-        bind(int.class).annotatedWith(Names.named("setting_client_port")).toInstance(this.clientPort);
     }
 }
