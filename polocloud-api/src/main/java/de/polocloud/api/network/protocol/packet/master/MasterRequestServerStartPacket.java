@@ -9,15 +9,26 @@ public class MasterRequestServerStartPacket implements IPacket {
     private GameServerVersion version;
     private long snowflake;
     private boolean isProxy;
+    private int memory, maxPlayers;
 
     public MasterRequestServerStartPacket() {
     }
 
-    public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy) {
+    public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers) {
         this.template = template;
         this.version = version;
         this.snowflake = snowflake;
         this.isProxy = isProxy;
+        this.memory = memory;
+        this.maxPlayers = maxPlayers;
+    }
+
+    public int getMemory() {
+        return memory;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
     public GameServerVersion getVersion() {

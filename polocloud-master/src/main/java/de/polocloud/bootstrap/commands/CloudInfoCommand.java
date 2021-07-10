@@ -7,6 +7,7 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 @CloudCommand.Info(name = "info", aliases = "", description = "")
@@ -65,6 +66,6 @@ public class CloudInfoCommand extends CloudCommand {
                 return;
             }
         }
-        Logger.log(LoggerType.INFO, "info <template/wrapper/service> <name-id>");
+        Logger.log(LoggerType.INFO, ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» info <template/wrapper/service> <name-id>");
     }
 }

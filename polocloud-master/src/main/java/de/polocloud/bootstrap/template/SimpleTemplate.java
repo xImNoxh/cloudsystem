@@ -11,19 +11,24 @@ public class SimpleTemplate implements ITemplate {
     private int maxServerCount;
     private int minServerCount;
 
+    private int memory;
+    private int maxPlayers;
+
     private TemplateType templateType;
 
     private GameServerVersion version;
 
     private String[] wrapperNames;
 
-    public SimpleTemplate(String name, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, String[] wrapperNames){
+    public SimpleTemplate(String name, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, String[] wrapperNames){
         this.name = name;
         this.maxServerCount = maxServerCount;
         this.minServerCount = minServerCount;
         this.templateType = templateType;
         this.version = version;
         this.wrapperNames = wrapperNames;
+        this.maxPlayers = maxPlayers;
+        this.memory = memory;
     }
 
     @Override
@@ -54,5 +59,15 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    @Override
+    public int getMaxMemory() {
+        return memory;
     }
 }

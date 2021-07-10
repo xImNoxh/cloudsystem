@@ -4,6 +4,8 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.api.template.GameServerVersion;
+import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.template.ITemplateService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -28,6 +30,8 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
         MasterRequestServerStartPacket packet = (MasterRequestServerStartPacket) obj;
         String templateName = packet.getTemplate();
+        int memory = packet.getMemory();
+        int maxPlayers = packet.getMaxPlayers();
         long snowFlake = packet.getSnowflake();
 
         Logger.log(LoggerType.INFO, "starting server with template: " + templateName + " / " + snowFlake);
@@ -46,7 +50,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
         createDefaultTemplateDirectory(templateName);
 
-        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile));
+        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers));
 
     }
 
@@ -56,7 +60,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     }
 
 
-    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File serverFile) {
+    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File serverFile, int maxMemory, int maxPlayers) {
         File serverDirectory = new File("tmp/" + snowflake);
 
         try {
@@ -82,16 +86,15 @@ public class MasterRequestServerStartListener extends IPacketHandler {
             e.printStackTrace();
         }
 
-
         //start spigot.jar on random port
         ProcessBuilder processBuilder;
         if (isProxy) {
-            processBuilder = new ProcessBuilder(("java -jar proxy.jar").split(" "));
+            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M proxy.jar").split(" "));
             Logger.log(LoggerType.INFO, "Starting server on " +  ConsoleColors.GREEN.getAnsiCode()  + "default " + ConsoleColors.GRAY.getAnsiCode() + "port");
 
         } else {
             int port = generatePort();
-            processBuilder = new ProcessBuilder(("java -jar -Dcom.mojang.eula.agree=true spigot.jar --online-mode false --max-players 100 --noconsole --port " + port).split(" "));
+            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
             Logger.log(LoggerType.INFO, "Starting server on port " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + port);
 
         }

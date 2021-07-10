@@ -8,6 +8,10 @@ public interface ITemplate extends INamable {
 
     int getMaxServerCount();
 
+    int getMaxPlayers();
+
+    int getMaxMemory();
+
     TemplateType getTemplateType();
 
     GameServerVersion getVersion();

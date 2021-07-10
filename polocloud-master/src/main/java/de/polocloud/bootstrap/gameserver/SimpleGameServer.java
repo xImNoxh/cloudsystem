@@ -71,6 +71,18 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
+    public int getTotalMemory() {
+        return 0;
+    }
+
+
+    @Override
+    public int getOnlinePlayers() {
+        return 0;
+    }
+
+
+    @Override
     public void stop() {
         //TODO implement stop
     }
