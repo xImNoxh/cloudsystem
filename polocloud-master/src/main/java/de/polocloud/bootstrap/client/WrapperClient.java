@@ -11,22 +11,33 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperClient implements IPacketSender {
 
+    private String name;
     private ChannelHandlerContext chx;
 
-    public WrapperClient(ChannelHandlerContext ctx) {
+    public WrapperClient(String name, ChannelHandlerContext ctx) {
         this.chx = ctx;
+        this.name = name;
     }
 
     public void startServer(IGameServer gameServer) {
-        Logger.log(LoggerType.INFO, "Start server " + gameServer.getName());
+        Logger.log(LoggerType.INFO, "Start server " + gameServer.getName() + " on Wrapper " +  getName());
         sendPacket(new MasterRequestServerStartPacket(
             gameServer.getTemplate().getName(),
             gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
             gameServer.getTemplate().getTemplateType() == TemplateType.PROXY));
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public void sendPacket(IPacket object) {
         this.chx.writeAndFlush(object);
     }
+
+    public ChannelHandlerContext getConnection(){
+        return this.chx;
+    }
+
 }

@@ -9,6 +9,8 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 public class ChannelInactiveListener extends IPacketHandler {
@@ -24,7 +26,7 @@ public class ChannelInactiveListener extends IPacketHandler {
 
         for (WrapperClient wrapperClient : wrapperClientManager.getWrapperClients()) {
             if(wrapperClient.getConnection().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
-                System.out.println("Wrapper " + wrapperClient.getName() + " disconnected!");
+                Logger.log(LoggerType.INFO, "Wrapper " + wrapperClient.getName() + " disconnected!");
                 wrapperClientManager.removeWrapper(wrapperClient);
                 return;
             }
@@ -33,13 +35,11 @@ public class ChannelInactiveListener extends IPacketHandler {
         for (IGameServer o : gameServerManager.getGameServers()) {
             SimpleGameServer  gameServer = (SimpleGameServer) o;
             if(gameServer.getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
-                System.out.println("GameServer " + gameServer.getName() + " disconnected!");
+                Logger.log(LoggerType.INFO, "GameServer " + gameServer.getName() + " disconnected!");
                 gameServerManager.unregisterGameServer(gameServer);
                 return;
             }
         }
-
-        System.out.println("Channel inactive hello from listener");
     }
 
     @Override

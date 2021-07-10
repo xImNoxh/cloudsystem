@@ -33,7 +33,7 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
         Logger.log(LoggerType.INFO, "Wrapper Login attempt > " + response);
 
         MasterLoginResponsePacket responsePacket = new MasterLoginResponsePacket(response, response ? "Ok" : "Wrong LOGIN_KEY!");
-        WrapperClient wrapperClient = new WrapperClient(ctx);
+        WrapperClient wrapperClient = new WrapperClient(packet.getName(), ctx);
         wrapperClient.sendPacket(responsePacket);
 
         if (!response) {

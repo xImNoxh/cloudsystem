@@ -25,13 +25,18 @@ public class TemplateCloudCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
-        if(args.length == 7) {
+        if(args.length >= 8) {
             if (args[1].equalsIgnoreCase("create")) {
                 String name = args[2];
                 int minServerCount = Integer.parseInt(args[3]);
                 int maxServerCount = Integer.parseInt(args[4]);
 
-                ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, TemplateType.valueOf(args[5]), GameServerVersion.getVersion(args[6]));
+                String[] wrapperNames = new String[args.length - 7];
+                for(int i = 7; i < args.length; i++){
+                    wrapperNames[i - 7] = args[i];
+                }
+
+                ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, TemplateType.valueOf(args[5]), GameServerVersion.getVersion(args[6]), wrapperNames);
 
                 this.templateService.getTemplateSaver().save(template);
                 Logger.log(LoggerType.INFO, "Template created.");
@@ -46,6 +51,6 @@ public class TemplateCloudCommand extends CloudCommand {
             }
         }
         Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template versions");
-        Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY> <version>");
+        Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY> <version> <WrapperNames...>");
     }
 }
