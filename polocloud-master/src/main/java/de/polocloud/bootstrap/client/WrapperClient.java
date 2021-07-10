@@ -19,7 +19,7 @@ public class WrapperClient implements IPacketSender {
         System.out.println("start server " + gameServer.getName());
         sendPacket(new MasterRequestServerStartPacket(
             gameServer.getTemplate().getName(),
-            gameServer.getSnowflake(),
+            gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
             gameServer.getTemplate().getTemplateType() == TemplateType.PROXY));
     }
 

@@ -10,4 +10,6 @@ public interface ITemplate extends INamable {
 
     TemplateType getTemplateType();
 
+    GameServerVersion getVersion();
+
 }

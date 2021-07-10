@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
@@ -22,19 +23,26 @@ public class TemplateCloudCommand extends CloudCommand {
     @Override
     public void execute(String[] args) {
         if (args.length == 1) {
-            System.out.println("template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY>");
-        } else if (args.length == 6) {
+            System.out.println("template versions");
+            System.out.println("template create <name> <minServerCount> <maxServerCount> <MINECRAFT/PROXY> <version>");
+        } else if (args.length == 7) {
             if (args[1].equalsIgnoreCase("create")) {
                 String name = args[2];
                 int minServerCount = Integer.parseInt(args[3]);
                 int maxServerCount = Integer.parseInt(args[4]);
 
-                ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, TemplateType.valueOf(args[5]));
+                ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, TemplateType.valueOf(args[5]), GameServerVersion.getVersion(args[6]));
 
                 this.templateService.getTemplateSaver().save(template);
 
                 System.out.println("Template created!");
 
+            }
+        } else if (args.length == 2) {
+            if (args[1].equalsIgnoreCase("versions")) {
+                for (GameServerVersion value : GameServerVersion.values()) {
+                    System.out.println(value.getTitle());
+                }
             }
         }
     }

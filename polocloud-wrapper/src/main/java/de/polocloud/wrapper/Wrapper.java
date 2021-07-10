@@ -12,6 +12,10 @@ import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.commands.StopCommand;
 import de.polocloud.wrapper.network.handler.MasterLoginResponsePacketHandler;
 import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 
 public class Wrapper implements IStartable, ITerminatable {
@@ -22,6 +26,11 @@ public class Wrapper implements IStartable, ITerminatable {
 
     public Wrapper() {
 
+        try {
+            FileUtils.forceDelete(new File("tmp"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule());
 
