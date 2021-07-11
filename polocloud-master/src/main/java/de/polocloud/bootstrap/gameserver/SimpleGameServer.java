@@ -27,7 +27,6 @@ public class SimpleGameServer implements IGameServer {
         this.startTime = startTime;
     }
 
-
     @Override
     public String getName() {
         return this.name;
