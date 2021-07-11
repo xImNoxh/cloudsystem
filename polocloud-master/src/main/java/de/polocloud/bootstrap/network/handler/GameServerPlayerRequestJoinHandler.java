@@ -32,7 +32,6 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
 
         UUID uuid = packet.getUuid();
 
-        //TODO filter lobby with lowest player count
         List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getFallbackServer()));
 
         IGameServer targetServer = null;
@@ -48,7 +47,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
         }
 
         if(targetServer == null){
-            //TODo send error message to proxy
+            //TODO send error message to proxy
             return;
         }
 
