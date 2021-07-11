@@ -9,6 +9,7 @@ import de.polocloud.api.template.ITemplateService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.wrapper.config.WrapperConfig;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.io.FileUtils;
 
@@ -24,6 +25,12 @@ import java.util.concurrent.Executors;
 public class MasterRequestServerStartListener extends IPacketHandler {
 
     private Executor executor = Executors.newCachedThreadPool();
+    private WrapperConfig config;
+
+    public MasterRequestServerStartListener(WrapperConfig config) {
+
+        this.config = config;
+    }
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
@@ -60,13 +67,13 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     }
 
 
-    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File serverFile, int maxMemory, int maxPlayers) {
+    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers) {
         File serverDirectory = new File("tmp/" + snowflake);
 
         try {
             //copy server.jar and api to server directory
             FileUtils.copyDirectory(new File("templates/" + templateName), serverDirectory);
-            FileUtils.copyFile(serverFile, new File(serverDirectory + (isProxy ? "/proxy.jar" : "/spigot.jar")));
+            FileUtils.copyFile(poloCloudFile, new File(serverDirectory + (isProxy ? "/proxy.jar" : "/spigot.jar")));
             FileUtils.copyFile(new File("templates/PoloCloud-API.jar"), new File(serverDirectory + "/plugins/PoloCloud-API.jar"));
 
             //create spigot config - disable online-mode and enable bungeecord
@@ -77,13 +84,17 @@ public class MasterRequestServerStartListener extends IPacketHandler {
                 FileUtils.writeStringToFile(serverProp, "online-mode=false\nmotd=PoloCloud\n");
 
                 FileUtils.writeStringToFile(spigotYML, "settings:\n  bungeecord: true\n");
-            }else{
+            } else {
                 File config = new File(serverDirectory + "/config.yml");
                 FileUtils.writeStringToFile(config, "ip_forward: true\n");
 
-//TODO
-               // FileUtils.writeStringToFile(config, "listeners:\n max_players: " + maxPlayers + "\n");
+
+                // FileUtils.writeStringToFile(config, "listeners:\n max_players: " + maxPlayers + "\n");
             }
+
+            File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
+            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\"}");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +103,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
         ProcessBuilder processBuilder;
         if (isProxy) {
             processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M proxy.jar").split(" "));
-            Logger.log(LoggerType.INFO, "Starting server on " +  ConsoleColors.GREEN.getAnsiCode()  + "default " + ConsoleColors.GRAY.getAnsiCode() + "port");
+            Logger.log(LoggerType.INFO, "Starting server on " + ConsoleColors.GREEN.getAnsiCode() + "default " + ConsoleColors.GRAY.getAnsiCode() + "port");
 
         } else {
             int port = generatePort();

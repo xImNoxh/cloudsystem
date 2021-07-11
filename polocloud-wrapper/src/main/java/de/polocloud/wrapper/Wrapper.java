@@ -84,7 +84,7 @@ public class Wrapper implements IStartable, ITerminatable {
         //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
 
         this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
-        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener());
+        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config));
 
     }
 

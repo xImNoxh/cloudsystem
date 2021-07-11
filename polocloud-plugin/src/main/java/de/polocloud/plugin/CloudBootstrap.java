@@ -1,6 +1,9 @@
 package de.polocloud.plugin;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.network.client.INettyClient;
@@ -11,6 +14,9 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class CloudBootstrap {
@@ -20,25 +26,50 @@ public class CloudBootstrap {
 
     public void connect(int port) {
         this.cloudAPI = new PoloCloudAPI();
-        this.client = new SimpleNettyClient("localhost", 8869, new SimpleProtocol());
 
-        new Thread(() -> {
-            this.client.start();
+        String path = null;
+        try {
+            File parentFile = new File(CloudBootstrap.class.getProtectionDomain().getCodeSource().getLocation()
+                .toURI()).getParentFile().getParentFile();
+            parentFile = new File(parentFile + "/PoloCloud.json");
 
-            System.exit(-1);
+            Gson gson = new GsonBuilder().create();
+
+            FileReader reader = new FileReader(parentFile);
+
+            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+
+            String masterAddress = jsonObject.get("Master-Address").getAsString();
+
+            System.out.println("master address: " + masterAddress);
 
 
-        }).start();
+            reader.close();
 
-        new Thread(() -> {
 
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            register(port);
-        }).start();
+            String[] split = masterAddress.split(":");
+            this.client = new SimpleNettyClient(split[0], Integer.parseInt(split[1]), new SimpleProtocol());
+
+            new Thread(() -> {
+                this.client.start();
+
+                System.exit(-1);
+
+
+            }).start();
+
+            new Thread(() -> {
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                register(port);
+            }).start();
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void registerPacketHandler(IPacketHandler packetHandler) {
@@ -57,6 +88,7 @@ public class CloudBootstrap {
             e.printStackTrace();
         }
     }
+
     public void sendPacket(IPacket packet) {
         this.client.sendPacket(packet);
     }
