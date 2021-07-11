@@ -1,16 +1,12 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
-import de.polocloud.api.config.IConfig;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterLoginResponsePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterUpdateProxyListPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
-import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.config.MasterConfig;
@@ -58,11 +54,6 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
                 System.out.println("adding " + data);
                 proxyList.add(data);
 
-            }
-            MasterUpdateProxyListPacket masterUpdateProxyListPacket = new MasterUpdateProxyListPacket(proxyList);
-
-            for (IGameServer gameServer : gameServerManager.getGameServers()) {
-                gameServer.sendPacket(masterUpdateProxyListPacket);
             }
 
         }

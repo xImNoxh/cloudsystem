@@ -8,7 +8,6 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterUpdateProxyListPacket;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
@@ -38,20 +37,6 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
         ((SimpleGameServer) gameServer).setPort(packet.getPort());
         gameServer.setStatus(GameServerStatus.RUNNING);
 
-
-        List<String> proxyList = new ArrayList<>();
-        proxyList.add("localhost");
-        proxyList.add("127.0.0.1");
-
-        for (WrapperClient wrapperClient : wrapperClientManager.getWrapperClients()) {
-            String data = wrapperClient.getConnection().channel().remoteAddress().toString().substring(1).split(":")[0];
-            System.out.println("adding " + data);
-            proxyList.add(data);
-
-        }
-        MasterUpdateProxyListPacket masterUpdateProxyListPacket = new MasterUpdateProxyListPacket(proxyList);
-
-        ctx.writeAndFlush(masterUpdateProxyListPacket);
 
         if (gameServer.getTemplate().getTemplateType() == TemplateType.MINECRAFT) {
 
