@@ -5,6 +5,8 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.plugin.CloudBootstrap;
+import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.executes.call.SpigotCommandCall;
 import io.netty.channel.ChannelHandlerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,5 +30,8 @@ public class PoloCloudPlugin extends JavaPlugin {
                 return GameServerShutdownPacket.class;
             }
         });
+
+        new CloudPlugin(bootstrap, new SpigotCommandCall());
+
     }
 }

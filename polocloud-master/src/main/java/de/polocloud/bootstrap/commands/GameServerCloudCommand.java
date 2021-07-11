@@ -1,13 +1,11 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
-import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 

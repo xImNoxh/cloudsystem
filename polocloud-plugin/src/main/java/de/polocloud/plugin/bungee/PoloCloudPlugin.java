@@ -6,6 +6,8 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPac
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
+import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.executes.call.BungeeCommandCall;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -78,7 +80,7 @@ public class PoloCloudPlugin extends Plugin {
         });
 
         getProxy().getPluginManager().registerListener(this, new BungeeConnectListener(this, bootstrap));
-
+        new CloudPlugin(bootstrap, new BungeeCommandCall());
 
     }
 }
