@@ -5,10 +5,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerReque
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -19,12 +16,28 @@ public class BungeeConnectListener implements Listener {
 
     private Plugin plugin;
     private CloudBootstrap bootstrap;
+    private PoloCloudPlugin poloCloudPlugin;
 
-    public BungeeConnectListener(Plugin plugin, CloudBootstrap bootstrap) {
+    public BungeeConnectListener(Plugin plugin, CloudBootstrap bootstrap, PoloCloudPlugin poloCloudPlugin) {
         this.plugin = plugin;
         this.bootstrap = bootstrap;
+        this.poloCloudPlugin = poloCloudPlugin;
     }
 
+    @EventHandler
+    public void handlePing(ProxyPingEvent event){
+        event.getResponse().setDescription(poloCloudPlugin.getMotd());
+        event.getResponse().getPlayers().setMax(poloCloudPlugin.getMaxPlayers());
+        event.getResponse().getPlayers().setOnline(poloCloudPlugin.getOnlinePlayers());
+    }
+
+
+    @EventHandler
+    public void handle(PostLoginEvent event){
+        if(poloCloudPlugin.isMaintenance() && (!event.getPlayer().hasPermission("*") && !event.getPlayer().hasPermission("cloud.maintenance"))){
+            event.getPlayer().disconnect(poloCloudPlugin.getMaintenanceMessage());
+        }
+    }
 
     @EventHandler
     public void handle(LoginEvent event) {

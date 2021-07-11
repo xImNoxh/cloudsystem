@@ -11,11 +11,12 @@ public class MasterRequestServerStartPacket implements IPacket {
     private boolean isProxy;
     private int memory, maxPlayers;
     private String serverName;
+    private String motd;
 
     public MasterRequestServerStartPacket() {
     }
 
-    public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers, String serverName) {
+    public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers, String serverName, String motd) {
         this.template = template;
         this.version = version;
         this.snowflake = snowflake;
@@ -23,6 +24,11 @@ public class MasterRequestServerStartPacket implements IPacket {
         this.memory = memory;
         this.maxPlayers = maxPlayers;
         this.serverName = serverName;
+        this.motd = motd;
+    }
+
+    public String getMotd() {
+        return motd;
     }
 
     public int getMemory() {

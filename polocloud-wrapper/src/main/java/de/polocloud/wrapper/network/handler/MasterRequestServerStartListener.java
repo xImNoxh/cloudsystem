@@ -3,22 +3,18 @@ package de.polocloud.wrapper.network.handler;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
-import de.polocloud.api.template.GameServerVersion;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.ITemplateService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.config.WrapperConfig;
+import de.polocloud.wrapper.config.properties.BungeeProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URI;
 import java.net.URL;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -57,7 +53,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
         createDefaultTemplateDirectory(templateName);
 
-        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName()));
+        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName(), packet.getMotd()));
 
     }
 
@@ -67,7 +63,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     }
 
 
-    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName) {
+    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
         File serverDirectory = new File("tmp/" + serverName + "#" + snowflake);
 
         try {
@@ -85,11 +81,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
                 FileUtils.writeStringToFile(spigotYML, "settings:\n  bungeecord: true\n");
             } else {
-                File config = new File(serverDirectory + "/config.yml");
-                FileUtils.writeStringToFile(config, "ip_forward: true\n");
-
-
-                // FileUtils.writeStringToFile(config, "listeners:\n max_players: " + maxPlayers + "\n");
+                new BungeeProperties(serverDirectory, maxPlayers, 25565, motd);
             }
 
             File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");

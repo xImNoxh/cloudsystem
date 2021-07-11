@@ -3,7 +3,6 @@ package de.polocloud.plugin;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecutePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterKickPlayerPacket;
 import de.polocloud.plugin.executes.CloudCommandExecute;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -35,4 +34,5 @@ public class CloudPlugin {
     public static CloudPlugin getInstance() {
         return instance;
     }
+
 }

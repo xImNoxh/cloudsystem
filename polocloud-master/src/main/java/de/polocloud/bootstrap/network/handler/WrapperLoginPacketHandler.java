@@ -11,6 +11,7 @@ import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -34,7 +35,7 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
 
         boolean response = config.getLoginKey().equals(packet.getKey());
 
-        Logger.log(LoggerType.INFO, "Wrapper Login attempt > " + response);
+        Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is successfully connected to the master.");
 
         MasterLoginResponsePacket responsePacket = new MasterLoginResponsePacket(response, response ? "Ok" : "Wrong LOGIN_KEY!");
         WrapperClient wrapperClient = new WrapperClient(packet.getName(), ctx);
@@ -51,7 +52,6 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
 
             for (WrapperClient _wrapperClient : wrapperClientManager.getWrapperClients()) {
                 String data = _wrapperClient.getConnection().channel().remoteAddress().toString().substring(1).split(":")[0];
-                System.out.println("adding " + data);
                 proxyList.add(data);
 
             }

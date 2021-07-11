@@ -8,6 +8,8 @@ public class SimpleTemplate implements ITemplate {
 
     private String name;
 
+    private boolean maintenance;
+
     private int maxServerCount;
     private int minServerCount;
 
@@ -18,9 +20,11 @@ public class SimpleTemplate implements ITemplate {
 
     private GameServerVersion version;
 
+    private String motd;
+
     private String[] wrapperNames;
 
-    public SimpleTemplate(String name, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, String[] wrapperNames){
+    public SimpleTemplate(String name, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, String[] wrapperNames){
         this.name = name;
         this.maxServerCount = maxServerCount;
         this.minServerCount = minServerCount;
@@ -29,6 +33,13 @@ public class SimpleTemplate implements ITemplate {
         this.wrapperNames = wrapperNames;
         this.maxPlayers = maxPlayers;
         this.memory = memory;
+        this.maintenance = maintenance;
+        this.motd = motd;
+    }
+
+    @Override
+    public String getMotd() {
+        return motd;
     }
 
     @Override
@@ -54,6 +65,11 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public TemplateType getTemplateType() {
         return this.templateType;
+    }
+
+    @Override
+    public boolean isMaintenance() {
+        return maintenance;
     }
 
     @Override

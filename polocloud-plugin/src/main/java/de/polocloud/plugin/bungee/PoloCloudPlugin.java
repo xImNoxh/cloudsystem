@@ -3,12 +3,11 @@ package de.polocloud.plugin.bungee;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.ProxyServerMotdUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.ProxyServerStartInformationPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.bungee.listener.ProxyPingListener;
 import de.polocloud.plugin.executes.call.BungeeCommandCall;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
@@ -25,13 +24,16 @@ public class PoloCloudPlugin extends Plugin {
     public static Map<UUID, LoginEvent> loginEvents = new HashMap<>();
     public static Map<UUID, String> loginServers = new HashMap<>();
 
-    private String firstMotd = "a default PoloCloudService";
-    private String secondMotd = " ";
+    private String motd = "a default PoloCloudService";
+
+    private int maxPlayers = 0;
+    private int onlinePlayers = 0;
+
+    private boolean maintenance = true;
+    private String maintenanceMessage = "§cmaintenance";
 
     @Override
     public void onEnable() {
-
-        ProxyServer.getInstance().getPluginManager().registerListener(this, new ProxyPingListener(this));
 
         CloudBootstrap bootstrap = new CloudBootstrap();
 
@@ -40,14 +42,16 @@ public class PoloCloudPlugin extends Plugin {
         bootstrap.registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
-                ProxyServerMotdUpdatePacket packet = (ProxyServerMotdUpdatePacket) obj;
-                firstMotd = packet.getFirst();
-                secondMotd = packet.getSecond();
+                ProxyServerStartInformationPacket packet = (ProxyServerStartInformationPacket) obj;
+                motd = packet.getMotd();
+                maxPlayers = packet.getMaxPlayers();
+                maintenance = packet.isMaintenance();
+                maintenanceMessage = packet.getMaintenanceMessage();
             }
 
             @Override
             public Class<? extends IPacket> getPacketClass() {
-                return ProxyServerMotdUpdatePacket.class;
+                return ProxyServerStartInformationPacket.class;
             }
         });
 
@@ -100,16 +104,27 @@ public class PoloCloudPlugin extends Plugin {
             }
         });
 
-        getProxy().getPluginManager().registerListener(this, new BungeeConnectListener(this, bootstrap));
+        getProxy().getPluginManager().registerListener(this, new BungeeConnectListener(this, bootstrap, this));
         new CloudPlugin(bootstrap, new BungeeCommandCall());
     }
 
-
-    public String getFirstMotd() {
-        return firstMotd;
+    public String getMotd() {
+        return motd;
     }
 
-    public String getSecondMotd() {
-        return secondMotd;
+    public String getMaintenanceMessage() {
+        return maintenanceMessage;
+    }
+
+    public boolean isMaintenance() {
+        return maintenance;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public int getOnlinePlayers() {
+        return onlinePlayers;
     }
 }

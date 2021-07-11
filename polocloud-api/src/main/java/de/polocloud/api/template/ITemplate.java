@@ -12,6 +12,10 @@ public interface ITemplate extends INamable {
 
     int getMaxMemory();
 
+    String getMotd();
+
+    boolean isMaintenance();
+
     TemplateType getTemplateType();
 
     GameServerVersion getVersion();
