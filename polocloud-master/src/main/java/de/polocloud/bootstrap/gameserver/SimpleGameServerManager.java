@@ -4,6 +4,7 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,5 +74,17 @@ public class SimpleGameServerManager implements IGameServerManager {
     @Override
     public void unregisterGameServer(IGameServer gameServer) {
         gameServerList.remove(gameServer);
+    }
+
+    @Override
+    public IGameServer getGameServerByConnection(ChannelHandlerContext ctx) {
+
+        for (IGameServer gameServer : getGameServers()) {
+            if(((SimpleGameServer)gameServer).getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
+                return gameServer;
+            }
+        }
+
+        return null;
     }
 }

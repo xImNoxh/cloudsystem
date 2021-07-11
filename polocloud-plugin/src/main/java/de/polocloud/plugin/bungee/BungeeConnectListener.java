@@ -1,10 +1,14 @@
 package de.polocloud.plugin.bungee;
 
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -41,6 +45,17 @@ public class BungeeConnectListener implements Listener {
             event.setTarget(ProxyServer.getInstance().getServerInfo(targetServer));
         }
 
+    }
+
+    @EventHandler
+    public void handle(ServerConnectedEvent event) {
+        //send player update to master
+        bootstrap.sendPacket(new GameServerPlayerUpdatePacket(event.getPlayer().getUniqueId(), event.getPlayer().getName(), Long.parseLong(event.getServer().getInfo().getName())));
+    }
+
+    @EventHandler
+    public void handle(PlayerDisconnectEvent event) {
+        bootstrap.sendPacket(new GameServerPlayerDisconnectPacket(event.getPlayer().getUniqueId()));
     }
 
 }

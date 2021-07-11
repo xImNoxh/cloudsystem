@@ -11,6 +11,7 @@ import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.server.SimpleNettyServer;
+import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
@@ -22,9 +23,8 @@ import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
-import de.polocloud.bootstrap.network.handler.GameServerPlayerRequestJoinHandler;
-import de.polocloud.bootstrap.network.handler.GameServerRegisterPacketHandler;
-import de.polocloud.bootstrap.network.handler.WrapperLoginPacketHandler;
+import de.polocloud.bootstrap.network.handler.*;
+import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
 import de.polocloud.logger.log.Logger;
@@ -42,6 +42,7 @@ public class Master implements IStartable, ITerminatable {
     private final ITemplateService templateService;
     private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
+    private final ICloudPlayerManager cloudPlayerManager;
 
     public static final String LOGIN_KEY = "xXxPoloxXxCloudxXx";
 
@@ -53,10 +54,11 @@ public class Master implements IStartable, ITerminatable {
         this.wrapperClientManager = new SimpleWrapperClientManager();
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
+        this.cloudPlayerManager = new SimpleCloudPlayerManager();
 
 
 
-        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService));
+        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
 
         ((SimpleTemplateService) this.templateService).load(this.cloudAPI, TemplateStorage.FILE);
@@ -102,6 +104,8 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerRequestJoinHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelActiveListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelInactiveListener.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerUpdateListener.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerDisconnectListener.class));
 
         new Thread(() -> nettyServer.start()).start();
 

@@ -38,7 +38,9 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
             List<IGameServer> proxyGameServerList = gameServerManager.getGameServersByType(TemplateType.PROXY);
 
             for (IGameServer proxyGameServer : proxyGameServerList) {
-                proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket("127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
+                if(proxyGameServer.getStatus() == GameServerStatus.RUNNING){
+                    proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket("127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
+                }
             }
 
         } else {

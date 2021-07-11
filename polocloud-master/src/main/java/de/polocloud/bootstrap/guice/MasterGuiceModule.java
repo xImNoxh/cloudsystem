@@ -6,6 +6,7 @@ import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
@@ -18,22 +19,25 @@ public class MasterGuiceModule extends AbstractModule {
     private IGameServerManager gameServerManager;
     private ITemplateService templateService;
     private MasterConfig masterConfig;
+    private ICloudPlayerManager cloudPlayerManager;
 
     private IConfigLoader configLoader = new SimpleConfigLoader();
     private IConfigSaver configSaver = new SimpleConfigSaver();
 
-    public MasterGuiceModule(MasterConfig masterConfig, Master master, IWrapperClientManager wrapperClientManager, IGameServerManager gameServerManager, ITemplateService templateService) {
+    public MasterGuiceModule(MasterConfig masterConfig, Master master, IWrapperClientManager wrapperClientManager, IGameServerManager gameServerManager, ITemplateService templateService, ICloudPlayerManager cloudPlayerManager) {
         this.masterConfig = masterConfig;
         this.master = master;
         this.wrapperClientManager = wrapperClientManager;
         this.gameServerManager = gameServerManager;
         this.templateService = templateService;
         this.masterConfig = new MasterConfig();
+        this.cloudPlayerManager = cloudPlayerManager;
     }
 
 
     @Override
     protected void configure() {
+        bind(ICloudPlayerManager.class).toInstance(this.cloudPlayerManager);
         bind(IGameServerManager.class).toInstance(this.gameServerManager);
         bind(ITemplateService.class).toInstance(this.templateService);
         bind(IWrapperClientManager.class).toInstance(this.wrapperClientManager);

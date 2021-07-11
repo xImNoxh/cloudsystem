@@ -2,6 +2,7 @@ package de.polocloud.api.gameserver;
 
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 
@@ -21,4 +22,5 @@ public interface IGameServerManager {
 
     void unregisterGameServer(IGameServer gameServer);
 
+    IGameServer getGameServerByConnection(ChannelHandlerContext ctx);
 }
