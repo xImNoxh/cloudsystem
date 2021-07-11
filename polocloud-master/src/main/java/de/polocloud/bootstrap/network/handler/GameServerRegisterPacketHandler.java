@@ -7,10 +7,12 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.ProxyServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
@@ -26,6 +28,9 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
 
     @Inject
     private IWrapperClientManager wrapperClientManager;
+
+    @Inject
+    private MasterConfig masterConfig;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
@@ -51,6 +56,7 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
         } else {
 
             List<IGameServer> serverList = gameServerManager.getGameServersByType(TemplateType.MINECRAFT);
+            gameServer.sendPacket(new ProxyServerMotdUpdatePacket(masterConfig.getCloudMotdFirstLine(), masterConfig.getCloudMotdSecondLine()));
 
             for (IGameServer iGameServer : serverList) {
                 gameServer.sendPacket(new MasterRequestServerListUpdatePacket("127.0.0.1", iGameServer.getPort(), iGameServer.getSnowflake())); //TODO update host
