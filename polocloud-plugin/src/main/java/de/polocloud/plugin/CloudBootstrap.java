@@ -14,7 +14,6 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -83,7 +82,7 @@ public class CloudBootstrap {
             String[] split = path.split("/");
             System.out.println(path);
 
-            sendPacket(new GameServerRegisterPacket(Long.parseLong(split[split.length - 3]), port));
+            sendPacket(new GameServerRegisterPacket(Long.parseLong(split[split.length - 3].split("#")[1]), port));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

@@ -102,6 +102,8 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void sendPacket(IPacket packet) {
-        this.ctx.writeAndFlush(packet);
+        if(this.ctx != null){
+            this.ctx.writeAndFlush(packet);
+        }
     }
 }

@@ -57,7 +57,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
         createDefaultTemplateDirectory(templateName);
 
-        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers));
+        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName()));
 
     }
 
@@ -67,8 +67,8 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     }
 
 
-    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers) {
-        File serverDirectory = new File("tmp/" + snowflake);
+    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName) {
+        File serverDirectory = new File("tmp/" + serverName + "#" + snowflake);
 
         try {
             //copy server.jar and api to server directory
