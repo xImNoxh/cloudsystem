@@ -2,6 +2,7 @@ package de.polocloud.bootstrap.creator;
 
 import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.util.Snowflake;
@@ -33,10 +34,29 @@ public abstract class ServerCreator {
 
 
         long id = snowflake.nextId();
-        SimpleGameServer gameServer = new SimpleGameServer(template.getName() + "-" + id, GameServerStatus.PENDING, null, id, template, System.currentTimeMillis());
+        SimpleGameServer gameServer = new SimpleGameServer(template.getName() + "-" + generateServerId(template), GameServerStatus.PENDING, null, id, template, System.currentTimeMillis());
         gameServerManager.registerGameServer(gameServer);
 
         client.startServer(gameServer);
+    }
+
+    private int generateServerId(ITemplate template){
+        int currentId = 1;
+
+        boolean found = false;
+
+        while(!found){
+
+            IGameServer gameServerByName = gameServerManager.getGameServerByName(template.getName() + "-" + currentId);
+            if(gameServerByName == null){
+                found = true;
+            }else{
+                currentId++;
+            }
+
+        }
+
+        return currentId;
     }
 
     public abstract boolean check(ITemplate template);
