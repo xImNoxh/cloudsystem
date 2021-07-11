@@ -35,11 +35,26 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
         //TODO filter lobby with lowest player count
         List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getFallbackServer()));
 
-        IGameServer iGameServer = gameServersByTemplate.get(0);
+        IGameServer targetServer = null;
 
-        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, iGameServer.getSnowflake()));
+        for (IGameServer iGameServer : gameServersByTemplate) {
+            if(targetServer == null){
+                targetServer = iGameServer;
+            }else{
+                if(targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()){
+                    targetServer = iGameServer;
+                }
+            }
+        }
 
-        Logger.log(LoggerType.INFO, "sending player to " + iGameServer.getName() + " / " + iGameServer.getSnowflake());
+        if(targetServer == null){
+            //TODo send error message to proxy
+            return;
+        }
+
+        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getSnowflake()));
+
+        Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
 
 
     }

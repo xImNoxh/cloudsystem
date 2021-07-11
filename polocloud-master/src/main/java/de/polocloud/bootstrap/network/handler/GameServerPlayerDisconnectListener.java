@@ -23,9 +23,16 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler {
         UUID uuid = packet.getUuid();
 
         ICloudPlayer onlinePlayer = playerManager.getOnlinePlayer(packet.getUuid());
+        if (onlinePlayer == null) {
+            return;
+        }
 
-        onlinePlayer.getProxyServer().getCloudPlayers().remove(onlinePlayer);
-        onlinePlayer.getMinecraftServer().getCloudPlayers().remove(onlinePlayer);
+        if (onlinePlayer.getProxyServer() != null) {
+            onlinePlayer.getProxyServer().getCloudPlayers().remove(onlinePlayer);
+        }
+        if (onlinePlayer.getMinecraftServer() != null) {
+            onlinePlayer.getMinecraftServer().getCloudPlayers().remove(onlinePlayer);
+        }
 
         playerManager.unregister(onlinePlayer);
 
