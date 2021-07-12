@@ -50,7 +50,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
         }
 
         ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
-        Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
+        //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
     }
 
     @Override
