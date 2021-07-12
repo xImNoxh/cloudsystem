@@ -37,7 +37,7 @@ public class TemplateCloudCommand extends CloudCommand {
             return;
         }
 
-        Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template versions");
-        Logger.log(LoggerType.INFO,"Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create");
+        Logger.log(LoggerType.INFO,Logger.PREFIX + "Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template versions");
+        Logger.log(LoggerType.INFO,Logger.PREFIX + "Use following command: "+ ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create");
     }
 }
