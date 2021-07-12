@@ -12,6 +12,7 @@ import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.commands.StopCommand;
 import de.polocloud.wrapper.config.WrapperConfig;
@@ -66,16 +67,15 @@ public class Wrapper implements IStartable, ITerminatable {
     @Override
     public void start() {
 
-        Logger.log(LoggerType.INFO, "bootstrapping Wrapper");
+        Logger.log(LoggerType.INFO, "Trying to start wrapper...");
 
         this.nettyClient = this.cloudAPI.getGuice().getInstance(SimpleNettyClient.class);
-        Logger.log(LoggerType.INFO, "connecting");
         new Thread(() -> {
             this.nettyClient.start();
 
         }).start();
 
-        Logger.log(LoggerType.INFO, "connected!");
+        Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "started.");
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

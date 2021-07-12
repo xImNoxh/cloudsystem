@@ -19,9 +19,7 @@ public class GameServerExecuteCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
-
-        if(args.length >= 2){
-
+        if(args.length >= 3){
             IGameServer server = gameServerManager.getGameServerByName(args[1]);
 
             if(server == null){
@@ -35,7 +33,7 @@ public class GameServerExecuteCommand extends CloudCommand {
                 builder.append(args[i]).append(" ");
             }
             server.sendPacket(new GameServerExecuteCommandPacket(builder.toString()));
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "You execute a command to " + server.getName() + " (" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "/" + builder + ConsoleColors.GRAY.getAnsiCode() + ")");
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "You execute a command to " + server.getName() + " (" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "/" + builder.substring(0, builder.length()-1) + ConsoleColors.GRAY.getAnsiCode() + ")");
             return;
         }
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use following command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "execute <name-id> <command>");
