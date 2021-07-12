@@ -22,20 +22,15 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
     private IGameServerManager gameServerManager;
     @Inject
     private ITemplateService templateService;
-
     @Inject
     private MasterConfig config;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
-
         UUID uuid = packet.getUuid();
-
         List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getFallbackServer()));
-
         IGameServer targetServer = null;
-
         for (IGameServer iGameServer : gameServersByTemplate) {
             if(targetServer == null){
                 targetServer = iGameServer;
@@ -45,17 +40,12 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
                 }
             }
         }
-
         if(targetServer == null){
             //TODO send error message to proxy
             return;
         }
-
         ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getSnowflake()));
-
         //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
-
-
     }
 
     @Override

@@ -1,38 +1,26 @@
 package de.polocloud.plugin;
 
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecutePacket;
-import de.polocloud.plugin.executes.CloudCommandExecute;
-import io.netty.channel.ChannelHandlerContext;
+import de.polocloud.plugin.function.BootstrapFunction;
+import de.polocloud.plugin.function.NetworkRegisterFunction;
+import de.polocloud.plugin.protocol.NetworkClient;
 
 public class CloudPlugin {
 
-    private static CloudPlugin instance;
-    private CloudCommandExecute cloudCommandExecute;
+    private BootstrapFunction bootstrapFunction;
+    private NetworkClient networkClient;
 
-    public CloudPlugin(CloudBootstrap cloudBootstrap, CloudCommandExecute cloudCommandExecute) {
-        instance = this;
+    public CloudPlugin(BootstrapFunction bootstrapFunction, NetworkRegisterFunction networkRegisterFunction) {
 
-        cloudBootstrap.registerPacketHandler(new IPacketHandler() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
-                GameServerExecutePacket gameServerExecutePacket = (GameServerExecutePacket) obj;
-                cloudCommandExecute.callExecute(gameServerExecutePacket.getCommand());
-            }
+        this.bootstrapFunction = bootstrapFunction;
 
-            @Override
-            public Class<? extends IPacket> getPacketClass() {
-                return GameServerExecutePacket.class;
-            }
-        });
+        this.networkClient = new NetworkClient();
+        this.networkClient.connect(bootstrapFunction.getNetworkPort());
 
-
-
+        bootstrapFunction.registerEvents(networkClient);
+        networkRegisterFunction.callNetwork(networkClient);
     }
 
-    public static CloudPlugin getInstance() {
-        return instance;
+    public BootstrapFunction getBootstrapFunction() {
+        return bootstrapFunction;
     }
-
 }

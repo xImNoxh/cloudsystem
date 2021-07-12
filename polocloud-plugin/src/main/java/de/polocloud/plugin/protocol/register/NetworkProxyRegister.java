@@ -1,36 +1,36 @@
-package de.polocloud.plugin.bungee;
+package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
-import de.polocloud.plugin.CloudBootstrap;
-import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.executes.call.BungeeCommandCall;
+import de.polocloud.plugin.protocol.NetworkClient;
+import de.polocloud.plugin.protocol.NetworkRegister;
+import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
-public class PoloCloudPlugin extends Plugin {
+public class NetworkProxyRegister extends NetworkRegister {
 
-    public static Map<UUID, LoginEvent> loginEvents = new HashMap<>();
-    public static Map<UUID, String> loginServers = new HashMap<>();
+    private Plugin plugin;
+    private NetworkLoginCache networkLoginCache;
 
-    @Override
-    public void onEnable() {
+    public NetworkProxyRegister(NetworkClient networkClient, NetworkLoginCache networkLoginCache, Plugin plugin) {
+        super(networkClient);
 
-        CloudBootstrap bootstrap = new CloudBootstrap();
+        this.plugin = plugin;
+        this.networkLoginCache = networkLoginCache;
 
-        bootstrap.connect(-1);
+        registerMasterRequestServerListUpdatePacket();
+        registerMasterPlayerRequestResponsePacket();
+    }
 
-        bootstrap.registerPacketHandler(new IPacketHandler() {
+    public void registerMasterRequestServerListUpdatePacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 MasterRequestServerListUpdatePacket packet = (MasterRequestServerListUpdatePacket) obj;
@@ -40,8 +40,6 @@ public class PoloCloudPlugin extends Plugin {
                     "PoloCloud",
                     false
                 ));
-
-
             }
 
             @Override
@@ -49,30 +47,16 @@ public class PoloCloudPlugin extends Plugin {
                 return MasterRequestServerListUpdatePacket.class;
             }
         });
+    }
 
-        bootstrap.registerPacketHandler(new IPacketHandler() {
+    public void registerMasterPlayerRequestResponsePacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
-                ProxyServer.getInstance().stop();
-            }
-
-            @Override
-            public Class<? extends IPacket> getPacketClass() {
-                return GameServerShutdownPacket.class;
-            }
-        });
-
-        bootstrap.registerPacketHandler(new IPacketHandler() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
-
                 MasterPlayerRequestResponsePacket packet = (MasterPlayerRequestResponsePacket) obj;
-
-                LoginEvent loginEvent = loginEvents.remove(packet.getUuid());
-                loginServers.put(loginEvent.getConnection().getUniqueId(), packet.getSnowflake() + "");
-
-                loginEvent.completeIntent(PoloCloudPlugin.this);
-
+                LoginEvent loginEvent = networkLoginCache.getLoginEvents().remove(packet.getUuid());
+                networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getSnowflake() + "");
+                loginEvent.completeIntent(plugin);
             }
 
             @Override
@@ -80,9 +64,6 @@ public class PoloCloudPlugin extends Plugin {
                 return MasterPlayerRequestResponsePacket.class;
             }
         });
-
-        getProxy().getPluginManager().registerListener(this, new BungeeConnectListener(this, bootstrap, this));
-        new CloudPlugin(bootstrap, new BungeeCommandCall());
     }
 
 }

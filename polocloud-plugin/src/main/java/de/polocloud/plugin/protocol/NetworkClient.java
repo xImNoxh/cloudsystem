@@ -1,5 +1,4 @@
-package de.polocloud.plugin;
-
+package de.polocloud.plugin.protocol;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,7 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class CloudBootstrap {
+public class NetworkClient {
 
     private INettyClient client;
     private CloudAPI cloudAPI;
@@ -28,7 +27,7 @@ public class CloudBootstrap {
 
         String path = null;
         try {
-            File parentFile = new File(CloudBootstrap.class.getProtectionDomain().getCodeSource().getLocation()
+            File parentFile = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getParentFile().getParentFile();
             parentFile = new File(parentFile + "/PoloCloud.json");
 
@@ -77,7 +76,7 @@ public class CloudBootstrap {
 
     private void register(int port) {
         try {
-            String path = new File(CloudBootstrap.class.getProtectionDomain().getCodeSource().getLocation()
+            String path = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getPath();
             String[] split = path.split("/");
             System.out.println(path);
