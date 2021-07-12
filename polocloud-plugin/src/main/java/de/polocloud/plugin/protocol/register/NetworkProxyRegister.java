@@ -55,7 +55,12 @@ public class NetworkProxyRegister extends NetworkRegister {
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 MasterPlayerRequestResponsePacket packet = (MasterPlayerRequestResponsePacket) obj;
                 LoginEvent loginEvent = networkLoginCache.getLoginEvents().remove(packet.getUuid());
-                networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getSnowflake() + "");
+                if(packet.getSnowflake() == -1){
+                    loginEvent.setCancelled(true);
+                    loginEvent.setCancelReason("§cEs wurde kein fallback Server gefunden!");
+                }else{
+                    networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getSnowflake() + "");
+                }
                 loginEvent.completeIntent(plugin);
             }
 

@@ -26,13 +26,14 @@ public interface IGameServer {
 
     int getPort();
 
+    long getPing();
+
     long getStartTime();
 
     void stop();
 
     void sendPacket(IPacket packet);
 
-    void setTotalMemory(long value);
 
 
 }

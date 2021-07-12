@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
+import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
@@ -32,18 +33,22 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
         List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getFallbackServer()));
         IGameServer targetServer = null;
         for (IGameServer iGameServer : gameServersByTemplate) {
-            if(targetServer == null){
-                targetServer = iGameServer;
-            }else{
-                if(targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()){
+            if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
+
+                if (targetServer == null) {
                     targetServer = iGameServer;
+                } else {
+                    if (targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()) {
+                        targetServer = iGameServer;
+                    }
                 }
             }
+            if (targetServer == null) {
+                ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, -1));
+                return;
+            }
         }
-        if(targetServer == null){
-            //TODO send error message to proxy
-            return;
-        }
+
         ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getSnowflake()));
         //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
     }

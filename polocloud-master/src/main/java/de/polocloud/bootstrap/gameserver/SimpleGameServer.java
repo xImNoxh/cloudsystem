@@ -23,6 +23,8 @@ public class SimpleGameServer implements IGameServer {
     private ITemplate template;
     private long startTime;
 
+    private long ping = -1;
+
     private int port;
 
     private List<ICloudPlayer> cloudPlayers = new ArrayList<>();
@@ -71,6 +73,15 @@ public class SimpleGameServer implements IGameServer {
         return this.port;
     }
 
+    public void setPing(long ping) {
+        this.ping = ping;
+    }
+    @Override
+    public long getPing() {
+        return this.ping;
+    }
+
+
     public void setPort(int port) {
         this.port = port;
     }
@@ -89,7 +100,6 @@ public class SimpleGameServer implements IGameServer {
         return totalMemory;
     }
 
-    @Override
     public void setTotalMemory(long value) {
         totalMemory = value;
     }

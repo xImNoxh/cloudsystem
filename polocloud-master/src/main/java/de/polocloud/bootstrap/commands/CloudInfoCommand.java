@@ -64,6 +64,7 @@ public class CloudInfoCommand extends CloudCommand {
                 Logger.log(LoggerType.INFO, "GameServer number: " + gameServer.getSnowflake());
                 Logger.log(LoggerType.INFO, "GameServer status: " + gameServer.getStatus());
                 Logger.log(LoggerType.INFO, "GameServer started time: " + gameServer.getStartTime());
+                Logger.log(LoggerType.INFO, "GameServer Ping: " + gameServer.getPing() + "ms");
                 return;
             }
         }
