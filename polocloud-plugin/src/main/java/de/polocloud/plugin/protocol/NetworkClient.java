@@ -50,14 +50,10 @@ public class NetworkClient {
 
             new Thread(() -> {
                 this.client.start();
-
                 System.exit(-1);
-
-
             }).start();
 
             new Thread(() -> {
-
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {

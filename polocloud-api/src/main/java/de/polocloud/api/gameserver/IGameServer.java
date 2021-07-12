@@ -20,7 +20,7 @@ public interface IGameServer {
 
     void setStatus(GameServerStatus status);
 
-    int getTotalMemory();
+    long getTotalMemory();
 
     int getOnlinePlayers();
 
@@ -31,6 +31,8 @@ public interface IGameServer {
     void stop();
 
     void sendPacket(IPacket packet);
+
+    void setTotalMemory(long value);
 
 
 }

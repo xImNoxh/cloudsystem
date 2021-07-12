@@ -8,6 +8,7 @@ import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 import de.polocloud.plugin.protocol.register.NetworkProxyRegister;
+import de.polocloud.plugin.scheduler.proxy.StatisticProxyDeviceRunnable;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -45,5 +46,10 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
     @Override
     public void shutdown() {
         ProxyServer.getInstance().stop();
+    }
+
+    @Override
+    public void initStatisticChannel(NetworkClient networkClient) {
+        new StatisticProxyDeviceRunnable(this, networkClient);
     }
 }

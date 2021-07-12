@@ -12,4 +12,6 @@ public interface BootstrapFunction {
 
     void shutdown();
 
+    void initStatisticChannel(NetworkClient networkClient);
+
 }

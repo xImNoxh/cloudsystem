@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.gameserver;
 
+import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
@@ -80,7 +81,8 @@ public class SimpleGameServerManager implements IGameServerManager {
     public IGameServer getGameServerByConnection(ChannelHandlerContext ctx) {
 
         for (IGameServer gameServer : getGameServers()) {
-            if(((SimpleGameServer)gameServer).getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
+            if(gameServer.getStatus().equals(GameServerStatus.RUNNING) &&
+                ((SimpleGameServer)gameServer).getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
                 return gameServer;
             }
         }

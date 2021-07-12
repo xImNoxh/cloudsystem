@@ -16,6 +16,9 @@ public class SimpleGameServer implements IGameServer {
     private String name;
     private GameServerStatus status;
     private ChannelHandlerContext ctx;
+
+    private long totalMemory = 0;
+
     private long snowflake;
     private ITemplate template;
     private long startTime;
@@ -82,8 +85,13 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public int getTotalMemory() {
-        return 0;
+    public long getTotalMemory() {
+        return totalMemory;
+    }
+
+    @Override
+    public void setTotalMemory(long value) {
+        totalMemory = value;
     }
 
     @Override

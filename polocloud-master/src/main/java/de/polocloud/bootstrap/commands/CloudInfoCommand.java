@@ -59,6 +59,7 @@ public class CloudInfoCommand extends CloudCommand {
                 }
 
                 Logger.log(LoggerType.INFO, "GameServer name: " + gameServer.getName());
+                Logger.log(LoggerType.INFO, "GameServer total memory: " + gameServer.getTotalMemory());
                 Logger.log(LoggerType.INFO, "GameServer port: " + gameServer.getPort());
                 Logger.log(LoggerType.INFO, "GameServer number: " + gameServer.getSnowflake());
                 Logger.log(LoggerType.INFO, "GameServer status: " + gameServer.getStatus());
