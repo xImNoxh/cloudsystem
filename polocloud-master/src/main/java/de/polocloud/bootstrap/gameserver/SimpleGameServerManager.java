@@ -3,6 +3,7 @@ package de.polocloud.bootstrap.gameserver;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import io.netty.channel.ChannelHandlerContext;
@@ -75,6 +76,10 @@ public class SimpleGameServerManager implements IGameServerManager {
     @Override
     public void unregisterGameServer(IGameServer gameServer) {
         gameServerList.remove(gameServer);
+        for (IGameServer proxyGameServer : getGameServersByType(TemplateType.PROXY)) {
+            proxyGameServer.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake()));
+        }
+
     }
 
     @Override
