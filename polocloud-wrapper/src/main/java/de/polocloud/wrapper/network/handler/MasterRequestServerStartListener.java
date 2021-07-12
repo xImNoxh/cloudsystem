@@ -38,7 +38,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
         long snowFlake = packet.getSnowflake();
 
         Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() +
-            packet.getServerName() + ConsoleColors.GRAY.getAnsiCode() + " server with template  " + templateName + " (#" + snowFlake  + ")");
+            packet.getServerName() + ConsoleColors.GRAY.getAnsiCode() + " server with template " + templateName + " (#" + snowFlake  + ")");
 
         File serverFile = new File("storage/version/" + packet.getVersion().getTitle() + ".jar");
         if (!serverFile.exists()) {
@@ -95,7 +95,6 @@ public class MasterRequestServerStartListener extends IPacketHandler {
         ProcessBuilder processBuilder;
         if (isProxy) {
             processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M proxy.jar").split(" "));
-            Logger.log(LoggerType.INFO, "Starting server on " + ConsoleColors.GREEN.getAnsiCode() + "default " + ConsoleColors.GRAY.getAnsiCode() + "port");
             Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + serverName + ConsoleColors.GRAY.getAnsiCode() + " on default port...");
 
         } else {
