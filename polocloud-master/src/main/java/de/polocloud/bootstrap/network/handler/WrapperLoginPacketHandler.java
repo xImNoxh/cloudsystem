@@ -33,7 +33,7 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
 
         WrapperLoginPacket packet = (WrapperLoginPacket) obj;
 
-        boolean response = config.getLoginKey().equals(packet.getKey());
+        boolean response = config.getProperties().getWrapperKey().equals(packet.getKey());
 
         Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is successfully connected to the master.");
 

@@ -30,7 +30,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
         UUID uuid = packet.getUuid();
-        List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getFallbackServer()));
+        List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]));
         IGameServer targetServer = null;
         for (IGameServer iGameServer : gameServersByTemplate) {
             if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
@@ -44,13 +44,13 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
                 }
             }
             if (targetServer == null) {
-                ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, -1));
+                ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
                 return;
             }
         }
 
-        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getSnowflake()));
-        //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
+        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
+        Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
     }
 
     @Override

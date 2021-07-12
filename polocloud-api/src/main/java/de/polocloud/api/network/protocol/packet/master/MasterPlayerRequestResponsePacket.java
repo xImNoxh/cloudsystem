@@ -7,13 +7,20 @@ import java.util.UUID;
 public class MasterPlayerRequestResponsePacket  implements IPacket {
 
     private UUID uuid;
+
+    private String serviceName;
     private long snowflake;
 
     public MasterPlayerRequestResponsePacket() {
     }
-    public MasterPlayerRequestResponsePacket(UUID uuid, long snowflake) {
+    public MasterPlayerRequestResponsePacket(UUID uuid, String serviceName, long snowflake) {
         this.uuid = uuid;
+        this.serviceName = serviceName;
         this.snowflake = snowflake;
+    }
+
+    public String getServiceName() {
+        return serviceName;
     }
 
     public UUID getUuid() {

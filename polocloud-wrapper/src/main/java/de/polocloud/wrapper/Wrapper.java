@@ -33,11 +33,12 @@ public class Wrapper implements IStartable, ITerminatable {
     private WrapperConfig config;
 
     public Wrapper() {
-
-        try {
-            FileUtils.forceDelete(new File("tmp"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (new File("tmp").exists()) {
+            try {
+                FileUtils.forceDelete(new File("tmp"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         config = loadConfig();

@@ -77,7 +77,7 @@ public class SimpleGameServerManager implements IGameServerManager {
     public void unregisterGameServer(IGameServer gameServer) {
         gameServerList.remove(gameServer);
         for (IGameServer proxyGameServer : getGameServersByType(TemplateType.PROXY)) {
-            proxyGameServer.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake()));
+            proxyGameServer.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
         }
 
     }

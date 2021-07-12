@@ -37,9 +37,7 @@ public class NetworkProxyRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 GameServerUnregisterPacket packet = (GameServerUnregisterPacket) obj;
-
-                ProxyServer.getInstance().getServers().remove(packet.getSnowflake() + "");
-
+                ProxyServer.getInstance().getServers().remove(packet.getName());
             }
 
             @Override
@@ -54,11 +52,9 @@ public class NetworkProxyRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 MasterRequestServerListUpdatePacket packet = (MasterRequestServerListUpdatePacket) obj;
-                ProxyServer.getInstance().getServers().put(packet.getSnowflake() + "", ProxyServer.getInstance().constructServerInfo(
-                    packet.getSnowflake() + "",
-                    InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
-                    "PoloCloud",
-                    false
+                ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
+                    packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
+                    "PoloCloud", false
                 ));
             }
 
@@ -79,7 +75,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                     loginEvent.setCancelled(true);
                     loginEvent.setCancelReason("§cEs wurde kein fallback Server gefunden!");
                 }else{
-                    networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getSnowflake() + "");
+                    networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
                 }
                 loginEvent.completeIntent(plugin);
             }

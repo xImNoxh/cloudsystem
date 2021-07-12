@@ -1,22 +1,20 @@
 package de.polocloud.bootstrap.config;
 
 import de.polocloud.api.config.IConfig;
+import de.polocloud.bootstrap.config.messages.Messages;
+import de.polocloud.bootstrap.config.properties.Properties;
 
 public class MasterConfig implements IConfig {
 
-    private String loginKey = "--Polo--";
-    private String fallbackServer = "Lobby";
-    private String maintenanceMessage = "§7This §b§lservice §7is in maintenance§8.";
+    private Properties properties = new Properties();
+    private Messages messages = new Messages();
 
-    public String getMaintenanceMessage() {
-        return maintenanceMessage;
+    public Properties getProperties() {
+        return properties;
     }
 
-    public String getFallbackServer() {
-        return fallbackServer;
+    public Messages getMessages() {
+        return messages;
     }
 
-    public String getLoginKey() {
-        return loginKey;
-    }
 }

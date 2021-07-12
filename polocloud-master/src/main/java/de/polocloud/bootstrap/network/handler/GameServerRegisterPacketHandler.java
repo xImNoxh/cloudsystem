@@ -49,14 +49,14 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
 
             for (IGameServer proxyGameServer : proxyGameServerList) {
                 if(proxyGameServer.getStatus() == GameServerStatus.RUNNING){
-                    proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket("127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
+                    proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
                 }
             }
 
         } else {
             List<IGameServer> serverList = gameServerManager.getGameServersByType(TemplateType.MINECRAFT);
             for (IGameServer iGameServer : serverList) {
-                gameServer.sendPacket(new MasterRequestServerListUpdatePacket("127.0.0.1", iGameServer.getPort(),
+                gameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", iGameServer.getPort(),
                     iGameServer.getSnowflake())); //TODO update host
             }
         }

@@ -9,13 +9,13 @@ public class GameServerPlayerUpdatePacket implements IPacket {
     private UUID uuid;
     private String name;
 
-    private long targetServer;
+    private String targetServer;
 
     public GameServerPlayerUpdatePacket(){
 
     }
 
-    public GameServerPlayerUpdatePacket(UUID uuid, String name, long targetServer) {
+    public GameServerPlayerUpdatePacket(UUID uuid, String name, String targetServer) {
         this.uuid = uuid;
         this.name = name;
         this.targetServer = targetServer;
@@ -25,7 +25,7 @@ public class GameServerPlayerUpdatePacket implements IPacket {
         return name;
     }
 
-    public long getTargetServer() {
+    public String getTargetServer() {
         return targetServer;
     }
 

@@ -30,9 +30,9 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
 
         String name = packet.getName();
         UUID uuid = packet.getUuid();
-        long targetServerSnowflake = packet.getTargetServer();
+        String targetServerSnowflake = packet.getTargetServer();
 
-        IGameServer targetServer = gameServerManager.getGameSererBySnowflake(targetServerSnowflake);
+        IGameServer targetServer = gameServerManager.getGameServerByName(targetServerSnowflake);
         IGameServer proxyServer = gameServerManager.getGameServerByConnection(ctx);
 
         ICloudPlayer cloudPlayer;

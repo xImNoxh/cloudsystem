@@ -45,12 +45,12 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ServerConnectedEvent event) {
-        networkClient.sendPacket(new GameServerPlayerUpdatePacket(event.getPlayer().getUniqueId(), event.getPlayer().getName(), Long.parseLong(event.getServer().getInfo().getName())));
+        networkClient.sendPacket(new GameServerPlayerUpdatePacket(event.getPlayer().getUniqueId(), event.getPlayer().getName(), event.getServer().getInfo().getName()));
     }
 
     @EventHandler
     public void handle(PlayerDisconnectEvent event) {
-        networkClient.sendPacket(new GameServerPlayerDisconnectPacket(event.getPlayer().getUniqueId()));
+        networkClient.sendPacket(new GameServerPlayerDisconnectPacket(event.getPlayer().getUniqueId(), event.getPlayer().getName()));
     }
 
 }

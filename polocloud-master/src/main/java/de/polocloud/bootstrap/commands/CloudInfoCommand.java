@@ -35,11 +35,11 @@ public class CloudInfoCommand extends CloudCommand {
                     Logger.log(LoggerType.INFO, "no template founded.");
                     return;
                 }
-                Logger.log(LoggerType.INFO, "Template name: " + template.getName());
-                Logger.log(LoggerType.INFO, "Maximal services: " + template.getMaxServerCount());
-                Logger.log(LoggerType.INFO, "Minimal services: " + template.getMinServerCount());
-                Logger.log(LoggerType.INFO, "Template type: " + template.getTemplateType().name());
-                Logger.log(LoggerType.INFO, "Template version: " + template.getVersion().getTitle());
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Template name: " + template.getName());
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Maximal services: " + template.getMaxServerCount());
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Minimal services: " + template.getMinServerCount());
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Template type: " + template.getTemplateType().name());
+                Logger.log(LoggerType.INFO,  Logger.PREFIX +"Template version: " + template.getVersion().getTitle());
                 return;
             }
 
@@ -54,17 +54,23 @@ public class CloudInfoCommand extends CloudCommand {
                 IGameServer gameServer = gameServerManager.getGameServerByName(name);
 
                 if(gameServer == null){
-                    Logger.log(LoggerType.INFO, "no gameserver founded.");
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "No gameserver founded.");
                     return;
                 }
 
-                Logger.log(LoggerType.INFO, "GameServer name: " + gameServer.getName());
-                Logger.log(LoggerType.INFO, "GameServer total memory: " + gameServer.getTotalMemory());
-                Logger.log(LoggerType.INFO, "GameServer port: " + gameServer.getPort());
-                Logger.log(LoggerType.INFO, "GameServer number: " + gameServer.getSnowflake());
-                Logger.log(LoggerType.INFO, "GameServer status: " + gameServer.getStatus());
-                Logger.log(LoggerType.INFO, "GameServer started time: " + gameServer.getStartTime());
-                Logger.log(LoggerType.INFO, "GameServer Ping: " + gameServer.getPing() + "ms");
+                Logger.newLine();
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "GameServer name: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName());
+                Logger.newLine();
+                Logger.log(LoggerType.INFO,
+                    Logger.PREFIX + "Total memory: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getTotalMemory() + "mb");
+                Logger.log(LoggerType.INFO,
+                    Logger.PREFIX + "Id: #" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getSnowflake());
+                Logger.log(LoggerType.INFO,
+                    Logger.PREFIX + "Status: " +ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getStatus());
+                Logger.log(LoggerType.INFO,
+                    Logger.PREFIX + "Started time: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getStartTime());
+                Logger.log(LoggerType.INFO,
+                    Logger.PREFIX + "Ping: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getPing() + "ms");
                 return;
             }
         }
