@@ -78,7 +78,6 @@ public class MasterRequestServerStartListener extends IPacketHandler {
                 File spigotYML = new File(serverDirectory + "/spigot.yml");
 
                 FileUtils.writeStringToFile(serverProp, "online-mode=false\nmotd=PoloCloud\n");
-
                 FileUtils.writeStringToFile(spigotYML, "settings:\n  bungeecord: true\n");
             } else {
                 new BungeeProperties(serverDirectory, maxPlayers, 25565, motd);

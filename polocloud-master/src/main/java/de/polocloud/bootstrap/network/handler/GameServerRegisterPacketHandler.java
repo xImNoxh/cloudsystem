@@ -7,7 +7,6 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.ProxyServerStartInformationPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
@@ -55,19 +54,14 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
             }
 
         } else {
-
             List<IGameServer> serverList = gameServerManager.getGameServersByType(TemplateType.MINECRAFT);
-            gameServer.sendPacket(new ProxyServerStartInformationPacket(template.getMotd(), template.getMaxPlayers(), template.isMaintenance(), masterConfig.getMaintenanceMessage()));
-
             for (IGameServer iGameServer : serverList) {
                 gameServer.sendPacket(new MasterRequestServerListUpdatePacket("127.0.0.1", iGameServer.getPort(),
                     iGameServer.getSnowflake())); //TODO update host
-
             }
-
         }
         Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-            ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "online" + ConsoleColors.GRAY.getAnsiCode() + ".");
+            ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() + ".");
     }
 
     @Override

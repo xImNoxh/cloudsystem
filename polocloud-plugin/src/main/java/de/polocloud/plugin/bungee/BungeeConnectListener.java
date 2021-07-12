@@ -26,17 +26,17 @@ public class BungeeConnectListener implements Listener {
 
     @EventHandler
     public void handlePing(ProxyPingEvent event){
-        event.getResponse().setDescription(poloCloudPlugin.getMotd());
-        event.getResponse().getPlayers().setMax(poloCloudPlugin.getMaxPlayers());
-        event.getResponse().getPlayers().setOnline(poloCloudPlugin.getOnlinePlayers());
+       // event.getResponse().setDescription(poloCloudPlugin.getMotd());
+        //event.getResponse().getPlayers().setMax(poloCloudPlugin.getMaxPlayers());
+       // event.getResponse().getPlayers().setOnline(poloCloudPlugin.getOnlinePlayers());
     }
 
 
     @EventHandler
     public void handle(PostLoginEvent event){
-        if(poloCloudPlugin.isMaintenance() && (!event.getPlayer().hasPermission("*") && !event.getPlayer().hasPermission("cloud.maintenance"))){
-            event.getPlayer().disconnect(poloCloudPlugin.getMaintenanceMessage());
-        }
+       // if(poloCloudPlugin.isMaintenance() && (!event.getPlayer().hasPermission("*") && !event.getPlayer().hasPermission("cloud.maintenance"))){
+         //   event.getPlayer().disconnect(poloCloudPlugin.getMaintenanceMessage());
+       // }
     }
 
     @EventHandler

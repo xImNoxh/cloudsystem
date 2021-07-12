@@ -3,7 +3,6 @@ package de.polocloud.plugin.bungee;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.ProxyServerStartInformationPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.CloudBootstrap;
@@ -24,36 +23,12 @@ public class PoloCloudPlugin extends Plugin {
     public static Map<UUID, LoginEvent> loginEvents = new HashMap<>();
     public static Map<UUID, String> loginServers = new HashMap<>();
 
-    private String motd = "a default PoloCloudService";
-
-    private int maxPlayers = 0;
-    private int onlinePlayers = 0;
-
-    private boolean maintenance = true;
-    private String maintenanceMessage = "§cmaintenance";
-
     @Override
     public void onEnable() {
 
         CloudBootstrap bootstrap = new CloudBootstrap();
 
         bootstrap.connect(-1);
-
-        bootstrap.registerPacketHandler(new IPacketHandler() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
-                ProxyServerStartInformationPacket packet = (ProxyServerStartInformationPacket) obj;
-                motd = packet.getMotd();
-                maxPlayers = packet.getMaxPlayers();
-                maintenance = packet.isMaintenance();
-                maintenanceMessage = packet.getMaintenanceMessage();
-            }
-
-            @Override
-            public Class<? extends IPacket> getPacketClass() {
-                return ProxyServerStartInformationPacket.class;
-            }
-        });
 
         bootstrap.registerPacketHandler(new IPacketHandler() {
             @Override
@@ -68,6 +43,7 @@ public class PoloCloudPlugin extends Plugin {
 
 
             }
+
             @Override
             public Class<? extends IPacket> getPacketClass() {
                 return MasterRequestServerListUpdatePacket.class;
@@ -79,6 +55,7 @@ public class PoloCloudPlugin extends Plugin {
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 ProxyServer.getInstance().stop();
             }
+
             @Override
             public Class<? extends IPacket> getPacketClass() {
                 return GameServerShutdownPacket.class;
@@ -108,23 +85,4 @@ public class PoloCloudPlugin extends Plugin {
         new CloudPlugin(bootstrap, new BungeeCommandCall());
     }
 
-    public String getMotd() {
-        return motd;
-    }
-
-    public String getMaintenanceMessage() {
-        return maintenanceMessage;
-    }
-
-    public boolean isMaintenance() {
-        return maintenance;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public int getOnlinePlayers() {
-        return onlinePlayers;
-    }
 }

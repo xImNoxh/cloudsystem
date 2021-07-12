@@ -10,6 +10,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.player.SimpleCloudPlayer;
 import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -53,9 +54,8 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
         ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
         targetServer.getCloudPlayers().add(cloudPlayer);
 
-
-        Logger.log(LoggerType.INFO, "Player " + uuid.toString() + " is playing on " + proxyServer.getName() + "/" + targetServer.getName());
-
+        Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() +
+            " is playing on " +  targetServer.getName() + "(" + proxyServer.getName() + ")");
     }
 
     @Override
