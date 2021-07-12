@@ -6,6 +6,7 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -17,6 +18,9 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler {
 
     @Inject
     private ICloudPlayerManager playerManager;
+
+    @Inject
+    private MasterConfig masterConfig;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
@@ -39,6 +43,7 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler {
 
         playerManager.unregister(onlinePlayer);
 
+        if(masterConfig.getProperties().isLogPlayerConnections())
         Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now disconnected!");
     }
 
