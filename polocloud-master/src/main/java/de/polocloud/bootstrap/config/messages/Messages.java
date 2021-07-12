@@ -7,4 +7,19 @@ public class Messages {
     private String noFallbackServer = "§cNo fallback server found§8.";
     private String onlyProxyJoin = "§cYou can only join on a Proxy§8.";
 
+    public String getProxyMaintenanceMessage() {
+        return proxyMaintenanceMessage;
+    }
+
+    public String getGroupMaintenanceMessage() {
+        return groupMaintenanceMessage;
+    }
+
+    public String getNoFallbackServer() {
+        return noFallbackServer;
+    }
+
+    public String getOnlyProxyJoin() {
+        return onlyProxyJoin;
+    }
 }

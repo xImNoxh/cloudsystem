@@ -6,6 +6,7 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.ITemplate;
@@ -39,8 +40,11 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
         IGameServer gameServer = gameServerManager.getGameSererBySnowflake(packet.getSnowflake());
         ((SimpleGameServer) gameServer).setCtx(ctx);
         ((SimpleGameServer) gameServer).setPort(packet.getPort());
-        gameServer.setStatus(GameServerStatus.RUNNING);
 
+        gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
+            gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
+
+        gameServer.setStatus(GameServerStatus.RUNNING);
 
         ITemplate template = gameServer.getTemplate();
         if (template.getTemplateType() == TemplateType.MINECRAFT) {

@@ -3,9 +3,12 @@ package de.polocloud.plugin.listener;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
+import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -28,7 +31,29 @@ public class CollectiveProxyEvents implements Listener {
     }
 
     @EventHandler
+    public void handle(PostLoginEvent event){
+        ProxiedPlayer player = event.getPlayer();
+
+
+        if(CloudPlugin.getInstance().getState() == null){
+            event.getPlayer().disconnect("");
+            return;
+        }
+
+
+        if(CloudPlugin.getInstance().getState().isMaintenance()  && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance") ){
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getState().getKickMessage()));
+        }
+    }
+
+    @EventHandler
     public void handle(LoginEvent event) {
+
+        if(CloudPlugin.getInstance().getState() == null){
+            event.setCancelled(true);
+            return;
+        }
+
         UUID requestId = UUID.randomUUID();
         networkLoginCache.getLoginEvents().put(requestId, event);
         event.registerIntent(this.plugin);
