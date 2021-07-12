@@ -35,7 +35,7 @@ public class GameServerExecuteCommand extends CloudCommand {
                 builder.append(args[i]).append(" ");
             }
             server.sendPacket(new GameServerExecuteCommandPacket(builder.toString()));
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "You execute a command to " + server.getName() + " with input = " + builder);
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "You execute a command to " + server.getName() + " (" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "/" + builder + ConsoleColors.GRAY.getAnsiCode() + ")");
             return;
         }
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use following command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "execute <name-id> <command>");
