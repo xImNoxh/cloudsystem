@@ -55,6 +55,7 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
 
                 ITemplate template = new SimpleTemplate(name, maxServerCount, minServerCount, templateType, gameServerVersion, maxPlayers, memory, true, "A default Polo Service",wrappers);
                 templateService.getTemplateSaver().save(template);
+                templateService.reloadTemplates();
                 Logger.log(LoggerType.INFO, Logger.PREFIX + "You " +
                     ConsoleColors.GREEN.getAnsiCode() + "complete " + ConsoleColors.GRAY.getAnsiCode() + "the setup.");
             }
