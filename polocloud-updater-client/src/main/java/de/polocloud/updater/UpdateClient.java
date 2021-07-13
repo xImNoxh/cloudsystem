@@ -22,6 +22,8 @@ public class UpdateClient {
 
     private String clientVersion;
 
+    private String fetchedVersion;
+
     public UpdateClient(String downloadUrl, File destinationFile, String versionUrl, String clientVersion) {
         this.downloadUrl = downloadUrl;
         this.destinationFile = destinationFile;
@@ -57,7 +59,9 @@ public class UpdateClient {
             JsonObject jsonObject = gson.fromJson(fetchedVersionJsonString, JsonObject.class);
             String fetchedVersion = jsonObject.get("currentVersion").getAsString();
 
+            this.fetchedVersion = fetchedVersion;
             System.out.println("fetched version: " + fetchedVersion);
+
             System.out.println("clientVersion: " + this.clientVersion);
 
             result = !fetchedVersion.equalsIgnoreCase(this.clientVersion);
@@ -72,6 +76,10 @@ public class UpdateClient {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public String getFetchedVersion() {
+        return fetchedVersion;
     }
 
     public String getClientVersion() {

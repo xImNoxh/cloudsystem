@@ -1,5 +1,8 @@
 package de.polocloud.wrapper;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.IConfigLoader;
@@ -23,6 +26,8 @@ import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 
@@ -56,10 +61,17 @@ public class Wrapper implements IStartable, ITerminatable {
         String downloadUrl = baseUrl + "/updater/download/api";
         String versionUrl = baseUrl + "/updater/version/api";
 
-        UpdateClient updateClient = new UpdateClient(downloadUrl, apiFile, versionUrl, config.getApiVersion());
-        updateClient.download(false);
 
-        while(!apiFile.exists()){
+        UpdateClient updateClient = new UpdateClient(downloadUrl, apiFile, versionUrl, config.getApiVersion());
+        boolean download = updateClient.download(false);
+        if (download) {
+            config.setApiVersion(updateClient.getFetchedVersion());
+            IConfigSaver saver = new SimpleConfigSaver();
+            saver.save(config, new File("config.json"));
+            System.out.println("updated API to version " + config.getApiVersion());
+        }
+
+        while (!apiFile.exists()) {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
@@ -74,6 +86,7 @@ public class Wrapper implements IStartable, ITerminatable {
 
         CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
     }
+
 
     private WrapperConfig loadConfig() {
 

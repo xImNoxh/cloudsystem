@@ -10,6 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.jar.JarFile;
 
@@ -30,16 +32,17 @@ public class Launcher {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         File configFile = new File("launcher.json");
+        Map<String, Object> configObject = null;
         if (!configFile.exists()) {
             try {
                 configFile.createNewFile();
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("version", "0.Alpha");
-                jsonObject.addProperty("forceUpdate", false);
+                configObject = new HashMap<>();
+                configObject.put("version", "0.Alpha");
+                configObject.put("forceUpdate", false);
 
                 FileWriter writer = new FileWriter(configFile);
-                gson.toJson(jsonObject, writer);
+                gson.toJson(configObject, writer);
                 writer.flush();
                 writer.close();
             } catch (IOException e) {
@@ -51,9 +54,9 @@ public class Launcher {
         boolean forceUpdate = false;
         try {
             FileReader reader = new FileReader(configFile);
-            JsonObject configObject = gson.fromJson(reader, JsonObject.class);
-            currentVersion = configObject.get("version").getAsString();
-            forceUpdate = configObject.get("forceUpdate").getAsBoolean();
+            configObject = gson.fromJson(reader, HashMap.class);
+            currentVersion = (String) configObject.get("version");
+            forceUpdate = (boolean) configObject.get("forceUpdate");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -68,7 +71,20 @@ public class Launcher {
 
         System.out.println("checking for bootstrap updates...");
         if (updateClient.download(forceUpdate)) {
+            configObject.remove("version");
+            configObject.put("version", updateClient.getFetchedVersion());
+
+            try {
+                FileWriter writer = new FileWriter(configFile);
+                gson.toJson(configObject, writer);
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             System.out.println("updated");
+
         } else {
             System.out.println("no update found!");
         }

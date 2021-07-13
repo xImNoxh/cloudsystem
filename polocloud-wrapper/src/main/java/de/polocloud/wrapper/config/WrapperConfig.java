@@ -25,4 +25,8 @@ public class WrapperConfig implements IConfig {
     public String getLoginKey() {
         return loginKey;
     }
+
+    public void setApiVersion(String fetchedVersion) {
+        this.apiVersion = fetchedVersion;
+    }
 }

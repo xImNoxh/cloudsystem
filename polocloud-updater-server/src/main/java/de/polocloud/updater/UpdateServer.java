@@ -12,7 +12,7 @@ public class UpdateServer {
         File bootstrapFile = new File("bootstrap.jar");
         File apiFile = new File("PoloCloud-API.jar");
 
-        String bootstrapVersion = "0.1.Closed-Alpha";
+        String bootstrapVersion = "0.0.1.Closed-Alpha";
         String apiVersion = "0.1.Closed-Alpha";
 
 
