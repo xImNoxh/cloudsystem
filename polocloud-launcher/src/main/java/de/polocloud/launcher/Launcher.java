@@ -64,6 +64,10 @@ public class Launcher {
 
         File bootstrapFile = new File("bootstrap.jar");
 
+        if(!bootstrapFile.exists()){
+            forceUpdate = true;
+        }
+
         String baseUrl = "http://37.114.60.129:8870";
         String downloadUrl = baseUrl + "/updater/download/bootstrap";
         String versionUrl = baseUrl + "/updater/version/bootstrap";

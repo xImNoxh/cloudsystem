@@ -11,11 +11,32 @@
 
   <groupId>de.polocloud.plugin</groupId>
   <artifactId>polocloud-plugin</artifactId>
-
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <finalName>polocloud-API</finalName>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <repositories>
     <!-- This adds the Spigot Maven repository to the build -->

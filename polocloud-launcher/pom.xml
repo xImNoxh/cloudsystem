@@ -61,6 +61,7 @@
           </execution>
         </executions>
         <configuration>
+          <finalName>launcher</finalName>
           <createDependencyReducedPom>false</createDependencyReducedPom>
           <shadedArtifactAttached>true</shadedArtifactAttached>
         </configuration>
