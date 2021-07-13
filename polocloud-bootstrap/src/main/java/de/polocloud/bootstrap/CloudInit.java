@@ -1,8 +1,6 @@
 package de.polocloud.bootstrap;
 
 import de.polocloud.bootstrap.logger.LogBootstrapService;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.wrapper.Wrapper;
 
 public class CloudInit {
@@ -14,7 +12,6 @@ public class CloudInit {
         logBootstrapService = new LogBootstrapService();
         logBootstrapService.printSymbol();
 
-        new ConsoleReadThread(Logger.getConsoleReader());
         //new ServiceTypeSetup().sendSetup();
 
         if (args[0].equalsIgnoreCase("master")) {

@@ -18,19 +18,16 @@ public class ShutdownGameServerCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
-
         if(args.length == 2) {
             IGameServer gameServer = gameServerManager.getGameServerByName(args[1]);
             if(gameServer == null){
-                Logger.log(LoggerType.INFO, "This group does not exists.");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "This service does not exists.");
                 return;
             }
             gameServer.stop();
             Logger.log(LoggerType.INFO, "You stopped the service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName());
             return;
         }
-
-        Logger.log(LoggerType.INFO, "Use follwoing command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "shutdown <name-id>");
-
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use follwoing command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "shutdown <name-id>");
     }
 }

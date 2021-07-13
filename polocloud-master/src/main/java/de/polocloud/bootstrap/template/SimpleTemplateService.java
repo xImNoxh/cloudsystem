@@ -46,7 +46,7 @@ public class SimpleTemplateService implements ITemplateService {
     @Override
     public ITemplate getTemplateByName(String name){
         for (ITemplate iTemplate : templateList) {
-            if(iTemplate.getName().equals(name)){
+            if(iTemplate.getName().equalsIgnoreCase(name)){
                 return iTemplate;
             }
         }
