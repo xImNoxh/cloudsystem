@@ -99,7 +99,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
         } else {
             int port = generatePort();
-            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
+            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
             Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + serverName + ConsoleColors.GRAY.getAnsiCode() + " on port " + port + "...");
 
         }
