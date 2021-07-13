@@ -37,7 +37,7 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
             .addStep("What is the amount of max players?", isInteger())
             .addStep("What is the maximal memory of this service", isInteger())
             .addStep("What is the template type of this service?", TemplateType.MINECRAFT.getDisplayName(), TemplateType.PROXY.getDisplayName())
-            .addStep("What is the game verison?", GameServerVersion.PROXY.getTitle(), GameServerVersion.SPIGOT_1_8_8.getTitle())
+            .addStep("What is the game version?", GameServerVersion.prettyValues())
             .addStep("What is name of the Wrapper(s) ?");
 
         setupBuilder.setStepAnswer(new StepAnswer() {

@@ -29,6 +29,15 @@ public class Step {
         return step;
     }
 
+    public Step addStep(String question, Object... possibleAnswers){
+
+        String[] s = new String[possibleAnswers.length];
+        for (int i = 0; i < s.length; i++) {
+            s[i] = possibleAnswers[i].toString();
+        }
+        return addStep(question, s);
+    }
+
     public Step addStep(String question, String... possibleAnswers){
         Step step = new Step(question, o -> true, possibleAnswers);
         nextStep = step;
