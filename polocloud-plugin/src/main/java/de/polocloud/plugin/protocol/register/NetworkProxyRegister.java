@@ -3,6 +3,7 @@ package de.polocloud.plugin.protocol.register;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -29,7 +30,7 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerMasterRequestServerListUpdatePacket();
         registerMasterPlayerRequestResponsePacket();
         registerGameServerUnregisterPacket();
-
+        registerCloudMotdUpdatePacket();
     }
 
     private void registerGameServerUnregisterPacket() {
@@ -83,6 +84,21 @@ public class NetworkProxyRegister extends NetworkRegister {
             @Override
             public Class<? extends IPacket> getPacketClass() {
                 return MasterPlayerRequestResponsePacket.class;
+            }
+        });
+    }
+
+    public void registerCloudMotdUpdatePacket(){
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+                 ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;
+
+            }
+
+            @Override
+            public Class<? extends IPacket> getPacketClass() {
+                return ProxyMotdUpdatePacket.class;
             }
         });
     }

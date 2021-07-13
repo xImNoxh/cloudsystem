@@ -1,19 +1,25 @@
 package de.polocloud.bootstrap.config.motd;
 
-public class CloudMotd {
+import de.polocloud.api.gameserver.motd.ICloudMotd;
+import de.polocloud.api.gameserver.motd.IMotdObject;
+
+public class CloudMotd implements ICloudMotd {
 
     private boolean use = true;
     private String currentMotdKey[] = new String[]{"default"};
     private MotdObject[] motdList = new MotdObject[]{new MotdObject()};
 
-    public MotdObject[] getMotdList() {
+    @Override
+    public IMotdObject[] getMotdList() {
         return motdList;
     }
 
+    @Override
     public String[] getCurrentMotdKey() {
         return currentMotdKey;
     }
 
+    @Override
     public boolean isUse() {
         return use;
     }

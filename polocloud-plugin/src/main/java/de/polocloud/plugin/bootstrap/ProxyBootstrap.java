@@ -1,5 +1,6 @@
 package de.polocloud.plugin.bootstrap;
 
+import de.polocloud.api.gameserver.motd.ICloudMotd;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
@@ -15,6 +16,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class ProxyBootstrap extends Plugin implements BootstrapFunction, NetworkRegisterFunction {
 
     private NetworkLoginCache networkLoginCache;
+    private ICloudMotd cloudMotd;
 
     @Override
     public void onEnable() {
