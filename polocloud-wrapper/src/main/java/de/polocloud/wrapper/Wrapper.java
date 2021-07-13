@@ -14,6 +14,7 @@ import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.updater.UpdateClient;
 import de.polocloud.wrapper.commands.StopCommand;
 import de.polocloud.wrapper.config.WrapperConfig;
 import de.polocloud.wrapper.guice.WrapperGuiceModule;
@@ -34,15 +35,38 @@ public class Wrapper implements IStartable, ITerminatable {
     private WrapperConfig config;
 
     public Wrapper() {
-        if (new File("tmp").exists()) {
+
+        config = loadConfig();
+
+
+        File tmpFile = new File("tmp");
+        File apiFile = new File("templates/PoloCloud-API.jar");
+        if (tmpFile.exists()) {
             try {
-                FileUtils.forceDelete(new File("tmp"));
+                FileUtils.forceDelete(tmpFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        config = loadConfig();
+        if (!apiFile.getParentFile().exists()) {
+            apiFile.getParentFile().mkdirs();
+        }
+        String baseUrl = "http://37.114.60.129:8870";
+        String downloadUrl = baseUrl + "/updater/download/api";
+        String versionUrl = baseUrl + "/updater/version/api";
+
+        UpdateClient updateClient = new UpdateClient(downloadUrl, apiFile, versionUrl, config.getApiVersion());
+        updateClient.download(false);
+
+        while(!apiFile.exists()){
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         String[] masterAddress = config.getMasterAddress().split(":");
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
