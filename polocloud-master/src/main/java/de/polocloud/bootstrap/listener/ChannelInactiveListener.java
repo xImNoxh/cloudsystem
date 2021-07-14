@@ -14,6 +14,8 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.concurrent.ExecutionException;
+
 public class ChannelInactiveListener extends IPacketHandler {
 
     @Inject
@@ -33,14 +35,18 @@ public class ChannelInactiveListener extends IPacketHandler {
             }
         }
 
-        for (IGameServer o : gameServerManager.getGameServers()) {
-            SimpleGameServer  gameServer = (SimpleGameServer) o;
-            if(gameServer.getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
-                Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-                    ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() +"!");
-                gameServerManager.unregisterGameServer(gameServer);
-                return;
+        try {
+            for (IGameServer o : gameServerManager.getGameServers().get()) {
+                SimpleGameServer  gameServer = (SimpleGameServer) o;
+                if(gameServer.getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
+                    Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
+                        ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() +"!");
+                    gameServerManager.unregisterGameServer(gameServer);
+                    return;
+                }
             }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 

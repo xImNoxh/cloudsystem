@@ -5,22 +5,24 @@ import de.polocloud.api.template.TemplateType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 public interface IGameServerManager {
 
-    IGameServer getGameServerByName(String name);
+    CompletableFuture<IGameServer> getGameServerByName(String name);
 
-    IGameServer getGameSererBySnowflake(long snowflake);
+    CompletableFuture<IGameServer> getGameSererBySnowflake(long snowflake);
 
-    List<IGameServer> getGameServers();
+    CompletableFuture<List<IGameServer>> getGameServers();
 
-    List<IGameServer> getGameServersByTemplate(ITemplate template);
+    CompletableFuture<List<IGameServer>> getGameServersByTemplate(ITemplate template);
 
-    List<IGameServer> getGameServersByType(TemplateType type);
+    CompletableFuture<List<IGameServer>> getGameServersByType(TemplateType type);
 
     void registerGameServer(IGameServer gameServer);
 
     void unregisterGameServer(IGameServer gameServer);
 
-    IGameServer getGameServerByConnection(ChannelHandlerContext ctx);
+    CompletableFuture<IGameServer> getGameServerByConnection(ChannelHandlerContext ctx);
 }

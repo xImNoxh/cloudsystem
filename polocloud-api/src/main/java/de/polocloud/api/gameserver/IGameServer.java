@@ -4,9 +4,10 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface IGameServer {
+public interface IGameServer extends Serializable {
 
     String getName();
 

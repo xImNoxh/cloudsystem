@@ -2,15 +2,20 @@ package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.api.CloudExecutor;
+import de.polocloud.plugin.api.server.APIGameServerManager;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.UUID;
 
 public class NetworkPluginRegister extends NetworkRegister {
 
@@ -24,6 +29,29 @@ public class NetworkPluginRegister extends NetworkRegister {
         registerGameServerExecutePacket();
         registerMaintenanceStatePacket();
         registerGameServerShutdownPacket();
+        registerAPIHandler();
+    }
+
+
+    public void registerAPIHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+                System.out.println("Help me!");
+                APIResponseGameServerPacket packet = (APIResponseGameServerPacket) obj;
+
+                UUID requestId = packet.getRequestId();
+                Object response = packet.getResponse();
+
+                ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true).complete(response);
+            }
+
+            @Override
+            public Class<? extends IPacket> getPacketClass() {
+                return APIResponseGameServerPacket.class;
+            }
+        });
+
     }
 
     public void registerMaintenanceStatePacket(){

@@ -39,6 +39,7 @@ public class SimpleProtocol implements IProtocol {
 
     @Override
     public void firePacketHandlers(ChannelHandlerContext ctx, IPacket packet) {
+
         if (packetHandlerMap.containsKey(packet.getClass())) {
             List<IPacketHandler> iPacketHandlers = packetHandlerMap.get(packet.getClass());
 

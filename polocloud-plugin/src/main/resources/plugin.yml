@@ -3,3 +3,6 @@ version: 1.0.0
 author: Max_DE
 
 main: de.polocloud.plugin.bootstrap.SpigotBootstrap
+
+commands:
+    testCloud:

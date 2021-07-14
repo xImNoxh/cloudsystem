@@ -1,6 +1,8 @@
 package de.polocloud.api.template;
 
-public enum TemplateType {
+import java.io.Serializable;
+
+public enum TemplateType implements Serializable {
 
     PROXY,
     MINECRAFT;

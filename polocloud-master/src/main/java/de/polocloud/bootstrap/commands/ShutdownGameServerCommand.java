@@ -7,6 +7,8 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
+import java.util.concurrent.ExecutionException;
+
 @CloudCommand.Info(name = "shutdown", description = "stop a current server", aliases = "")
 public class ShutdownGameServerCommand extends CloudCommand {
 
@@ -18,15 +20,20 @@ public class ShutdownGameServerCommand extends CloudCommand {
 
     @Override
     public void execute(String[] args) {
-        if(args.length == 2) {
-            IGameServer gameServer = gameServerManager.getGameServerByName(args[1]);
-            if(gameServer == null){
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "This service does not exists.");
+        if (args.length == 2) {
+            try {
+                IGameServer gameServer = gameServerManager.getGameServerByName(args[1]).get();
+
+                if (gameServer == null) {
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "This service does not exists.");
+                    return;
+                }
+                gameServer.stop();
+                Logger.log(LoggerType.INFO, "You stopped the service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName());
                 return;
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-            gameServer.stop();
-            Logger.log(LoggerType.INFO, "You stopped the service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName());
-            return;
         }
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use follwoing command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "shutdown <name-id>");
     }

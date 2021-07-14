@@ -1,6 +1,7 @@
 package de.polocloud.plugin.bootstrap;
 
 import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.bootstrap.command.TestCloudCommand;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.listener.CollectiveSpigotEvents;
@@ -15,6 +16,7 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void onEnable() {
+        getCommand("testCloud").setExecutor(new TestCloudCommand());
         new CloudPlugin(this, this);
     }
 

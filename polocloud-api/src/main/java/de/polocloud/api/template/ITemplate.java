@@ -2,7 +2,9 @@ package de.polocloud.api.template;
 
 import de.polocloud.api.common.INamable;
 
-public interface ITemplate extends INamable {
+import java.io.Serializable;
+
+public interface ITemplate extends INamable, Serializable {
 
     int getMinServerCount();
 

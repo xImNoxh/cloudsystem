@@ -16,6 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
 
@@ -30,27 +31,32 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
         UUID uuid = packet.getUuid();
-        List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]));
-        IGameServer targetServer = null;
-        for (IGameServer iGameServer : gameServersByTemplate) {
-            if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
+        try {
+            List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0])).get();
 
-                if (targetServer == null) {
-                    targetServer = iGameServer;
-                } else {
-                    if (targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()) {
+            IGameServer targetServer = null;
+            for (IGameServer iGameServer : gameServersByTemplate) {
+                if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
+
+                    if (targetServer == null) {
                         targetServer = iGameServer;
+                    } else {
+                        if (targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()) {
+                            targetServer = iGameServer;
+                        }
                     }
                 }
+                if (targetServer == null) {
+                    ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
+                    return;
+                }
             }
-            if (targetServer == null) {
-                ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
-                return;
-            }
-        }
 
-        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
-        //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
+            ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
+            //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

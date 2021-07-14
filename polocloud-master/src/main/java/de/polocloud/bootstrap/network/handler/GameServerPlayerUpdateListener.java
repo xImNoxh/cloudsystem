@@ -36,31 +36,36 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
         UUID uuid = packet.getUuid();
         String targetServerSnowflake = packet.getTargetServer();
 
-        IGameServer targetServer = gameServerManager.getGameServerByName(targetServerSnowflake);
-        IGameServer proxyServer = gameServerManager.getGameServerByConnection(ctx);
+        try {
+            IGameServer targetServer = gameServerManager.getGameServerByName(targetServerSnowflake).get();
+            IGameServer proxyServer = gameServerManager.getGameServerByConnection(ctx).get();
 
-        ICloudPlayer cloudPlayer;
 
-        if (playerManager.isPlayerOnline(uuid)) {
-            cloudPlayer = playerManager.getOnlinePlayer(uuid);
-        } else {
-            cloudPlayer = new SimpleCloudPlayer(name, uuid);
-            ((SimpleCloudPlayer) cloudPlayer).setProxyGameServer(proxyServer);
-            cloudPlayer.getProxyServer().getCloudPlayers().add(cloudPlayer);
-            playerManager.register(cloudPlayer);
+            ICloudPlayer cloudPlayer;
+
+            if (playerManager.isPlayerOnline(uuid)) {
+                cloudPlayer = playerManager.getOnlinePlayer(uuid);
+            } else {
+                cloudPlayer = new SimpleCloudPlayer(name, uuid);
+                ((SimpleCloudPlayer) cloudPlayer).setProxyGameServer(proxyServer);
+                cloudPlayer.getProxyServer().getCloudPlayers().add(cloudPlayer);
+                playerManager.register(cloudPlayer);
+            }
+
+            if (cloudPlayer.getMinecraftServer() != null) {
+                cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
+            }
+
+
+            ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
+            targetServer.getCloudPlayers().add(cloudPlayer);
+
+            if (masterConfig.getProperties().isLogPlayerConnections())
+                Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() +
+                    " is playing on " + targetServer.getName() + "(" + proxyServer.getName() + ")");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        if(cloudPlayer.getMinecraftServer() != null){
-            cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
-        }
-
-
-        ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
-        targetServer.getCloudPlayers().add(cloudPlayer);
-
-        if(masterConfig.getProperties().isLogPlayerConnections())
-        Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() +
-            " is playing on " +  targetServer.getName() + "(" + proxyServer.getName() + ")");
     }
 
     @Override

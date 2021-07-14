@@ -30,7 +30,7 @@
           </execution>
         </executions>
         <configuration>
-          <finalName>polocloud-API</finalName>
+          <finalName>PoloCloud-API</finalName>
           <createDependencyReducedPom>false</createDependencyReducedPom>
           <shadedArtifactAttached>true</shadedArtifactAttached>
         </configuration>

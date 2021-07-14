@@ -1,6 +1,8 @@
 package de.polocloud.api.gameserver;
 
-public enum GameServerStatus {
+import java.io.Serializable;
+
+public enum GameServerStatus implements Serializable {
 
     PENDING,
     STARTING,

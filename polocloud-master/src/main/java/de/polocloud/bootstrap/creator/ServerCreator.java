@@ -13,6 +13,7 @@ import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class ServerCreator {
@@ -40,20 +41,24 @@ public abstract class ServerCreator {
         client.startServer(gameServer);
     }
 
-    private int generateServerId(ITemplate template){
+    private int generateServerId(ITemplate template) {
         int currentId = 1;
 
         boolean found = false;
 
-        while(!found){
+        while (!found) {
 
-            IGameServer gameServerByName = gameServerManager.getGameServerByName(template.getName() + "-" + currentId);
-            if(gameServerByName == null){
-                found = true;
-            }else{
-                currentId++;
+            try {
+                IGameServer gameServerByName = gameServerManager.getGameServerByName(template.getName() + "-" + currentId).get();
+
+                if (gameServerByName == null) {
+                    found = true;
+                } else {
+                    currentId++;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-
         }
 
         return currentId;

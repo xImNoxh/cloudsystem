@@ -20,6 +20,7 @@ import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class GameServerRegisterPacketHandler extends IPacketHandler {
 
@@ -37,35 +38,49 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
 
         GameServerRegisterPacket packet = (GameServerRegisterPacket) obj;
 
-        IGameServer gameServer = gameServerManager.getGameSererBySnowflake(packet.getSnowflake());
-        ((SimpleGameServer) gameServer).setCtx(ctx);
-        ((SimpleGameServer) gameServer).setPort(packet.getPort());
+        try {
+            IGameServer gameServer = gameServerManager.getGameSererBySnowflake(packet.getSnowflake()).get();
 
-        gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
-            gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
+            ((SimpleGameServer) gameServer).setCtx(ctx);
+            ((SimpleGameServer) gameServer).setPort(packet.getPort());
 
-        gameServer.setStatus(GameServerStatus.RUNNING);
+            gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
+                gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
 
-        ITemplate template = gameServer.getTemplate();
-        if (template.getTemplateType() == TemplateType.MINECRAFT) {
+            gameServer.setStatus(GameServerStatus.RUNNING);
 
-            List<IGameServer> proxyGameServerList = gameServerManager.getGameServersByType(TemplateType.PROXY);
+            ITemplate template = gameServer.getTemplate();
+            if (template.getTemplateType() == TemplateType.MINECRAFT) {
 
-            for (IGameServer proxyGameServer : proxyGameServerList) {
-                if(proxyGameServer.getStatus() == GameServerStatus.RUNNING){
-                    proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
+                try {
+                    List<IGameServer> proxyGameServerList = gameServerManager.getGameServersByType(TemplateType.PROXY).get();
+
+
+                    for (IGameServer proxyGameServer : proxyGameServerList) {
+                        if (proxyGameServer.getStatus() == GameServerStatus.RUNNING) {
+                            proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
+                        }
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    List<IGameServer> serverList = gameServerManager.getGameServersByType(TemplateType.MINECRAFT).get();
+
+                    for (IGameServer iGameServer : serverList) {
+                        gameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", iGameServer.getPort(),
+                            iGameServer.getSnowflake())); //TODO update host
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
-
-        } else {
-            List<IGameServer> serverList = gameServerManager.getGameServersByType(TemplateType.MINECRAFT);
-            for (IGameServer iGameServer : serverList) {
-                gameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", iGameServer.getPort(),
-                    iGameServer.getSnowflake())); //TODO update host
-            }
+            Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
+                ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() + ".");
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
-        Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-            ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() + ".");
     }
 
     @Override

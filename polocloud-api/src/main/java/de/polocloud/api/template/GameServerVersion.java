@@ -1,6 +1,8 @@
 package de.polocloud.api.template;
 
-public enum GameServerVersion {
+import java.io.Serializable;
+
+public enum GameServerVersion implements Serializable {
 
     PROXY("https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar", "BungeeCord"),
 

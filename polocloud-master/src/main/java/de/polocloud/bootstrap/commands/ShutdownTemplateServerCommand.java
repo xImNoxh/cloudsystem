@@ -10,6 +10,7 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @CloudCommand.Info(name = "shutdowntemplate", description = "shutdown all service of one template", aliases = "")
@@ -26,19 +27,25 @@ public class ShutdownTemplateServerCommand extends CloudCommand {
     @Override
     public void execute(String[] args) {
 
-        if(args.length == 2){
+        if (args.length == 2) {
             ITemplate template = templateService.getTemplateByName(args[1]);
-            if(template == null){
+            if (template == null) {
                 Logger.log(LoggerType.INFO, "This template does not exists.");
                 return;
             }
 
-            List<IGameServer> servers = gameServerManager.getGameServers().stream().filter(key -> key.getTemplate().equals(template)).collect(Collectors.toList());
-            for (IGameServer server : servers) {
-                Logger.log(LoggerType.INFO, "Trying to stop " + server.getName() + "...");
-                server.stop();
+            try {
+                List<IGameServer> servers = gameServerManager.getGameServers().get().stream().filter(key -> key.getTemplate().equals(template)).collect(Collectors.toList());
+
+                for (IGameServer server : servers) {
+                    Logger.log(LoggerType.INFO, "Trying to stop " + server.getName() + "...");
+                    server.stop();
+                }
+                Logger.log(LoggerType.INFO, "Shutdown " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + servers.size() + ConsoleColors.GRAY.getAnsiCode() + " game servers.");
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-            Logger.log(LoggerType.INFO, "Shutdown " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + servers.size() + ConsoleColors.GRAY.getAnsiCode() + " game servers.");
             return;
         }
         Logger.log(LoggerType.INFO, "Use following command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "shutdowntemplate <name-id>");

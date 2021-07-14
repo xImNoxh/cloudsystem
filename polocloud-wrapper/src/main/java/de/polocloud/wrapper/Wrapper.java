@@ -63,7 +63,7 @@ public class Wrapper implements IStartable, ITerminatable {
 
 
         UpdateClient updateClient = new UpdateClient(downloadUrl, apiFile, versionUrl, config.getApiVersion());
-        boolean download = updateClient.download(false);
+        boolean download = updateClient.download(true);
         if (download) {
             config.setApiVersion(updateClient.getFetchedVersion());
             IConfigSaver saver = new SimpleConfigSaver();
