@@ -17,7 +17,6 @@ public class TestCloudCommand implements CommandExecutor {
                 sender.sendMessage(gameServer.getName() + " info");
                 sender.sendMessage("snowflake " + gameServer.getSnowflake() + "");
                 sender.sendMessage("status: " + gameServer.getStatus().toString());
-                sender.sendMessage("onlineplayers: " + gameServer.getCloudPlayers().size());
 
             });
 

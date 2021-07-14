@@ -7,37 +7,42 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class APIRequestGameServerPacket extends IPacket {
-    @Override
-    public void write(ByteBuf byteBuf) throws IOException {
 
-    }
-
-    @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-
-    }
-
-    /* TODO reimplement
 
     private UUID requestId;
     private Action action;
-    private Object value;
+    private String value;
 
     public APIRequestGameServerPacket() {
 
     }
 
-    public APIRequestGameServerPacket(UUID requestId, Action action, Object value) {
+    public APIRequestGameServerPacket(UUID requestId, Action action, String value) {
         this.requestId = requestId;
         this.action = action;
         this.value = value;
     }
 
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        writeString(byteBuf, requestId.toString());
+        writeString(byteBuf, action.toString());
+        writeString(byteBuf, this.value);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        requestId = UUID.fromString(readString(byteBuf));
+        action = Action.valueOf(readString(byteBuf));
+        value = readString(byteBuf);
+    }
+
+
     public Action getAction() {
         return action;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -53,7 +58,5 @@ public class APIRequestGameServerPacket extends IPacket {
         LIST_BY_NAME,
         LIST_BY_TYPE,
     }
-
-     */
 
 }

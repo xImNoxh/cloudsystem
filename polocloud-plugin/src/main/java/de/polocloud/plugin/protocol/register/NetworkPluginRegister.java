@@ -1,5 +1,6 @@
 package de.polocloud.plugin.protocol.register;
 
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
@@ -15,7 +16,10 @@ import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class NetworkPluginRegister extends NetworkRegister {
 
@@ -40,11 +44,15 @@ public class NetworkPluginRegister extends NetworkRegister {
                 System.out.println("Help me!");
                 APIResponseGameServerPacket packet = (APIResponseGameServerPacket) obj;
 
-                /* TODO
                 UUID requestId = packet.getRequestId();
-                Object response = packet.getResponse();
+                List<IGameServer> response = packet.getResponse();
+                CompletableFuture<Object> completableFuture = ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true);
 
-                ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true).complete(response);                 */
+                if(packet.getType() == APIResponseGameServerPacket.Type.SINGLE){
+                    completableFuture.complete(response.get(0));
+                }else{
+                    completableFuture.complete(response);
+                }
 
             }
 

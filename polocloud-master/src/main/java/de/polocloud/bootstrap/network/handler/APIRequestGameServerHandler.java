@@ -1,7 +1,6 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
@@ -22,9 +21,8 @@ public class APIRequestGameServerHandler extends IPacketHandler {
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
         APIRequestGameServerPacket packet = (APIRequestGameServerPacket) obj;
 
-        /*TODO reimplement
         UUID requestId = packet.getRequestId();
-        Object value = packet.getValue();
+        String value = packet.getValue();
         APIRequestGameServerPacket.Action action = packet.getAction();
 
         if (action == APIRequestGameServerPacket.Action.NAME) {
@@ -32,14 +30,13 @@ public class APIRequestGameServerHandler extends IPacketHandler {
                 System.out.println("fetched gameserver " + gameServer.getName());
                 gameServerManager.getGameServerByConnection(ctx).thenAccept(requestServer -> {
                     requestServer.sendPacket(new MasterKickPlayerPacket(UUID.randomUUID(), "Test"));
-                    //TODO requestServer.sendPacket(new APIResponseGameServerPacket(requestId, gameServer));
+                    requestServer.sendPacket(new APIResponseGameServerPacket(requestId, Collections.singletonList(gameServer), APIResponseGameServerPacket.Type.SINGLE));
                     System.out.println("api response packet sent!");
                 });
 
             });
         }
 
-         */
 
 
     }

@@ -22,7 +22,7 @@ public class GameServerControlPlayerListener extends IPacketHandler {
 
         UUID uuid = packet.getUuid();
         if(!playerManager.isPlayerOnline(uuid)){
-            //TODO ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
+            //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
         }
 
     }
