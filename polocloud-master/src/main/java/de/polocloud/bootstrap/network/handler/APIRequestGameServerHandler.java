@@ -26,12 +26,10 @@ public class APIRequestGameServerHandler extends IPacketHandler {
         APIRequestGameServerPacket.Action action = packet.getAction();
 
         if (action == APIRequestGameServerPacket.Action.NAME) {
-            gameServerManager.getGameServerByName((String) value).thenAccept(gameServer -> {
-                System.out.println("fetched gameserver " + gameServer.getName());
+            gameServerManager.getGameServerByName(value).thenAccept(gameServer -> {
                 gameServerManager.getGameServerByConnection(ctx).thenAccept(requestServer -> {
                     requestServer.sendPacket(new MasterKickPlayerPacket(UUID.randomUUID(), "Test"));
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, Collections.singletonList(gameServer), APIResponseGameServerPacket.Type.SINGLE));
-                    System.out.println("api response packet sent!");
                 });
 
             });

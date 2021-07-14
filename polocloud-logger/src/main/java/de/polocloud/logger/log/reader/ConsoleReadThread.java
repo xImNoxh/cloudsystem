@@ -42,7 +42,7 @@ public class ConsoleReadThread extends Thread {
                         List<CloudCommand> commands = commandPool.getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList());
 
                         if(commands.size() == 0){
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknow command... Please use the " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "/help " + ConsoleColors.GRAY.getAnsiCode() + "command.");
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknow command... Please use the " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "help " + ConsoleColors.GRAY.getAnsiCode() + "command.");
                         }else {
                             for (CloudCommand command : commands) {
                                 command.execute(args);

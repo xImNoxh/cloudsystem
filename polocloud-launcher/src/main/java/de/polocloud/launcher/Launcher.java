@@ -2,7 +2,6 @@ package de.polocloud.launcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import de.polocloud.updater.UpdateClient;
 
 import java.io.*;
@@ -12,20 +11,21 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.jar.JarFile;
 
 public class Launcher {
 
+    public static String PREFIX = "PoloCloud » ";
+
     public static void main(String[] args) {
 
         if (args.length != 1) {
-            System.out.println("Please specify what you want to start. (Master, Wrapper)");
+            System.out.println(PREFIX + "Please specify what you want to start. (Master, Wrapper)");
             return;
         }
 
         if (!(args[0].equalsIgnoreCase("Master") || args[0].equalsIgnoreCase("Wrapper"))) {
-            System.out.println(args[0] + " is wrong argument!");
+            System.out.println(PREFIX + args[0] + " is wrong argument!");
             return;
         }
 
@@ -39,7 +39,7 @@ public class Launcher {
 
                 configObject = new HashMap<>();
                 configObject.put("version", "0.Alpha");
-                configObject.put("forceUpdate", false);
+                configObject.put("forceUpdate", true);
 
                 FileWriter writer = new FileWriter(configFile);
                 gson.toJson(configObject, writer);
@@ -51,7 +51,7 @@ public class Launcher {
         }
 
         String currentVersion = "-1";
-        boolean forceUpdate = false;
+        boolean forceUpdate = true;
         try {
             FileReader reader = new FileReader(configFile);
             configObject = gson.fromJson(reader, HashMap.class);
@@ -73,7 +73,7 @@ public class Launcher {
         String versionUrl = baseUrl + "/updater/version/bootstrap";
         UpdateClient updateClient = new UpdateClient(downloadUrl, bootstrapFile, versionUrl, currentVersion);
 
-        System.out.println("checking for bootstrap updates...");
+        System.out.println(PREFIX + "#Checking for bootstrap updates... (" + updateClient.getClientVersion() + ")");
         if (updateClient.download(forceUpdate)) {
             configObject.remove("version");
             configObject.put("version", updateClient.getFetchedVersion());
@@ -86,11 +86,9 @@ public class Launcher {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            System.out.println("updated");
-
+            System.out.println(PREFIX + "#updated");
         } else {
-            System.out.println("no update found!");
+            System.out.println(PREFIX + "#no update found!");
         }
 
         //launch bootstrap.jar
@@ -101,7 +99,6 @@ public class Launcher {
 
             String mainClass = "de.polocloud.bootstrap.Bootstrap";
             Class<?> loadedClass = classLoader.loadClass(mainClass);
-            System.out.println("class " + loadedClass.getSimpleName() + " loaded!");
             Method mainMethod = loadedClass.getMethod("main", String[].class);
 
             final Object[] params = new Object[1];

@@ -14,7 +14,6 @@ public class PacketEncoder extends MessageToByteEncoder<IPacket> {
         if (id == -1) {
             throw new NullPointerException("Packet with " + packet.getClass().getSimpleName() + " was not registered");
         }
-        System.out.println("write packet #" + packet.getClass().getSimpleName());
         byteBuf.writeInt(id);
         packet.write(byteBuf);
 

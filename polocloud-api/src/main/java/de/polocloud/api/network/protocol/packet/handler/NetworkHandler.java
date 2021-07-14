@@ -28,7 +28,6 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         this.channelHandlerContext = ctx;
-        System.out.println("connected!");
         EventRegistry.fireEvent(new ChannelActiveEvent(ctx));
 
     }

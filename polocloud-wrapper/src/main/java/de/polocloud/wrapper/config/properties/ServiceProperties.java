@@ -10,7 +10,10 @@ public abstract class ServiceProperties {
     private int port;
     private String[] properties;
 
+    private boolean can;
+
     public ServiceProperties(File file, String child, int port) {
+        can = new File(file.getPath(), child).exists();
         this.file = new File(file.getPath(), child);
 
         this.port = port;
@@ -21,16 +24,18 @@ public abstract class ServiceProperties {
     }
 
     public void writeFile() {
-        try {
-            FileWriter fileWriter = new FileWriter(file);
+        if(!can) {
+            try {
+                FileWriter fileWriter = new FileWriter(file);
 
-            for (String line : properties) {
-                fileWriter.write(line + "\n");
+                for (String line : properties) {
+                    fileWriter.write(line + "\n");
+                }
+                fileWriter.close();
+
+            } catch (IOException ignored) {
+                ignored.printStackTrace();
             }
-            fileWriter.close();
-
-        } catch (IOException ignored) {
-            ignored.printStackTrace();
         }
     }
 

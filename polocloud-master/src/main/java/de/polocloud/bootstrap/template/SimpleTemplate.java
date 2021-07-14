@@ -68,6 +68,11 @@ public class SimpleTemplate implements ITemplate {
     }
 
     @Override
+    public void setMaintenance(boolean maintenance) {
+        this.maintenance = maintenance;
+    }
+
+    @Override
     public boolean isMaintenance() {
         return maintenance;
     }

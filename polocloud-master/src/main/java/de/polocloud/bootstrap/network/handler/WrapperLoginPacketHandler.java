@@ -38,7 +38,8 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
         Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is successfully connected to the master.");
 
         MasterLoginResponsePacket responsePacket = new MasterLoginResponsePacket(response, response ?
-            "Master authentication " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "completed." : "Master authentication " + ConsoleColors.RED.getAnsiCode() + "denied" + ConsoleColors.GRAY.getAnsiCode() + ".");
+            "Master authentication " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "completed."
+            : "Master authentication " + ConsoleColors.RED.getAnsiCode() + "denied" + ConsoleColors.GRAY.getAnsiCode() + ".");
         WrapperClient wrapperClient = new WrapperClient(packet.getName(), ctx);
         wrapperClient.sendPacket(responsePacket);
 

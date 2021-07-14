@@ -61,7 +61,6 @@ public class Master implements IStartable, ITerminatable {
 
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
-
         ((SimpleTemplateService) this.templateService).load(this.cloudAPI, TemplateStorage.FILE);
         this.templateService.getTemplateLoader().loadTemplates();
 
@@ -70,6 +69,7 @@ public class Master implements IStartable, ITerminatable {
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ClouldStopCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownGameServerCommand(gameServerManager));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudHelpCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudEditCommand(templateService, gameServerManager));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudInfoCommand(this.templateService, this.gameServerManager));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownTemplateServerCommand(this.gameServerManager, this.templateService));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new LogMeCommand());

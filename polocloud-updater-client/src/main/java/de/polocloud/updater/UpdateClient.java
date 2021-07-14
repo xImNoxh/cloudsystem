@@ -60,9 +60,7 @@ public class UpdateClient {
             String fetchedVersion = jsonObject.get("currentVersion").getAsString();
 
             this.fetchedVersion = fetchedVersion;
-            System.out.println("fetched version: " + fetchedVersion);
 
-            System.out.println("clientVersion: " + this.clientVersion);
 
             result = !fetchedVersion.equalsIgnoreCase(this.clientVersion);
 

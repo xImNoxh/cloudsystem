@@ -49,7 +49,6 @@ public class SimpleNettyServer implements INettyServer {
             channelFuture.channel().closeFuture().sync();
         } catch (Exception exc) {
             exc.printStackTrace();
-            System.out.println(exc.getLocalizedMessage());
         }
         System.out.println("starting server on port " + this.port);
     }

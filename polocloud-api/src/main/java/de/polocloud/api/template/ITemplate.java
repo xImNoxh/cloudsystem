@@ -22,6 +22,8 @@ public interface ITemplate extends INamable, Serializable {
 
     GameServerVersion getVersion();
 
+    void setMaintenance(boolean state);
+
     String[] getWrapperNames();
 
 }

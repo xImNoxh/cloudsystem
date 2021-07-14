@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.config.properties;
 
-public class Properties {
+import de.polocloud.api.config.IConfig;
+
+public class Properties implements IConfig {
 
     private String wrapperKey = "--Polo--";
     private String[] fallback = new String[]{"Lobby"};

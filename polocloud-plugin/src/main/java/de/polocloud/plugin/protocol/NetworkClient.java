@@ -39,8 +39,6 @@ public class NetworkClient {
 
             String masterAddress = jsonObject.get("Master-Address").getAsString();
 
-            System.out.println("master address: " + masterAddress);
-
 
             reader.close();
 
@@ -75,7 +73,6 @@ public class NetworkClient {
             String path = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getPath();
             String[] split = path.split("/");
-            System.out.println(path);
 
             sendPacket(new GameServerRegisterPacket(Long.parseLong(split[split.length - 3].split("#")[1]), port));
         } catch (URISyntaxException e) {

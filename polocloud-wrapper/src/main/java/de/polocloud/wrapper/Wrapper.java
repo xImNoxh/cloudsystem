@@ -68,7 +68,7 @@ public class Wrapper implements IStartable, ITerminatable {
             config.setApiVersion(updateClient.getFetchedVersion());
             IConfigSaver saver = new SimpleConfigSaver();
             saver.save(config, new File("config.json"));
-            System.out.println("updated API to version " + config.getApiVersion());
+            Logger.log(LoggerType.INFO, "updated API to version " + config.getApiVersion());
         }
 
         while (!apiFile.exists()) {
