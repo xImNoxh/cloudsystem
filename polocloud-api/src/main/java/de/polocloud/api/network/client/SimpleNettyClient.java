@@ -19,6 +19,8 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
 
 public class SimpleNettyClient implements INettyClient {
 
@@ -65,7 +67,8 @@ public class SimpleNettyClient implements INettyClient {
 
                     @Override
                     protected void initChannel(SocketChannel channel) throws Exception {
-                        channel.pipeline().addLast(new PacketDecoder())
+                        channel.pipeline()
+                            .addLast(new PacketDecoder())
                             .addLast(new PacketEncoder())
                             .addLast(networkHandler);
 
