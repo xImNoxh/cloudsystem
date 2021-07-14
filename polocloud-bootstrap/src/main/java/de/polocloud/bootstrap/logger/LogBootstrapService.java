@@ -27,7 +27,7 @@ public class LogBootstrapService {
             " | |  | (_) | | (_) | |____| | (_) | |_| | (_| |\n" +
             " |_|   \\___/|_|\\___/ \\_____|_|\\___/ \\__,_|\\__,_|\n" +
             "                                                \n");
-        Logger.log(LoggerType.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "HttpMarco");
+        Logger.log(LoggerType.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "HttpMarco, Max_DE");
         Logger.log(LoggerType.INFO,  ConsoleColors.GRAY.getAnsiCode() + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "v1.0.1 " +
             ConsoleColors.GRAY.getAnsiCode() + "(@Alpha) | ©opyright by PoloCloud.");
         Logger.newLine();
