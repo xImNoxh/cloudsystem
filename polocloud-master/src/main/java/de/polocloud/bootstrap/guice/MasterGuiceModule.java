@@ -30,7 +30,6 @@ public class MasterGuiceModule extends AbstractModule {
         this.wrapperClientManager = wrapperClientManager;
         this.gameServerManager = gameServerManager;
         this.templateService = templateService;
-        this.masterConfig = new MasterConfig();
         this.cloudPlayerManager = cloudPlayerManager;
     }
 

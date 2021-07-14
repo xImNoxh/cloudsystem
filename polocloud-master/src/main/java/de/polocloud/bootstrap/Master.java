@@ -44,8 +44,6 @@ public class Master implements IStartable, ITerminatable {
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
 
-    public static final String LOGIN_KEY = "xXxPoloxXxCloudxXx";
-
     private boolean running = false;
 
 
