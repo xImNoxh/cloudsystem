@@ -51,6 +51,7 @@ public enum GameServerVersion implements Serializable {
         this.url = url;
     }
 
+
     public String getTitle() {
         return title;
     }

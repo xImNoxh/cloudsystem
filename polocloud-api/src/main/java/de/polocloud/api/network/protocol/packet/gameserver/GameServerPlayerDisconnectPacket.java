@@ -1,21 +1,35 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
 import java.util.UUID;
 
-public class GameServerPlayerDisconnectPacket implements IPacket {
+public class GameServerPlayerDisconnectPacket extends IPacket {
 
     private UUID uuid;
     private String name;
 
-    public GameServerPlayerDisconnectPacket(){
+    public GameServerPlayerDisconnectPacket() {
 
     }
 
     public GameServerPlayerDisconnectPacket(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
+    }
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        writeString(byteBuf, uuid.toString());
+        writeString(byteBuf, name);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        uuid = UUID.fromString(readString(byteBuf));
+        name = readString(byteBuf);
     }
 
     public UUID getUuid() {
@@ -25,4 +39,5 @@ public class GameServerPlayerDisconnectPacket implements IPacket {
     public String getName() {
         return name;
     }
+
 }

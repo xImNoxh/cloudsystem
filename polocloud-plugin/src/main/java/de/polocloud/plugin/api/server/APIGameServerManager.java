@@ -48,7 +48,7 @@ public class APIGameServerManager implements IGameServerManager {
             UUID requestID = UUID.randomUUID();
             futureMap.put(requestID, completableFuture);
 
-            networkClient.sendPacket(new APIRequestGameServerPacket(requestID, APIRequestGameServerPacket.Action.NAME, name));
+            //networkClient.sendPacket(new APIRequestGameServerPacket(requestID, APIRequestGameServerPacket.Action.NAME, name));
 
 
         });

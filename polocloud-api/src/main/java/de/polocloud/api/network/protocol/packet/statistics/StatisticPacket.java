@@ -1,17 +1,38 @@
 package de.polocloud.api.network.protocol.packet.statistics;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
-public class StatisticPacket implements IPacket {
+import java.io.IOException;
+
+public class StatisticPacket extends IPacket {
 
     private long currentMemory;
     private int tps;
     private long timestamp;
 
+    public StatisticPacket() {
+    }
+
     public StatisticPacket(long currentMemory, int tps, long timestamp) {
         this.currentMemory = currentMemory;
         this.tps = tps;
         this.timestamp = timestamp;
+    }
+
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        byteBuf.writeLong(currentMemory);
+        byteBuf.writeInt(tps);
+        byteBuf.writeLong(timestamp);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        currentMemory = byteBuf.readLong();
+        tps = byteBuf.readInt();
+        timestamp = byteBuf.readLong();
     }
 
     public long getTimestamp() {
@@ -26,6 +47,5 @@ public class StatisticPacket implements IPacket {
         return currentMemory;
     }
 
-    public StatisticPacket() {
-    }
+
 }

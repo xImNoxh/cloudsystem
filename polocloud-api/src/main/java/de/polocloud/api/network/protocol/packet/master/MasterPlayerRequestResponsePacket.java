@@ -1,10 +1,12 @@
 package de.polocloud.api.network.protocol.packet.master;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
 import java.util.UUID;
 
-public class MasterPlayerRequestResponsePacket  implements IPacket {
+public class MasterPlayerRequestResponsePacket extends IPacket {
 
     private UUID uuid;
 
@@ -13,10 +15,29 @@ public class MasterPlayerRequestResponsePacket  implements IPacket {
 
     public MasterPlayerRequestResponsePacket() {
     }
+
     public MasterPlayerRequestResponsePacket(UUID uuid, String serviceName, long snowflake) {
         this.uuid = uuid;
         this.serviceName = serviceName;
         this.snowflake = snowflake;
+    }
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        writeString(byteBuf, uuid.toString());
+
+        writeString(byteBuf, serviceName);
+
+        byteBuf.writeLong(this.snowflake);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        uuid = UUID.fromString(readString(byteBuf));
+
+        serviceName = readString(byteBuf);
+
+        this.snowflake = byteBuf.readLong();
     }
 
     public String getServiceName() {
@@ -30,4 +51,5 @@ public class MasterPlayerRequestResponsePacket  implements IPacket {
     public long getSnowflake() {
         return snowflake;
     }
+
 }

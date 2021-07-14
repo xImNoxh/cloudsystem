@@ -1,8 +1,11 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
-public class GameServerMaintenanceUpdatePacket implements IPacket {
+import java.io.IOException;
+
+public class GameServerMaintenanceUpdatePacket extends IPacket {
 
     private boolean state;
     private String message;
@@ -15,19 +18,24 @@ public class GameServerMaintenanceUpdatePacket implements IPacket {
         this.message = message;
     }
 
-    public void setState(boolean state) {
-        this.state = state;
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        byteBuf.writeBoolean(state);
+        writeString(byteBuf, message);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        state = byteBuf.readBoolean();
+        message = readString(byteBuf);
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public boolean isState() {
         return state;
     }
+
 }

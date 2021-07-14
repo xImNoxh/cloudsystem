@@ -1,17 +1,37 @@
 package de.polocloud.api.network.protocol.packet.master;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
-public class MasterLoginResponsePacket implements IPacket {
+import java.io.IOException;
+
+public class MasterLoginResponsePacket extends IPacket {
 
     private boolean response;
     private String message;
 
     public MasterLoginResponsePacket() {
     }
+
     public MasterLoginResponsePacket(boolean response, String message) {
         this.response = response;
         this.message = message;
+    }
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        byteBuf.writeBoolean(this.response);
+
+        writeString(byteBuf, this.message);
+
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        this.response = byteBuf.readBoolean();
+
+        this.message = readString(byteBuf);
+
     }
 
     public String getMessage() {
@@ -29,4 +49,6 @@ public class MasterLoginResponsePacket implements IPacket {
     public boolean isResponse() {
         return response;
     }
+
+
 }

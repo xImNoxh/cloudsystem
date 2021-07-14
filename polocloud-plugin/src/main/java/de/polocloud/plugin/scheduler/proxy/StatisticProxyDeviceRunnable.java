@@ -14,7 +14,7 @@ public class StatisticProxyDeviceRunnable extends StatisticMathBalancer {
     private ScheduledTask task;
 
     public StatisticProxyDeviceRunnable(Plugin plugin, NetworkClient networkClient) {
-        task = ProxyServer.getInstance().getScheduler().schedule(plugin, () -> networkClient.sendPacket(new StatisticPacket(getUsedMemory(), -1, System.currentTimeMillis())), 5L, 5L,  TimeUnit.SECONDS);
+        //task = ProxyServer.getInstance().getScheduler().schedule(plugin, () -> networkClient.sendPacket(new StatisticPacket(getUsedMemory(), -1, System.currentTimeMillis())), 5L, 5L,  TimeUnit.SECONDS);
     }
 
     public ScheduledTask getTask() {

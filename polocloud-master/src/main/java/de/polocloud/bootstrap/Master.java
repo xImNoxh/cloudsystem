@@ -6,6 +6,9 @@ import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
+import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.ChannelInactiveEvent;
+import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
@@ -56,7 +59,6 @@ public class Master implements IStartable, ITerminatable {
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
 
 
-
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
 
@@ -103,20 +105,22 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerRegisterPacketHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerRequestJoinHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(StatisticMemoryHandler.class));
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelActiveListener.class));
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelInactiveListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerUpdateListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerDisconnectListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerControlPlayerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerHandler.class));
 
+        //events
+        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelInactiveListener.class), ChannelInactiveEvent.class);
+        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelActiveListener.class), ChannelActiveEvent.class);
+
         new Thread(() -> nettyServer.start()).start();
 
-        if(this.templateService.getLoadedTemplates().size() > 0) {
+        if (this.templateService.getLoadedTemplates().size() > 0) {
             StringBuilder builder = new StringBuilder();
             this.templateService.getLoadedTemplates().forEach(key -> builder.append(key.getName()).append(","));
-            Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length()-1));
-        }else{
+            Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
+        } else {
             Logger.log(LoggerType.INFO, "No templates founded.");
         }
 

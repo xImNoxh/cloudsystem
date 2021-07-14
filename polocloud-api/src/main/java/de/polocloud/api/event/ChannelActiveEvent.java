@@ -1,13 +1,13 @@
-package de.polocloud.api.network.event;
+package de.polocloud.api.event;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ChannelInactiveEvent implements IPacket {
+public class ChannelActiveEvent implements CloudEvent {
 
     private ChannelHandlerContext chx;
 
-    public ChannelInactiveEvent(ChannelHandlerContext chx) {
+    public ChannelActiveEvent(ChannelHandlerContext chx) {
         this.chx = chx;
 
     }

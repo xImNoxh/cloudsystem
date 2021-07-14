@@ -1,15 +1,35 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
-public class GameServerRegisterPacket implements IPacket {
+import java.io.IOException;
+
+public class GameServerRegisterPacket extends IPacket {
 
     private long snowflake;
     private int port;
 
+    public GameServerRegisterPacket() {
+
+    }
+
     public GameServerRegisterPacket(long snowflake, int port) {
         this.snowflake = snowflake;
         this.port = port;
+    }
+
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        byteBuf.writeLong(snowflake);
+        byteBuf.writeInt(port);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        this.snowflake = byteBuf.readLong();
+        this.port = byteBuf.readInt();
     }
 
     public int getPort() {

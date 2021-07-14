@@ -1,8 +1,11 @@
 package de.polocloud.api.network.protocol.packet.master;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
-public class MasterRequestServerListUpdatePacket implements IPacket {
+import java.io.IOException;
+
+public class MasterRequestServerListUpdatePacket extends IPacket {
 
     private String name;
     private String host;
@@ -15,6 +18,24 @@ public class MasterRequestServerListUpdatePacket implements IPacket {
         this.port = port;
         this.snowflake = snowflake;
         this.name = name;
+    }
+
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        writeString(byteBuf, name);
+        writeString(byteBuf, host);
+        byteBuf.writeInt(port);
+        byteBuf.writeLong(snowflake);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        name = readString(byteBuf);
+        host = readString(byteBuf);
+
+        port = byteBuf.readInt();
+        snowflake = byteBuf.readLong();
     }
 
     public String getName() {
@@ -32,4 +53,5 @@ public class MasterRequestServerListUpdatePacket implements IPacket {
     public String getHost() {
         return host;
     }
+
 }

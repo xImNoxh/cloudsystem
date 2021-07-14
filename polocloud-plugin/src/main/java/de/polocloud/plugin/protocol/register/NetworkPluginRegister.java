@@ -40,10 +40,12 @@ public class NetworkPluginRegister extends NetworkRegister {
                 System.out.println("Help me!");
                 APIResponseGameServerPacket packet = (APIResponseGameServerPacket) obj;
 
+                /* TODO
                 UUID requestId = packet.getRequestId();
                 Object response = packet.getResponse();
 
-                ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true).complete(response);
+                ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true).complete(response);                 */
+
             }
 
             @Override
@@ -54,13 +56,14 @@ public class NetworkPluginRegister extends NetworkRegister {
 
     }
 
-    public void registerMaintenanceStatePacket(){
+    public void registerMaintenanceStatePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 GameServerMaintenanceUpdatePacket maintenanceUpdatePacket = (GameServerMaintenanceUpdatePacket) obj;
                 CloudPlugin.getInstance().setState(new MaintenanceState(maintenanceUpdatePacket.isState(), maintenanceUpdatePacket.getMessage()));
             }
+
             @Override
             public Class<? extends IPacket> getPacketClass() {
                 return GameServerMaintenanceUpdatePacket.class;
@@ -75,6 +78,7 @@ public class NetworkPluginRegister extends NetworkRegister {
                 GameServerExecuteCommandPacket gameServerExecutePacket = (GameServerExecuteCommandPacket) obj;
                 bootstrapFunction.executeCommand(gameServerExecutePacket.getCommand());
             }
+
             @Override
             public Class<? extends IPacket> getPacketClass() {
                 return GameServerExecuteCommandPacket.class;

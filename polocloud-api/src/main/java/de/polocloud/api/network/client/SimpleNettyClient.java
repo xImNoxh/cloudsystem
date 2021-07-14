@@ -2,9 +2,12 @@ package de.polocloud.api.network.client;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import de.polocloud.api.network.NetworkHandler;
+import de.polocloud.api.network.protocol.packet.PacketRegistry;
+import de.polocloud.api.network.protocol.packet.handler.NetworkHandler;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.handler.PacketDecoder;
+import de.polocloud.api.network.protocol.packet.handler.PacketEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -16,9 +19,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class SimpleNettyClient implements INettyClient {
 
@@ -51,6 +51,8 @@ public class SimpleNettyClient implements INettyClient {
 
     @Override
     public void start() {
+        PacketRegistry.registerDefaultPackets();
+
         networkHandler = new NetworkHandler(protocol);
 
         MultithreadEventLoopGroup workerGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
@@ -62,10 +64,11 @@ public class SimpleNettyClient implements INettyClient {
                 ((bootstrap.group(workerGroup)).channel(Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class)).handler(new ChannelInitializer<SocketChannel>() {
 
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
-                        socketChannel.pipeline().addLast(new ObjectEncoder());
-                        socketChannel.pipeline().addLast(networkHandler);
+                    protected void initChannel(SocketChannel channel) throws Exception {
+                        channel.pipeline().addLast(new PacketDecoder())
+                            .addLast(new PacketEncoder())
+                            .addLast(networkHandler);
+
                     }
                 });
                 this.channelFuture = bootstrap.connect(host, port);

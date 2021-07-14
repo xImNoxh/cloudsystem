@@ -1,9 +1,10 @@
 package de.polocloud.bootstrap.listener;
 
 import com.google.inject.Inject;
+import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.event.ChannelInactiveEvent;
+import de.polocloud.api.event.ChannelInactiveEvent;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
@@ -16,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.concurrent.ExecutionException;
 
-public class ChannelInactiveListener extends IPacketHandler {
+public class ChannelInactiveListener implements EventHandler<ChannelInactiveEvent> {
 
     @Inject
     private IGameServerManager gameServerManager;
@@ -24,11 +25,13 @@ public class ChannelInactiveListener extends IPacketHandler {
     @Inject
     private IWrapperClientManager wrapperClientManager;
 
+
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handleEvent(ChannelInactiveEvent event) {
+        ChannelHandlerContext ctx = event.getChx();
 
         for (WrapperClient wrapperClient : wrapperClientManager.getWrapperClients()) {
-            if(wrapperClient.getConnection().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
+            if (wrapperClient.getConnection().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())) {
                 Logger.log(LoggerType.INFO, "Wrapper " + wrapperClient.getName() + " disconnected!");
                 wrapperClientManager.removeWrapper(wrapperClient);
                 return;
@@ -37,10 +40,10 @@ public class ChannelInactiveListener extends IPacketHandler {
 
         try {
             for (IGameServer o : gameServerManager.getGameServers().get()) {
-                SimpleGameServer  gameServer = (SimpleGameServer) o;
-                if(gameServer.getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())){
+                SimpleGameServer gameServer = (SimpleGameServer) o;
+                if (gameServer.getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())) {
                     Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-                        ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() +"!");
+                        ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() + "!");
                     gameServerManager.unregisterGameServer(gameServer);
                     return;
                 }
@@ -50,8 +53,5 @@ public class ChannelInactiveListener extends IPacketHandler {
         }
     }
 
-    @Override
-    public Class<? extends IPacket> getPacketClass() {
-        return ChannelInactiveEvent.class;
-    }
+
 }

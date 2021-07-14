@@ -1,10 +1,13 @@
 package de.polocloud.api.network.protocol.packet.api;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
 import java.util.UUID;
 
-public class APIResponseGameServerPacket implements IPacket {
+public class APIResponseGameServerPacket extends IPacket {
+/*TODO reimplement
 
     private UUID requestId;
     private Object response;
@@ -24,5 +27,19 @@ public class APIResponseGameServerPacket implements IPacket {
 
     public Object getResponse() {
         return response;
+    }
+
+ */
+
+
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+
     }
 }

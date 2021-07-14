@@ -22,6 +22,7 @@ public class APIRequestGameServerHandler extends IPacketHandler {
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
         APIRequestGameServerPacket packet = (APIRequestGameServerPacket) obj;
 
+        /*TODO reimplement
         UUID requestId = packet.getRequestId();
         Object value = packet.getValue();
         APIRequestGameServerPacket.Action action = packet.getAction();
@@ -31,12 +32,14 @@ public class APIRequestGameServerHandler extends IPacketHandler {
                 System.out.println("fetched gameserver " + gameServer.getName());
                 gameServerManager.getGameServerByConnection(ctx).thenAccept(requestServer -> {
                     requestServer.sendPacket(new MasterKickPlayerPacket(UUID.randomUUID(), "Test"));
-                    requestServer.sendPacket(new APIResponseGameServerPacket(requestId, gameServer));
+                    //TODO requestServer.sendPacket(new APIResponseGameServerPacket(requestId, gameServer));
                     System.out.println("api response packet sent!");
                 });
 
             });
         }
+
+         */
 
 
     }

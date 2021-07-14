@@ -1,7 +1,8 @@
-package de.polocloud.api.network;
+package de.polocloud.api.network.protocol.packet.handler;
 
-import de.polocloud.api.network.event.ChannelActiveEvent;
-import de.polocloud.api.network.event.ChannelInactiveEvent;
+import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.ChannelInactiveEvent;
+import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,14 +28,15 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         this.channelHandlerContext = ctx;
-        protocol.firePacketHandlers(ctx, new ChannelActiveEvent(ctx));
+        System.out.println("connected!");
+        EventRegistry.fireEvent(new ChannelActiveEvent(ctx));
 
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        protocol.firePacketHandlers(ctx, new ChannelInactiveEvent(ctx));
+        EventRegistry.fireEvent(new ChannelInactiveEvent(ctx));
 
     }
 

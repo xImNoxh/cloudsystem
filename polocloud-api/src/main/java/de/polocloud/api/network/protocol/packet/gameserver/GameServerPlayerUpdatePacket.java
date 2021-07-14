@@ -1,17 +1,19 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
+import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
 import java.util.UUID;
 
-public class GameServerPlayerUpdatePacket implements IPacket {
+public class GameServerPlayerUpdatePacket extends IPacket {
 
     private UUID uuid;
     private String name;
 
     private String targetServer;
 
-    public GameServerPlayerUpdatePacket(){
+    public GameServerPlayerUpdatePacket() {
 
     }
 
@@ -19,6 +21,20 @@ public class GameServerPlayerUpdatePacket implements IPacket {
         this.uuid = uuid;
         this.name = name;
         this.targetServer = targetServer;
+    }
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        writeString(byteBuf, uuid.toString());
+        writeString(byteBuf, name);
+        writeString(byteBuf, targetServer);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        uuid = UUID.fromString(readString(byteBuf));
+        name = readString(byteBuf);
+        targetServer = readString(byteBuf);
     }
 
     public String getName() {
@@ -32,4 +48,6 @@ public class GameServerPlayerUpdatePacket implements IPacket {
     public UUID getUuid() {
         return uuid;
     }
+
+
 }

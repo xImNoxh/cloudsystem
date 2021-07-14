@@ -18,6 +18,7 @@ public class StatisticMemoryHandler extends IPacketHandler {
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+        /*
         StatisticPacket packet = (StatisticPacket) obj;
         try {
             IGameServer gameServer = gameServerManager.getGameServerByConnection(ctx).get();
@@ -30,6 +31,8 @@ public class StatisticMemoryHandler extends IPacketHandler {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
+         */
     }
 
     @Override

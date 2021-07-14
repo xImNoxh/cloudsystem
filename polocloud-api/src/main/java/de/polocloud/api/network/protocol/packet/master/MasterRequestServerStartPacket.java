@@ -2,8 +2,11 @@ package de.polocloud.api.network.protocol.packet.master;
 
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.template.GameServerVersion;
+import io.netty.buffer.ByteBuf;
 
-public class MasterRequestServerStartPacket implements IPacket {
+import java.io.IOException;
+
+public class MasterRequestServerStartPacket extends IPacket {
 
     private String template;
     private GameServerVersion version;
@@ -25,6 +28,30 @@ public class MasterRequestServerStartPacket implements IPacket {
         this.maxPlayers = maxPlayers;
         this.serverName = serverName;
         this.motd = motd;
+    }
+
+    @Override
+    public void write(ByteBuf byteBuf) throws IOException {
+        writeString(byteBuf, template);
+        writeString(byteBuf, version.getTitle());
+        byteBuf.writeLong(snowflake);
+        byteBuf.writeBoolean(isProxy);
+        byteBuf.writeInt(memory);
+        byteBuf.writeInt(maxPlayers);
+        writeString(byteBuf, serverName);
+        writeString(byteBuf, motd);
+    }
+
+    @Override
+    public void read(ByteBuf byteBuf) throws IOException {
+        template = readString(byteBuf);
+        version = GameServerVersion.getVersion(readString(byteBuf));
+        snowflake = byteBuf.readLong();
+        isProxy = byteBuf.readBoolean();
+        memory = byteBuf.readInt();
+        maxPlayers = byteBuf.readInt();
+        serverName = readString(byteBuf);
+        motd = readString(byteBuf);
     }
 
     public String getMotd() {
@@ -58,4 +85,5 @@ public class MasterRequestServerStartPacket implements IPacket {
     public long getSnowflake() {
         return snowflake;
     }
+
 }

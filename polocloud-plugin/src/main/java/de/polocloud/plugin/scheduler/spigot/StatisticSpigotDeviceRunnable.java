@@ -12,7 +12,7 @@ public class StatisticSpigotDeviceRunnable extends StatisticMathBalancer {
     private BukkitTask task;
 
     public StatisticSpigotDeviceRunnable(Plugin plugin, NetworkClient networkClient) {
-        this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> networkClient.sendPacket(new StatisticPacket(getUsedMemory(), -1, System.currentTimeMillis())),100,100);
+        //this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> networkClient.sendPacket(new StatisticPacket(getUsedMemory(), -1, System.currentTimeMillis())),100,100);
     }
 
     public BukkitTask getTask() {
