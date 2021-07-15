@@ -5,7 +5,6 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.APIRequestGameServerPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
-import de.polocloud.api.util.Snowflake;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,7 +24,7 @@ public class APIGameServerManager implements IGameServerManager {
 
     private final NetworkClient networkClient = CloudPlugin.getInstance().getNetworkClient();
 
-    private final Map<UUID, CompletableFuture<IGameServer>> futureMap = new ConcurrentHashMap<>();
+    private final Map<UUID, CompletableFuture<?>> futureMap = new ConcurrentHashMap<>();
 
     public <T> CompletableFuture<T> getCompletableFuture(UUID requestId, boolean autoRemove) {
         if (autoRemove) {
@@ -35,7 +34,7 @@ public class APIGameServerManager implements IGameServerManager {
         }
     }
 
-    public void removeCompletableFuture(UUID requestId){
+    public void removeCompletableFuture(UUID requestId) {
         futureMap.remove(requestId);
     }
 
@@ -43,13 +42,11 @@ public class APIGameServerManager implements IGameServerManager {
     public CompletableFuture<IGameServer> getGameServerByName(String name) {
         CompletableFuture<IGameServer> completableFuture = new CompletableFuture<>();
 
-
         executor.submit(() -> {
             UUID requestID = UUID.randomUUID();
+
             futureMap.put(requestID, completableFuture);
-
             networkClient.sendPacket(new APIRequestGameServerPacket(requestID, APIRequestGameServerPacket.Action.NAME, name));
-
 
         });
 
@@ -64,8 +61,17 @@ public class APIGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<List<IGameServer>> getGameServers() {
-        throw new NotImplementedException();
+        CompletableFuture<List<IGameServer>> completableFuture = new CompletableFuture<>();
 
+        executor.submit(() -> {
+            UUID requestId = UUID.randomUUID();
+
+            futureMap.put(requestId, completableFuture);
+            networkClient.sendPacket(new APIRequestGameServerPacket(requestId, APIRequestGameServerPacket.Action.ALL, "_"));
+        });
+
+
+        return completableFuture;
     }
 
     @Override

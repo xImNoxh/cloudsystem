@@ -36,9 +36,13 @@ public class APIResponseGameServerPacket extends IPacket {
         byteBuf.writeInt(size);
 
         for (IGameServer gameServer : response) {
+            writeGameServer(byteBuf, gameServer);
+            /*
             writeString(byteBuf, gameServer.getName());
             byteBuf.writeLong(gameServer.getSnowflake());
             writeString(byteBuf, gameServer.getStatus().toString());
+             */
+
         }
 
         writeString(byteBuf, type.toString());
@@ -53,7 +57,9 @@ public class APIResponseGameServerPacket extends IPacket {
         int size = byteBuf.readInt();
 
         for (int i = 0; i < size; i++) {
-
+            IGameServer tmpGameServer = readGameServer(byteBuf);
+            response.add(tmpGameServer);
+            /*
             String name = readString(byteBuf);
             long snowflake = byteBuf.readLong();
             GameServerStatus status = GameServerStatus.valueOf(readString(byteBuf));
@@ -125,6 +131,9 @@ public class APIResponseGameServerPacket extends IPacket {
                 }
             };
             response.add(tmpGameServer);
+
+ */
+
         }
 
         type = Type.valueOf(readString(byteBuf));
