@@ -6,6 +6,7 @@ import de.polocloud.plugin.protocol.NetworkClient;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -28,6 +29,8 @@ public class CollectiveSpigotEvents implements Listener {
     @EventHandler
     public void handle(PlayerLoginEvent event) {
 
+        if(event.getResult().equals(PlayerLoginEvent.Result.KICK_FULL)) event.allow();
+
         if (CloudPlugin.getInstance().getState() == null) {
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "");
             return;
@@ -38,6 +41,10 @@ public class CollectiveSpigotEvents implements Listener {
         if (CloudPlugin.getInstance().getState().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CloudPlugin.getInstance().getState().getKickMessage());
             return;
+        }
+
+        if(Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers()){
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
         }
 
         networkClient.sendPacket(new GameServerControlPlayerPacket(player.getUniqueId()));

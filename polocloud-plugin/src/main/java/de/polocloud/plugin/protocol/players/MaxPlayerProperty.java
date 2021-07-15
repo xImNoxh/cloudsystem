@@ -6,6 +6,8 @@ public class MaxPlayerProperty {
 
     private int maxPlayers;
     private BootstrapFunction bootstrapFunction;
+    private String message;
+
 
     public MaxPlayerProperty(BootstrapFunction bootstrapFunction) {
         this.bootstrapFunction = bootstrapFunction;
@@ -24,5 +26,11 @@ public class MaxPlayerProperty {
         this.maxPlayers = maxPlayers;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
+    public String getMessage() {
+        return message;
+    }
 }
