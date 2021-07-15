@@ -1,17 +1,12 @@
 package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
-import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterKickPlayerPacket;
-import de.polocloud.plugin.api.CloudExecutor;
-import de.polocloud.plugin.api.server.APIGameServerManager;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import io.netty.channel.ChannelHandlerContext;
 import org.bukkit.Bukkit;
-
-import java.util.UUID;
 
 public class NetworkSpigotRegister extends NetworkRegister {
 
@@ -28,7 +23,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
     public void registerMasterKickPlayerPacket() {
         networkClient.registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterKickPlayerPacket packet = (MasterKickPlayerPacket) obj;
                 if (Bukkit.getPlayer(packet.getUuid()) != null) {
                     Bukkit.getPlayer(packet.getUuid()).kickPlayer(packet.getMessage());
@@ -36,7 +31,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return MasterKickPlayerPacket.class;
             }
         });

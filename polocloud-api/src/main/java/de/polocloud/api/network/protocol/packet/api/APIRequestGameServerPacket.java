@@ -1,12 +1,12 @@
 package de.polocloud.api.network.protocol.packet.api;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class APIRequestGameServerPacket extends IPacket {
+public class APIRequestGameServerPacket extends Packet {
 
 
     private UUID requestId;
@@ -55,7 +55,6 @@ public class APIRequestGameServerPacket extends IPacket {
         NAME,
         SNOWFLAKE,
         ALL,
-        LIST_BY_NAME,
         LIST_BY_TYPE,
     }
 

@@ -5,13 +5,11 @@ import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.config.MasterConfig;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -28,7 +26,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
     private MasterConfig config;
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
         UUID uuid = packet.getUuid();
         try {
@@ -60,7 +58,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
     }
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return GameServerPlayerRequestJoinPacket.class;
     }
 }

@@ -29,6 +29,8 @@ import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
 import de.polocloud.bootstrap.network.handler.*;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
+import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
+import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
 import de.polocloud.logger.log.Logger;
@@ -110,6 +112,9 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerDisconnectListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerControlPlayerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerHandler.class));
+
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PublishPacketHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(SubscribePacketHandler.class));
 
         //events
         EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelInactiveListener.class), ChannelInactiveEvent.class);

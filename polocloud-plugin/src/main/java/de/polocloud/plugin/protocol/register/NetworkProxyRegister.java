@@ -1,7 +1,7 @@
 package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
@@ -36,13 +36,13 @@ public class NetworkProxyRegister extends NetworkRegister {
     private void registerGameServerUnregisterPacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerUnregisterPacket packet = (GameServerUnregisterPacket) obj;
                 ProxyServer.getInstance().getServers().remove(packet.getName());
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return GameServerUnregisterPacket.class;
             }
         });
@@ -51,7 +51,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     public void registerMasterRequestServerListUpdatePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterRequestServerListUpdatePacket packet = (MasterRequestServerListUpdatePacket) obj;
                 ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
                     packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
@@ -60,7 +60,7 @@ public class NetworkProxyRegister extends NetworkRegister {
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return MasterRequestServerListUpdatePacket.class;
             }
         });
@@ -69,7 +69,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     public void registerMasterPlayerRequestResponsePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerRequestResponsePacket packet = (MasterPlayerRequestResponsePacket) obj;
                 LoginEvent loginEvent = networkLoginCache.getLoginEvents().remove(packet.getUuid());
                 if(packet.getSnowflake() == -1){
@@ -82,7 +82,7 @@ public class NetworkProxyRegister extends NetworkRegister {
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerRequestResponsePacket.class;
             }
         });
@@ -91,13 +91,13 @@ public class NetworkProxyRegister extends NetworkRegister {
     public void registerCloudMotdUpdatePacket(){
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                  ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;
 
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return ProxyMotdUpdatePacket.class;
             }
         });

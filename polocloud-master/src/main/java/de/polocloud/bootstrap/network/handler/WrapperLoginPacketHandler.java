@@ -1,10 +1,9 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
@@ -29,7 +28,7 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
     private MasterConfig config;
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
 
         WrapperLoginPacket packet = (WrapperLoginPacket) obj;
 
@@ -63,7 +62,7 @@ public class WrapperLoginPacketHandler extends IPacketHandler {
     }
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return WrapperLoginPacket.class;
     }
 }

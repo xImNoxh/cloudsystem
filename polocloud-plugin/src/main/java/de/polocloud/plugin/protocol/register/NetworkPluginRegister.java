@@ -2,7 +2,7 @@ package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
@@ -17,7 +17,6 @@ import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -31,24 +30,31 @@ public class NetworkPluginRegister extends NetworkRegister {
 
         this.bootstrapFunction = bootstrapFunction;
 
+        enableCloudExecutor();
+
         registerGameServerExecutePacket();
         registerMaintenanceStatePacket();
         registerGameServerShutdownPacket();
         registerMaxPlayersUpdatePacket();
         registerAPIHandler();
+
+    }
+
+    private void enableCloudExecutor() {
+        new CloudExecutor(getNetworkClient(), getNetworkClient().getClient().getProtocol());
     }
 
     public void registerMaxPlayersUpdatePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerMaxPlayersUpdatePacket packet = (GameServerMaxPlayersUpdatePacket) obj;
                 CloudPlugin.getInstance().getMaxPlayerProperty().setMaxPlayers(packet.getMaxPlayers());
                 CloudPlugin.getInstance().getMaxPlayerProperty().setMessage(packet.getMessage());
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return GameServerMaxPlayersUpdatePacket.class;
             }
         });
@@ -57,7 +63,7 @@ public class NetworkPluginRegister extends NetworkRegister {
     public void registerAPIHandler() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 System.out.println("Help me!");
                 APIResponseGameServerPacket packet = (APIResponseGameServerPacket) obj;
 
@@ -65,16 +71,16 @@ public class NetworkPluginRegister extends NetworkRegister {
                 List<IGameServer> response = packet.getResponse();
                 CompletableFuture<Object> completableFuture = ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true);
 
-                if(packet.getType() == APIResponseGameServerPacket.Type.SINGLE){
+                if (packet.getType() == APIResponseGameServerPacket.Type.SINGLE) {
                     completableFuture.complete(response.get(0));
-                }else{
+                } else {
                     completableFuture.complete(response);
                 }
 
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return APIResponseGameServerPacket.class;
             }
         });
@@ -84,13 +90,13 @@ public class NetworkPluginRegister extends NetworkRegister {
     public void registerMaintenanceStatePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerMaintenanceUpdatePacket maintenanceUpdatePacket = (GameServerMaintenanceUpdatePacket) obj;
                 CloudPlugin.getInstance().setState(new MaintenanceState(maintenanceUpdatePacket.isState(), maintenanceUpdatePacket.getMessage()));
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return GameServerMaintenanceUpdatePacket.class;
             }
         });
@@ -99,13 +105,13 @@ public class NetworkPluginRegister extends NetworkRegister {
     public void registerGameServerExecutePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerExecuteCommandPacket gameServerExecutePacket = (GameServerExecuteCommandPacket) obj;
                 bootstrapFunction.executeCommand(gameServerExecutePacket.getCommand());
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return GameServerExecuteCommandPacket.class;
             }
         });
@@ -114,12 +120,12 @@ public class NetworkPluginRegister extends NetworkRegister {
     public void registerGameServerShutdownPacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 bootstrapFunction.shutdown();
             }
 
             @Override
-            public Class<? extends IPacket> getPacketClass() {
+            public Class<? extends Packet> getPacketClass() {
                 return GameServerShutdownPacket.class;
             }
         });

@@ -2,7 +2,7 @@ package de.polocloud.bootstrap.gameserver;
 
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
@@ -119,7 +119,7 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public void sendPacket(IPacket packet) {
+    public void sendPacket(Packet packet) {
         if(this.ctx != null){
             this.ctx.writeAndFlush(packet);
         }

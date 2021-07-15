@@ -55,8 +55,17 @@ public class APIGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<IGameServer> getGameSererBySnowflake(long snowflake) {
-        throw new NotImplementedException();
+        CompletableFuture<IGameServer> completableFuture = new CompletableFuture<>();
 
+        executor.submit(() -> {
+            UUID requestId = UUID.randomUUID();
+
+            futureMap.put(requestId, completableFuture);
+            networkClient.sendPacket(new APIRequestGameServerPacket(requestId, APIRequestGameServerPacket.Action.SNOWFLAKE, "_"));
+        });
+
+
+        return completableFuture;
     }
 
     @Override
@@ -82,7 +91,17 @@ public class APIGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<List<IGameServer>> getGameServersByType(TemplateType type) {
-        throw new NotImplementedException();
+        CompletableFuture<List<IGameServer>> completableFuture = new CompletableFuture<>();
+
+        executor.submit(() -> {
+            UUID requestId = UUID.randomUUID();
+
+            futureMap.put(requestId, completableFuture);
+            networkClient.sendPacket(new APIRequestGameServerPacket(requestId, APIRequestGameServerPacket.Action.LIST_BY_TYPE, type.toString()));
+        });
+
+
+        return completableFuture;
 
     }
 

@@ -1,7 +1,7 @@
 package de.polocloud.wrapper.network.handler;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -29,7 +29,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     }
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
 
         MasterRequestServerStartPacket packet = (MasterRequestServerStartPacket) obj;
         String templateName = packet.getTemplate();
@@ -132,7 +132,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return MasterRequestServerStartPacket.class;
     }
 }

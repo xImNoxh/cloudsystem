@@ -1,7 +1,7 @@
 package de.polocloud.api.network.protocol;
 
 import com.google.inject.Inject;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 
 import javax.inject.Named;
@@ -18,7 +18,7 @@ public class SimpleProtocol implements IProtocol {
     private int threadSize = 8;
 
 
-    private Map<Class<? extends IPacket>, List<IPacketHandler>> packetHandlerMap = new HashMap<>();
+    private Map<Class<? extends Packet>, List<IPacketHandler>> packetHandlerMap = new HashMap<>();
 
 
     @Override
@@ -38,7 +38,7 @@ public class SimpleProtocol implements IProtocol {
     }
 
     @Override
-    public void firePacketHandlers(ChannelHandlerContext ctx, IPacket packet) {
+    public void firePacketHandlers(ChannelHandlerContext ctx, Packet packet) {
 
         if (packetHandlerMap.containsKey(packet.getClass())) {
             List<IPacketHandler> iPacketHandlers = packetHandlerMap.get(packet.getClass());

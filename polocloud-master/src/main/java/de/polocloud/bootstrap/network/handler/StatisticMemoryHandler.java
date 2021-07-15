@@ -1,15 +1,11 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
-import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.concurrent.ExecutionException;
 
 public class StatisticMemoryHandler extends IPacketHandler {
 
@@ -17,7 +13,7 @@ public class StatisticMemoryHandler extends IPacketHandler {
     private IGameServerManager gameServerManager;
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         /*
         StatisticPacket packet = (StatisticPacket) obj;
         try {
@@ -36,7 +32,7 @@ public class StatisticMemoryHandler extends IPacketHandler {
     }
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return StatisticPacket.class;
     }
 

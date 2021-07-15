@@ -1,11 +1,11 @@
 package de.polocloud.api.network.protocol.packet.master;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class MasterRequestServerListUpdatePacket extends IPacket {
+public class MasterRequestServerListUpdatePacket extends Packet {
 
     private String name;
     private String host;

@@ -2,10 +2,14 @@ package de.polocloud.api.network.client;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.CloudEvent;
+import de.polocloud.api.event.EventHandler;
+import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.network.protocol.packet.handler.*;
 import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -17,8 +21,9 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleNettyClient implements INettyClient {
 
@@ -45,6 +50,8 @@ public class SimpleNettyClient implements INettyClient {
         this.host = host;
         this.port = port;
         this.protocol = protocol;
+
+
     }
 
     private NetworkHandler networkHandler;
@@ -95,7 +102,10 @@ public class SimpleNettyClient implements INettyClient {
     }
 
     @Override
-    public void sendPacket(IPacket packet) {
+    public void sendPacket(Packet packet) {
+        if (networkHandler.getChannelHandlerContext() == null) {
+            return;
+        }
         networkHandler.getChannelHandlerContext().writeAndFlush(packet);
     }
 

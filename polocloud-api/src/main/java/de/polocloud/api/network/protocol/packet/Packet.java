@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet;
 
+import com.google.gson.Gson;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
@@ -11,15 +12,16 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
-public abstract class IPacket {
+public abstract class Packet {
+
+    protected static Gson gson = new Gson();
 
     public abstract void write(ByteBuf byteBuf) throws IOException;
 
     public abstract void read(ByteBuf byteBuf) throws IOException;
 
-    public void writeGameServer(ByteBuf byteBuf, IGameServer gameServer) {
+    protected void writeGameServer(ByteBuf byteBuf, IGameServer gameServer) {
 
         writeString(byteBuf, gameServer.getName());
         writeString(byteBuf, gameServer.getStatus().toString());
@@ -35,7 +37,7 @@ public abstract class IPacket {
 
     }
 
-    public IGameServer readGameServer(ByteBuf byteBuf) {
+    protected IGameServer readGameServer(ByteBuf byteBuf) {
 
         String name = readString(byteBuf);
         GameServerStatus status = GameServerStatus.valueOf(readString(byteBuf));
@@ -113,7 +115,7 @@ public abstract class IPacket {
             }
 
             @Override
-            public void sendPacket(IPacket packet) {
+            public void sendPacket(Packet packet) {
                 //TODO
                 throw new NotImplementedException();
             }
@@ -122,7 +124,7 @@ public abstract class IPacket {
     }
 
 
-    private void writeTemplate(ByteBuf byteBuf, ITemplate template) {
+    protected void writeTemplate(ByteBuf byteBuf, ITemplate template) {
 
         writeString(byteBuf, template.getName());
 
@@ -143,7 +145,7 @@ public abstract class IPacket {
 
     }
 
-    public ITemplate readTemplate(ByteBuf byteBuf) {
+    protected ITemplate readTemplate(ByteBuf byteBuf) {
 
         String name = readString(byteBuf);
 
@@ -228,14 +230,14 @@ public abstract class IPacket {
 
     }
 
-    public void writeStringArray(ByteBuf byteBuf, String[] arr) {
+    protected void writeStringArray(ByteBuf byteBuf, String[] arr) {
         byteBuf.writeInt(arr.length);
         for (String s : arr) {
             writeString(byteBuf, s);
         }
     }
 
-    public String[] readStringArray(ByteBuf byteBuf) {
+    protected String[] readStringArray(ByteBuf byteBuf) {
         int length = byteBuf.readInt();
         String[] array = new String[length];
         for (int i = 0; i < length; i++) {
@@ -244,13 +246,13 @@ public abstract class IPacket {
         return array;
     }
 
-    public void writeString(ByteBuf byteBuf, String s) {
+    protected void writeString(ByteBuf byteBuf, String s) {
         byte[] bArr = s.getBytes();
         byteBuf.writeInt(bArr.length);
         byteBuf.writeBytes(bArr);
     }
 
-    public String readString(ByteBuf byteBuf) {
+    protected String readString(ByteBuf byteBuf) {
         byte[] bArr = new byte[byteBuf.readInt()];
         byteBuf.readBytes(bArr);
         return new String(bArr);

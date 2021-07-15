@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
@@ -29,7 +29,7 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
     private MasterConfig masterConfig;
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         GameServerPlayerUpdatePacket packet = (GameServerPlayerUpdatePacket) obj;
 
         String name = packet.getName();
@@ -69,7 +69,7 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
     }
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return GameServerPlayerUpdatePacket.class;
     }
 }

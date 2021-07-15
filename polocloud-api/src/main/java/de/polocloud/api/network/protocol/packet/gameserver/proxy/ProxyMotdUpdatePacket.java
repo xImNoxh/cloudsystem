@@ -1,12 +1,11 @@
 package de.polocloud.api.network.protocol.packet.gameserver.proxy;
 
-import de.polocloud.api.gameserver.motd.ICloudMotd;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class ProxyMotdUpdatePacket extends IPacket {
+public class ProxyMotdUpdatePacket extends Packet {
     //TODO reimplement
     /*
         private ICloudMotd cloudMotd;

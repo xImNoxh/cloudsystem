@@ -1,12 +1,12 @@
 package de.polocloud.api.network.protocol.packet.master;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.template.GameServerVersion;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class MasterRequestServerStartPacket extends IPacket {
+public class MasterRequestServerStartPacket extends Packet {
 
     private String template;
     private GameServerVersion version;

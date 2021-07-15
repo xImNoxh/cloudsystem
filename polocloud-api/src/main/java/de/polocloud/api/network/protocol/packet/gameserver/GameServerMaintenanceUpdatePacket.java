@@ -1,11 +1,11 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class GameServerMaintenanceUpdatePacket extends IPacket {
+public class GameServerMaintenanceUpdatePacket extends Packet {
 
     private boolean state;
     private String message;

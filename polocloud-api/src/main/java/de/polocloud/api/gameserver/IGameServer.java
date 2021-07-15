@@ -1,6 +1,6 @@
 package de.polocloud.api.gameserver;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
 
@@ -33,7 +33,7 @@ public interface IGameServer extends Serializable {
 
     void stop();
 
-    void sendPacket(IPacket packet);
+    void sendPacket(Packet packet);
 
 
 

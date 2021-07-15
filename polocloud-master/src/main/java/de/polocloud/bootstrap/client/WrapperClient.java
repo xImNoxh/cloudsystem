@@ -1,7 +1,7 @@
 package de.polocloud.bootstrap.client;
 
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.api.template.TemplateType;
@@ -9,8 +9,6 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.io.Console;
 
 public class WrapperClient implements IPacketSender {
 
@@ -36,7 +34,7 @@ public class WrapperClient implements IPacketSender {
     }
 
     @Override
-    public void sendPacket(IPacket object) {
+    public void sendPacket(Packet object) {
         this.chx.writeAndFlush(object);
     }
 

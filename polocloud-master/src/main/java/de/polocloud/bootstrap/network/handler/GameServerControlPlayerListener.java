@@ -2,9 +2,8 @@ package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlayerPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterKickPlayerPacket;
 import de.polocloud.api.player.ICloudPlayerManager;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -16,7 +15,7 @@ public class GameServerControlPlayerListener extends IPacketHandler {
     private ICloudPlayerManager playerManager;
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
 
         GameServerControlPlayerPacket packet = (GameServerControlPlayerPacket) obj;
 
@@ -28,7 +27,7 @@ public class GameServerControlPlayerListener extends IPacketHandler {
     }
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return GameServerControlPlayerPacket.class;
     }
 }

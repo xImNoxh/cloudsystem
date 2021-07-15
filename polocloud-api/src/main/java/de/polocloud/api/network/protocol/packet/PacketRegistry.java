@@ -2,57 +2,68 @@ package de.polocloud.api.network.protocol.packet;
 
 import de.polocloud.api.network.protocol.packet.api.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.PublishPacket;
+import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PacketRegistry {
 
-    private static List<Class<? extends IPacket>> packetList = new ArrayList<>();
+    //private static List<Class<? extends Packet>> packetList = new ArrayList<>();
 
-    public static void registerPacket(Class<? extends IPacket> packet) {
-        packetList.add(packet);
+    private static Map<Integer, Class<? extends Packet>> packetMap = new ConcurrentHashMap<>();
+
+    public static void registerPacket(int id, Class<? extends Packet> packet) {
+        packetMap.put(id, packet);
     }
 
-    public static void registerDefaultPackets(){
-        registerPacket(APIResponseGameServerPacket.class);
-        registerPacket(APIRequestGameServerPacket.class);
+    public static void registerDefaultPackets() {
+        registerPacket(100, APIResponseGameServerPacket.class);
+        registerPacket(101, APIRequestGameServerPacket.class);
 
-        registerPacket(ProxyMotdUpdatePacket.class);
-        registerPacket(GameServerControlPlayerPacket.class);
-        registerPacket(GameServerExecuteCommandPacket.class);
-        registerPacket(GameServerMaintenanceUpdatePacket.class);
-        registerPacket(GameServerMaxPlayersUpdatePacket.class);
-        registerPacket(GameServerPlayerDisconnectPacket.class);
-        registerPacket(GameServerPlayerRequestJoinPacket.class);
-        registerPacket(GameServerPlayerUpdatePacket.class);
-        registerPacket(GameServerRegisterPacket.class);
-        registerPacket(GameServerShutdownPacket.class);
-        registerPacket(GameServerUnregisterPacket.class);
+        registerPacket(102, ProxyMotdUpdatePacket.class);
+        registerPacket(103, GameServerControlPlayerPacket.class);
+        registerPacket(104, GameServerExecuteCommandPacket.class);
+        registerPacket(105, GameServerMaintenanceUpdatePacket.class);
+        registerPacket(106, GameServerMaxPlayersUpdatePacket.class);
+        registerPacket(107, GameServerPlayerDisconnectPacket.class);
+        registerPacket(108, GameServerPlayerRequestJoinPacket.class);
+        registerPacket(109, GameServerPlayerUpdatePacket.class);
+        registerPacket(110, GameServerRegisterPacket.class);
+        registerPacket(111, GameServerShutdownPacket.class);
+        registerPacket(112, GameServerUnregisterPacket.class);
 
-        registerPacket(MasterKickPlayerPacket.class);
-        registerPacket(MasterLoginResponsePacket.class);
-        registerPacket(MasterPlayerRequestResponsePacket.class);
-        registerPacket(MasterRequestServerListUpdatePacket.class);
-        registerPacket(MasterRequestServerStartPacket.class);
+        registerPacket(113, MasterKickPlayerPacket.class);
+        registerPacket(114, MasterLoginResponsePacket.class);
+        registerPacket(115, MasterPlayerRequestResponsePacket.class);
+        registerPacket(116, MasterRequestServerListUpdatePacket.class);
+        registerPacket(117, MasterRequestServerStartPacket.class);
 
-        registerPacket(StatisticPacket.class);
+        registerPacket(118, StatisticPacket.class);
 
-        registerPacket(WrapperLoginPacket.class);
+        registerPacket(119, WrapperLoginPacket.class);
 
+        registerPacket(120, PublishPacket.class);
+        registerPacket(121, SubscribePacket.class);
     }
 
-    public static int getPacketId(Class<? extends IPacket> clazz){
-        return packetList.indexOf(clazz);
+    public static int getPacketId(Class<? extends Packet> clazz) {
+        for (Integer id : packetMap.keySet()) {
+            if (packetMap.get(id).equals(clazz)) {
+                return id;
+            }
+        }
+        return -1;
     }
 
-    public static IPacket createInstance(int id) throws InstantiationException, IllegalAccessException {
-        return packetList.get(id).newInstance();
+    public static Packet createInstance(int id) throws InstantiationException, IllegalAccessException {
+        return packetMap.get(id).newInstance();
     }
 
 }

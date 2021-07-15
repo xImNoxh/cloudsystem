@@ -1,12 +1,12 @@
 package de.polocloud.api.network.protocol.packet.master;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class MasterPlayerRequestResponsePacket extends IPacket {
+public class MasterPlayerRequestResponsePacket extends Packet {
 
     private UUID uuid;
 

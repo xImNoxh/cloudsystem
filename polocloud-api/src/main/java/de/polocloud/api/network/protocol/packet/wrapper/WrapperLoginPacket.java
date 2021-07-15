@@ -1,11 +1,11 @@
 package de.polocloud.api.network.protocol.packet.wrapper;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class WrapperLoginPacket extends IPacket {
+public class WrapperLoginPacket extends Packet {
 
     private String name;
     private String key;

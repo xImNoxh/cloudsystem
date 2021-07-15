@@ -16,8 +16,10 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void onEnable() {
-        getCommand("testCloud").setExecutor(new TestCloudCommand());
+
         new CloudPlugin(this, this);
+
+        getCommand("testCloud").setExecutor(new TestCloudCommand());
     }
 
     @Override

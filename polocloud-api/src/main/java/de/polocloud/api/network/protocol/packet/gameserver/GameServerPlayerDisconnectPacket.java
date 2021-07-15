@@ -1,12 +1,12 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class GameServerPlayerDisconnectPacket extends IPacket {
+public class GameServerPlayerDisconnectPacket extends Packet {
 
     private UUID uuid;
     private String name;

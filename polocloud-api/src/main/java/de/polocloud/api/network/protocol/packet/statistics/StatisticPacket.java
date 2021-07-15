@@ -1,11 +1,11 @@
 package de.polocloud.api.network.protocol.packet.statistics;
 
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class StatisticPacket extends IPacket {
+public class StatisticPacket extends Packet {
 
     private long currentMemory;
     private int tps;

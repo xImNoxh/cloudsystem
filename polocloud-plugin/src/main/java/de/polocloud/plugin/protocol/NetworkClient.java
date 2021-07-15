@@ -9,7 +9,8 @@ import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.SimpleProtocol;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.IPacketSender;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 
 import java.io.File;
@@ -17,16 +18,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class NetworkClient {
+public class NetworkClient implements IPacketSender {
 
     private INettyClient client;
     private CloudAPI cloudAPI;
 
-    public void connect(int port) {
-        this.cloudAPI = new PoloCloudAPI();
-
-        String path = null;
+    public NetworkClient() {
         try {
+
             File parentFile = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getParentFile().getParentFile();
             parentFile = new File(parentFile + "/PoloCloud.json");
@@ -45,23 +44,35 @@ public class NetworkClient {
 
             String[] split = masterAddress.split(":");
             this.client = new SimpleNettyClient(split[0], Integer.parseInt(split[1]), new SimpleProtocol());
-
-            new Thread(() -> {
-                this.client.start();
-                System.exit(-1);
-            }).start();
-
-            new Thread(() -> {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                register(port);
-            }).start();
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public INettyClient getClient() {
+        return client;
+    }
+
+    public void connect(int port) {
+        this.cloudAPI = new PoloCloudAPI();
+
+        String path = null;
+
+
+        new Thread(() -> {
+            this.client.start();
+            System.exit(-1);
+        }).start();
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            register(port);
+        }).start();
+
     }
 
     public void registerPacketHandler(IPacketHandler packetHandler) {
@@ -80,7 +91,8 @@ public class NetworkClient {
         }
     }
 
-    public void sendPacket(IPacket packet) {
+    @Override
+    public void sendPacket(Packet packet) {
         this.client.sendPacket(packet);
     }
 }

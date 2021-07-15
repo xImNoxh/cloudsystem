@@ -1,12 +1,11 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class GameServerExecuteCommandPacket extends IPacket {
+public class GameServerExecuteCommandPacket extends Packet {
 
     private String command;
 

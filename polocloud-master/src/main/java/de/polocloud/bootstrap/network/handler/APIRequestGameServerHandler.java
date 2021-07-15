@@ -4,17 +4,15 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterKickPlayerPacket;
 import de.polocloud.api.template.TemplateType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 public class APIRequestGameServerHandler extends IPacketHandler {
 
@@ -22,7 +20,7 @@ public class APIRequestGameServerHandler extends IPacketHandler {
     private IGameServerManager gameServerManager;
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         APIRequestGameServerPacket packet = (APIRequestGameServerPacket) obj;
 
         UUID requestId = packet.getRequestId();
@@ -47,6 +45,10 @@ public class APIRequestGameServerHandler extends IPacketHandler {
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, gameServerList, APIResponseGameServerPacket.Type.LIST));
 
                 });
+            }else if(action == APIRequestGameServerPacket.Action.SNOWFLAKE){
+                gameServerManager.getGameSererBySnowflake(Long.parseLong(value)).thenAccept(gameServer -> {
+                    requestServer.sendPacket(new APIResponseGameServerPacket(requestId, Collections.singletonList(gameServer), APIResponseGameServerPacket.Type.SINGLE));
+                });
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -55,7 +57,7 @@ public class APIRequestGameServerHandler extends IPacketHandler {
     }
 
     @Override
-    public Class<? extends IPacket> getPacketClass() {
+    public Class<? extends Packet> getPacketClass() {
         return APIRequestGameServerPacket.class;
     }
 }

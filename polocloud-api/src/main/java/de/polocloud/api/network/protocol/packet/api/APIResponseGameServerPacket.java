@@ -1,10 +1,7 @@
 package de.polocloud.api.network.protocol.packet.api;
 
-import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.IPacket;
-import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
@@ -12,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class APIResponseGameServerPacket extends IPacket {
+public class APIResponseGameServerPacket extends Packet {
 
     private UUID requestId;
     private List<IGameServer> response;

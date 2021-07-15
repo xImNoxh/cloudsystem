@@ -4,7 +4,7 @@ import de.polocloud.api.event.ChannelActiveEvent;
 import de.polocloud.api.event.ChannelInactiveEvent;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.packet.IPacket;
+import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -13,7 +13,6 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
     private IProtocol protocol;
 
     private ChannelHandlerContext channelHandlerContext;
-
 
     public NetworkHandler(IProtocol protocol) {
         this.protocol = protocol;
@@ -41,8 +40,8 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
-        if (o instanceof IPacket) {
-            protocol.firePacketHandlers(channelHandlerContext, (IPacket) o);
+        if (o instanceof Packet) {
+            protocol.firePacketHandlers(channelHandlerContext, (Packet) o);
         }
     }
 
