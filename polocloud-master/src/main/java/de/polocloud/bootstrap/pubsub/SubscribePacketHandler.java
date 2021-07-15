@@ -9,12 +9,12 @@ import io.netty.channel.ChannelHandlerContext;
 public class SubscribePacketHandler extends IPacketHandler {
 
     @Inject
-    private PubSubManager pubSubManager;
+    private MasterPubSubManager pubSubManager;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         SubscribePacket packet = (SubscribePacket) obj;
-
+        System.out.println("subbed to  " + packet.getChannel());
         pubSubManager.subscribe(ctx, packet.getChannel());
     }
 

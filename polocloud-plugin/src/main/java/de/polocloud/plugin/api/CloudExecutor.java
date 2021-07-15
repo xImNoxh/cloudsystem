@@ -16,6 +16,7 @@ public class CloudExecutor {
     public CloudExecutor(IPacketSender sender, IProtocol protocol) {
         instance = this;
         this.pubSubManager = new SimplePubSubManager(sender, protocol);
+
     }
 
     private IGameServerManager gameServerManager = new APIGameServerManager();

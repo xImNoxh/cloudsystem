@@ -11,7 +11,7 @@ import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.config.MasterConfig;
-import de.polocloud.bootstrap.pubsub.PubSubManager;
+import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 
 public class MasterGuiceModule extends AbstractModule {
 
@@ -25,7 +25,7 @@ public class MasterGuiceModule extends AbstractModule {
     private IConfigLoader configLoader = new SimpleConfigLoader();
     private IConfigSaver configSaver = new SimpleConfigSaver();
 
-    private PubSubManager pubSubManager = new PubSubManager();
+    private MasterPubSubManager pubSubManager = new MasterPubSubManager();
 
     public MasterGuiceModule(MasterConfig masterConfig, Master master, IWrapperClientManager wrapperClientManager, IGameServerManager gameServerManager, ITemplateService templateService, ICloudPlayerManager cloudPlayerManager) {
         this.masterConfig = masterConfig;
@@ -45,7 +45,7 @@ public class MasterGuiceModule extends AbstractModule {
         bind(IWrapperClientManager.class).toInstance(this.wrapperClientManager);
         bind(Master.class).toInstance(this.master);
 
-        bind(PubSubManager.class).toInstance(this.pubSubManager);
+        bind(MasterPubSubManager.class).toInstance(this.pubSubManager);
 
         bind(MasterConfig.class).toInstance(this.masterConfig);
 

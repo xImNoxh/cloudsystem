@@ -1,13 +1,15 @@
 package de.polocloud.bootstrap.gameserver;
 
+import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import io.netty.channel.ChannelHandlerContext;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,9 @@ import java.util.concurrent.ExecutionException;
 public class SimpleGameServerManager implements IGameServerManager {
 
     private List<IGameServer> gameServerList = new ArrayList<>();
+
+    @Inject
+    private MasterPubSubManager pubSubManager;
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByName(String name) {
@@ -87,6 +92,9 @@ public class SimpleGameServerManager implements IGameServerManager {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
+        pubSubManager.publish("polo:event:serverStopped", gameServer.getName());
+
 
     }
 

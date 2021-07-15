@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.commands;
 
+import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
@@ -18,6 +19,7 @@ import java.util.Optional;
 )
 public class GameServerCloudCommand extends CloudCommand {
 
+    @Inject
     private Snowflake snowflake;
 
     private ITemplateService templateService;

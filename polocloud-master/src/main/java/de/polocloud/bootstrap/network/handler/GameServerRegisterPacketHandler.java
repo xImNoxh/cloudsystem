@@ -16,6 +16,7 @@ import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.config.messages.Messages;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
+import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -34,6 +35,9 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
 
     @Inject
     private MasterConfig masterConfig;
+
+    @Inject
+    private MasterPubSubManager pubSubManager;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
@@ -84,6 +88,10 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
                     e.printStackTrace();
                 }
             }
+
+            pubSubManager.publish("polo:event:serverStarted", gameServer.getName());
+
+
             Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
                 ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() + ".");
         } catch (InterruptedException | ExecutionException e) {

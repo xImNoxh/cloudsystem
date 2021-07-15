@@ -12,20 +12,6 @@ import java.util.Arrays;
 
 public class TestCloudCommand implements CommandExecutor {
 
-    public TestCloudCommand() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                CloudExecutor.getInstance().getPubSubManager().subscribe("TestChannel", subscribePacket -> {
-                    System.out.println("info from other lobby server  -> " + subscribePacket.getData());
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
-
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -33,8 +19,6 @@ public class TestCloudCommand implements CommandExecutor {
         if (args.length == 1) {
 
             sender.sendMessage("requesting... " + args[0]);
-
-            CloudExecutor.getInstance().getPubSubManager().publish("TestChannel", "Player " + sender.getName() + " is requesting something..");
 
             CloudExecutor.getInstance().getGameServerManager().getGameServersByType(TemplateType.valueOf(args[0])).thenAccept(list -> {
 

@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class PublishPacketHandler extends IPacketHandler {
 
     @Inject
-    private PubSubManager pubSubManager;
+    private MasterPubSubManager pubSubManager;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {

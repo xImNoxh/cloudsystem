@@ -10,6 +10,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.player.SimpleCloudPlayer;
+import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -27,6 +28,8 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
 
     @Inject
     private MasterConfig masterConfig;
+    @Inject
+    private MasterPubSubManager pubSubManager;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
@@ -59,6 +62,8 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
 
             ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
             targetServer.getCloudPlayers().add(cloudPlayer);
+
+            pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
 
             if (masterConfig.getProperties().isLogPlayerConnections())
                 Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() +
