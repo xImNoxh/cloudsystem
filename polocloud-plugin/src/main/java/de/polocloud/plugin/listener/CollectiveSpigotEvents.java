@@ -43,7 +43,7 @@ public class CollectiveSpigotEvents implements Listener {
             return;
         }
 
-        if(Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers()){
+        if(Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")){
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
         }
 
