@@ -10,6 +10,7 @@ import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
+import de.polocloud.plugin.protocol.players.MaxPlayerProperty;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.UUID;
@@ -19,6 +20,8 @@ public class CloudPlugin {
     private static CloudPlugin instance;
 
     private MaintenanceState state;
+    private MaxPlayerProperty maxPlayerProperty;
+
 
     private BootstrapFunction bootstrapFunction;
     private NetworkClient networkClient;
@@ -28,6 +31,7 @@ public class CloudPlugin {
         instance = this;
 
         this.bootstrapFunction = bootstrapFunction;
+        maxPlayerProperty = new MaxPlayerProperty(this.bootstrapFunction);
 
         this.networkClient = new NetworkClient();
         this.networkClient.connect(bootstrapFunction.getNetworkPort());
@@ -57,5 +61,9 @@ public class CloudPlugin {
 
     public BootstrapFunction getBootstrapFunction() {
         return bootstrapFunction;
+    }
+
+    public MaxPlayerProperty getMaxPlayerProperty() {
+        return maxPlayerProperty;
     }
 }

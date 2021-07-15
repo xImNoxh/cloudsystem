@@ -14,4 +14,6 @@ public interface BootstrapFunction {
 
     void initStatisticChannel(NetworkClient networkClient);
 
+    int getMaxPlayers();
+
 }

@@ -7,6 +7,7 @@ import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
@@ -17,6 +18,7 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 @CloudCommand.Info(name = "edit", description = "edit templates", aliases = "")
 public class CloudEditCommand extends CloudCommand {
@@ -79,10 +81,49 @@ public class CloudEditCommand extends CloudCommand {
                             + ConsoleColors.LIGHT_BLUE.getAnsiCode() + template.getName());
                         return;
                     }
+
+                    if(args[4].equalsIgnoreCase("maxplayers")) {
+
+                        if(!isInteger().test(args[5])){
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "The last argument must be an integer.");
+                            return;
+                        }
+                        template.setMaxPlayers(Integer.parseInt(args[5]));
+                        templateService.getTemplateSaver().save(template);
+
+                        try {
+                            for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
+                                gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(template.getMaxPlayers()));
+                            }
+                        }catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + "You update the " + ConsoleColors.CYAN.getAnsiCode() + "max players amount " + ConsoleColors.GRAY.getAnsiCode() + "for template "
+                            + ConsoleColors.LIGHT_BLUE.getAnsiCode() + template.getName());
+                        return;
+
+                    }
+
                 }
             }
         }
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use following command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() +
             "edit template <template> set maintenance <true/false>");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use following command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() +
+            "edit template <template> set maxplayers <value>");
     }
+
+    public Predicate<String> isInteger(){
+        return s -> {
+            try {
+                Integer.parseInt(String.valueOf(s));
+                return true;
+            } catch (NumberFormatException ignored) {
+                return false;
+            }
+        };
+    }
+
 }

@@ -50,4 +50,9 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
     public void shutdown() {
         Bukkit.shutdown();
     }
+
+    @Override
+    public int getMaxPlayers() {
+        return Bukkit.getMaxPlayers();
+    }
 }

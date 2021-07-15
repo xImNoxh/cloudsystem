@@ -6,6 +6,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdat
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
+import de.polocloud.plugin.protocol.players.MaxPlayerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -31,18 +32,27 @@ public class CollectiveProxyEvents implements Listener {
     }
 
     @EventHandler
+    public void handle(ProxyPingEvent event) {
+        event.getResponse().getPlayers().setMax(CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers());
+    }
+
+    @EventHandler
     public void handle(PostLoginEvent event){
         ProxiedPlayer player = event.getPlayer();
-
 
         if(CloudPlugin.getInstance().getState() == null){
             event.getPlayer().disconnect("");
             return;
         }
 
-
         if(CloudPlugin.getInstance().getState().isMaintenance()  && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance") ){
             event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getState().getKickMessage()));
+        }
+
+        MaxPlayerProperty maxPlayerProperty = CloudPlugin.getInstance().getMaxPlayerProperty();
+        if(ProxyServer.getInstance().getPlayers().size() >= maxPlayerProperty.getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+            event.getPlayer().disconnect("Full!");
+            return;
         }
     }
 

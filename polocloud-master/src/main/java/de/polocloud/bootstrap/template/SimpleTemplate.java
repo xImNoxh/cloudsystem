@@ -73,6 +73,11 @@ public class SimpleTemplate implements ITemplate {
     }
 
     @Override
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    @Override
     public boolean isMaintenance() {
         return maintenance;
     }

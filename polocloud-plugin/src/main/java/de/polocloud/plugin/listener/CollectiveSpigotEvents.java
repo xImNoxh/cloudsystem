@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.Plugin;
 
 public class CollectiveSpigotEvents implements Listener {
@@ -17,6 +18,11 @@ public class CollectiveSpigotEvents implements Listener {
     public CollectiveSpigotEvents(Plugin plugin, NetworkClient networkClient) {
         this.networkClient = networkClient;
         Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+    @EventHandler
+    public void handle(ServerListPingEvent event){
+        event.setMaxPlayers(CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers());
     }
 
     @EventHandler

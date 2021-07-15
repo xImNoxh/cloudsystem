@@ -6,6 +6,7 @@ import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
@@ -33,9 +34,24 @@ public class NetworkPluginRegister extends NetworkRegister {
         registerGameServerExecutePacket();
         registerMaintenanceStatePacket();
         registerGameServerShutdownPacket();
+        registerMaxPlayersUpdatePacket();
         registerAPIHandler();
     }
 
+    public void registerMaxPlayersUpdatePacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
+                GameServerMaxPlayersUpdatePacket packet = (GameServerMaxPlayersUpdatePacket) obj;
+                CloudPlugin.getInstance().getMaxPlayerProperty().setMaxPlayers(packet.getMaxPlayers());
+            }
+
+            @Override
+            public Class<? extends IPacket> getPacketClass() {
+                return GameServerMaxPlayersUpdatePacket.class;
+            }
+        });
+    }
 
     public void registerAPIHandler() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {

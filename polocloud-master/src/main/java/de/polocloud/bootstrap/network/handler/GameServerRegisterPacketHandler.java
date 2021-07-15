@@ -7,6 +7,7 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.ITemplate;
@@ -45,7 +46,10 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
             ((SimpleGameServer) gameServer).setPort(packet.getPort());
 
             gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
-                gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
+                gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ?
+                    masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
+
+            gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getMaxPlayers()));
 
             gameServer.setStatus(GameServerStatus.RUNNING);
 

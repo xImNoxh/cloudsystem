@@ -27,6 +27,7 @@ public class PacketRegistry {
         registerPacket(GameServerControlPlayerPacket.class);
         registerPacket(GameServerExecuteCommandPacket.class);
         registerPacket(GameServerMaintenanceUpdatePacket.class);
+        registerPacket(GameServerMaxPlayersUpdatePacket.class);
         registerPacket(GameServerPlayerDisconnectPacket.class);
         registerPacket(GameServerPlayerRequestJoinPacket.class);
         registerPacket(GameServerPlayerUpdatePacket.class);

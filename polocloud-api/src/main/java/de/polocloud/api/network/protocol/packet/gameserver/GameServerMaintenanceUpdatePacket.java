@@ -1,6 +1,5 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
-import com.google.inject.Inject;
 import de.polocloud.api.network.protocol.packet.IPacket;
 import io.netty.buffer.ByteBuf;
 

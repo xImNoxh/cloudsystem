@@ -21,7 +21,6 @@
       <module>polocloud-updater-server</module>
         <module>polocloud-launcher</module>
         <module>polocloud-modules</module>
-      <module>polocloud-modules-hubcommand</module>
     </modules>
 
     <properties>

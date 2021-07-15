@@ -12,6 +12,8 @@ public interface ITemplate extends INamable, Serializable {
 
     int getMaxPlayers();
 
+    void setMaxPlayers(int maxPlayers);
+
     int getMaxMemory();
 
     String getMotd();
