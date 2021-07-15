@@ -12,6 +12,7 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.bootstrap.config.messages.Messages;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -52,6 +53,7 @@ public class CloudEditCommand extends CloudCommand {
                 }
 
                 if(args[3].equalsIgnoreCase("set")){
+                    Messages messages = masterConfig.getMessages();
                     if(args[4].equalsIgnoreCase("maintenance")){
 
                         if(!(args[5].equalsIgnoreCase("true") || args[5].equalsIgnoreCase("false"))){
@@ -69,7 +71,7 @@ public class CloudEditCommand extends CloudCommand {
                             for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
                                 gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(template.isMaintenance(),
                                     gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ?
-                                        masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
+                                        messages.getProxyMaintenanceMessage() : messages.getGroupMaintenanceMessage()));
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -93,7 +95,8 @@ public class CloudEditCommand extends CloudCommand {
 
                         try {
                             for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
-                                gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(template.getMaxPlayers()));
+                                gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY)
+                                    ? messages.getNetworkIsFull() : messages.getServiceIsFull(),template.getMaxPlayers()));
                             }
                         }catch (InterruptedException e) {
                             e.printStackTrace();

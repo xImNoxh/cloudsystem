@@ -41,6 +41,8 @@ public class CloudPlugin {
         networkRegisterFunction.callNetwork(networkClient);
 
 
+
+
     }
 
     public static CloudPlugin getInstance() {

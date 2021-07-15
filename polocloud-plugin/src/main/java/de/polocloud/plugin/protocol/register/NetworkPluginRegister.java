@@ -44,6 +44,7 @@ public class NetworkPluginRegister extends NetworkRegister {
             public void handlePacket(ChannelHandlerContext ctx, IPacket obj) {
                 GameServerMaxPlayersUpdatePacket packet = (GameServerMaxPlayersUpdatePacket) obj;
                 CloudPlugin.getInstance().getMaxPlayerProperty().setMaxPlayers(packet.getMaxPlayers());
+                CloudPlugin.getInstance().getMaxPlayerProperty().setMessage(packet.getMessage());
             }
 
             @Override

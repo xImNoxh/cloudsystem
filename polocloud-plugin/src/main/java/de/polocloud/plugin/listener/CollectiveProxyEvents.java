@@ -50,8 +50,9 @@ public class CollectiveProxyEvents implements Listener {
         }
 
         MaxPlayerProperty maxPlayerProperty = CloudPlugin.getInstance().getMaxPlayerProperty();
-        if(ProxyServer.getInstance().getPlayers().size() >= maxPlayerProperty.getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.getPlayer().disconnect("Full!");
+
+        if(ProxyServer.getInstance().getPlayers().size()-1 >= maxPlayerProperty.getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+            event.getPlayer().disconnect(CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
             return;
         }
     }

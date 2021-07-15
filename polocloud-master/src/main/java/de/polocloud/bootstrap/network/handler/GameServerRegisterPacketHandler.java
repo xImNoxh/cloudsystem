@@ -14,6 +14,7 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.bootstrap.config.messages.Messages;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -45,11 +46,14 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
             ((SimpleGameServer) gameServer).setCtx(ctx);
             ((SimpleGameServer) gameServer).setPort(packet.getPort());
 
+            Messages messages = masterConfig.getMessages();
             gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
-                gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ?
-                    masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
+                gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ?
+                    messages.getProxyMaintenanceMessage() : messages.getGroupMaintenanceMessage()));
 
-            gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getMaxPlayers()));
+            gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(
+                gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? messages.getNetworkIsFull() : messages.getServiceIsFull()
+                , gameServer.getTemplate().getMaxPlayers()));
 
             gameServer.setStatus(GameServerStatus.RUNNING);
 
