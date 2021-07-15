@@ -7,6 +7,9 @@ import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class LogBootstrapService {
 
     private LogService logService;
@@ -31,6 +34,13 @@ public class LogBootstrapService {
         Logger.log(LoggerType.INFO,  ConsoleColors.GRAY.getAnsiCode() + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "v1.0.1 " +
             ConsoleColors.GRAY.getAnsiCode() + "(@Alpha) | ©opyright by PoloCloud.");
         Logger.newLine();
+
+        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
+            StringWriter stringWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stringWriter));
+            Logger.logErr(stringWriter.toString());
+        });
+
     }
 
 }
