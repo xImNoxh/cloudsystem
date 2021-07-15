@@ -9,6 +9,7 @@ public class SimpleTemplate implements ITemplate {
     private String name;
 
     private boolean maintenance;
+    private boolean staticServer;
 
     private int maxServerCount;
     private int minServerCount;
@@ -24,8 +25,9 @@ public class SimpleTemplate implements ITemplate {
 
     private String[] wrapperNames;
 
-    public SimpleTemplate(String name, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, String[] wrapperNames){
+    public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, String[] wrapperNames){
         this.name = name;
+        this.staticServer = staticServer;
         this.maxServerCount = maxServerCount;
         this.minServerCount = minServerCount;
         this.templateType = templateType;
@@ -50,6 +52,11 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public String[] getWrapperNames() {
         return this.wrapperNames;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return this.staticServer;
     }
 
     @Override

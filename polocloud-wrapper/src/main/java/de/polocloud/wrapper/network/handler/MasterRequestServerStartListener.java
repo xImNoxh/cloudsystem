@@ -1,5 +1,7 @@
 package de.polocloud.wrapper.network.handler;
 
+import de.polocloud.api.config.saver.IConfigSaver;
+import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
@@ -23,6 +25,8 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     private Executor executor = Executors.newCachedThreadPool();
     private WrapperConfig config;
 
+    private IConfigSaver configSaver = new SimpleConfigSaver();
+
     public MasterRequestServerStartListener(WrapperConfig config) {
 
         this.config = config;
@@ -38,7 +42,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
         long snowFlake = packet.getSnowflake();
 
         Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() +
-            packet.getServerName() + ConsoleColors.GRAY.getAnsiCode() + " server with template " + templateName + " (#" + snowFlake  + ")");
+            packet.getServerName() + ConsoleColors.GRAY.getAnsiCode() + " server with template " + templateName + " (#" + snowFlake + ")");
 
         File serverFile = new File("storage/version/" + packet.getVersion().getTitle() + ".jar");
         if (!serverFile.exists()) {
@@ -54,7 +58,46 @@ public class MasterRequestServerStartListener extends IPacketHandler {
 
         createDefaultTemplateDirectory(templateName);
 
-        executor.execute(() -> handleServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName(), packet.getMotd()));
+        if (packet.isStatic()) {
+            executor.execute(() -> handleStaticServerStart(packet.getServerName(), packet.getSnowflake(), serverFile, packet.getMemory(), packet.getMaxPlayers()));
+        } else {
+            //handle dynamic servers
+            executor.execute(() -> handleDynamicServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName(), packet.getMotd()));
+        }
+
+    }
+
+    public void handleStaticServerStart(String serverName, long snowflake, File serverFile, int maxMemory, int maxPlayers) {
+        File serverDirectory = new File("static/" + serverName + "#" + +snowflake);
+
+        try {
+            //copy server.jar and api to server directory
+            FileUtils.copyFile(serverFile, new File(serverDirectory + "/spigot.jar"));
+            FileUtils.copyFile(new File("templates/PoloCloud-API.jar"), new File(serverDirectory + "/plugins/PoloCloud-API.jar"));
+
+            //config
+            File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
+            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\"}");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //save port and server in config; load on wrapper start
+        int port = generatePort();
+
+        config.getStaticServers().add(serverName + "#" + snowflake + "," + port + "," + maxMemory);
+        configSaver.save(config, new File("config.json"));
+
+        ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
+        try {
+            processBuilder.directory(serverDirectory);
+
+            Process process = processBuilder.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -64,7 +107,7 @@ public class MasterRequestServerStartListener extends IPacketHandler {
     }
 
 
-    private void handleServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
+    private void handleDynamicServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
         File serverDirectory = new File("tmp/" + serverName + "#" + snowflake);
 
         try {

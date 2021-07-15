@@ -16,10 +16,12 @@ public class MasterRequestServerStartPacket extends Packet {
     private String serverName;
     private String motd;
 
+    private boolean isStatic;
+
     public MasterRequestServerStartPacket() {
     }
 
-    public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers, String serverName, String motd) {
+    public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers, String serverName, String motd, boolean isStatic) {
         this.template = template;
         this.version = version;
         this.snowflake = snowflake;
@@ -28,6 +30,7 @@ public class MasterRequestServerStartPacket extends Packet {
         this.maxPlayers = maxPlayers;
         this.serverName = serverName;
         this.motd = motd;
+        this.isStatic = isStatic;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class MasterRequestServerStartPacket extends Packet {
         byteBuf.writeInt(maxPlayers);
         writeString(byteBuf, serverName);
         writeString(byteBuf, motd);
+        byteBuf.writeBoolean(this.isStatic);
     }
 
     @Override
@@ -52,6 +56,11 @@ public class MasterRequestServerStartPacket extends Packet {
         maxPlayers = byteBuf.readInt();
         serverName = readString(byteBuf);
         motd = readString(byteBuf);
+        this.isStatic = byteBuf.readBoolean();
+    }
+
+    public boolean isStatic() {
+        return isStatic;
     }
 
     public String getMotd() {

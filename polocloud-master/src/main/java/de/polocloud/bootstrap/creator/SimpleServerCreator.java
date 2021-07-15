@@ -25,6 +25,9 @@ public class SimpleServerCreator extends ServerCreator {
         if (serversByTemplate == null) {
             return false;
         }
+        if (template.isStatic()) {
+            return false;
+        }
         return serversByTemplate.size() < template.getMinServerCount();
     }
 

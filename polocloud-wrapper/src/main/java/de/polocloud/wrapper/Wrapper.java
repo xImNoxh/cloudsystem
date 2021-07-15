@@ -9,11 +9,16 @@ import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
+import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.CloudEvent;
+import de.polocloud.api.event.EventHandler;
+import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
+import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -29,6 +34,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 public class Wrapper implements IStartable, ITerminatable {
@@ -42,6 +49,41 @@ public class Wrapper implements IStartable, ITerminatable {
     public Wrapper() {
 
         config = loadConfig();
+
+        Executor executor = Executors.newCachedThreadPool();
+        //start all static servers
+
+        EventRegistry.registerListener(new EventHandler<ChannelActiveEvent>() {
+            @Override
+            public void handleEvent(ChannelActiveEvent event) {
+                executor.execute(() -> {
+
+                    for (String staticServer : config.getStaticServers()) {
+                        executor.execute(() -> {
+
+                            String[] split = staticServer.split(",");
+                            String serverName = split[0];
+                            int port = Integer.parseInt(split[1]);
+                            int memory = Integer.parseInt(split[2]);
+                            Logger.log(LoggerType.INFO, "Starting server " + serverName + " on port " + port);
+                            ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + memory + "M -Xmx" + memory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
+                            try {
+                                processBuilder.directory(new File("static/" + serverName));
+
+                                event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(serverName));
+
+                                Process process = processBuilder.start();
+                                process.waitFor();
+                            } catch (IOException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        }, ChannelActiveEvent.class);
 
 
         File tmpFile = new File("tmp");

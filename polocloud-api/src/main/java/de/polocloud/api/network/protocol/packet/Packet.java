@@ -223,6 +223,11 @@ public abstract class Packet {
             }
 
             @Override
+            public boolean isStatic() {
+                return false;
+            }
+
+            @Override
             public String getName() {
                 return name;
             }

@@ -2,6 +2,9 @@ package de.polocloud.wrapper.config;
 
 import de.polocloud.api.config.IConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WrapperConfig implements IConfig {
 
     private String loginKey = "--Polo--";
@@ -9,6 +12,12 @@ public class WrapperConfig implements IConfig {
     private String wrapperName = "Wrapper-1";
 
     private String apiVersion = "-1";
+
+    private List<String> staticServers = new ArrayList<>();
+
+    public List<String> getStaticServers() {
+        return staticServers;
+    }
 
     public String getApiVersion() {
         return apiVersion;

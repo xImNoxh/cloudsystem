@@ -28,4 +28,6 @@ public interface ITemplate extends INamable, Serializable {
 
     String[] getWrapperNames();
 
+    boolean isStatic();
+
 }

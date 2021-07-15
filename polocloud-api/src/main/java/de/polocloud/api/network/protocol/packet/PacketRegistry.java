@@ -9,6 +9,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdate
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
+import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,6 +52,8 @@ public class PacketRegistry {
 
         registerPacket(120, PublishPacket.class);
         registerPacket(121, SubscribePacket.class);
+
+        registerPacket(122, WrapperRegisterStaticServerPacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
