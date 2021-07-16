@@ -7,6 +7,7 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
+import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -18,6 +19,8 @@ public class APIRequestGameServerHandler extends IPacketHandler {
 
     @Inject
     private IGameServerManager gameServerManager;
+    @Inject
+    private ITemplateService templateService;
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
@@ -48,6 +51,10 @@ public class APIRequestGameServerHandler extends IPacketHandler {
             }else if(action == APIRequestGameServerPacket.Action.SNOWFLAKE){
                 gameServerManager.getGameSererBySnowflake(Long.parseLong(value)).thenAccept(gameServer -> {
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, Collections.singletonList(gameServer), APIResponseGameServerPacket.Type.SINGLE));
+                });
+            }else if(action == APIRequestGameServerPacket.Action.LIST_BY_TEMPLATE){
+                gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(value)).thenAccept(gameServer -> {
+                    requestServer.sendPacket(new APIResponseGameServerPacket(requestId, (gameServer), APIResponseGameServerPacket.Type.LIST));
                 });
             }
         } catch (InterruptedException | ExecutionException e) {
