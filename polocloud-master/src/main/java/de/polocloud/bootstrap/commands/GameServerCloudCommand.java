@@ -3,6 +3,7 @@ package de.polocloud.bootstrap.commands;
 import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.gameserver.GameServerStatus;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
@@ -15,6 +16,7 @@ import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @CloudCommand.Info(
     name = "gameserver",
@@ -68,16 +70,38 @@ public class GameServerCloudCommand extends CloudCommand {
 
                 WrapperClient wrapperClient = optionalWrapperClient.get();
 
+
+
                 long id = snowflake.nextId();
-                SimpleGameServer gameServer = new SimpleGameServer(templateName + "-" + id, GameServerStatus.PENDING, null, id, template, System.currentTimeMillis());
+                SimpleGameServer gameServer = new SimpleGameServer(templateName + "-" + generateServerId(template), GameServerStatus.PENDING, null, id, template, System.currentTimeMillis());
                 gameServerManager.registerGameServer(gameServer);
                 wrapperClient.startServer(gameServer);
-                Logger.log(LoggerType.INFO, "starting...");
-
-
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "starting...");
             }
         }
     }
 
+    private int generateServerId(ITemplate template) {
+        int currentId = 1;
+
+        boolean found = false;
+
+        while (!found) {
+
+            try {
+                IGameServer gameServerByName = gameServerManager.getGameServerByName(template.getName() + "-" + currentId).get();
+
+                if (gameServerByName == null) {
+                    found = true;
+                } else {
+                    currentId++;
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return currentId;
+    }
 
 }
