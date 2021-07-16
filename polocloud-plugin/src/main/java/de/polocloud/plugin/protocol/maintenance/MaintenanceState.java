@@ -1,5 +1,9 @@
 package de.polocloud.plugin.protocol.maintenance;
 
+import de.polocloud.api.template.ITemplate;
+
+import java.util.function.Consumer;
+
 public class MaintenanceState {
 
     private boolean maintenance;

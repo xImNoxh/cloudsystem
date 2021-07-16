@@ -23,6 +23,7 @@ public class CollectiveSignEvents implements Listener {
 
     @EventHandler
     public void handle(CloudServerStoppedEvent event){
+        SignService.getInstance().getRemoveSign().execute(event.getGameServer());
     }
 
     @EventHandler

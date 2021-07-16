@@ -24,18 +24,28 @@ public class CloudSign {
         if(!location.getChunk().isLoaded()) location.getChunk().load();
 
         this.sign = (Sign) location.getBlock().getState();
+
+        sign.setLine(1, "Searching");
+        sign.setLine(2, "Service...");
+        sign.update();
     }
 
     public Sign getSign() {
         return sign;
     }
 
-    public void setSign(){
-        System.out.println(gameServer.getName());
-        this.sign.setLine(0, gameServer.getName());
-        this.sign.setLine(1, gameServer.getStatus().toString());
-        this.sign.setLine(2, gameServer.getOnlinePlayers() + "/" + gameServer.getTemplate().getMaxPlayers());
-        this.sign.setLine(3, Arrays.stream(gameServer.getTemplate().getWrapperNames()).collect(Collectors.joining(", ")));
+    public void setSign() {
+        if(hasServer()) {
+            this.sign.setLine(0, gameServer.getName());
+            this.sign.setLine(1, gameServer.getStatus().toString());
+            this.sign.setLine(2, gameServer.getOnlinePlayers() + "/" + gameServer.getTemplate().getMaxPlayers());
+            this.sign.setLine(3, Arrays.stream(gameServer.getTemplate().getWrapperNames()).collect(Collectors.joining(", ")));
+        }else{
+            this.sign.setLine(0," ");
+            this.sign.setLine(1,"Searching");
+            this.sign.setLine(2,"Server");
+            this.sign.setLine(3," ");
+        }
         this.sign.update(true);
     }
 

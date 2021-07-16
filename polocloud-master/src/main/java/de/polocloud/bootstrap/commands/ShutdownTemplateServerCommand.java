@@ -38,10 +38,10 @@ public class ShutdownTemplateServerCommand extends CloudCommand {
                 List<IGameServer> servers = gameServerManager.getGameServers().get().stream().filter(key -> key.getTemplate().equals(template)).collect(Collectors.toList());
 
                 for (IGameServer server : servers) {
-                    Logger.log(LoggerType.INFO, "Trying to stop " + server.getName() + "...");
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Trying to stop " + server.getName() + "...");
                     server.stop();
                 }
-                Logger.log(LoggerType.INFO, "Shutdown " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + servers.size() + ConsoleColors.GRAY.getAnsiCode() + " game servers.");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Shutdown " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + servers.size() + ConsoleColors.GRAY.getAnsiCode() + " game servers.");
 
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
