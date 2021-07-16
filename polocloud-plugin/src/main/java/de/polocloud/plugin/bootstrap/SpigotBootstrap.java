@@ -28,8 +28,6 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
         getCommand("testCloud").setExecutor(new TestCloudCommand());
 
-        getServer().getPluginManager().registerEvents(new TestcloudEvents(), this);
-
 
     }
 

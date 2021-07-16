@@ -53,6 +53,10 @@ public class SimpleGameServerManager implements IGameServerManager {
     @Override
     public CompletableFuture<List<IGameServer>> getGameServersByTemplate(ITemplate template) {
 
+        if (template == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+
         List<IGameServer> result = new ArrayList<>();
 
         for (IGameServer iGameServer : gameServerList) {

@@ -31,30 +31,37 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
         UUID uuid = packet.getUuid();
         try {
             List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0])).get();
-
             IGameServer targetServer = null;
-            for (IGameServer iGameServer : gameServersByTemplate) {
-                if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
+            if (gameServersByTemplate != null) {
 
-                    if (targetServer == null) {
-                        targetServer = iGameServer;
-                    } else {
-                        if (targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()) {
+                for (IGameServer iGameServer : gameServersByTemplate) {
+                    if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
+
+                        if (targetServer == null) {
                             targetServer = iGameServer;
+                        } else {
+                            if (targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()) {
+                                targetServer = iGameServer;
+                            }
                         }
                     }
+                    if (targetServer == null) {
+                        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
+                        return;
+                    }
                 }
-                if (targetServer == null) {
-                    ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
-                    return;
-                }
+            } else {
+                ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
+                return;
             }
+
 
             ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
             //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
