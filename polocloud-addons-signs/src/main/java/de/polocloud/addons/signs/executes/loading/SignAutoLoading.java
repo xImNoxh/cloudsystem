@@ -15,8 +15,10 @@ public class SignAutoLoading {
         this.signService = signService;
         System.out.println(template.getName());
 
+        System.out.println("start loading...");
 
         CloudExecutor.getInstance().getGameServerManager().getGameServersByTemplate(template).thenAccept(key -> {
+            System.out.println(key.size());
             for (IGameServer iGameServer : key) {
                 signService.getAddSign().execute(iGameServer);
             }

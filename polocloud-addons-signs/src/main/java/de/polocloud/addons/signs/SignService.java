@@ -1,6 +1,7 @@
 package de.polocloud.addons.signs;
 
 import de.polocloud.addons.signs.cache.SignCache;
+import de.polocloud.addons.signs.collectives.CollectiveSignEvents;
 import de.polocloud.addons.signs.executes.SignAddExecute;
 import de.polocloud.addons.signs.executes.SignExecute;
 import de.polocloud.addons.signs.executes.SignRemoveExecute;
@@ -13,6 +14,7 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.plugin.api.CloudExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Sign;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -36,10 +38,10 @@ public class SignService {
 
         EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> CloudExecutor.getInstance().getGameServerManager()
             .getGameServerByName("Lobby-1").thenAccept(gameServer -> {
-            Location location = new Location(Bukkit.getWorld("world"), -1269, 5, -390);
-            for (int i = 0; i < 3; i++) {
-                addSign(gameServer.getTemplate(), location.clone().subtract(i,0,0));
-            }
+                Location location = new Location(Bukkit.getWorld("world"), -1269, 5, -390);
+                for (int i = 0; i < 3; i++) {
+                    addSign(gameServer.getTemplate(), location.clone().subtract(i, 0, 0));
+                }
                 try {
                     new SignAutoLoading(this, gameServer.getTemplate());
                 } catch (ExecutionException e) {
@@ -48,6 +50,7 @@ public class SignService {
                     e.printStackTrace();
                 }
             }), ChannelActiveEvent.class);
+        new CollectiveSignEvents();
     }
 
     public void addSign(ITemplate template, Location location) {
@@ -64,6 +67,10 @@ public class SignService {
 
     public List<CloudSign> getSignsByTemplate(ITemplate template) {
         return cache.stream().filter(key -> key.getTemplate().getName().equals(template.getName())).collect(Collectors.toList());
+    }
+
+    public CloudSign getCloudSignBySign(Sign sign) {
+        return cache.stream().filter(key -> key.getSign().equals(sign)).findAny().orElse(null);
     }
 
     public CloudSign getSignByGameServer(IGameServer gameServer) {

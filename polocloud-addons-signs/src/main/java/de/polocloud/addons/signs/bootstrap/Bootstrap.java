@@ -1,6 +1,7 @@
 package de.polocloud.addons.signs.bootstrap;
 
 import de.polocloud.addons.signs.SignService;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Bootstrap extends JavaPlugin {
@@ -11,6 +12,7 @@ public class Bootstrap extends JavaPlugin {
     public void onEnable() {
         instance = this;
         new SignService();
+        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(Bootstrap.getInstance(), "BungeeCord");
     }
 
     @Override

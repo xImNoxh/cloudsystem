@@ -17,6 +17,7 @@ public class SignAddExecute implements SignExecute {
     public void execute(IGameServer gameServer) {
         CloudSign sign = signService.getNextFreeSignByTemplate(gameServer.getTemplate());
         if (sign == null) return;
+
         sign.setGameServer(gameServer);
         sign.setSign();
     }
