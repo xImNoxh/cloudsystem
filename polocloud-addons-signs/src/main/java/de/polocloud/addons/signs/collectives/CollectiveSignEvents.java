@@ -6,6 +6,7 @@ import de.polocloud.plugin.api.spigot.event.CloudServerStoppedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class CollectiveSignEvents implements Listener {
 
@@ -21,6 +22,11 @@ public class CollectiveSignEvents implements Listener {
     @EventHandler
     public void handle(CloudServerStartedEvent event){
 
+    }
+
+    @EventHandler
+    public void handle(ChunkUnloadEvent event){
+        event.setCancelled(true);
     }
 
 }

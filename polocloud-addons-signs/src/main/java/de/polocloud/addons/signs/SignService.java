@@ -5,16 +5,16 @@ import de.polocloud.addons.signs.executes.SignAddExecute;
 import de.polocloud.addons.signs.executes.SignExecute;
 import de.polocloud.addons.signs.executes.SignRemoveExecute;
 import de.polocloud.addons.signs.executes.loading.SignAutoLoading;
+import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.EventHandler;
+import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.api.CloudExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class SignService {
@@ -33,35 +33,18 @@ public class SignService {
         this.removeSign = new SignRemoveExecute(this);
         this.addSign = new SignAddExecute(this);
 
-
-        //testing
-
-
-        ITemplate template = null;
-        try {
-            template = CloudExecutor.getInstance().getGameServerManager().getGameServerByName("Lobby-1").get().getTemplate();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        System.out.println(template != null);
-        System.out.println(template.getName());
-
-        Location location = new Location(Bukkit.getWorld("world"),-1269,5,-390);
-
-        if(!location.getChunk().isLoaded()) location.getChunk().load();
-
-        for(int i = 0; i < 3; i++){
-            //addSign(iTemplate, location.clone().add(-i,0,0));
-            location.clone().add(-i,0,0).getBlock().setType(Material.STONE);
-        }
-
-        //new SignAutoLoading(this, iTemplate);
+        EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> CloudExecutor.getInstance().getGameServerManager()
+            .getGameServerByName("Lobby-1").thenAccept(gameServer -> {
+            Location location = new Location(Bukkit.getWorld("world"), -1269, 5, -390);
+            for (int i = 0; i < 3; i++) {
+                addSign(gameServer.getTemplate(), location.clone().subtract(i,0,0));
+            }
+            new SignAutoLoading(this, gameServer.getTemplate());
+        }), ChannelActiveEvent.class);
     }
 
-    public void addSign(ITemplate template, Location location){
-        cache.add(new Sign(template, location));
+    public void addSign(ITemplate template, Location location) {
+        cache.add(new CloudSign(template, location));
     }
 
     public static SignService getInstance() {
@@ -72,15 +55,15 @@ public class SignService {
         return cache;
     }
 
-    public List<Sign> getSignsByTemplate(ITemplate template) {
+    public List<CloudSign> getSignsByTemplate(ITemplate template) {
         return cache.stream().filter(key -> key.getTemplate().equals(template)).collect(Collectors.toList());
     }
 
-    public Sign getSignByGameServer(IGameServer gameServer){
+    public CloudSign getSignByGameServer(IGameServer gameServer) {
         return cache.stream().filter(key -> key.getGameServer().equals(gameServer)).findAny().orElse(null);
     }
 
-    public Sign getNextFreeSignByTemplate(ITemplate template){
+    public CloudSign getNextFreeSignByTemplate(ITemplate template) {
         return getSignsByTemplate(template).stream().filter(key -> key.getGameServer() == null).findAny().orElse(null);
     }
 
