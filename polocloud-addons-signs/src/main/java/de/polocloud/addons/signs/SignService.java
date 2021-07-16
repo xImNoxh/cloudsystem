@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class SignService {
@@ -39,8 +40,14 @@ public class SignService {
             for (int i = 0; i < 3; i++) {
                 addSign(gameServer.getTemplate(), location.clone().subtract(i,0,0));
             }
-            new SignAutoLoading(this, gameServer.getTemplate());
-        }), ChannelActiveEvent.class);
+                try {
+                    new SignAutoLoading(this, gameServer.getTemplate());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }), ChannelActiveEvent.class);
     }
 
     public void addSign(ITemplate template, Location location) {
@@ -56,7 +63,7 @@ public class SignService {
     }
 
     public List<CloudSign> getSignsByTemplate(ITemplate template) {
-        return cache.stream().filter(key -> key.getTemplate().equals(template)).collect(Collectors.toList());
+        return cache.stream().filter(key -> key.getTemplate().getName().equals(template.getName())).collect(Collectors.toList());
     }
 
     public CloudSign getSignByGameServer(IGameServer gameServer) {

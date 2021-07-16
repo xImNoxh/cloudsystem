@@ -16,11 +16,8 @@ public class SignAddExecute implements SignExecute {
     @Override
     public void execute(IGameServer gameServer) {
         CloudSign sign = signService.getNextFreeSignByTemplate(gameServer.getTemplate());
-
-        if(sign == null) return;
-
+        if (sign == null) return;
         sign.setGameServer(gameServer);
-        sign.getSign().setLine(0, gameServer.getName());
-        sign.getSign().update();
+        sign.setSign();
     }
 }

@@ -18,11 +18,19 @@ public class CloudSign {
         this.template = template;
         this.location = location;
 
+        if(!location.getChunk().isLoaded()) location.getChunk().load();
+
         this.sign = (Sign) location.getBlock().getState();
     }
 
     public Sign getSign() {
         return sign;
+    }
+
+    public void setSign(){
+        System.out.println(gameServer.getName());
+        this.sign.setLine(0, gameServer.getName());
+        this.sign.update(true);
     }
 
     public boolean hasServer(){
