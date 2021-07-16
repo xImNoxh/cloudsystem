@@ -39,12 +39,10 @@ public class MasterPubSubManager {
 
         String channel = packet.getChannel();
 
-        System.out.println("try to publish to " + channel);
         if (subscriberMap.containsKey(channel)) {
             List<ChannelHandlerContext> channelHandlerContextList = subscriberMap.get(channel);
 
             for (ChannelHandlerContext channelHandlerContext : channelHandlerContextList) {
-                System.out.println("publish to channel " + channel);
                 channelHandlerContext.writeAndFlush(packet);
             }
         }

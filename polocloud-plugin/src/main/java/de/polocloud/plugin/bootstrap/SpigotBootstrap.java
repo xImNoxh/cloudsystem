@@ -9,7 +9,6 @@ import de.polocloud.plugin.api.spigot.event.CloudServerStartedEvent;
 import de.polocloud.plugin.api.spigot.event.CloudServerStoppedEvent;
 import de.polocloud.plugin.api.spigot.event.CloudServerUpdatedEvent;
 import de.polocloud.plugin.bootstrap.command.TestCloudCommand;
-import de.polocloud.plugin.bootstrap.events.TestcloudEvents;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.listener.CollectiveSpigotEvents;
