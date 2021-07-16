@@ -20,17 +20,15 @@ public class TestCloudCommand implements CommandExecutor {
 
             sender.sendMessage("requesting... " + args[0]);
 
-            CloudExecutor.getInstance().getGameServerManager().getGameServersByType(TemplateType.valueOf(args[0])).thenAccept(list -> {
+            CloudExecutor.getInstance().getGameServerManager().getGameServerByName(args[0]).thenAccept(gameServer -> {
 
-                for (IGameServer gameServer : list) {
-                    sender.sendMessage(gameServer.getName() + " info");
-                    sender.sendMessage("snowflake " + gameServer.getSnowflake() + "");
-                    sender.sendMessage("status: " + gameServer.getStatus().toString());
-                    sender.sendMessage("template: " + gameServer.getTemplate().getName());
-                    sender.sendMessage(" - maintenance: " + gameServer.getTemplate().isMaintenance());
-                    sender.sendMessage(" - Wrappers: " + Arrays.toString(gameServer.getTemplate().getWrapperNames()));
-                    sender.sendMessage("--");
-                }
+                sender.sendMessage(gameServer.getName() + " info");
+                sender.sendMessage("snowflake " + gameServer.getSnowflake() + "");
+                sender.sendMessage("status: " + gameServer.getStatus().toString());
+                sender.sendMessage("template: " + gameServer.getTemplate().getName());
+                sender.sendMessage(" - maintenance: " + gameServer.getTemplate().isMaintenance());
+                sender.sendMessage(" - Wrappers: " + Arrays.toString(gameServer.getTemplate().getWrapperNames()));
+                sender.sendMessage("--");
 
             });
 
