@@ -1,0 +1,6 @@
+name: PoloCloud-Signs
+version: 1.0
+author: HttpMarco
+main: de.polocloud.addons.signs.bootstrap.Bootstrap
+depend:
+    - PoloCloud-Plugin
