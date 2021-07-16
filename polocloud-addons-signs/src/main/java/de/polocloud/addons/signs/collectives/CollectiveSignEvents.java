@@ -38,12 +38,9 @@ public class CollectiveSignEvents implements Listener {
     @EventHandler
     public void handle(PlayerInteractEvent event){
         if(event.getClickedBlock() == null) return;
-
         Block block = event.getClickedBlock();
         if(!block.getType().equals(Material.WALL_SIGN)) return;
-        Sign sign = (Sign) block.getState();
-
-        CloudSign cloudSign = SignService.getInstance().getCloudSignBySign(sign);
+        CloudSign cloudSign = SignService.getInstance().getCloudSignBySign((Sign) block.getState());
 
         if(cloudSign == null) return;
         PlayerUtils.sendPlayerToServer(event.getPlayer(), cloudSign.getGameServer().getName());

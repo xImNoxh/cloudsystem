@@ -5,6 +5,9 @@ import de.polocloud.api.template.ITemplate;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class CloudSign {
 
     private ITemplate template;
@@ -30,6 +33,9 @@ public class CloudSign {
     public void setSign(){
         System.out.println(gameServer.getName());
         this.sign.setLine(0, gameServer.getName());
+        this.sign.setLine(1, gameServer.getStatus().toString());
+        this.sign.setLine(2, gameServer.getOnlinePlayers() + "/" + gameServer.getTemplate().getMaxPlayers());
+        this.sign.setLine(3, Arrays.stream(gameServer.getTemplate().getWrapperNames()).collect(Collectors.joining(", ")));
         this.sign.update(true);
     }
 
