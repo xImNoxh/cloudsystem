@@ -85,8 +85,17 @@ public class APIGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<List<IGameServer>> getGameServersByTemplate(ITemplate template) {
-        throw new NotImplementedException();
+        CompletableFuture<List<IGameServer>> completableFuture = new CompletableFuture<>();
 
+        executor.submit(() -> {
+            UUID requestId = UUID.randomUUID();
+
+            futureMap.put(requestId, completableFuture);
+            networkClient.sendPacket(new APIRequestGameServerPacket(requestId, APIRequestGameServerPacket.Action.LIST_BY_TEMPLATE, template.getName()));
+        });
+
+
+        return completableFuture;
     }
 
     @Override

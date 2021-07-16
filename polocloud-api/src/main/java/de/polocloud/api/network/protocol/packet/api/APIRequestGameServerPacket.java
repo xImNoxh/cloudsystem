@@ -55,6 +55,7 @@ public class APIRequestGameServerPacket extends Packet {
         NAME,
         SNOWFLAKE,
         ALL,
+        LIST_BY_TEMPLATE,
         LIST_BY_TYPE,
     }
 
