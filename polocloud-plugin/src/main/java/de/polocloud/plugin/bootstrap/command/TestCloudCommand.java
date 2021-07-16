@@ -20,15 +20,23 @@ public class TestCloudCommand implements CommandExecutor {
 
             sender.sendMessage("requesting... " + args[0]);
 
-            CloudExecutor.getInstance().getGameServerManager().getGameServerByName(args[0]).thenAccept(gameServer -> {
+            CloudExecutor.getInstance().getGameServerManager().getGameServerByName(args[0]).thenAccept(s -> {
 
-                sender.sendMessage(gameServer.getName() + " info");
-                sender.sendMessage("snowflake " + gameServer.getSnowflake() + "");
-                sender.sendMessage("status: " + gameServer.getStatus().toString());
-                sender.sendMessage("template: " + gameServer.getTemplate().getName());
-                sender.sendMessage(" - maintenance: " + gameServer.getTemplate().isMaintenance());
-                sender.sendMessage(" - Wrappers: " + Arrays.toString(gameServer.getTemplate().getWrapperNames()));
-                sender.sendMessage("--");
+                CloudExecutor.getInstance().getGameServerManager().getGameServersByTemplate(s.getTemplate()).thenAccept(servers -> {
+
+                    for (IGameServer gameServer : servers) {
+                        sender.sendMessage(gameServer.getName() + " info");
+                        sender.sendMessage("snowflake " + gameServer.getSnowflake() + "");
+                        sender.sendMessage("status: " + gameServer.getStatus().toString());
+                        sender.sendMessage("template: " + gameServer.getTemplate().getName());
+                        sender.sendMessage(" - maintenance: " + gameServer.getTemplate().isMaintenance());
+                        sender.sendMessage(" - Wrappers: " + Arrays.toString(gameServer.getTemplate().getWrapperNames()));
+                        sender.sendMessage("--");
+                    }
+
+
+                });
+
 
             });
 

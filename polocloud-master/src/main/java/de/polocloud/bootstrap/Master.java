@@ -26,6 +26,7 @@ import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
+import de.polocloud.bootstrap.module.MasterModuleLoader;
 import de.polocloud.bootstrap.network.handler.*;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
@@ -49,10 +50,13 @@ public class Master implements IStartable, ITerminatable {
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
 
+    private final MasterModuleLoader moduleLoader;
+
     private boolean running = false;
 
 
     public Master() {
+
 
         this.wrapperClientManager = new SimpleWrapperClientManager();
         this.gameServerManager = new SimpleGameServerManager();
@@ -60,7 +64,11 @@ public class Master implements IStartable, ITerminatable {
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
 
 
+
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
+
+        this.moduleLoader = new MasterModuleLoader();
+
 
         ((SimpleTemplateService) this.templateService).load(this.cloudAPI, TemplateStorage.FILE);
         this.templateService.getTemplateLoader().loadTemplates();
@@ -79,6 +87,9 @@ public class Master implements IStartable, ITerminatable {
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(GameServerCloudCommand.class));
 
         Thread runnerThread = new Thread(PoloCloudAPI.getInstance().getGuice().getInstance(ServerCreatorRunner.class));
+
+        this.moduleLoader.loadModules();
+
         runnerThread.start();
 
     }

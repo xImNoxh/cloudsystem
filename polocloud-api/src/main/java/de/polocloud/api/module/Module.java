@@ -1,4 +1,4 @@
-package de.polocloud.bootstrap.module;
+package de.polocloud.api.module;
 
 import com.google.inject.Inject;
 import de.polocloud.api.config.loader.IConfigLoader;
@@ -6,7 +6,6 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 
 public abstract class Module {
 
@@ -20,9 +19,6 @@ public abstract class Module {
     private ICloudPlayerManager playerManager;
 
     @Inject
-    private MasterPubSubManager pubSubManager;
-
-    @Inject
     private IConfigLoader configLoader;
 
     @Inject
@@ -31,10 +27,6 @@ public abstract class Module {
     public abstract void onLoad();
 
     public abstract void onShutdown();
-
-    public MasterPubSubManager getPubSubManager() {
-        return pubSubManager;
-    }
 
     public ITemplateService getTemplateService() {
         return templateService;

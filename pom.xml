@@ -21,6 +21,7 @@
       <module>polocloud-updater-server</module>
         <module>polocloud-launcher</module>
       <module>polocloud-addons-signs</module>
+      <module>polocloud-modules</module>
     </modules>
 
     <properties>
