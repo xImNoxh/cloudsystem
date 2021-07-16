@@ -5,6 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.CloudEvent;
+import de.polocloud.api.event.EventHandler;
+import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.IPacketHandler;
@@ -17,11 +21,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 public class NetworkClient implements IPacketSender {
 
     private INettyClient client;
     private CloudAPI cloudAPI;
+    private int port;
 
     public NetworkClient() {
         try {
@@ -41,6 +48,7 @@ public class NetworkClient implements IPacketSender {
 
             reader.close();
 
+            EventRegistry.registerListener(event -> register(port), ChannelActiveEvent.class);
 
             String[] split = masterAddress.split(":");
             this.client = new SimpleNettyClient(split[0], Integer.parseInt(split[1]), new SimpleProtocol());
@@ -54,24 +62,16 @@ public class NetworkClient implements IPacketSender {
     }
 
     public void connect(int port) {
+        this.port = port;
         this.cloudAPI = new PoloCloudAPI();
 
         String path = null;
-
 
         new Thread(() -> {
             this.client.start();
             System.exit(-1);
         }).start();
 
-        new Thread(() -> {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            register(port);
-        }).start();
 
     }
 
