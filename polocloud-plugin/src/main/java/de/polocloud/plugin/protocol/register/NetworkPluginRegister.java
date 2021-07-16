@@ -64,7 +64,6 @@ public class NetworkPluginRegister extends NetworkRegister {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                System.out.println("Help me!");
                 APIResponseGameServerPacket packet = (APIResponseGameServerPacket) obj;
 
                 UUID requestId = packet.getRequestId();

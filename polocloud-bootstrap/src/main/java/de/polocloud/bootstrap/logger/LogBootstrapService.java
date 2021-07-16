@@ -35,11 +35,14 @@ public class LogBootstrapService {
             ConsoleColors.GRAY.getAnsiCode() + "(@Alpha) | ©opyright by PoloCloud.");
         Logger.newLine();
 
+        /*
         Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
             StringWriter stringWriter = new StringWriter();
             e.printStackTrace(new PrintWriter(stringWriter));
             Logger.logErr(stringWriter.toString());
         });
+
+         */
 
     }
 
