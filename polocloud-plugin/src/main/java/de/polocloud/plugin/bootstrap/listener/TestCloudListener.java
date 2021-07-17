@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 public class TestCloudListener implements Listener {
 
+    /*
     @EventHandler
     public void handle(CloudPlayerJoinNetworkEvent event) {
         event.getPlayer().thenAccept(player -> {
@@ -39,6 +40,8 @@ public class TestCloudListener implements Listener {
             }
         });
     }
+
+     */
 
 
 }
