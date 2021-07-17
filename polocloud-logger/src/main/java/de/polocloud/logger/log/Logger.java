@@ -24,7 +24,7 @@ public class Logger {
     }
 
     public static void logErr(String message){
-        LogService.getLogService().getLogFileService().getLogFileWriter().write("[" + getSimpleTime() + " | " + LoggerType.ERROR + "] » " + replaceColorCodes(message));
+        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + LoggerType.ERROR + "] » " + message));
     }
 
     public static void log(LoggerType loggerType, String message) {
@@ -35,7 +35,7 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LogService.getLogService().getLogFileService().getLogFileWriter().write("[" + getSimpleTime() + " | " + loggerType.getLabel() + "] » " + replaceColorCodes(message));
+        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + loggerType.getLabel() + "] » " + message));
     }
 
     public static void log(String message) {

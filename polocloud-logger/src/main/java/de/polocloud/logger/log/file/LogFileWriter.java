@@ -8,6 +8,7 @@ import java.io.IOException;
 public class LogFileWriter {
 
     public void write(String message) {
+        message = message.replaceAll("\u001B\\[[;\\d]*m", "");
         File[] files = {getLogService().getCurrentDayLog(), getLogService().getLatestLog()};
         for (File file : files) {
             try {
