@@ -1,13 +1,12 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @CloudCommand.Info(
     name = "players",
@@ -35,30 +34,40 @@ public class PlayersCloudCommand extends CloudCommand {
                     message += args[i] + " ";
                 }
                 message = message.substring(0, message.length() - 1);
-                if (playerManager.isPlayerOnline(targetName)) {
+                try {
+                    if (playerManager.isPlayerOnline(targetName).get()) {
 
-                    if (args[1].equalsIgnoreCase("kick")) {
-                        playerManager.getOnlinePlayer(targetName).kick(message);
-                        Logger.log(LoggerType.INFO, "Der Spieler " + targetName + " wurde gekickt!");
-                    } else if (args[1].equalsIgnoreCase("message")) {
-                        playerManager.getOnlinePlayer(targetName).sendMessage(message);
-                        Logger.log(LoggerType.INFO, "sent!");
-                    } else if (args[1].equalsIgnoreCase("send")) {
-
-                        gameServerManager.getGameServerByName(message).thenAccept(server -> {
-                            playerManager.getOnlinePlayer(targetName).sendTo(server);
+                        if (args[1].equalsIgnoreCase("kick")) {
+                            playerManager.getOnlinePlayer(targetName).get().kick(message);
+                            Logger.log(LoggerType.INFO, "Der Spieler " + targetName + " wurde gekickt!");
+                        } else if (args[1].equalsIgnoreCase("message")) {
+                            playerManager.getOnlinePlayer(targetName).get().sendMessage(message);
                             Logger.log(LoggerType.INFO, "sent!");
-                        });
+                        } else if (args[1].equalsIgnoreCase("send")) {
 
+                            gameServerManager.getGameServerByName(message).thenAccept(server -> {
+                                try {
+                                    playerManager.getOnlinePlayer(targetName).get().sendTo(server);
+                                    Logger.log(LoggerType.INFO, "sent!");
+                                } catch (InterruptedException | ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+
+                        }
+
+
+                    } else {
+                        Logger.log(LoggerType.INFO, "Der Spieler " + targetName + " wurde nicht gefunden!");
                     }
-
-
-                } else {
-                    Logger.log(LoggerType.INFO, "Der Spieler " + targetName + " wurde nicht gefunden!");
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
 
 
             }
+        } else {
+            Logger.log(LoggerType.INFO, "players <kick/message/send> <player> <message/serverName>");
         }
 
     }

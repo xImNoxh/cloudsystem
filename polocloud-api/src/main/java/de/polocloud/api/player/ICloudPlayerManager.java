@@ -2,6 +2,7 @@ package de.polocloud.api.player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface ICloudPlayerManager {
 
@@ -9,14 +10,14 @@ public interface ICloudPlayerManager {
 
     void unregister(ICloudPlayer cloudPlayer);
 
-    List<ICloudPlayer> getAllOnlinePlayers();
+    CompletableFuture<List<ICloudPlayer>> getAllOnlinePlayers();
 
-    ICloudPlayer getOnlinePlayer(String name);
+    CompletableFuture<ICloudPlayer> getOnlinePlayer(String name);
 
-    ICloudPlayer getOnlinePlayer(UUID uuid);
+    CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid);
 
-    boolean isPlayerOnline(String name);
+    CompletableFuture<Boolean> isPlayerOnline(String name);
 
-    boolean isPlayerOnline(UUID uuid);
+    CompletableFuture<Boolean> isPlayerOnline(UUID uuid);
 
 }

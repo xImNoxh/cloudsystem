@@ -8,6 +8,7 @@ import de.polocloud.api.player.ICloudPlayerManager;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class GameServerControlPlayerListener extends IPacketHandler {
 
@@ -20,8 +21,12 @@ public class GameServerControlPlayerListener extends IPacketHandler {
         GameServerControlPlayerPacket packet = (GameServerControlPlayerPacket) obj;
 
         UUID uuid = packet.getUuid();
-        if(!playerManager.isPlayerOnline(uuid)){
-            //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
+        try {
+            if(!playerManager.isPlayerOnline(uuid).get()){
+                //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
 
     }

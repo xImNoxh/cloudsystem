@@ -13,6 +13,7 @@ import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class GameServerPlayerDisconnectListener extends IPacketHandler {
 
@@ -29,7 +30,12 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler {
 
         UUID uuid = packet.getUuid();
 
-        ICloudPlayer onlinePlayer = playerManager.getOnlinePlayer(packet.getUuid());
+        ICloudPlayer onlinePlayer = null;
+        try {
+            onlinePlayer = playerManager.getOnlinePlayer(packet.getUuid()).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         if (onlinePlayer == null) {
             return;
         }

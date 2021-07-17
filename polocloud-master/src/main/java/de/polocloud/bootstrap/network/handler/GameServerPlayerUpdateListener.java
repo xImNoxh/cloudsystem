@@ -46,8 +46,8 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
 
             ICloudPlayer cloudPlayer;
 
-            if (playerManager.isPlayerOnline(uuid)) {
-                cloudPlayer = playerManager.getOnlinePlayer(uuid);
+            if (playerManager.isPlayerOnline(uuid).get()) {
+                cloudPlayer = playerManager.getOnlinePlayer(uuid).get();
             } else {
                 cloudPlayer = new SimpleCloudPlayer(name, uuid);
                 ((SimpleCloudPlayer) cloudPlayer).setProxyGameServer(proxyServer);

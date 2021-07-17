@@ -2,10 +2,12 @@ package de.polocloud.bootstrap.player;
 
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class SimpleCloudPlayerManager implements ICloudPlayerManager {
 
@@ -22,16 +24,16 @@ public class SimpleCloudPlayerManager implements ICloudPlayerManager {
     }
 
     @Override
-    public List<ICloudPlayer> getAllOnlinePlayers() {
-        return this.cloudPlayers;
+    public CompletableFuture<List<ICloudPlayer>> getAllOnlinePlayers() {
+        return CompletableFuture.completedFuture(this.cloudPlayers);
     }
 
     @Override
-    public ICloudPlayer getOnlinePlayer(String name) {
+    public CompletableFuture<ICloudPlayer> getOnlinePlayer(String name) {
 
         for (ICloudPlayer cloudPlayer : this.cloudPlayers) {
-            if(cloudPlayer.getName().equalsIgnoreCase(name)){
-                return cloudPlayer;
+            if (cloudPlayer.getName().equalsIgnoreCase(name)) {
+                return CompletableFuture.completedFuture(cloudPlayer);
             }
         }
 
@@ -39,11 +41,11 @@ public class SimpleCloudPlayerManager implements ICloudPlayerManager {
     }
 
     @Override
-    public ICloudPlayer getOnlinePlayer(UUID uuid) {
+    public CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid) {
 
         for (ICloudPlayer cloudPlayer : this.cloudPlayers) {
-            if(cloudPlayer.getUUID().toString().equalsIgnoreCase(uuid.toString())){
-                return cloudPlayer;
+            if (cloudPlayer.getUUID().toString().equalsIgnoreCase(uuid.toString())) {
+                return CompletableFuture.completedFuture(cloudPlayer);
             }
         }
 
@@ -51,13 +53,13 @@ public class SimpleCloudPlayerManager implements ICloudPlayerManager {
     }
 
     @Override
-    public boolean isPlayerOnline(String name) {
-        return getOnlinePlayer(name) != null;
+    public CompletableFuture<Boolean> isPlayerOnline(String name) {
+        return CompletableFuture.completedFuture(getOnlinePlayer(name) != null);
     }
 
     @Override
-    public boolean isPlayerOnline(UUID uuid) {
-        return getOnlinePlayer(uuid) != null;
+    public CompletableFuture<Boolean> isPlayerOnline(UUID uuid) {
+        return CompletableFuture.completedFuture(getOnlinePlayer(uuid) != null);
 
     }
 }
