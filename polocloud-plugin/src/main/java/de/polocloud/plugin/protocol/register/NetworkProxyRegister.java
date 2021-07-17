@@ -4,14 +4,13 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
+import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -34,6 +33,55 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerGameServerUnregisterPacket();
         registerCloudMotdUpdatePacket();
         registerMasterPlayerKickPacket();
+        registerMasterSendMessagePacket();
+        registerMasterSendPlayerToPacket();
+    }
+
+    private void registerMasterSendMessagePacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                MasterPlayerSendMessagePacket packet = (MasterPlayerSendMessagePacket) obj;
+
+                UUID uuid = packet.getUuid();
+                String message = packet.getMessage();
+
+                if (ProxyServer.getInstance().getPlayer(uuid) != null) {
+                    ProxyServer.getInstance().getPlayer(uuid).sendMessage(message);
+                }
+
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return MasterPlayerSendMessagePacket.class;
+            }
+        });
+    }
+
+    private void registerMasterSendPlayerToPacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                MasterPlayerSendToServerPacket packet = (MasterPlayerSendToServerPacket) obj;
+
+                UUID uuid = packet.getUuid();
+                String targetServer = packet.getTargetServer();
+
+                if (ProxyServer.getInstance().getPlayer(uuid) != null) {
+                    ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(targetServer);
+                    if (serverInfo != null) {
+                        ProxyServer.getInstance().getPlayer(uuid).connect(serverInfo);
+                    }
+                }
+
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return MasterPlayerSendToServerPacket.class;
+            }
+        });
     }
 
     private void registerMasterPlayerKickPacket() {

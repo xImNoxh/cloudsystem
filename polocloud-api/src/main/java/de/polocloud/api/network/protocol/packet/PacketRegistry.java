@@ -54,6 +54,9 @@ public class PacketRegistry {
         registerPacket(121, SubscribePacket.class);
 
         registerPacket(122, WrapperRegisterStaticServerPacket.class);
+
+        registerPacket(123, MasterPlayerSendMessagePacket.class);
+        registerPacket(124, MasterPlayerSendToServerPacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
