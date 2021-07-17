@@ -70,7 +70,8 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
 
                     for (IGameServer proxyGameServer : proxyGameServerList) {
                         if (proxyGameServer.getStatus() == GameServerStatus.RUNNING) {
-                            proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake())); //TODO update host
+                            proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(),
+                                gameServer.getSnowflake())); //TODO update host
                         }
                     }
                 } catch (InterruptedException | ExecutionException e) {

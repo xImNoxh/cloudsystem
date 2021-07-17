@@ -33,7 +33,8 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void executeCommand(String command) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        Bukkit.getScheduler().runTask(this, () ->
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
     }
 
     @Override
