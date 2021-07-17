@@ -3,19 +3,23 @@ package de.polocloud.plugin.protocol.register;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.network.protocol.packet.api.APIResponseCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
+import de.polocloud.plugin.api.response.ResponseHandler;
 import de.polocloud.plugin.api.server.APIGameServerManager;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
 import io.netty.channel.ChannelHandlerContext;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +65,80 @@ public class NetworkPluginRegister extends NetworkRegister {
     }
 
     public void registerAPIHandler() {
+
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                System.out.println("incomming api player call");
+                APIResponseCloudPlayerPacket packet = (APIResponseCloudPlayerPacket) obj;
+                UUID requestId = packet.getRequestId();
+                List<ICloudPlayer> incomming = packet.getResponse();
+                List<ICloudPlayer> response = packet.getResponse();
+                APIResponseCloudPlayerPacket.Type type = packet.getType();
+
+                CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
+
+                for (int i = 0; i < incomming.size(); i++) {
+                    ICloudPlayer incommingObj = incomming.get(i);
+                    response.add(new ICloudPlayer() {
+                        @Override
+                        public UUID getUUID() {
+                            return incommingObj.getUUID();
+                        }
+
+                        @Override
+                        public IGameServer getProxyServer() {
+                            return incommingObj.getProxyServer();
+                        }
+
+                        @Override
+                        public IGameServer getMinecraftServer() {
+                            return incommingObj.getMinecraftServer();
+                        }
+
+                        @Override
+                        public void sendMessage(String message) {
+                            //TODO
+                            throw new NotImplementedException();
+                        }
+
+                        @Override
+                        public void sendTo(IGameServer gameServer) {
+                            //TODO
+                            throw new NotImplementedException();
+                        }
+
+                        @Override
+                        public void kick(String message) {
+                            //TODO
+                            throw new NotImplementedException();
+                        }
+
+                        @Override
+                        public String getName() {
+                            return incommingObj.getName();
+                        }
+                    });
+                }
+
+
+                if (packet.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
+                    completableFuture.complete(incomming.get(0));
+                } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.LIST) {
+                    completableFuture.complete(incomming);
+                } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.BOOLEAN) {
+                    completableFuture.complete(!incomming.isEmpty());
+                }
+
+
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return APIResponseCloudPlayerPacket.class;
+            }
+        });
+
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
@@ -68,7 +146,7 @@ public class NetworkPluginRegister extends NetworkRegister {
 
                 UUID requestId = packet.getRequestId();
                 List<IGameServer> response = packet.getResponse();
-                CompletableFuture<Object> completableFuture = ((APIGameServerManager) CloudExecutor.getInstance().getGameServerManager()).getCompletableFuture(requestId, true);
+                CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
 
                 if (packet.getType() == APIResponseGameServerPacket.Type.SINGLE) {
                     completableFuture.complete(response.get(0));

@@ -18,8 +18,16 @@ public class TestCloudCommand implements CommandExecutor {
 
         if (args.length == 1) {
 
-            sender.sendMessage("requesting... " + args[0]);
+            sender.sendMessage("requesting Player... " + args[0]);
 
+            CloudExecutor.getInstance().getCloudPlayerManager().getOnlinePlayer(args[0]).thenAccept(player -> {
+                sender.sendMessage(player.getName());
+                sender.sendMessage(player.getUUID().toString());
+                sender.sendMessage(player.getProxyServer().getName());
+                sender.sendMessage(player.getMinecraftServer().getName());
+            });
+
+            /*
             CloudExecutor.getInstance().getGameServerManager().getGameServerByName(args[0]).thenAccept(s -> {
 
                 CloudExecutor.getInstance().getGameServerManager().getGameServersByTemplate(s.getTemplate()).thenAccept(servers -> {
@@ -39,6 +47,8 @@ public class TestCloudCommand implements CommandExecutor {
 
 
             });
+
+             */
 
         } else {
 

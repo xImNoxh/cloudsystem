@@ -6,18 +6,18 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 import java.util.UUID;
 
-public class APIRequestGameServerPacket extends Packet {
+public class APIRequestCloudPlayerPacket extends Packet {
 
 
     private UUID requestId;
     private Action action;
     private String value;
 
-    public APIRequestGameServerPacket() {
+    public APIRequestCloudPlayerPacket() {
 
     }
 
-    public APIRequestGameServerPacket(UUID requestId, Action action, String value) {
+    public APIRequestCloudPlayerPacket(UUID requestId, Action action, String value) {
         this.requestId = requestId;
         this.action = action;
         this.value = value;
@@ -50,18 +50,14 @@ public class APIRequestGameServerPacket extends Packet {
         return requestId;
     }
 
-    public enum Type {
-        SINGLE,
-        LIST;
-    }
-
     public enum Action {
 
-        NAME,
-        SNOWFLAKE,
         ALL,
-        LIST_BY_TEMPLATE,
-        LIST_BY_TYPE,
+        BY_NAME,
+        BY_UUID,
+        ONLINE_UUID,
+        ONLINE_NAME
+        ;
     }
 
 }

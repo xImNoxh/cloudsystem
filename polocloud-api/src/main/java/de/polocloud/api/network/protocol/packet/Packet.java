@@ -12,6 +12,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class Packet {
 
@@ -20,6 +21,57 @@ public abstract class Packet {
     public abstract void write(ByteBuf byteBuf) throws IOException;
 
     public abstract void read(ByteBuf byteBuf) throws IOException;
+
+    protected void writeCloudPlayer(ByteBuf byteBuf, ICloudPlayer cloudPlayer) {
+        writeString(byteBuf, cloudPlayer.getName());
+        writeString(byteBuf, cloudPlayer.getUUID().toString());
+        writeGameServer(byteBuf, cloudPlayer.getProxyServer());
+        writeGameServer(byteBuf, cloudPlayer.getMinecraftServer());
+    }
+
+    protected ICloudPlayer readCloudPlayer(ByteBuf byteBuf) {
+        String name = readString(byteBuf);
+        UUID uuid = UUID.fromString(readString(byteBuf));
+        IGameServer proxyServer = readGameServer(byteBuf);
+        IGameServer minecraftServer = readGameServer(byteBuf);
+
+        return new ICloudPlayer() {
+            @Override
+            public UUID getUUID() {
+                return uuid;
+            }
+
+            @Override
+            public IGameServer getProxyServer() {
+                return proxyServer;
+            }
+
+            @Override
+            public IGameServer getMinecraftServer() {
+                return minecraftServer;
+            }
+
+            @Override
+            public void sendMessage(String message) {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public void sendTo(IGameServer gameServer) {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public void kick(String message) {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+        };
+    }
 
     protected void writeGameServer(ByteBuf byteBuf, IGameServer gameServer) {
 
