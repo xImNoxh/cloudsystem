@@ -40,9 +40,9 @@ public class PacketRegistry {
         registerPacket(111, GameServerShutdownPacket.class);
         registerPacket(112, GameServerUnregisterPacket.class);
 
-        registerPacket(113, MasterKickPlayerPacket.class);
+        registerPacket(113, MasterPlayerKickPacket.class);
         registerPacket(114, MasterLoginResponsePacket.class);
-        registerPacket(115, MasterPlayerRequestResponsePacket.class);
+        registerPacket(115, MasterPlayerRequestJoinResponsePacket.class);
         registerPacket(116, MasterRequestServerListUpdatePacket.class);
         registerPacket(117, MasterRequestServerStartPacket.class);
 

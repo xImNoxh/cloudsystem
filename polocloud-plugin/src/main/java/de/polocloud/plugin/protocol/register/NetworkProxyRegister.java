@@ -4,7 +4,8 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
+import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
+import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
@@ -15,6 +16,7 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
 public class NetworkProxyRegister extends NetworkRegister {
 
@@ -31,6 +33,29 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerMasterPlayerRequestResponsePacket();
         registerGameServerUnregisterPacket();
         registerCloudMotdUpdatePacket();
+        registerMasterPlayerKickPacket();
+    }
+
+    private void registerMasterPlayerKickPacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                MasterPlayerKickPacket packet = (MasterPlayerKickPacket) obj;
+
+                UUID uuid = packet.getUuid();
+                String message = packet.getMessage();
+
+                if (ProxyServer.getInstance().getPlayer(uuid) != null) {
+                    ProxyServer.getInstance().getPlayer(uuid).disconnect(message);
+                }
+
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return MasterPlayerKickPacket.class;
+            }
+        });
     }
 
     private void registerGameServerUnregisterPacket() {
@@ -70,12 +95,12 @@ public class NetworkProxyRegister extends NetworkRegister {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterPlayerRequestResponsePacket packet = (MasterPlayerRequestResponsePacket) obj;
+                MasterPlayerRequestJoinResponsePacket packet = (MasterPlayerRequestJoinResponsePacket) obj;
                 LoginEvent loginEvent = networkLoginCache.getLoginEvents().remove(packet.getUuid());
-                if(packet.getSnowflake() == -1){
+                if (packet.getSnowflake() == -1) {
                     loginEvent.setCancelled(true);
                     loginEvent.setCancelReason("§cEs wurde kein fallback Server gefunden!");
-                }else{
+                } else {
                     networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
                 }
                 loginEvent.completeIntent(plugin);
@@ -83,16 +108,16 @@ public class NetworkProxyRegister extends NetworkRegister {
 
             @Override
             public Class<? extends Packet> getPacketClass() {
-                return MasterPlayerRequestResponsePacket.class;
+                return MasterPlayerRequestJoinResponsePacket.class;
             }
         });
     }
 
-    public void registerCloudMotdUpdatePacket(){
+    public void registerCloudMotdUpdatePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                 ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;
+                ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;
 
             }
 

@@ -2,7 +2,7 @@ package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.master.MasterKickPlayerPacket;
+import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +24,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
         networkClient.registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterKickPlayerPacket packet = (MasterKickPlayerPacket) obj;
+                MasterPlayerKickPacket packet = (MasterPlayerKickPacket) obj;
                 if (Bukkit.getPlayer(packet.getUuid()) != null) {
                     Bukkit.getPlayer(packet.getUuid()).kickPlayer(packet.getMessage());
                 }
@@ -32,7 +32,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
 
             @Override
             public Class<? extends Packet> getPacketClass() {
-                return MasterKickPlayerPacket.class;
+                return MasterPlayerKickPacket.class;
             }
         });
     }

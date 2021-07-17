@@ -6,17 +6,17 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 import java.util.UUID;
 
-public class MasterPlayerRequestResponsePacket extends Packet {
+public class MasterPlayerRequestJoinResponsePacket extends Packet {
 
     private UUID uuid;
 
     private String serviceName;
     private long snowflake;
 
-    public MasterPlayerRequestResponsePacket() {
+    public MasterPlayerRequestJoinResponsePacket() {
     }
 
-    public MasterPlayerRequestResponsePacket(UUID uuid, String serviceName, long snowflake) {
+    public MasterPlayerRequestJoinResponsePacket(UUID uuid, String serviceName, long snowflake) {
         this.uuid = uuid;
         this.serviceName = serviceName;
         this.snowflake = snowflake;

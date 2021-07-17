@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.player;
 
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -61,6 +62,6 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public void kick(String message) {
-        throw new NotImplementedException();
+        getProxyServer().sendPacket(new MasterPlayerKickPacket(getUUID(), message));
     }
 }

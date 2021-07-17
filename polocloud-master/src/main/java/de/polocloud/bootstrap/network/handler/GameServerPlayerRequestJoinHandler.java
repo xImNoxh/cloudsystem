@@ -7,7 +7,7 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestResponsePacket;
+import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.config.MasterConfig;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,17 +46,17 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
                         }
                     }
                     if (targetServer == null) {
-                        ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
+                        ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
                         return;
                     }
                 }
             } else {
-                ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, "", -1));
+                ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
                 return;
             }
 
 
-            ctx.writeAndFlush(new MasterPlayerRequestResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
+            ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
             //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

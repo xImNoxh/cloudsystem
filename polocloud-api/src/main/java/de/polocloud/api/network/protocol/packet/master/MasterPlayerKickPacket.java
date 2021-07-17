@@ -6,16 +6,16 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 import java.util.UUID;
 
-public class MasterKickPlayerPacket extends Packet {
+public class MasterPlayerKickPacket extends Packet {
 
     private UUID uuid;
     private String message;
 
-    public MasterKickPlayerPacket() {
+    public MasterPlayerKickPacket() {
 
     }
 
-    public MasterKickPlayerPacket(UUID uuid, String message) {
+    public MasterPlayerKickPacket(UUID uuid, String message) {
         this.uuid = uuid;
         this.message = message;
     }
