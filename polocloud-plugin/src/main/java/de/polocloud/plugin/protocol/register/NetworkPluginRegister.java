@@ -77,7 +77,7 @@ public class NetworkPluginRegister extends NetworkRegister {
                 APIResponseCloudPlayerPacket.Type type = packet.getType();
 
                 CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
-
+/*
                 for (int i = 0; i < incomming.size(); i++) {
                     ICloudPlayer incommingObj = incomming.get(i);
                     response.add(new ICloudPlayer() {
@@ -122,12 +122,14 @@ public class NetworkPluginRegister extends NetworkRegister {
                 }
 
 
+ */
+
                 if (packet.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
-                    completableFuture.complete(incomming.get(0));
+                    completableFuture.complete(response.get(0));
                 } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.LIST) {
-                    completableFuture.complete(incomming);
+                    completableFuture.complete(response);
                 } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.BOOLEAN) {
-                    completableFuture.complete(!incomming.isEmpty());
+                    completableFuture.complete(!response.isEmpty());
                 }
 
 

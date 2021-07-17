@@ -1,20 +1,24 @@
 package de.polocloud.plugin.api.spigot.event;
 
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.plugin.api.CloudExecutor;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import java.util.concurrent.CompletableFuture;
 
 public class CloudPlayerJoinNetworkEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
-    private ICloudPlayer player;
+    private String playerName;
 
-    public CloudPlayerJoinNetworkEvent(ICloudPlayer player) {
-        this.player = player;
+    public CloudPlayerJoinNetworkEvent(String playerName) {
+        this.playerName = playerName;
     }
 
-    public ICloudPlayer getPlayer() {
-        return player;
+
+    public CompletableFuture<ICloudPlayer> getPlayer() {
+        return CloudExecutor.getInstance().getCloudPlayerManager().getOnlinePlayer(playerName);
     }
 
     @Override

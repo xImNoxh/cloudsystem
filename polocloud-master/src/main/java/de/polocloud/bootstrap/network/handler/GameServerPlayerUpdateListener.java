@@ -45,15 +45,20 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
 
 
             ICloudPlayer cloudPlayer;
-
+            boolean isOnline = false;
             if (playerManager.isPlayerOnline(uuid).get()) {
+                isOnline = true;
                 cloudPlayer = playerManager.getOnlinePlayer(uuid).get();
             } else {
                 cloudPlayer = new SimpleCloudPlayer(name, uuid);
                 ((SimpleCloudPlayer) cloudPlayer).setProxyGameServer(proxyServer);
                 cloudPlayer.getProxyServer().getCloudPlayers().add(cloudPlayer);
                 playerManager.register(cloudPlayer);
+
+                pubSubManager.publish("polo:event:playerJoin", cloudPlayer.getName());
             }
+
+            IGameServer from = cloudPlayer.getMinecraftServer();
 
             if (cloudPlayer.getMinecraftServer() != null) {
                 cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
@@ -63,7 +68,12 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
             ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
             targetServer.getCloudPlayers().add(cloudPlayer);
 
-            pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
+            IGameServer to = cloudPlayer.getMinecraftServer();
+
+            if (isOnline) {
+                pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
+                pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
+            }
 
             if (masterConfig.getProperties().isLogPlayerConnections())
                 Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() +

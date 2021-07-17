@@ -5,10 +5,9 @@ import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
-import de.polocloud.plugin.api.spigot.event.CloudServerStartedEvent;
-import de.polocloud.plugin.api.spigot.event.CloudServerStoppedEvent;
-import de.polocloud.plugin.api.spigot.event.CloudServerUpdatedEvent;
+import de.polocloud.plugin.api.spigot.event.*;
 import de.polocloud.plugin.bootstrap.command.TestCloudCommand;
+import de.polocloud.plugin.bootstrap.listener.TestCloudListener;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.listener.CollectiveSpigotEvents;
@@ -27,6 +26,7 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
         new CloudPlugin(this, this);
 
         getCommand("testCloud").setExecutor(new TestCloudCommand());
+        getServer().getPluginManager().registerEvents(new TestCloudListener(), this);
 
 
     }
@@ -70,12 +70,38 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
                     Bukkit.getPluginManager().callEvent(new CloudServerStoppedEvent(server)));
             });
 
-
             CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverUpdated", packet -> {
                 String serverName = packet.getData();
                 CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
                     Bukkit.getPluginManager().callEvent(new CloudServerUpdatedEvent(server)));
             });
+
+
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerJoin", packet -> {
+                String playerName = packet.getData();
+                System.out.println("call join for player " + playerName);
+
+                Bukkit.getPluginManager().callEvent(new CloudPlayerJoinNetworkEvent(playerName));
+            });
+
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerQuit", packet -> {
+                String playerName = packet.getData();
+                System.out.println("call quit for player " + playerName);
+                Bukkit.getPluginManager().callEvent(new CloudPlayerQuitNetworkEvent(playerName));
+            });
+
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerSwitch", packet -> {
+
+                System.out.println("call switch for player " + packet.getData());
+
+                String[] data = packet.getData().split(",");
+                String playerName = data[0];
+                String to = data[1];
+                String from = data[2];
+
+                Bukkit.getPluginManager().callEvent(new CloudPlayerSwitchServerEvent(playerName, from, to));
+            });
+
 
         }, ChannelActiveEvent.class);
 

@@ -8,8 +8,10 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
+import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -23,8 +25,12 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
     @Inject
     private ITemplateService templateService;
     @Inject
+    private ICloudPlayerManager playerManager;
+    @Inject
     private MasterConfig config;
 
+    @Inject
+    private MasterPubSubManager pubSubManager;
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
@@ -57,6 +63,9 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
 
 
             ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
+
+
+
             //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
