@@ -134,6 +134,18 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void shutdown() {
+        new Thread(() -> {
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.exit(-1);
+
+        }).start();
+
         Bukkit.shutdown();
     }
 

@@ -45,6 +45,7 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
         GameServerRegisterPacket packet = (GameServerRegisterPacket) obj;
 
         try {
+            System.out.println("snowflake: " + packet.getSnowflake());
             IGameServer gameServer = gameServerManager.getGameSererBySnowflake(packet.getSnowflake()).get();
 
             ((SimpleGameServer) gameServer).setCtx(ctx);

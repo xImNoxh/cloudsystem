@@ -21,7 +21,7 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler {
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         WrapperRegisterStaticServerPacket packet = (WrapperRegisterStaticServerPacket) obj;
-
+        System.out.println("register static server with id " + packet.getSnowflake());
         IGameServer gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), templateService.getTemplateByName(packet.getTemplateName()), System.currentTimeMillis());
 
         gameServerManager.registerGameServer(gameServer);

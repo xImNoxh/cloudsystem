@@ -1,8 +1,5 @@
 package de.polocloud.wrapper;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.IConfigLoader;
@@ -10,7 +7,6 @@ import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.ChannelActiveEvent;
-import de.polocloud.api.event.CloudEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
@@ -31,8 +27,6 @@ import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -70,7 +64,12 @@ public class Wrapper implements IStartable, ITerminatable {
                             try {
                                 processBuilder.directory(new File("static/" + serverName));
 
-                                event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(serverName));
+                                String name = serverName.split("#")[0];
+                                long snowflake = Long.parseLong(serverName.split("#")[1]);
+
+                                System.out.println("start with " + name + "/" + snowflake + "(" + serverName + ")");
+
+                                event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflake));
 
                                 Process process = processBuilder.start();
                                 process.waitFor();

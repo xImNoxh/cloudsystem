@@ -8,23 +8,27 @@ import java.io.IOException;
 public class WrapperRegisterStaticServerPacket extends Packet {
 
     private String serverName;
+    private long snowflake;
 
     public WrapperRegisterStaticServerPacket() {
 
     }
 
-    public WrapperRegisterStaticServerPacket(String serverName) {
+    public WrapperRegisterStaticServerPacket(String serverName, long snowflake) {
         this.serverName = serverName;
+        this.snowflake = snowflake;
     }
 
     @Override
     public void write(ByteBuf byteBuf) throws IOException {
         writeString(byteBuf, serverName);
+        byteBuf.writeLong(snowflake);
     }
 
     @Override
     public void read(ByteBuf byteBuf) throws IOException {
         serverName = readString(byteBuf);
+        snowflake = byteBuf.readLong();
     }
 
     public String getServerName() {
@@ -35,7 +39,7 @@ public class WrapperRegisterStaticServerPacket extends Packet {
         return serverName.split("-")[0];
     }
     public long getSnowflake(){
-        return Long.parseLong(serverName.split("-")[1].split("#")[0]);
+        return snowflake;
     }
 
 }
