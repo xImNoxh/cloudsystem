@@ -30,7 +30,7 @@
       <groupId>de.polocloud.database</groupId>
       <artifactId>polocloud-database</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>de.polocloud.logger</groupId>

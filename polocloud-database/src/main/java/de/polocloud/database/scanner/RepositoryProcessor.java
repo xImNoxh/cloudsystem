@@ -23,13 +23,13 @@ public class RepositoryProcessor {
     private final DatabaseService databaseService;
     private final ClassLoader classLoader;
 
-    public RepositoryProcessor(ClassLoader classLoader, DatabaseService databaseService) {
+    public RepositoryProcessor(ClassLoader classLoader, DatabaseService databaseService, String packing) {
         this.databaseService = databaseService;
         this.classLoader = classLoader;
 
         List<Class<?>> classes = null;
         try {
-            classes = ClassHelper.findClassesWithAnnotation(classLoader, "de.polocloud", Repository.class);
+            classes = ClassHelper.findClassesWithAnnotation(classLoader, packing, Repository.class);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }

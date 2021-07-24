@@ -17,12 +17,12 @@ public class EntityProcessor {
 
     private final DatabaseService databaseService;
 
-    public EntityProcessor(ClassLoader classLoader, DatabaseService databaseService) {
+    public EntityProcessor(ClassLoader classLoader, DatabaseService databaseService, String packing) {
         this.databaseService = databaseService;
 
         List<Class<?>> classes = null;
         try {
-            classes = ClassHelper.findClassesWithAnnotation(classLoader, "de.polocloud", Entity.class);
+            classes = ClassHelper.findClassesWithAnnotation(classLoader, packing, Entity.class);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
