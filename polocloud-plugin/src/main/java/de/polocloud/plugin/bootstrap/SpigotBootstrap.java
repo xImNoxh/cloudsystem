@@ -7,7 +7,6 @@ import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.api.spigot.event.*;
 import de.polocloud.plugin.bootstrap.command.TestCloudCommand;
-import de.polocloud.plugin.bootstrap.listener.TestCloudListener;
 import de.polocloud.plugin.commands.CommandReader;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
@@ -30,9 +29,6 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
         new CloudPlugin(this, this);
 
         getCommand("testCloud").setExecutor(new TestCloudCommand());
-        getServer().getPluginManager().registerEvents(new TestCloudListener(), this);
-
-
     }
 
     @Override
@@ -95,10 +91,7 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
             CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerJoin", packet -> {
                 Bukkit.getScheduler().runTask(this, () -> {
-
                     String playerName = packet.getData();
-                    System.out.println("call join for player " + playerName);
-
                     Bukkit.getPluginManager().callEvent(new CloudPlayerJoinNetworkEvent(playerName));
                 });
 
@@ -106,9 +99,7 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
             CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerQuit", packet -> {
                 Bukkit.getScheduler().runTask(this, () -> {
-
                     String playerName = packet.getData();
-                    System.out.println("call quit for player " + playerName);
                     Bukkit.getPluginManager().callEvent(new CloudPlayerQuitNetworkEvent(playerName));
                 });
 
@@ -116,15 +107,10 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
             CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerSwitch", packet -> {
                 Bukkit.getScheduler().runTask(this, () -> {
-
-
-                    System.out.println("call switch for player " + packet.getData());
-
                     String[] data = packet.getData().split(",");
                     String playerName = data[0];
                     String to = data[1];
                     String from = data[2];
-
                     Bukkit.getPluginManager().callEvent(new CloudPlayerSwitchServerEvent(playerName, from, to));
                 });
 

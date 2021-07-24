@@ -3,6 +3,9 @@ package de.polocloud.bootstrap.module;
 import com.google.gson.Gson;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.module.Module;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,26 +35,20 @@ public class MasterModuleLoader {
 
         for (ModuleData data : moduleData) {
             try {
-                System.out.println("try loading: " + data.getMain());
                 Class<?> aClass = getClass().getClassLoader().loadClass(Module.class.getName());
-                System.out.println("loaded " + aClass.getSimpleName());
                 Class<?> cl = new URLClassLoader(new URL[]{data.getFile().toURL()}, Thread.currentThread().getContextClassLoader()).loadClass(data.getMain());
 
                 Class[] interfaces = cl.getInterfaces();
                 boolean isplugin = false;
                 for (int y = 0; y < interfaces.length && !isplugin; y++) {
-                    System.out.println(interfaces[y].getName() + " ?");
                     if (interfaces[y].equals(Module.class)) {
                         isplugin = true;
                     }
                 }
-
-
                 Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
-                //Module module = (Module) cl.getDeclaredConstructor().newInstance();
                 module.onLoad();
-
-                System.out.println("Module " + data.getName() + " Loaded (Author: " + data.getAuthor() + ")");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() +
+                    ConsoleColors.GRAY.getAnsiCode() +" Loaded (Author: " + data.getAuthor() + ")");
             } catch (MalformedURLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

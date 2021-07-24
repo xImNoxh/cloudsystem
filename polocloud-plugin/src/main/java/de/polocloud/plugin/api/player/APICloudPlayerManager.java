@@ -56,8 +56,6 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
             UUID requestId = UUID.randomUUID();
             APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.BY_NAME, name);
             ResponseHandler.register(requestId, completableFuture);
-
-            System.out.println("sending packet!");
             networkClient.sendPacket(packet);
 
         });

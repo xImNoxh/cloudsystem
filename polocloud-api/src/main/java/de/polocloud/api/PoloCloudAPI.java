@@ -10,16 +10,16 @@ import de.polocloud.api.commands.types.ConsoleExecutor;
 
 public class PoloCloudAPI extends CloudAPI {
 
-    private Injector inector;
+    private final Injector inector;
     private ICommandPool commandPool;
 
     private ICommandExecutor commandSender;
 
     public PoloCloudAPI(AbstractModule... modules) {
-        instance = this;
         this.inector = Guice.createInjector(modules);
-        commandPool = new CommandPool();
 
+        instance = this;
+        commandPool = new CommandPool();
         this.commandSender = new ConsoleExecutor();
     }
 

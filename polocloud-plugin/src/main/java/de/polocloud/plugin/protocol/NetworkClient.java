@@ -63,6 +63,7 @@ public class NetworkClient implements IPacketSender {
     }
 
     public void connect(int port) {
+
         this.port = port;
         this.cloudAPI = new PoloCloudAPI();
 
@@ -85,13 +86,6 @@ public class NetworkClient implements IPacketSender {
             String path = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getPath();
             String[] split = path.split(path.contains("/") ? "/" : "\\\\");
-
-            System.out.println(Arrays.toString(split));
-
-            System.out.println(path);
-            System.out.println(split[split.length - 3]);
-            System.out.println(split[split.length - 3].split("#")[1]);
-
             sendPacket(new GameServerRegisterPacket(Long.parseLong(split[split.length - 3].split("#")[1]), port));
         } catch (URISyntaxException e) {
             e.printStackTrace();

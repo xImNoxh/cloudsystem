@@ -9,6 +9,8 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperRegisterStaticServerListener extends IPacketHandler {
@@ -21,9 +23,8 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler {
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         WrapperRegisterStaticServerPacket packet = (WrapperRegisterStaticServerPacket) obj;
-        System.out.println("register static server with id " + packet.getSnowflake());
+        Logger.log(LoggerType.INFO, "register static server with id " + packet.getSnowflake());
         IGameServer gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), templateService.getTemplateByName(packet.getTemplateName()), System.currentTimeMillis());
-
         gameServerManager.registerGameServer(gameServer);
     }
 

@@ -13,14 +13,12 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.commands.*;
-import de.polocloud.bootstrap.commands.ClouldStopCommand;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
@@ -46,6 +44,8 @@ public class Master implements IStartable, ITerminatable {
 
     private SimpleNettyServer nettyServer;
 
+    public static Master instance;
+
     private final ITemplateService templateService;
     private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
@@ -57,6 +57,7 @@ public class Master implements IStartable, ITerminatable {
 
 
     public Master() {
+        instance = this;
 
 
         this.wrapperClientManager = new SimpleWrapperClientManager();
@@ -157,5 +158,37 @@ public class Master implements IStartable, ITerminatable {
 
     public boolean isRunning() {
         return running;
+    }
+
+    public static Master getInstance() {
+        return instance;
+    }
+
+    public IGameServerManager getGameServerManager() {
+        return gameServerManager;
+    }
+
+    public CloudAPI getCloudAPI() {
+        return cloudAPI;
+    }
+
+    public SimpleNettyServer getNettyServer() {
+        return nettyServer;
+    }
+
+    public ITemplateService getTemplateService() {
+        return templateService;
+    }
+
+    public IWrapperClientManager getWrapperClientManager() {
+        return wrapperClientManager;
+    }
+
+    public ICloudPlayerManager getCloudPlayerManager() {
+        return cloudPlayerManager;
+    }
+
+    public MasterModuleLoader getModuleLoader() {
+        return moduleLoader;
     }
 }

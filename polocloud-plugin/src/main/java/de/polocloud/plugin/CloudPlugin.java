@@ -1,5 +1,6 @@
 package de.polocloud.plugin;
 
+import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.protocol.NetworkClient;

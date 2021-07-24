@@ -12,13 +12,14 @@
   <artifactId>polocloud-modules</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>polocloud-test-module</module>
+    <module>polocloud-hubcommnad-module</module>
   </modules>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
+
 
 
 

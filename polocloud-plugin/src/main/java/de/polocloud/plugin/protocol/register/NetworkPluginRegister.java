@@ -69,7 +69,6 @@ public class NetworkPluginRegister extends NetworkRegister {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                System.out.println("incomming api player call");
                 APIResponseCloudPlayerPacket packet = (APIResponseCloudPlayerPacket) obj;
                 UUID requestId = packet.getRequestId();
                 List<ICloudPlayer> incomming = packet.getResponse();

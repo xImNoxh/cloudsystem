@@ -67,8 +67,7 @@ public class Wrapper implements IStartable, ITerminatable {
                                 String name = serverName.split("#")[0];
                                 long snowflake = Long.parseLong(serverName.split("#")[1]);
 
-                                System.out.println("start with " + name + "/" + snowflake + "(" + serverName + ")");
-
+                                Logger.log(LoggerType.INFO, "start with " + name + "/" + snowflake + "(" + serverName + ")");
                                 event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflake));
 
                                 Process process = processBuilder.start();
