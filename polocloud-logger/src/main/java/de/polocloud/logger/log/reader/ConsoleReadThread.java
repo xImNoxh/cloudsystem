@@ -1,7 +1,9 @@
 package de.polocloud.logger.log.reader;
 
+import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -45,7 +47,9 @@ public class ConsoleReadThread extends Thread {
                             Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknow command... Please use the " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "help " + ConsoleColors.GRAY.getAnsiCode() + "command.");
                         }else {
                             for (CloudCommand command : commands) {
-                                command.execute(args);
+                                if(command.getCommandType().equals(CommandType.CONSOLE) || command.getCommandType().equals(CommandType.INGAME_CONSOLE)) {
+                                    command.execute(CloudAPI.getInstance().getConsoleExecutor(), args);
+                                }
                             }
                         }
 

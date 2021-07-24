@@ -1,11 +1,13 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.util.Hastebin;
 
 import java.io.*;
 
-@CloudCommand.Info(name = "logMe", aliases = "", description = "Log the Master to hastebin")
+@CloudCommand.Info(name = "logMe", aliases = "", description = "Log the Master to hastebin", commandType = CommandType.CONSOLE)
 public class LogMeCommand extends CloudCommand {
 
     private final Hastebin hastebin = new Hastebin();
@@ -13,7 +15,7 @@ public class LogMeCommand extends CloudCommand {
 
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
 
         StringBuilder logString = new StringBuilder();
 

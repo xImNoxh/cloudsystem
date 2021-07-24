@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-@CloudCommand.Info(name = "shutdowntemplate", description = "shutdown all service of one template", aliases = "")
+@CloudCommand.Info(name = "shutdowntemplate", description = "shutdown all service of one template", aliases = "", commandType = CommandType.CONSOLE)
 public class ShutdownTemplateServerCommand extends CloudCommand {
 
     private IGameServerManager gameServerManager;
@@ -25,7 +27,7 @@ public class ShutdownTemplateServerCommand extends CloudCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
 
         if (args.length == 2) {
             ITemplate template = templateService.getTemplateByName(args[1]);

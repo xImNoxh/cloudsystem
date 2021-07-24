@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
@@ -10,7 +12,7 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.concurrent.ExecutionException;
 
-@CloudCommand.Info(name = "execute", description = "send a command to a gameserver", aliases = "")
+@CloudCommand.Info(name = "execute", description = "send a command to a gameserver", aliases = "", commandType = CommandType.CONSOLE)
 public class GameServerExecuteCommand extends CloudCommand {
 
     private IGameServerManager gameServerManager;
@@ -20,7 +22,7 @@ public class GameServerExecuteCommand extends CloudCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
         if (args.length >= 3) {
             try {
                 IGameServer server = gameServerManager.getGameServerByName(args[1]).get();

@@ -2,6 +2,8 @@ package de.polocloud.bootstrap.commands;
 
 import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -13,7 +15,6 @@ import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 @CloudCommand.Info(
     name = "gameserver",
     description = "gameserver command",
-    aliases = "gs"
+    aliases = "gs", commandType = CommandType.CONSOLE
 )
 public class GameServerCloudCommand extends CloudCommand {
 
@@ -48,7 +49,7 @@ public class GameServerCloudCommand extends CloudCommand {
 
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
         if (args.length == 1) {
             Logger.log(LoggerType.INFO, "gameserver start <template>");
         } else if (args.length == 3) {

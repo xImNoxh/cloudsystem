@@ -1,7 +1,8 @@
 package de.polocloud.bootstrap.commands;
 
-import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.gameserver.IGameServer;
@@ -21,7 +22,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
-@CloudCommand.Info(name = "edit", description = "edit templates", aliases = "")
+@CloudCommand.Info(name = "edit", description = "edit templates", aliases = "", commandType = CommandType.CONSOLE)
 public class CloudEditCommand extends CloudCommand {
 
     private ITemplateService templateService;
@@ -39,7 +40,7 @@ public class CloudEditCommand extends CloudCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
 
         if(args.length == 6){
 

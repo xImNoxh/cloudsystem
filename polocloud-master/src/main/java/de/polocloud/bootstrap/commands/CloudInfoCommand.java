@@ -1,18 +1,19 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.concurrent.ExecutionException;
 
-@CloudCommand.Info(name = "info", aliases = "", description = "")
+@CloudCommand.Info(name = "info", aliases = "", description = "", commandType = CommandType.CONSOLE)
 public class CloudInfoCommand extends CloudCommand {
 
     private ITemplateService templateService;
@@ -24,7 +25,7 @@ public class CloudInfoCommand extends CloudCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
 
         if (args.length == 3) {
 

@@ -57,6 +57,8 @@ public class PacketRegistry {
 
         registerPacket(125, APIRequestCloudPlayerPacket.class);
         registerPacket(126, APIResponseCloudPlayerPacket.class);
+
+        registerPacket(127, GameServerCloudCommandExecutePacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {

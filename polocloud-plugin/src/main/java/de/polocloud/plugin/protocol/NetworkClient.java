@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -83,7 +84,13 @@ public class NetworkClient implements IPacketSender {
         try {
             String path = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation()
                 .toURI()).getPath();
-            String[] split = path.split("/");
+            String[] split = path.split(path.contains("/") ? "/" : "\\\\");
+
+            System.out.println(Arrays.toString(split));
+
+            System.out.println(path);
+            System.out.println(split[split.length - 3]);
+            System.out.println(split[split.length - 3].split("#")[1]);
 
             sendPacket(new GameServerRegisterPacket(Long.parseLong(split[split.length - 3].split("#")[1]), port));
         } catch (URISyntaxException e) {

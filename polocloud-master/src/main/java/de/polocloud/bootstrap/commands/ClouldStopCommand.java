@@ -2,16 +2,18 @@ package de.polocloud.bootstrap.commands;
 
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 
 @CloudCommand.Info(
     name = "stop",
     description = "stop the server",
-    aliases = ""
+    aliases = "", commandType = CommandType.CONSOLE
 )
 public class ClouldStopCommand extends CloudCommand {
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
         System.exit(-1);
     }
 }

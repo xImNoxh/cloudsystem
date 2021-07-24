@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.setup.CreateTemplateSetup;
@@ -11,7 +13,7 @@ import de.polocloud.logger.log.types.LoggerType;
 @CloudCommand.Info(
     name = "template",
     description = "template command",
-    aliases = ""
+    aliases = "", commandType = CommandType.CONSOLE
 )
 public class TemplateCloudCommand extends CloudCommand {
 
@@ -22,7 +24,7 @@ public class TemplateCloudCommand extends CloudCommand {
     }
 
     @Override
-    public void execute(String[] args) {
+    public void execute(ICommandExecutor commandSender, String[] args) {
 
 
         if (args.length == 2 && args[1].equalsIgnoreCase("create")) {
