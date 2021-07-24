@@ -23,15 +23,18 @@ public class SimpleTemplate implements ITemplate {
 
     private String motd;
 
+    private int serverCreateThreshold;
+
     private String[] wrapperNames;
 
-    public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, String[] wrapperNames){
+    public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, int serverCreateThreshold, String[] wrapperNames){
         this.name = name;
         this.staticServer = staticServer;
         this.maxServerCount = maxServerCount;
         this.minServerCount = minServerCount;
         this.templateType = templateType;
         this.version = version;
+        this.serverCreateThreshold = serverCreateThreshold;
         this.wrapperNames = wrapperNames;
         this.maxPlayers = maxPlayers;
         this.memory = memory;
@@ -47,6 +50,11 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public GameServerVersion getVersion() {
         return version;
+    }
+
+    @Override
+    public int getServerCreateThreshold() {
+        return serverCreateThreshold;
     }
 
     @Override

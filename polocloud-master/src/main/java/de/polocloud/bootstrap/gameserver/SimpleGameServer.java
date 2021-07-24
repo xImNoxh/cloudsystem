@@ -76,6 +76,7 @@ public class SimpleGameServer implements IGameServer {
     public void setPing(long ping) {
         this.ping = ping;
     }
+
     @Override
     public long getPing() {
         return this.ping;
@@ -106,7 +107,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public int getOnlinePlayers() {
-        return 0;
+        return getCloudPlayers().size();
     }
 
     @Override
@@ -120,7 +121,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void sendPacket(Packet packet) {
-        if(this.ctx != null){
+        if (this.ctx != null) {
             this.ctx.writeAndFlush(packet);
         }
     }

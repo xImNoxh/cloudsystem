@@ -264,6 +264,12 @@ public abstract class Packet {
             }
 
             @Override
+            public int getServerCreateThreshold() {
+                //TODO
+                throw new NotImplementedException();
+            }
+
+            @Override
             public void setMaintenance(boolean state) {
                 //TODO
                 throw new NotImplementedException();
