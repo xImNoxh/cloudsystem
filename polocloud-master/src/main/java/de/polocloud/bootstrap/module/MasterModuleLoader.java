@@ -47,7 +47,7 @@ public class MasterModuleLoader {
                 }
                 Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
                 module.onLoad();
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() +
+                Logger.log(LoggerType.INFO, "Module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() +
                     ConsoleColors.GRAY.getAnsiCode() +" Loaded (Author: " + data.getAuthor() + ")");
             } catch (MalformedURLException | ClassNotFoundException e) {
                 e.printStackTrace();

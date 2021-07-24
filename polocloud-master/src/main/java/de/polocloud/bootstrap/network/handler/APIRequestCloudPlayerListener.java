@@ -23,7 +23,6 @@ public class APIRequestCloudPlayerListener extends IPacketHandler {
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-        System.out.println("try handle APIRequestCloudPlayer");
         APIRequestCloudPlayerPacket packet = (APIRequestCloudPlayerPacket) obj;
 
         UUID requestId = packet.getRequestId();

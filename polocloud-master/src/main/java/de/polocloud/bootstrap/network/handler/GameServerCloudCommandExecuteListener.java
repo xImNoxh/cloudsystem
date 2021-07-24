@@ -24,8 +24,6 @@ public class GameServerCloudCommandExecuteListener extends IPacketHandler {
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         GameServerCloudCommandExecutePacket packet = (GameServerCloudCommandExecutePacket) obj;
 
-        Logger.log(LoggerType.INFO, ((GameServerCloudCommandExecutePacket) obj).getCommand());
-
         String[] args = packet.getCommand().split(" ");
         List<CloudCommand> commands = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList());
 

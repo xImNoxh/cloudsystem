@@ -48,7 +48,6 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(String name) {
-        System.out.println("try to get player");
         CompletableFuture<ICloudPlayer> completableFuture = new CompletableFuture<>();
 
         executor.execute(() -> {
