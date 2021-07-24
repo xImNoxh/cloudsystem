@@ -39,7 +39,8 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
             .addStep("What is the template type of this service?", TemplateType.MINECRAFT.getDisplayName(), TemplateType.PROXY.getDisplayName())
             .addStep("What is the game version?", GameServerVersion.prettyValues())
             .addStep("What is name of the Wrapper(s) ?")
-            .addStep("Static ? (true/false)", isBoolean());
+            .addStep("Static ? (true/false)", isBoolean())
+            .addStep("ServerCreateThreshold ? (0-100)%", isInteger());
 
         setupBuilder.setStepAnswer(new StepAnswer() {
             @Override
@@ -48,15 +49,16 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
                 int maxServerCount = Integer.parseInt(steps.get(2).getAnswer());
                 int minServerCount = Integer.parseInt(steps.get(1).getAnswer());
                 int maxPlayers = Integer.parseInt(steps.get(3).getAnswer());
-                int memory= Integer.parseInt(steps.get(4).getAnswer());
+                int memory = Integer.parseInt(steps.get(4).getAnswer());
 
                 TemplateType templateType = TemplateType.valueOf(steps.get(5).getAnswer().toUpperCase());
                 GameServerVersion gameServerVersion = Arrays.stream(GameServerVersion.values()).filter(key -> key.getTitle().equalsIgnoreCase(steps.get(6).getAnswer())).findAny().get();
-                String[] wrappers =  steps.get(7).getAnswer().replaceAll(" ", "").split(",");
+                String[] wrappers = steps.get(7).getAnswer().replaceAll(" ", "").split(",");
 
                 boolean isStatic = Boolean.parseBoolean(steps.get(8).getAnswer());
+                int threshold = Integer.parseInt(steps.get(9).getAnswer());
 
-                ITemplate template = new SimpleTemplate(name, isStatic, maxServerCount, minServerCount, templateType, gameServerVersion, maxPlayers, memory, true, "A default Polo Service",wrappers);
+                ITemplate template = new SimpleTemplate(name, isStatic, maxServerCount, minServerCount, templateType, gameServerVersion, maxPlayers, memory, true, "A default Polo Service", threshold, wrappers);
                 templateService.getTemplateSaver().save(template);
                 templateService.reloadTemplates();
                 Logger.log(LoggerType.INFO, Logger.PREFIX + "You " +

@@ -65,7 +65,6 @@ public class Master implements IStartable, ITerminatable {
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
 
 
-
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
         this.moduleLoader = new MasterModuleLoader();
@@ -139,7 +138,7 @@ public class Master implements IStartable, ITerminatable {
 
         if (this.templateService.getLoadedTemplates().size() > 0) {
             StringBuilder builder = new StringBuilder();
-            this.templateService.getLoadedTemplates().forEach(key -> builder.append(key.getName()).append(","));
+            this.templateService.getLoadedTemplates().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%),"));
             Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
         } else {
             Logger.log(LoggerType.INFO, "No templates founded.");
