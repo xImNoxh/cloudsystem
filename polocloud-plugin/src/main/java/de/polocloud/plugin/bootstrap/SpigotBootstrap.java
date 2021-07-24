@@ -8,6 +8,7 @@ import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.api.spigot.event.*;
 import de.polocloud.plugin.bootstrap.command.TestCloudCommand;
 import de.polocloud.plugin.bootstrap.listener.TestCloudListener;
+import de.polocloud.plugin.commands.CommandReader;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.listener.CollectiveSpigotEvents;
@@ -20,9 +21,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, NetworkRegisterFunction {
 
+    private CommandReader commandReader;
+
     @Override
     public void onEnable() {
 
+        this.commandReader = new CommandReader();
         new CloudPlugin(this, this);
 
         getCommand("testCloud").setExecutor(new TestCloudCommand());
@@ -44,7 +48,7 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void callNetwork(NetworkClient networkClient) {
-        new NetworkSpigotRegister(networkClient);
+        new NetworkSpigotRegister(networkClient, this);
         new NetworkPluginRegister(networkClient, this);
     }
 
@@ -129,7 +133,7 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
         }, ChannelActiveEvent.class);
 
-        new CollectiveSpigotEvents(this, networkClient);
+        new CollectiveSpigotEvents(this, networkClient, this);
     }
 
     @Override
@@ -147,6 +151,10 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
         }).start();
 
         Bukkit.shutdown();
+    }
+
+    public CommandReader getCommandReader() {
+        return commandReader;
     }
 
     @Override

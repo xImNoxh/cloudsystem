@@ -8,11 +8,7 @@ public class TestModule extends Module {
 
     @Override
     public void onLoad() {
-        System.out.println("Hello world test Module! :)");
-
         System.out.println("loaded " + getTemplateService().getLoadedTemplates().size() + " Templates :)");
-
-
         CloudAPI.getInstance().getCommandPool().registerCommand(new commsamdiawd());
 
     }

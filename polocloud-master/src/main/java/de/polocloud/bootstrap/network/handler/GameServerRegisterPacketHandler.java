@@ -6,6 +6,7 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
@@ -45,7 +46,6 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
         GameServerRegisterPacket packet = (GameServerRegisterPacket) obj;
 
         try {
-            System.out.println("snowflake: " + packet.getSnowflake());
             IGameServer gameServer = gameServerManager.getGameSererBySnowflake(packet.getSnowflake()).get();
 
             ((SimpleGameServer) gameServer).setCtx(ctx);
@@ -55,6 +55,10 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
             gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
                 gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ?
                     messages.getProxyMaintenanceMessage() : messages.getGroupMaintenanceMessage()));
+
+            if(gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)){
+                gameServer.sendPacket(new CommandListAcceptorPacket());
+            }
 
             gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(
                 gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? messages.getNetworkIsFull() : messages.getServiceIsFull()
