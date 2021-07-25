@@ -12,8 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class SimplePubSubManager implements IPubSubManager {
@@ -22,23 +21,28 @@ public class SimplePubSubManager implements IPubSubManager {
 
     private Map<String, List<Consumer<PublishPacket>>> subMap = new ConcurrentHashMap<>();
 
+    private Executor executor = Executors.newCachedThreadPool();
+
     public SimplePubSubManager(IPacketSender sender, IProtocol protocol) {
         this.sender = sender;
 
         protocol.registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                PublishPacket packet = (PublishPacket) obj;
+                executor.execute(() -> {
 
-                String channel = packet.getChannel();
+                    PublishPacket packet = (PublishPacket) obj;
 
-                if (subMap.containsKey(channel)) {
-                    List<Consumer<PublishPacket>> consumerList = subMap.get(channel);
+                    String channel = packet.getChannel();
 
-                    for (Consumer<PublishPacket> subscribePacketConsumer : consumerList) {
-                        subscribePacketConsumer.accept(packet);
+                    if (subMap.containsKey(channel)) {
+                        List<Consumer<PublishPacket>> consumerList = subMap.get(channel);
+
+                        for (Consumer<PublishPacket> subscribePacketConsumer : consumerList) {
+                            subscribePacketConsumer.accept(packet);
+                        }
                     }
-                }
+                });
 
             }
 
