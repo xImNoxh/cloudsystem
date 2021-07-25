@@ -165,6 +165,7 @@ public class Master implements IStartable, ITerminatable {
     @Override
     public boolean terminate() {
         this.running = false;
+        if(databaseService != null) databaseService.connector().disconnect();
         return this.nettyServer.terminate();
     }
 
