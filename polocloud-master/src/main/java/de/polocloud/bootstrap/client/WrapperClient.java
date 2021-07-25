@@ -1,5 +1,7 @@
 package de.polocloud.bootstrap.client;
 
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
@@ -27,6 +29,9 @@ public class WrapperClient implements IPacketSender {
             gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
             gameServer.getTemplate().getTemplateType() == TemplateType.PROXY,  gameServer.getTemplate().getMaxMemory(),
             gameServer.getTemplate().getMaxPlayers(), gameServer.getName(), gameServer.getTemplate().getMotd(), gameServer.getTemplate().isStatic()));
+
+        EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
+
     }
 
     public String getName() {

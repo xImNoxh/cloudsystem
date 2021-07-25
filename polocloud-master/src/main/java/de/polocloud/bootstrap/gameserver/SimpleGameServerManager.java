@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.gameserver;
 
 import com.google.inject.Inject;
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -98,6 +100,7 @@ public class SimpleGameServerManager implements IGameServerManager {
         }
 
         pubSubManager.publish("polo:event:serverStopped", gameServer.getName());
+        EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STOPPING));
 
 
     }

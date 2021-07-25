@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -96,6 +98,8 @@ public class GameServerRegisterPacketHandler extends IPacketHandler {
             }
 
             pubSubManager.publish("polo:event:serverStarted", gameServer.getName());
+            EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
+
 
 
             Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
