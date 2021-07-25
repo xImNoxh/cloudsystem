@@ -1,6 +1,6 @@
 package de.polocloud.plugin.bootstrap;
 
-import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.plugin.CloudPlugin;

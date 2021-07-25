@@ -6,7 +6,7 @@ import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
-import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.guice.PoloAPIGuiceModule;

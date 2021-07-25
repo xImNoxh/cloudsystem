@@ -5,9 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.ChannelActiveEvent;
-import de.polocloud.api.event.CloudEvent;
-import de.polocloud.api.event.EventHandler;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
@@ -21,9 +19,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 public class NetworkClient implements IPacketSender {
 

@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.event.ChannelInactiveEvent;
+import de.polocloud.api.event.channel.ChannelInactiveEvent;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;

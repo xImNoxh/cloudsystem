@@ -1,5 +1,6 @@
-package de.polocloud.api.event;
+package de.polocloud.api.event.channel;
 
+import de.polocloud.api.event.CloudEvent;
 import io.netty.channel.ChannelHandlerContext;
 
 public class ChannelActiveEvent implements CloudEvent {

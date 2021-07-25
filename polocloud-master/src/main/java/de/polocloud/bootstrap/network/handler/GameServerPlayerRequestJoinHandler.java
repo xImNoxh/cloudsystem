@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -31,6 +33,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
 
     @Inject
     private MasterPubSubManager pubSubManager;
+
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
@@ -62,8 +65,8 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
             }
 
 
-            ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
 
+            ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
 
 
             //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());

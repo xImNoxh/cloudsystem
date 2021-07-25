@@ -1,6 +1,8 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
@@ -56,6 +58,7 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler {
         Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now disconnected!");
 
         pubSubManager.publish("polo:event:playerQuit", uuid.toString());
+        EventRegistry.fireEvent(new CloudPlayerDisconnectEvent(onlinePlayer));
 
 
     }

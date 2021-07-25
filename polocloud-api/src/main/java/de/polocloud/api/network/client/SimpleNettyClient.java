@@ -2,10 +2,6 @@ package de.polocloud.api.network.client;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import de.polocloud.api.event.ChannelActiveEvent;
-import de.polocloud.api.event.CloudEvent;
-import de.polocloud.api.event.EventHandler;
-import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.network.protocol.packet.handler.*;
 import de.polocloud.api.network.protocol.IProtocol;
@@ -21,9 +17,6 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SimpleNettyClient implements INettyClient {
 

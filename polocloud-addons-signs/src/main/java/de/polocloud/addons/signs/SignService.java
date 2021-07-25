@@ -6,7 +6,7 @@ import de.polocloud.addons.signs.executes.SignAddExecute;
 import de.polocloud.addons.signs.executes.SignExecute;
 import de.polocloud.addons.signs.executes.SignRemoveExecute;
 import de.polocloud.addons.signs.executes.loading.SignAutoLoading;
-import de.polocloud.api.event.ChannelActiveEvent;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.gameserver.IGameServer;

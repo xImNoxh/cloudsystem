@@ -1,6 +1,9 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
+import de.polocloud.api.event.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
@@ -56,6 +59,7 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
                 playerManager.register(cloudPlayer);
 
                 pubSubManager.publish("polo:event:playerJoin", cloudPlayer.getName());
+                EventRegistry.fireEvent(new CloudPlayerJoinNetworkEvent(cloudPlayer));
             }
 
             IGameServer from = cloudPlayer.getMinecraftServer();
@@ -73,6 +77,7 @@ public class GameServerPlayerUpdateListener extends IPacketHandler {
             if (isOnline) {
                 pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
                 pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
+                EventRegistry.fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
             }
 
             if (masterConfig.getProperties().isLogPlayerConnections())

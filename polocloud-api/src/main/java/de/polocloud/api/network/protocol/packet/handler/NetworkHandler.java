@@ -1,7 +1,7 @@
 package de.polocloud.api.network.protocol.packet.handler;
 
-import de.polocloud.api.event.ChannelActiveEvent;
-import de.polocloud.api.event.ChannelInactiveEvent;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
+import de.polocloud.api.event.channel.ChannelInactiveEvent;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
