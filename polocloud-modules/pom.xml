@@ -13,6 +13,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>polocloud-hubcommnad-module</module>
+      <module>polocloud-party-module</module>
   </modules>
 
   <properties>
