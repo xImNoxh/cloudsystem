@@ -48,6 +48,7 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     @Override
     public void shutdown() {
+        ProxyServer.getInstance().getPlayers().forEach(it -> it.disconnect());
         ProxyServer.getInstance().stop();
     }
 
