@@ -22,13 +22,13 @@ public class CloudHelpCommand extends CloudCommand {
                 ConsoleColors.GRAY.getAnsiCode() + " × " + ConsoleColors.GRAY.getAnsiCode() + key.getDescription()));
 
         int ingame = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(it ->
-            it.getCommandType().equals(CommandType.CONSOLE)).collect(Collectors.toList()).size();
+            it.getCommandType().equals(CommandType.INGAME)).collect(Collectors.toList()).size();
 
         int console = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(it ->
-            it.getCommandType().equals(CommandType.INGAME)).collect(Collectors.toList()).size();
+            it.getCommandType().equals(CommandType.CONSOLE)).collect(Collectors.toList()).size();
 
         int both = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(it ->
-            it.getCommandType().equals(CommandType.INGAME)).collect(Collectors.toList()).size();
+            it.getCommandType().equals(CommandType.INGAME_CONSOLE)).collect(Collectors.toList()).size();
 
         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GRAY.getAnsiCode() + "Founded " +
             ConsoleColors.LIGHT_BLUE.getAnsiCode() +  CloudAPI.getInstance().getCommandPool().getAllCachedCommands().size()
