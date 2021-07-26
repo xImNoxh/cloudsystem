@@ -19,6 +19,14 @@ public class UpdateConfig implements IConfig {
         return apiVersion;
     }
 
+    public int getApiDownloadCount() {
+        return apiDownloadCount;
+    }
+
+    public int getBootstrapDownloadCount() {
+        return bootstrapDownloadCount;
+    }
+
     public void addBootstrapDownloadCount() {
         bootstrapDownloadCount = bootstrapDownloadCount + 1;
     }
