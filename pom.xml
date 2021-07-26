@@ -20,10 +20,8 @@
     <module>polocloud-updater-client</module>
     <module>polocloud-updater-server</module>
     <module>polocloud-launcher</module>
-    <module>polocloud-addons-signs</module>
     <module>polocloud-modules</module>
     <module>polocloud-addons</module>
-    <module>polocloud-addons/adons-signs</module>
   </modules>
 
   <properties>
