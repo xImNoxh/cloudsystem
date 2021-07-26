@@ -1,10 +1,10 @@
 package de.polocloud.plugin.api.player;
 
 import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.api.response.ResponseHandler;
 import de.polocloud.plugin.protocol.NetworkClient;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

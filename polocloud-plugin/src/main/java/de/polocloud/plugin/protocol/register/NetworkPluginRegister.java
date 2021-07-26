@@ -9,17 +9,15 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteComm
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
-import de.polocloud.plugin.api.response.ResponseHandler;
-import de.polocloud.plugin.api.server.APIGameServerManager;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
 import io.netty.channel.ChannelHandlerContext;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.UUID;

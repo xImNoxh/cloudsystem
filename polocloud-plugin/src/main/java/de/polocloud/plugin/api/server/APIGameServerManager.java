@@ -3,19 +3,17 @@ package de.polocloud.plugin.api.server;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.APIRequestGameServerPacket;
+import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.api.response.ResponseHandler;
 import de.polocloud.plugin.protocol.NetworkClient;
 import io.netty.channel.ChannelHandlerContext;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

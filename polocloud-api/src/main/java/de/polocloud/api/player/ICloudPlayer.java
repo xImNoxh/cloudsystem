@@ -5,8 +5,8 @@ import de.polocloud.api.common.INamable;
 import de.polocloud.api.gameserver.IGameServer;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface ICloudPlayer extends INamable, Serializable, ICommandExecutor {
 
@@ -19,6 +19,8 @@ public interface ICloudPlayer extends INamable, Serializable, ICommandExecutor {
     void sendMessage(String message);
 
     void sendTo(IGameServer gameServer);
+
+    CompletableFuture<Boolean> hasPermissions(String permission);
 
     void kick(String message);
 

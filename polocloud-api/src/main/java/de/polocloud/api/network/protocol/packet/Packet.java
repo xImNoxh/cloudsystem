@@ -13,6 +13,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Packet {
 
@@ -69,6 +70,11 @@ public abstract class Packet {
             @Override
             public String getName() {
                 return name;
+            }
+
+            @Override
+            public CompletableFuture<Boolean> hasPermissions(String permission) {
+                throw new NotImplementedException();
             }
         };
     }

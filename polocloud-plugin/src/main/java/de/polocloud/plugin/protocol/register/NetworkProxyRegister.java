@@ -3,6 +3,7 @@ package de.polocloud.plugin.protocol.register;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -11,6 +12,7 @@ import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -35,6 +37,27 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerMasterPlayerKickPacket();
         registerMasterSendMessagePacket();
         registerMasterSendPlayerToPacket();
+        registerPermissionCheckPacket(networkClient);
+    }
+
+    private void registerPermissionCheckPacket(NetworkClient networkClient){
+        System.out.println("check permission");
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                PermissionCheckResponsePacket packet = (PermissionCheckResponsePacket) obj;
+
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getPlayer());
+                if (player != null) {
+                    packet.setResponse(player.hasPermission(packet.getPermission()));
+                }
+                networkClient.sendPacket(packet);
+            }
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return PermissionCheckResponsePacket.class;
+            }
+        });
     }
 
     private void registerMasterSendMessagePacket() {

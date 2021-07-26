@@ -1,15 +1,23 @@
 package de.polocloud.bootstrap.player;
 
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendToServerPacket;
+import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimpleCloudPlayer implements ICloudPlayer {
+
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private String name;
     private UUID uuid;
@@ -24,7 +32,6 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
 
     @Override
-
     public String getName() {
         return this.name;
     }
@@ -60,6 +67,18 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     @Override
     public void sendTo(IGameServer gameServer) {
         getProxyServer().sendPacket(new MasterPlayerSendToServerPacket(getUUID(), gameServer.getName()));
+    }
+
+    @Override
+    public CompletableFuture<Boolean> hasPermissions(String permission) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+        executor.execute(() -> {
+            UUID requestId = UUID.randomUUID();
+            PermissionCheckResponsePacket packet = new PermissionCheckResponsePacket(requestId, permission, uuid, false);
+            ResponseHandler.register(requestId, completableFuture);
+            getProxyServer().sendPacket(packet);
+        });
+        return completableFuture;
     }
 
     @Override

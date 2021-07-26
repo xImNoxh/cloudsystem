@@ -3,6 +3,7 @@ package de.polocloud.api.network.protocol.packet;
 import de.polocloud.api.network.protocol.packet.api.*;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
+import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
@@ -61,6 +62,8 @@ public class PacketRegistry {
 
         registerPacket(127, GameServerCloudCommandExecutePacket.class);
         registerPacket(128, CommandListAcceptorPacket.class);
+
+        registerPacket(129, PermissionCheckResponsePacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
