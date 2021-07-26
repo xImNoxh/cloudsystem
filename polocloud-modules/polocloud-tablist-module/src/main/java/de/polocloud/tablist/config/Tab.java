@@ -1,21 +1,17 @@
 package de.polocloud.tablist.config;
 
+import de.polocloud.tablist.config.symbol.TabSymbol;
+
 public class Tab {
 
     private Boolean use = true;
 
-    private String[] header;
-    private String[] footer;
+    private TabSymbol[] tabs;
     private String[] groups;
 
-    public Tab(String[] header, String[] footer, String... groups) {
-        this.header = header;
-        this.footer = footer;
+    public Tab(TabSymbol[] tabs, String... groups) {
+        this.tabs = tabs;
         this.groups = groups;
-    }
-
-    public String[] getFooter() {
-        return footer;
     }
 
     public String[] getGroups() {
@@ -26,7 +22,7 @@ public class Tab {
         return use;
     }
 
-    public String[] getHeader() {
-        return header;
+    public TabSymbol[] getTabs() {
+        return tabs;
     }
 }

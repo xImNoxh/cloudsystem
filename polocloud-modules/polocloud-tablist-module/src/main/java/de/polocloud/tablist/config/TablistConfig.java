@@ -2,6 +2,7 @@ package de.polocloud.tablist.config;
 
 import com.google.common.collect.Lists;
 import de.polocloud.api.config.IConfig;
+import de.polocloud.tablist.config.symbol.TabSymbol;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class TablistConfig implements IConfig {
     private boolean updateOnPlayerConnection = true;
     private TabInterval tabInterval = new TabInterval();
 
-    private List<Tab> tabs = Lists.newArrayList(new Tab(new String[]{"a"}, new String[]{"casdwd"}));
+    private List<Tab> tabs = Lists.newArrayList(new Tab(new TabSymbol[]{(new TabSymbol("\n §b§lPolo§7Cloud §7§ov§b§o1§7.§b§o0 \n", "§8» §b§l%ONLINE_COUNT%"))}, new String[]{}));
 
     public List<Tab> getTabs() {
         return tabs;

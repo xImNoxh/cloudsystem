@@ -2,9 +2,12 @@ package de.polocloud.tablist;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.module.Module;
-import de.polocloud.tablist.collective.CollectiveCloudEvents;
+import de.polocloud.tablist.cache.TabCache;
+import de.polocloud.tablist.collective.CloudPlayerDisconnectListener;
+import de.polocloud.tablist.collective.CloudPlayerJoinListener;
 import de.polocloud.tablist.config.TablistConfig;
 
 import java.io.File;
@@ -13,11 +16,19 @@ public class TablistModule {
 
     private TablistConfig tablistConfig;
 
-    public TablistModule(Module module) {
-        this.tablistConfig = loadTablistConfig(module);
+    private TabCache tabCache;
 
-        if (tablistConfig.isActiveModule())
-            EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CollectiveCloudEvents.class), CloudPlayerJoinNetworkEvent.class);
+    private static TablistModule instance;
+
+    public TablistModule(Module module) {
+        instance = this;
+        this.tablistConfig = loadTablistConfig(module);
+        this.tabCache = new TabCache();
+
+        if (tablistConfig.isActiveModule()) {
+            EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerJoinListener.class), CloudPlayerJoinNetworkEvent.class);
+            EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerDisconnectListener.class), CloudPlayerDisconnectEvent.class);
+        }
 
     }
 
@@ -38,5 +49,13 @@ public class TablistModule {
 
     public void setTablistConfig(TablistConfig tablistConfig) {
         this.tablistConfig = tablistConfig;
+    }
+
+    public static TablistModule getInstance() {
+        return instance;
+    }
+
+    public TabCache getTabCache() {
+        return tabCache;
     }
 }
