@@ -5,12 +5,15 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -38,10 +41,10 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerMasterSendMessagePacket();
         registerMasterSendPlayerToPacket();
         registerPermissionCheckPacket(networkClient);
+        registerTablistUpdatePacket();
     }
 
     private void registerPermissionCheckPacket(NetworkClient networkClient){
-        System.out.println("check permission");
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
@@ -60,21 +63,34 @@ public class NetworkProxyRegister extends NetworkRegister {
         });
     }
 
+    public void registerTablistUpdatePacket(){
+        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                ProxyTablistUpdatePacket packet = (ProxyTablistUpdatePacket) obj;
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
+                if(player != null) {
+                    player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
+                }
+            }
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return ProxyTablistUpdatePacket.class;
+            }
+        });
+    }
+
     private void registerMasterSendMessagePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerSendMessagePacket packet = (MasterPlayerSendMessagePacket) obj;
-
                 UUID uuid = packet.getUuid();
                 String message = packet.getMessage();
-
                 if (ProxyServer.getInstance().getPlayer(uuid) != null) {
                     ProxyServer.getInstance().getPlayer(uuid).sendMessage(message);
                 }
-
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerSendMessagePacket.class;

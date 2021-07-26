@@ -76,6 +76,11 @@ public abstract class Packet {
             public CompletableFuture<Boolean> hasPermissions(String permission) {
                 throw new NotImplementedException();
             }
+
+            @Override
+            public void sendTablist(String header, String footer) {
+                new NotImplementedException();
+            }
         };
     }
 

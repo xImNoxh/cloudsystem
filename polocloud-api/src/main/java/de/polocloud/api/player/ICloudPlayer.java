@@ -20,6 +20,8 @@ public interface ICloudPlayer extends INamable, Serializable, ICommandExecutor {
 
     void sendTo(IGameServer gameServer);
 
+    void sendTablist(String header, String footer);
+
     CompletableFuture<Boolean> hasPermissions(String permission);
 
     void kick(String message);

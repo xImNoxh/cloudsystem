@@ -5,6 +5,7 @@ import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacke
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
@@ -64,6 +65,7 @@ public class PacketRegistry {
         registerPacket(128, CommandListAcceptorPacket.class);
 
         registerPacket(129, PermissionCheckResponsePacket.class);
+        registerPacket(130, ProxyTablistUpdatePacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {

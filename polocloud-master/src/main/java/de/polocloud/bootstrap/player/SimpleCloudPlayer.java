@@ -3,6 +3,7 @@ package de.polocloud.bootstrap.player;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendToServerPacket;
@@ -62,6 +63,11 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     @Override
     public void sendMessage(String message) {
         getProxyServer().sendPacket(new MasterPlayerSendMessagePacket(getUUID(), message));
+    }
+
+    @Override
+    public void sendTablist(String header, String footer) {
+        getProxyServer().sendPacket(new ProxyTablistUpdatePacket(uuid, header, footer));
     }
 
     @Override

@@ -60,9 +60,6 @@ public class APIRequestCloudPlayerListener extends IPacketHandler {
                 type = APIResponseCloudPlayerPacket.Type.BOOLEAN;
 
             }
-
-            System.out.println("response " + responseData + " - " + type);
-
             ctx.writeAndFlush(new APIResponseCloudPlayerPacket(requestId, responseData, type));
 
 
