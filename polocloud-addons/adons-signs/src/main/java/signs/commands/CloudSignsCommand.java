@@ -1,4 +1,4 @@
-package de.polocloud.addons.signs.commands;
+package signs.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

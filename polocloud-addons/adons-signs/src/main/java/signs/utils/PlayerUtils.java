@@ -1,4 +1,4 @@
-package de.polocloud.addons.signs.utils;
+package signs.utils;
 
 import de.polocloud.addons.signs.bootstrap.Bootstrap;
 import org.bukkit.entity.Player;

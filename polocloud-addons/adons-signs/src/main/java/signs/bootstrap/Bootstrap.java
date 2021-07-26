@@ -1,8 +1,8 @@
-package de.polocloud.addons.signs.bootstrap;
+package signs.bootstrap;
 
-import de.polocloud.addons.signs.SignService;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import signs.SignService;
 
 public class Bootstrap extends JavaPlugin {
 

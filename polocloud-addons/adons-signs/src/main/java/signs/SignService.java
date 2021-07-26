@@ -1,20 +1,20 @@
-package de.polocloud.addons.signs;
+package signs;
 
-import de.polocloud.addons.signs.cache.SignCache;
-import de.polocloud.addons.signs.collectives.CollectiveSignEvents;
-import de.polocloud.addons.signs.executes.SignAddExecute;
-import de.polocloud.addons.signs.executes.SignExecute;
-import de.polocloud.addons.signs.executes.SignRemoveExecute;
-import de.polocloud.addons.signs.executes.loading.SignAutoLoading;
-import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.plugin.api.CloudExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import signs.cache.SignCache;
+import signs.collectives.CollectiveSignEvents;
+import signs.executes.SignAddExecute;
+import signs.executes.SignExecute;
+import signs.executes.SignRemoveExecute;
+import signs.executes.loading.SignAutoLoading;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -85,7 +85,8 @@ public class SignService {
         return addSign;
     }
 
-    public SignExecute getRemoveSign() {
+    public SignExecute
+    getRemoveSign() {
         return removeSign;
     }
 }

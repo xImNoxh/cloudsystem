@@ -1,8 +1,8 @@
-package de.polocloud.addons.signs.executes;
+package signs.executes;
 
-import de.polocloud.addons.signs.CloudSign;
-import de.polocloud.addons.signs.SignService;
 import de.polocloud.api.gameserver.IGameServer;
+import signs.CloudSign;
+import signs.SignService;
 
 public class SignAddExecute implements SignExecute {
 

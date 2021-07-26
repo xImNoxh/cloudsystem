@@ -1,4 +1,4 @@
-package de.polocloud.addons.signs.cache;
+package signs.cache;
 
 import de.polocloud.api.gameserver.IGameServer;
 
