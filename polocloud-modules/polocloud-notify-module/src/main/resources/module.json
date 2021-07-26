@@ -1,0 +1,6 @@
+{
+  "name": "Notify",
+  "version": "0.1.Alpha",
+  "author": "HttpMarco",
+  "main": "de.polocloud.notify.bootstrap.NotifyBootstrap"
+}

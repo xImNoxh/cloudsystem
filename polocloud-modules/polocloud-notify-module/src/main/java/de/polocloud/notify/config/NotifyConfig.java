@@ -17,4 +17,8 @@ public class NotifyConfig implements IConfig {
     public String getPermission() {
         return permission;
     }
+
+    public Messages getMessages() {
+        return messages;
+    }
 }
