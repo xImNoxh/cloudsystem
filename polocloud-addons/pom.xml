@@ -11,6 +11,11 @@
 
   <groupId>de.polocloud.addons</groupId>
   <artifactId>polocloud-addons</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>polocloud-addons-signs</module>
+  </modules>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>

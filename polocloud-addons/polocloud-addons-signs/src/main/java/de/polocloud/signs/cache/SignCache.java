@@ -1,6 +1,6 @@
-package signs.cache;
+package de.polocloud.signs.cache;
 
-import signs.CloudSign;
+import de.polocloud.signs.CloudSign;
 
 import java.util.ArrayList;
 

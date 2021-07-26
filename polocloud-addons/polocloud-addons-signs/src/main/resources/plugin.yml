@@ -1,0 +1,6 @@
+name: CloudSigns
+version: 1.0
+author: HttpMarco
+main: de.polocloud.signs.bootstrap.Bootstrap
+commands:
+  cloudsigns:

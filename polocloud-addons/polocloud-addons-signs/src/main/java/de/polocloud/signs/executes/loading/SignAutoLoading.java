@@ -1,9 +1,9 @@
-package signs.executes.loading;
+package de.polocloud.signs.executes.loading;
 
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.plugin.api.CloudExecutor;
-import signs.SignService;
+import de.polocloud.signs.SignService;
 
 import java.util.concurrent.ExecutionException;
 

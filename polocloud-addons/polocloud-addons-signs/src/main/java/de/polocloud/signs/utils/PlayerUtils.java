@@ -1,7 +1,7 @@
-package signs.utils;
+package de.polocloud.signs.utils;
 
-import de.polocloud.addons.signs.bootstrap.Bootstrap;
 import org.bukkit.entity.Player;
+import de.polocloud.signs.bootstrap.Bootstrap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -17,8 +17,7 @@ public class PlayerUtils {
             player.sendPluginMessage(Bootstrap.getInstance(), "BungeeCord", b.toByteArray());
             b.close();
             out.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
         }
     }

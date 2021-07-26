@@ -33,17 +33,7 @@ public class LogBootstrapService {
         Logger.log(LoggerType.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "HttpMarco, Max_DE");
         Logger.log(LoggerType.INFO,  ConsoleColors.GRAY.getAnsiCode() + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "v1.0.1 " +
             ConsoleColors.GRAY.getAnsiCode() + "(@Alpha) | ©opyright by PoloCloud.");
+        Logger.log(LoggerType.INFO, "Problems or questions? Our Discord » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "https://discord.gg/HyRnsdkUBA");
         Logger.newLine();
-
-        /*
-        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
-            StringWriter stringWriter = new StringWriter();
-            e.printStackTrace(new PrintWriter(stringWriter));
-            Logger.logErr(stringWriter.toString());
-        });
-
-         */
-
     }
-
 }

@@ -1,4 +1,4 @@
-package signs.executes;
+package de.polocloud.signs.executes;
 
 import de.polocloud.api.gameserver.IGameServer;
 
