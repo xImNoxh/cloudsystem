@@ -16,6 +16,7 @@
       <module>polocloud-party-module</module>
       <module>polocloud-notify-module</module>
       <module>polocloud-whitelist-module</module>
+      <module>polocloud-tablist-module</module>
   </modules>
 
   <properties>

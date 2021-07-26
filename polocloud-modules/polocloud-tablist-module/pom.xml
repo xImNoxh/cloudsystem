@@ -9,8 +9,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.polocloud.modules.party</groupId>
-  <artifactId>polocloud-party-module</artifactId>
+  <groupId>de.polocloud.modules.tablist</groupId>
+  <artifactId>polocloud-tablist-module</artifactId>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
@@ -32,4 +32,5 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
 </project>
