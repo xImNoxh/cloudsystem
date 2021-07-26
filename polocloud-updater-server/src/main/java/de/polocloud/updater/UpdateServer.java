@@ -48,6 +48,11 @@ public class UpdateServer {
             context.result("{\"currentVersion\": \"" + config.get().getApiVersion() + "\"}");
         });
 
+        javalin.get("/stats", context -> {
+
+            context.json(config.get());
+        });
+
         javalin.start(8870);
 
     }
