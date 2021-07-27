@@ -3,6 +3,7 @@ package de.polocloud.api.network.protocol.packet.handler;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.channel.ChannelInactiveEvent;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.netty.NettyExceptionEvent;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,6 +23,16 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
         this.protocol = protocol;
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        NettyExceptionEvent event = new NettyExceptionEvent(cause);
+        EventRegistry.fireEvent(event);
+
+        if(event.isShouldThrow()){
+           cause.printStackTrace();
+        }
+
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

@@ -9,6 +9,7 @@ import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.channel.ChannelInactiveEvent;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.netty.NettyExceptionEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
@@ -26,6 +27,7 @@ import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
+import de.polocloud.bootstrap.listener.NettyExceptionListener;
 import de.polocloud.bootstrap.module.MasterModuleLoader;
 import de.polocloud.bootstrap.network.handler.*;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
@@ -77,6 +79,8 @@ public class Master implements IStartable, ITerminatable {
 
         ((SimpleTemplateService) this.templateService).load(this.cloudAPI, TemplateStorage.FILE);
         this.templateService.getTemplateLoader().loadTemplates();
+
+        EventRegistry.registerListener(new NettyExceptionListener(), NettyExceptionEvent.class);
 
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
