@@ -3,9 +3,12 @@ package de.polocloud.plugin.bootstrap.command;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.api.CloudExecutor;
+import net.md_5.bungee.api.ProxyServer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
 
@@ -19,6 +22,8 @@ public class TestCloudCommand implements CommandExecutor {
         if (args.length == 1) {
 
             sender.sendMessage("requesting Player... " + args[0]);
+
+
 
             CloudExecutor.getInstance().getCloudPlayerManager().getOnlinePlayer(args[0]).thenAccept(player -> {
                 sender.sendMessage(player.getName());

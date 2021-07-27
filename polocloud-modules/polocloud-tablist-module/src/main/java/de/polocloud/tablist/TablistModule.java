@@ -9,16 +9,19 @@ import de.polocloud.tablist.cache.CloudPlayerTabCache;
 import de.polocloud.tablist.collective.CloudPlayerDisconnectListener;
 import de.polocloud.tablist.collective.CloudPlayerJoinListener;
 import de.polocloud.tablist.config.TablistConfig;
+import de.polocloud.tablist.scheduler.IntervalRunnable;
 
 import java.io.File;
 
 public class TablistModule {
 
-    private TablistConfig tablistConfig;
-
-    private CloudPlayerTabCache cloudPlayerTabCache;
 
     private static TablistModule instance;
+
+    private TablistConfig tablistConfig;
+    private IntervalRunnable intervalRunnable;
+    private CloudPlayerTabCache cloudPlayerTabCache;
+
 
     public TablistModule(Module module) {
         instance = this;
@@ -28,6 +31,8 @@ public class TablistModule {
         if (tablistConfig.isActiveModule()) {
             EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerJoinListener.class), CloudPlayerJoinNetworkEvent.class);
             EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerDisconnectListener.class), CloudPlayerDisconnectEvent.class);
+
+            intervalRunnable = new IntervalRunnable(tablistConfig);
         }
 
     }
@@ -41,6 +46,10 @@ public class TablistModule {
         TablistConfig tablistConfig = module.getConfigLoader().load(TablistConfig.class, configFile);
         module.getConfigSaver().save(tablistConfig, configFile);
         return tablistConfig;
+    }
+
+    public IntervalRunnable getIntervalRunnable() {
+        return intervalRunnable;
     }
 
     public TablistConfig getTablistConfig() {
