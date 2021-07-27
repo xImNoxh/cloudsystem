@@ -12,7 +12,9 @@ public class TablistConfig implements IConfig {
     private boolean updateOnPlayerConnection = true;
     private TabInterval tabInterval = new TabInterval();
 
-    private List<Tab> tabs = Lists.newArrayList(new Tab(new TabSymbol[]{(new TabSymbol("\n §b§lPolo§7Cloud §7§ov§b§o1§7.§b§o0 \n", "§8» §b§l%ONLINE_COUNT%"))}, new String[]{}));
+    private List<Tab> tabs = Lists.newArrayList(new Tab(new TabSymbol[]{(new TabSymbol(
+        "\n §8     §b§lPoloCloud§8, §7a simple Minecraft §bCloud \n §7Players §8» §b%ONLINE_COUNT%§8/§b%MAX_PLAYERS% \n",
+        "\n §7  Problems or support §8» §bdc.polocloud.de \n §7Author §8» §bHttpMaco§8, §bMax_DE §7  \n"))}, new String[]{}));
 
     public List<Tab> getTabs() {
         return tabs;

@@ -28,42 +28,10 @@ public class CloudPlayerJoinListener implements EventHandler<CloudPlayerJoinNetw
     public void handleEvent(CloudPlayerJoinNetworkEvent event) {
         ICloudPlayer player = event.getPlayer();
 
-        CloudPlayerTabCache cloudPlayerTabCache = TablistModule.getInstance().getTabCache();
-
-        Tab tab = TablistModule.getInstance().getTablistConfig().getTabs().stream()
-            .filter(key -> key.getUse() && (key.getGroups().length <= 0 || Arrays.stream(key.getGroups())
-                .anyMatch(it -> it.equalsIgnoreCase(config.getProperties().getFallback()[0])))).findAny().orElse(null);
-
-        if (tab != null) {
-           cloudPlayerTabCache.put(player.getUUID(), tab);
-            player.sendTablist(tab.getTabs()[0].getHeader().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount()))
-                , tab.getTabs()[0].getFooter().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount())));
-        }
-
-        if(!canUpdate) return;
-        cloudPlayerTabCache.keySet().forEach(key -> {
-            try {
-                if(!key.equals(player.getUUID()))
-                Master.getInstance().getCloudPlayerManager().getOnlinePlayer(key).get().sendTablist(cloudPlayerTabCache.get(key).getTabs()[0].getHeader().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount()))
-                    , cloudPlayerTabCache.get(key).getTabs()[0].getFooter().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount())));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        });
+        TablistModule.getInstance().getTablistSetExecute().execute(player, config);
+        TablistModule.getInstance().getTablistUpdateExecute().execute(player, config);
 
 
 
     }
-
-    public int getOnlineCount() {
-        try {
-            return Master.getInstance().getCloudPlayerManager().getAllOnlinePlayers().get().size();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
 }

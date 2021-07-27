@@ -13,12 +13,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import de.polocloud.signs.CloudSign;
-import de.polocloud.signs.bootstrap.Bootstrap;
+import de.polocloud.signs.bootstrap.SignBootstrap;
 
 public class CollectiveSignEvents implements Listener {
 
     public CollectiveSignEvents() {
-        Bukkit.getPluginManager().registerEvents(this, Bootstrap.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, SignBootstrap.getInstance());
     }
 
     @EventHandler

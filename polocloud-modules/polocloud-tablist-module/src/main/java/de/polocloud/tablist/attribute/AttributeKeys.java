@@ -10,7 +10,7 @@ public enum AttributeKeys {
     private String display;
 
     AttributeKeys() {
-        this.display = new StringBuilder("%").append(this).append("%").toString();
+        this.display = new StringBuilder("%").append(AttributeKeys.this.name()).append("%").toString();
     }
 
     public String getDisplay() {

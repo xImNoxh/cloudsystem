@@ -6,10 +6,11 @@ import de.polocloud.bootstrap.Master;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AttributeConverter {
 
-    private Map<AttributeKeys, Attribute> attributes;
+    private static Map<AttributeKeys, Attribute> attributes;
 
     public AttributeConverter() {
         attributes = Maps.newConcurrentMap();
@@ -41,9 +42,17 @@ public class AttributeConverter {
         attributes.put(AttributeKeys.SERVICE_NAME, new Attribute() {
             @Override
             public Object execute(ICloudPlayer player) {
-                return player.getMinecraftServer().getName();
+                return (player.getMinecraftServer() != null)  ? player.getMinecraftServer().getName() : "null";
             }
         });
+    }
+
+    public static String[] convertTab(String header, String footer, ICloudPlayer player){
+        for(AttributeKeys key : AttributeKeys.values()){
+            header = header.replaceAll(key.getDisplay(), attributes.get(key).execute(player).toString());
+            footer = footer.replaceAll(key.getDisplay(), attributes.get(key).execute(player).toString());
+        }
+        return new String[]{header, footer};
     }
 
     public Attribute getAttributes(AttributeKeys attributeKeys) {

@@ -91,4 +91,12 @@
     </plugins>
   </build>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>polocloud</id>
+      <name>polocloud snapshots</name>
+      <url>http://polocloud.de:8081/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>
