@@ -36,6 +36,15 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler {
         UUID uuid = packet.getUuid();
 
         ICloudPlayer onlinePlayer = null;
+
+        try {
+            if(!playerManager.isPlayerOnline(uuid).get()){
+                return;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
         try {
             onlinePlayer = playerManager.getOnlinePlayer(packet.getUuid()).get();
         } catch (InterruptedException | ExecutionException e) {
