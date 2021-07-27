@@ -5,7 +5,7 @@ import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.tablist.TablistModule;
-import de.polocloud.tablist.cache.TabCache;
+import de.polocloud.tablist.cache.CloudPlayerTabCache;
 
 import java.util.concurrent.ExecutionException;
 
@@ -22,13 +22,13 @@ public class CloudPlayerDisconnectListener implements EventHandler<CloudPlayerDi
     public void handleEvent(CloudPlayerDisconnectEvent event) {
         ICloudPlayer player = event.getPlayer();
 
-        TabCache tabCache = TablistModule.getInstance().getTabCache();
-        tabCache.remove(player.getUUID());
+        CloudPlayerTabCache cloudPlayerTabCache = TablistModule.getInstance().getTabCache();
+        cloudPlayerTabCache.remove(player.getUUID());
         if (!canUpdate) return;
-        tabCache.keySet().forEach(key -> {
+        cloudPlayerTabCache.keySet().forEach(key -> {
             try {
-                Master.getInstance().getCloudPlayerManager().getOnlinePlayer(key).get().sendTablist(tabCache.get(key).getTabs()[0].getHeader().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount()))
-                    , tabCache.get(key).getTabs()[0].getFooter().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount())));
+                Master.getInstance().getCloudPlayerManager().getOnlinePlayer(key).get().sendTablist(cloudPlayerTabCache.get(key).getTabs()[0].getHeader().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount()))
+                    , cloudPlayerTabCache.get(key).getTabs()[0].getFooter().replace("%ONLINE_COUNT%", String.valueOf(getOnlineCount())));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {

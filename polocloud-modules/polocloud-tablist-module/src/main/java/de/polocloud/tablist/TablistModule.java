@@ -5,7 +5,7 @@ import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.module.Module;
-import de.polocloud.tablist.cache.TabCache;
+import de.polocloud.tablist.cache.CloudPlayerTabCache;
 import de.polocloud.tablist.collective.CloudPlayerDisconnectListener;
 import de.polocloud.tablist.collective.CloudPlayerJoinListener;
 import de.polocloud.tablist.config.TablistConfig;
@@ -16,14 +16,14 @@ public class TablistModule {
 
     private TablistConfig tablistConfig;
 
-    private TabCache tabCache;
+    private CloudPlayerTabCache cloudPlayerTabCache;
 
     private static TablistModule instance;
 
     public TablistModule(Module module) {
         instance = this;
         this.tablistConfig = loadTablistConfig(module);
-        this.tabCache = new TabCache();
+        this.cloudPlayerTabCache = new CloudPlayerTabCache();
 
         if (tablistConfig.isActiveModule()) {
             EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerJoinListener.class), CloudPlayerJoinNetworkEvent.class);
@@ -55,7 +55,7 @@ public class TablistModule {
         return instance;
     }
 
-    public TabCache getTabCache() {
-        return tabCache;
+    public CloudPlayerTabCache getTabCache() {
+        return cloudPlayerTabCache;
     }
 }
