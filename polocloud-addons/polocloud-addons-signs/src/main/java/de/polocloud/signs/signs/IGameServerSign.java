@@ -2,6 +2,8 @@ package de.polocloud.signs.signs;
 
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.template.ITemplate;
+import de.polocloud.signs.SignService;
+import de.polocloud.signs.enumeration.SignState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -13,6 +15,7 @@ public class IGameServerSign {
     private ConfigSignLocation configSignLocation;
 
     private Location location;
+    private SignState signState = SignState.LOADING;
 
     private String[] lastInput;
 
@@ -26,24 +29,31 @@ public class IGameServerSign {
         sign = (Sign) location.getBlock().getState();
 
         if(!sign.getLocation().getChunk().isLoaded()) sign.getLocation().getChunk().load();
-        writeSign("---", "sign", "active", "---");
+
+        if(template.isMaintenance()){
+            signState = SignState.MAINTENANCE;
+        }
+        writeSign();
     }
 
-    public void writeSign(String... lines){
+    public void writeSign(){
+        String[] content = SignService.getInstance().getSignConfig().getSignLayouts().getSignLayouts().get(signState)[0].getLines();
         for(int i = 0; i < 4; i++) {
-            sign.setLine(i, lines[i]);
+            sign.setLine(i, content[i]);
         }
-        lastInput = lines;
+        lastInput = content;
         sign.update();
     }
 
     public void updateSign(){
         if(lastInput == null) return;
-        writeSign(lastInput);
+        writeSign();
     }
 
+
     public void displayService(){
-        writeSign(gameServer.getName(), "players » §b" + gameServer.getOnlinePlayers(), gameServer.getTemplate().getMotd(), gameServer.getTemplate().getName());
+        signState = SignState.ONLINE;
+        writeSign();
     }
 
     public void reloadSign(Sign sign){
@@ -80,5 +90,9 @@ public class IGameServerSign {
 
     public Sign getSign() {
         return sign;
+    }
+
+    public SignState getSignState() {
+        return signState;
     }
 }

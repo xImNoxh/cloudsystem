@@ -154,7 +154,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
             process = processBuilder.start();
             process.waitFor();
 
-            FileUtils.deleteDirectory(serverDirectory);
+            //FileUtils.deleteDirectory(serverDirectory);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

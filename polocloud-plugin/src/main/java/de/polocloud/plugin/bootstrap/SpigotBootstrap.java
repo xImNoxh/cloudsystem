@@ -124,7 +124,6 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void shutdown() {
-        Bukkit.getOnlinePlayers().forEach(it -> it.kickPlayer(""));
         new Thread(() -> {
 
             try {

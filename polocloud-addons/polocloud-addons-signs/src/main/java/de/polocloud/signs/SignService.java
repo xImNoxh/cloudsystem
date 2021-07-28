@@ -5,6 +5,7 @@ import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.signs.commands.CloudSignsCommand;
 import de.polocloud.signs.config.SignConfig;
 import de.polocloud.signs.signs.IGameServerSign;
