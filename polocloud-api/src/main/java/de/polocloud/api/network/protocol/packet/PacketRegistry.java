@@ -66,6 +66,8 @@ public class PacketRegistry {
 
         registerPacket(129, PermissionCheckResponsePacket.class);
         registerPacket(130, ProxyTablistUpdatePacket.class);
+
+        registerPacket(131, RedirectPacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {

@@ -6,7 +6,7 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import io.netty.channel.ChannelHandlerContext;
 
-public class SubscribePacketHandler extends IPacketHandler {
+public class SubscribePacketHandler extends IPacketHandler<Packet> {
 
     @Inject
     private MasterPubSubManager pubSubManager;

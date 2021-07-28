@@ -28,7 +28,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class GameServerRegisterPacketHandler extends IPacketHandler {
+public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
 
     @Inject
     private IGameServerManager gameServerManager;

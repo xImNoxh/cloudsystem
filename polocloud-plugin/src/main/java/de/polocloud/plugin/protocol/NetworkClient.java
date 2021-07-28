@@ -72,7 +72,7 @@ public class NetworkClient implements IPacketSender {
 
     }
 
-    public void registerPacketHandler(IPacketHandler packetHandler) {
+    public void registerPacketHandler(IPacketHandler<Packet> packetHandler) {
         this.client.getProtocol().registerPacketHandler(packetHandler);
     }
 

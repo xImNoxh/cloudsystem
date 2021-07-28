@@ -17,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WrapperLoginPacketHandler extends IPacketHandler {
+public class WrapperLoginPacketHandler extends IPacketHandler<Packet> {
 
     @Inject
     private IWrapperClientManager wrapperClientManager;

@@ -1,6 +1,5 @@
 package de.polocloud.api.pubsub;
 
-import de.polocloud.api.CloudAPI;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
@@ -9,7 +8,6 @@ import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -26,7 +24,7 @@ public class SimplePubSubManager implements IPubSubManager {
     public SimplePubSubManager(IPacketSender sender, IProtocol protocol) {
         this.sender = sender;
 
-        protocol.registerPacketHandler(new IPacketHandler() {
+        protocol.registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 executor.execute(() -> {

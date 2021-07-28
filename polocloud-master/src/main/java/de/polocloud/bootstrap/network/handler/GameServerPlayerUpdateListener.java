@@ -21,7 +21,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.UUID;
 
-public class GameServerPlayerUpdateListener extends IPacketHandler {
+public class GameServerPlayerUpdateListener extends IPacketHandler<Packet> {
 
     @Inject
     private IGameServerManager gameServerManager;

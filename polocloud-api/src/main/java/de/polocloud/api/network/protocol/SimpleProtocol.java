@@ -18,12 +18,12 @@ public class SimpleProtocol implements IProtocol {
     private int threadSize = 8;
 
 
-    private Map<Class<? extends Packet>, List<IPacketHandler>> packetHandlerMap = new HashMap<>();
+    private Map<Class<? extends Packet>, List<IPacketHandler<Packet>>> packetHandlerMap = new HashMap<>();
 
 
     @Override
-    public void registerPacketHandler(IPacketHandler packetHandler) {
-        List<IPacketHandler> list;
+    public void registerPacketHandler(IPacketHandler<Packet> packetHandler) {
+        List<IPacketHandler<Packet>> list;
 
         if (packetHandlerMap.containsKey(packetHandler.getPacketClass())) {
             list = packetHandlerMap.get(packetHandler.getPacketClass());
@@ -41,9 +41,9 @@ public class SimpleProtocol implements IProtocol {
     public void firePacketHandlers(ChannelHandlerContext ctx, Packet packet) {
 
         if (packetHandlerMap.containsKey(packet.getClass())) {
-            List<IPacketHandler> iPacketHandlers = packetHandlerMap.get(packet.getClass());
+            List<IPacketHandler<Packet>> iPacketHandlers = packetHandlerMap.get(packet.getClass());
 
-            for (IPacketHandler iPacketHandler : iPacketHandlers) {
+            for (IPacketHandler<Packet> iPacketHandler : iPacketHandlers) {
                 iPacketHandler.handlePacket(ctx, packet);
             }
         }

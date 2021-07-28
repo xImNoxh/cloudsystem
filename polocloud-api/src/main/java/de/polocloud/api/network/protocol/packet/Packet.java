@@ -3,6 +3,7 @@ package de.polocloud.api.network.protocol.packet;
 import com.google.gson.Gson;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
@@ -173,8 +174,7 @@ public abstract class Packet {
 
             @Override
             public void stop() {
-                //TODO
-                throw new NotImplementedException();
+                sendPacket(new GameServerShutdownPacket());
             }
 
             @Override

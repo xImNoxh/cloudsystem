@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class MasterRequestServerStartListener extends IPacketHandler {
+public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
 
     private Executor executor = Executors.newCachedThreadPool();
     private WrapperConfig config;

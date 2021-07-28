@@ -12,7 +12,6 @@ import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -45,7 +44,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     private void registerPermissionCheckPacket(NetworkClient networkClient){
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 PermissionCheckResponsePacket packet = (PermissionCheckResponsePacket) obj;
@@ -64,7 +63,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     public void registerTablistUpdatePacket(){
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 ProxyTablistUpdatePacket packet = (ProxyTablistUpdatePacket) obj;
@@ -81,7 +80,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     private void registerMasterSendMessagePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerSendMessagePacket packet = (MasterPlayerSendMessagePacket) obj;
@@ -99,7 +98,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     private void registerMasterSendPlayerToPacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerSendToServerPacket packet = (MasterPlayerSendToServerPacket) obj;
@@ -124,7 +123,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     private void registerMasterPlayerKickPacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerKickPacket packet = (MasterPlayerKickPacket) obj;
@@ -146,7 +145,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     private void registerGameServerUnregisterPacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerUnregisterPacket packet = (GameServerUnregisterPacket) obj;
@@ -161,7 +160,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     public void registerMasterRequestServerListUpdatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterRequestServerListUpdatePacket packet = (MasterRequestServerListUpdatePacket) obj;
@@ -179,7 +178,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     public void registerMasterPlayerRequestResponsePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerRequestJoinResponsePacket packet = (MasterPlayerRequestJoinResponsePacket) obj;
@@ -201,7 +200,7 @@ public class NetworkProxyRegister extends NetworkRegister {
     }
 
     public void registerCloudMotdUpdatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;

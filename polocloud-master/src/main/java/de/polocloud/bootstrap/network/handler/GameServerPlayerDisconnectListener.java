@@ -18,7 +18,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class GameServerPlayerDisconnectListener extends IPacketHandler {
+public class GameServerPlayerDisconnectListener extends IPacketHandler<Packet> {
 
     @Inject
     private ICloudPlayerManager playerManager;

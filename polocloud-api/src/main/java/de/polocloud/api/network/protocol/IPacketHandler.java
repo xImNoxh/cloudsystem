@@ -3,7 +3,7 @@ package de.polocloud.api.network.protocol;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 
-public abstract class IPacketHandler {
+public abstract class IPacketHandler<R extends Packet> {
 
     public abstract void handlePacket(ChannelHandlerContext ctx, Packet obj);
 

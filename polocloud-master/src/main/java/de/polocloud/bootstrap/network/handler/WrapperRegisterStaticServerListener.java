@@ -13,7 +13,7 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-public class WrapperRegisterStaticServerListener extends IPacketHandler {
+public class WrapperRegisterStaticServerListener extends IPacketHandler<Packet> {
 
     @Inject
     private ITemplateService templateService;

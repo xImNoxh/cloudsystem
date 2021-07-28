@@ -5,18 +5,16 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class APIRequestCloudPlayerListener extends IPacketHandler {
+public class APIRequestCloudPlayerListener extends IPacketHandler<Packet> {
 
     @Inject
     private ICloudPlayerManager cloudPlayerManager;

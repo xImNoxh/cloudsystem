@@ -7,7 +7,7 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-public class MasterLoginResponsePacketHandler extends IPacketHandler {
+public class MasterLoginResponsePacketHandler extends IPacketHandler<Packet> {
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         MasterLoginResponsePacket packet = (MasterLoginResponsePacket) obj;

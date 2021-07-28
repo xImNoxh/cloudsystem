@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.concurrent.CompletableFuture;
 
-public class PermissionCheckResponseHandler extends IPacketHandler {
+public class PermissionCheckResponseHandler extends IPacketHandler<Packet> {
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {

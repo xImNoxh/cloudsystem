@@ -25,7 +25,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
 
 
     public void registerMasterKickPlayerPacket() {
-        networkClient.registerPacketHandler(new IPacketHandler() {
+        networkClient.registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerKickPacket packet = (MasterPlayerKickPacket) obj;
@@ -40,7 +40,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
             }
         });
 
-        networkClient.registerPacketHandler(new IPacketHandler() {
+        networkClient.registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 CommandListAcceptorPacket packet = (CommandListAcceptorPacket) obj;

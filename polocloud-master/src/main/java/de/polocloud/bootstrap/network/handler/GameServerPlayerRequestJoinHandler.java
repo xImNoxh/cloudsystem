@@ -1,8 +1,6 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -20,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class GameServerPlayerRequestJoinHandler extends IPacketHandler {
+public class GameServerPlayerRequestJoinHandler extends IPacketHandler<Packet> {
 
     @Inject
     private IGameServerManager gameServerManager;

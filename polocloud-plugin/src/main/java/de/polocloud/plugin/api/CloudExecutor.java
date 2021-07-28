@@ -4,7 +4,7 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
-import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
@@ -32,7 +32,7 @@ public class CloudExecutor {
         return pubSubManager;
     }
 
-    public void registerPacketHandler(IPacketHandler packetHandler){
+    public void registerPacketHandler(IPacketHandler<Packet> packetHandler){
         this.protocol.registerPacketHandler(packetHandler);
     }
 

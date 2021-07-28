@@ -7,7 +7,7 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
 import io.netty.channel.ChannelHandlerContext;
 
-public class StatisticMemoryHandler extends IPacketHandler {
+public class StatisticMemoryHandler extends IPacketHandler<Packet> {
 
     @Inject
     private IGameServerManager gameServerManager;

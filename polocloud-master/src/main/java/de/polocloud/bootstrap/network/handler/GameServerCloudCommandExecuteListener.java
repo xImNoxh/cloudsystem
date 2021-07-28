@@ -7,15 +7,13 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
 import de.polocloud.api.player.ICloudPlayerManager;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class GameServerCloudCommandExecuteListener extends IPacketHandler {
+public class GameServerCloudCommandExecuteListener extends IPacketHandler<Packet> {
 
     @Inject
     private ICloudPlayerManager cloudPlayerManager;

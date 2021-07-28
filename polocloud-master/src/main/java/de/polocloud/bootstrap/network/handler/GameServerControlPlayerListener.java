@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class GameServerControlPlayerListener extends IPacketHandler {
+public class GameServerControlPlayerListener extends IPacketHandler<Packet> {
 
     @Inject
     private ICloudPlayerManager playerManager;

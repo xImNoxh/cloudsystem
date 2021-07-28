@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class APIRequestGameServerHandler extends IPacketHandler {
+public class APIRequestGameServerHandler extends IPacketHandler<Packet> {
 
     @Inject
     private IGameServerManager gameServerManager;

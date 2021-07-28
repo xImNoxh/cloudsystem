@@ -1,6 +1,7 @@
 package de.polocloud.plugin.bootstrap.command;
 
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.api.CloudExecutor;
 import net.md_5.bungee.api.ProxyServer;
@@ -21,15 +22,14 @@ public class TestCloudCommand implements CommandExecutor {
 
         if (args.length == 1) {
 
-            sender.sendMessage("requesting Player... " + args[0]);
+            sender.sendMessage("Stopping Server... " + args[0]);
 
 
 
-            CloudExecutor.getInstance().getCloudPlayerManager().getOnlinePlayer(args[0]).thenAccept(player -> {
-                sender.sendMessage(player.getName());
-                sender.sendMessage(player.getUUID().toString());
-                sender.sendMessage(player.getProxyServer().getName());
-                sender.sendMessage(player.getMinecraftServer().getName());
+            CloudExecutor.getInstance().getGameServerManager().getGameServerByName(args[0]).thenAccept(server -> {
+                server.stop();
+                server.sendPacket(new GameServerShutdownPacket());
+                sender.sendMessage("success");
             });
 
             /*
