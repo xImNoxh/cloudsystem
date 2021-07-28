@@ -4,11 +4,11 @@ import com.google.inject.Injector;
 import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.template.ITemplateService;
 
 public abstract class CloudAPI {
 
     protected static CloudAPI instance;
-
 
     public CloudAPI() {
         instance = this;
@@ -23,4 +23,5 @@ public abstract class CloudAPI {
     public static CloudAPI getInstance() {
         return instance;
     }
+
 }

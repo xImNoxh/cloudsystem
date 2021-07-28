@@ -1,20 +1,25 @@
-package de.polocloud.signs.config.utils;
+package de.polocloud.signs.signs;
 
-public class ConfigLocation {
+public class ConfigSignLocation {
 
     private double x,y,z;
 
-    private int yaw, pitch;
+    private String world, group;
 
-    private String world;
-
-    public ConfigLocation(double x, double y, double z, int yaw, int pitch, String world) {
+    public ConfigSignLocation(double x, double y, double z, String world, String group) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
         this.world = world;
+        this.group = group;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public void setX(double x) {
@@ -27,22 +32,6 @@ public class ConfigLocation {
 
     public void setZ(double z) {
         this.z = z;
-    }
-
-    public int getYaw() {
-        return yaw;
-    }
-
-    public void setYaw(int yaw) {
-        this.yaw = yaw;
-    }
-
-    public int getPitch() {
-        return pitch;
-    }
-
-    public void setPitch(int pitch) {
-        this.pitch = pitch;
     }
 
     public String getWorld() {

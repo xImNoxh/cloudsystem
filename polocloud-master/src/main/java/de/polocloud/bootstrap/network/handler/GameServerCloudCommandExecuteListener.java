@@ -11,6 +11,7 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -25,7 +26,8 @@ public class GameServerCloudCommandExecuteListener extends IPacketHandler {
         GameServerCloudCommandExecutePacket packet = (GameServerCloudCommandExecutePacket) obj;
 
         String[] args = packet.getCommand().split(" ");
-        List<CloudCommand> commands = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList());
+        List<CloudCommand> commands = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key
+            -> (key.getName().equalsIgnoreCase(args[0])  || Arrays.stream(key.getAliases()).anyMatch(it -> it.equalsIgnoreCase(args[0])))).collect(Collectors.toList());
 
         for (CloudCommand command : commands) {
             try {

@@ -3,4 +3,4 @@ version: 1.0
 author: HttpMarco
 main: de.polocloud.signs.bootstrap.SignBootstrap
 commands:
-  cloudsigns:
+  cloudsings:
