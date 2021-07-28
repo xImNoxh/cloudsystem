@@ -1,6 +1,12 @@
 package de.polocloud.api.network.protocol.packet;
 
 import de.polocloud.api.network.protocol.packet.api.*;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
+import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
