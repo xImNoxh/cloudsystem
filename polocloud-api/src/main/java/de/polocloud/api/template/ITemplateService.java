@@ -9,7 +9,7 @@ public interface ITemplateService {
 
     ITemplateSaver getTemplateSaver();
 
-    ITemplate getTemplateByName(String name);
+    CompletableFuture<ITemplate> getTemplateByName(String name);
 
     CompletableFuture<Collection<ITemplate>> getLoadedTemplates();
 

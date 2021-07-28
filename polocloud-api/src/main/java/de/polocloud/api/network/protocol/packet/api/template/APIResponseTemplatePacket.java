@@ -7,20 +7,21 @@ import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 public class APIResponseTemplatePacket extends Packet {
 
     private UUID requestId;
-    private List<ITemplate> response;
+    private Collection<ITemplate> response;
     private Type type;
 
     public APIResponseTemplatePacket() {
 
     }
 
-    public APIResponseTemplatePacket(UUID requestId, List<ITemplate> response, Type type) {
+    public APIResponseTemplatePacket(UUID requestId, Collection<ITemplate> response, Type type) {
         this.requestId = requestId;
         this.response = response;
         this.type = type;
@@ -63,7 +64,7 @@ public class APIResponseTemplatePacket extends Packet {
         return type;
     }
 
-    public List<ITemplate> getResponse() {
+    public Collection<ITemplate> getResponse() {
         return response;
     }
 

@@ -2,11 +2,11 @@ package de.polocloud.signs.signs;
 
 public class ConfigSignLocation {
 
-    private double x,y,z;
+    private int x,y,z;
 
     private String world, group;
 
-    public ConfigSignLocation(double x, double y, double z, String world, String group) {
+    public ConfigSignLocation(int x, int y, int z, String world, String group) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -22,15 +22,15 @@ public class ConfigSignLocation {
         this.group = group;
     }
 
-    public void setX(double x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(double y) {
+    public void setY(int y) {
         this.y = y;
     }
 
-    public void setZ(double z) {
+    public void setZ(int z) {
         this.z = z;
     }
 
@@ -42,15 +42,15 @@ public class ConfigSignLocation {
         this.world = world;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
-    public double getZ() {
+    public int getZ() {
         return z;
     }
 }

@@ -53,7 +53,7 @@ public class APIRequestGameServerHandler extends IPacketHandler {
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, Collections.singletonList(gameServer), APIResponseGameServerPacket.Type.SINGLE));
                 });
             }else if(action == APIRequestGameServerPacket.Action.LIST_BY_TEMPLATE){
-                gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(value)).thenAccept(gameServer -> {
+                gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(value).get()).thenAccept(gameServer -> {
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, (gameServer), APIResponseGameServerPacket.Type.LIST));
                 });
             }

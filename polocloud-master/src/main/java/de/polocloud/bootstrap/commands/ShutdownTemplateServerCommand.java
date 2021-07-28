@@ -30,14 +30,12 @@ public class ShutdownTemplateServerCommand extends CloudCommand {
     public void execute(ICommandExecutor commandSender, String[] args) {
 
         if (args.length == 2) {
-            ITemplate template = templateService.getTemplateByName(args[1]);
-            if (template == null) {
-                Logger.log(LoggerType.INFO, "This template does not exists.");
-                return;
-            }
-
+            ITemplate template = null;
             try {
-                List<IGameServer> servers = gameServerManager.getGameServers().get().stream().filter(key -> key.getTemplate().equals(template)).collect(Collectors.toList());
+                template = templateService.getTemplateByName(args[1]).get();
+
+                ITemplate finalTemplate = template;
+                List<IGameServer> servers = gameServerManager.getGameServers().get().stream().filter(key -> key.getTemplate().equals(finalTemplate.getName())).collect(Collectors.toList());
 
                 for (IGameServer server : servers) {
                     Logger.log(LoggerType.INFO, Logger.PREFIX + "Trying to stop " + server.getName() + "...");
@@ -45,8 +43,13 @@ public class ShutdownTemplateServerCommand extends CloudCommand {
                 }
                 Logger.log(LoggerType.INFO, Logger.PREFIX + "Shutdown " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + servers.size() + ConsoleColors.GRAY.getAnsiCode() + " game servers.");
 
+
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+            }
+            if (template == null) {
+                Logger.log(LoggerType.INFO, "This template does not exists.");
+                return;
             }
             return;
         }

@@ -56,7 +56,12 @@ public class GameServerCloudCommand extends CloudCommand {
             if (args[1].equals("start")) {
                 String templateName = args[2];
 
-                ITemplate template = this.templateService.getTemplateByName(templateName);
+                ITemplate template = null;
+                try {
+                    template = this.templateService.getTemplateByName(templateName).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
                 if (template == null) {
                     Logger.log(LoggerType.INFO, "No template founded!");
                     return;

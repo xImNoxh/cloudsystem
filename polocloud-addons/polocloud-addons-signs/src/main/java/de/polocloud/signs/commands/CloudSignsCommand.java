@@ -3,6 +3,7 @@ package de.polocloud.signs.commands;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.signs.SignService;
+import de.polocloud.signs.signs.ConfigSignLocation;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -36,8 +37,9 @@ public class CloudSignsCommand implements CommandExecutor {
         player.sendMessage("adding sign " + group);
 
 
-
-        IConfigSaver configSaver = new SimpleConfigSaver();
+        SignService.getInstance().getSignConfig().getLocationConfig().getLocations().add(new ConfigSignLocation(
+            block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), group));
+        IConfigSaver configSaver = SignService.getInstance().getConfigSaver();
         configSaver.save(SignService.getInstance().getSignConfig(), new File("config.json"));
 
 

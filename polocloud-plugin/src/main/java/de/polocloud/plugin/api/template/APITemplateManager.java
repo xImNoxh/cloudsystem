@@ -1,6 +1,7 @@
 package de.polocloud.plugin.api.template;
 
 import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
+import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateLoader;
@@ -25,6 +26,12 @@ public class APITemplateManager implements ITemplateService {
         networkClient = CloudPlugin.getInstance().getNetworkClient();
     }
 
+    public void sendRequest(CompletableFuture<?> type, APIRequestTemplatePacket.Action action, String value){
+        UUID uuid = UUID.randomUUID();
+        ResponseHandler.register(uuid, type);
+        networkClient.sendPacket(new APIRequestTemplatePacket(uuid, action, value));
+    }
+
     @Override
     public ITemplateLoader getTemplateLoader() {
         return null;
@@ -36,18 +43,16 @@ public class APITemplateManager implements ITemplateService {
     }
 
     @Override
-    public ITemplate getTemplateByName(String name) {
-        return null;
+    public CompletableFuture<ITemplate> getTemplateByName(String name) {
+        CompletableFuture<ITemplate> completableFuture = new CompletableFuture<>();
+        executor.execute(() -> sendRequest(completableFuture, APIRequestTemplatePacket.Action.NAME, name));
+        return completableFuture;
     }
 
     @Override
     public CompletableFuture<Collection<ITemplate>> getLoadedTemplates() {
         CompletableFuture<Collection<ITemplate>> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> {
-            UUID requestId = UUID.randomUUID();
-            ResponseHandler.register(requestId, completableFuture);
-            networkClient.sendPacket(new APIRequestTemplatePacket(requestId, APIRequestTemplatePacket.Action.ALL, "_"));
-        });
+        executor.execute(() -> sendRequest(completableFuture, APIRequestTemplatePacket.Action.ALL, "_"));
         return completableFuture;
     }
 

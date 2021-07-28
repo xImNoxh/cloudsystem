@@ -29,7 +29,7 @@ public class HubCloudCommand extends CloudCommand {
         IGameServerManager gameServerManager = Master.getInstance().getGameServerManager();
         ITemplateService templateService = Master.getInstance().getTemplateService();
         try {
-            List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0])).get();
+            List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]).get()).get();
             IGameServer gameServer = gameServersByTemplate.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
             if(gameServer == null){
                 player.sendMessage("Es konnte kein Fallback gefunden werden...");
