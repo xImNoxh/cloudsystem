@@ -1,6 +1,6 @@
 package de.polocloud.plugin.api.player;
 
-import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;

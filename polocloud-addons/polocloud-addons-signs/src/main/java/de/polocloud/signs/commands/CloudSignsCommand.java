@@ -21,7 +21,7 @@ public class CloudSignsCommand implements CommandExecutor {
 
         Block block = player.getTargetBlock((Set<Material>) null, 3);
 
-        String group = args[1];
+        String group = args[0];
 
         if(block == null){
             player.sendMessage("no block");

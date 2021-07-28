@@ -3,14 +3,12 @@ package de.polocloud.bootstrap.network.handler;
 import com.google.inject.Inject;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
