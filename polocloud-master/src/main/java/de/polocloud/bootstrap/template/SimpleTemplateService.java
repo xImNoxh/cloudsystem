@@ -10,6 +10,7 @@ import de.polocloud.api.template.ITemplateService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SimpleTemplateService implements ITemplateService {
 
@@ -54,8 +55,8 @@ public class SimpleTemplateService implements ITemplateService {
     }
 
     @Override
-    public Collection<ITemplate> getLoadedTemplates() {
-        return this.templateList;
+    public CompletableFuture<Collection<ITemplate>> getLoadedTemplates() {
+        return CompletableFuture.completedFuture(this.templateList);
     }
 
     @Override
