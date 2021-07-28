@@ -5,6 +5,6 @@ import de.polocloud.bootstrap.config.MasterConfig;
 
 public interface TablistExecute {
 
-    void execute(ICloudPlayer iCloudPlayer, MasterConfig masterConfig);
+    void execute(ICloudPlayer iCloudPlayer, MasterConfig masterConfig, boolean playerUpdate);
 
 }

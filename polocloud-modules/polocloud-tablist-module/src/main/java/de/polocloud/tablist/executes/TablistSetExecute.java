@@ -17,7 +17,7 @@ public class TablistSetExecute implements TablistExecute {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Override
-    public void execute(ICloudPlayer iCloudPlayer, MasterConfig masterConfig) {
+    public void execute(ICloudPlayer iCloudPlayer, MasterConfig masterConfig, boolean playerUpdate) {
         CloudPlayerTabCache cloudPlayerTabCache = TablistModule.getInstance().getTabCache();
 
         Tab tab = TablistModule.getInstance().getTablistConfig().getTabs().stream()
