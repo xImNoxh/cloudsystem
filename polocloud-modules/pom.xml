@@ -12,7 +12,7 @@
   <artifactId>polocloud-modules</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>polocloud-hubcommnad-module</module>
+    <module>polocloud-hubcommand-module</module>
       <module>polocloud-party-module</module>
       <module>polocloud-notify-module</module>
       <module>polocloud-whitelist-module</module>
