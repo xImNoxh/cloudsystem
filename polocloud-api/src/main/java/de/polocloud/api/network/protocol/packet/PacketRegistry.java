@@ -1,6 +1,12 @@
 package de.polocloud.api.network.protocol.packet;
 
 import de.polocloud.api.network.protocol.packet.api.*;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
+import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
@@ -66,6 +72,10 @@ public class PacketRegistry {
 
         registerPacket(129, PermissionCheckResponsePacket.class);
         registerPacket(130, ProxyTablistUpdatePacket.class);
+
+        registerPacket(131, APIRequestTemplatePacket.class);
+        registerPacket(132, APIResponseTemplatePacket.class);
+
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
