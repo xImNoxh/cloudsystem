@@ -27,9 +27,7 @@ public class NotifyModule {
     public NotifyConfig loadNotifyConfig(Module module) {
         File configPath = new File("modules/notify-system/");
         if(!configPath.exists()) configPath.mkdirs();
-
         File configFile = new File("modules/notify-system/config.json");
-
         NotifyConfig masterConfig = module.getConfigLoader().load(NotifyConfig.class, configFile);
         module.getConfigSaver().save(masterConfig, configFile);
         return masterConfig;
