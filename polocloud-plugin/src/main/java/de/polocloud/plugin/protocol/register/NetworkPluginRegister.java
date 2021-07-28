@@ -21,9 +21,11 @@ import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class NetworkPluginRegister extends NetworkRegister {
 
@@ -120,7 +122,7 @@ public class NetworkPluginRegister extends NetworkRegister {
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 APIResponseTemplatePacket packet = (APIResponseTemplatePacket) obj;
                 UUID requestId = packet.getRequestId();
-                List<ITemplate> response = packet.getResponse();
+                List<ITemplate> response = packet.getResponse().stream().collect(Collectors.toList());
                 CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
                 if (packet.getType() == APIResponseTemplatePacket.Type.SINGLE) {
                     completableFuture.complete(response.get(0));

@@ -13,6 +13,8 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.concurrent.ExecutionException;
+
 public class WrapperRegisterStaticServerListener extends IPacketHandler {
 
     @Inject
@@ -24,8 +26,12 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler {
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         WrapperRegisterStaticServerPacket packet = (WrapperRegisterStaticServerPacket) obj;
         Logger.log(LoggerType.INFO, "register static server with id " + packet.getSnowflake());
-        IGameServer gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), templateService.getTemplateByName(packet.getTemplateName()), System.currentTimeMillis());
-        gameServerManager.registerGameServer(gameServer);
+        try {
+            IGameServer gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), templateService.getTemplateByName(packet.getTemplateName()).get(), System.currentTimeMillis());
+            gameServerManager.registerGameServer(gameServer);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

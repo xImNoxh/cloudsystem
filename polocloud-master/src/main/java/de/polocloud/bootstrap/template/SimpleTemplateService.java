@@ -45,13 +45,13 @@ public class SimpleTemplateService implements ITemplateService {
     }
 
     @Override
-    public ITemplate getTemplateByName(String name){
+    public CompletableFuture<ITemplate> getTemplateByName(String name){
         for (ITemplate iTemplate : templateList) {
             if(iTemplate.getName().equalsIgnoreCase(name)){
-                return iTemplate;
+                return CompletableFuture.completedFuture(iTemplate);
             }
         }
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
