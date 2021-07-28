@@ -12,6 +12,8 @@ import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler<Packet> {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
         UUID uuid = packet.getUuid();
         try {
-            List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0])).get();
+            List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]).get()).get();
             IGameServer targetServer = null;
             if (gameServersByTemplate != null) {
 
@@ -61,13 +63,7 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler<Packet> {
                 ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
                 return;
             }
-
-
-
             ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
-
-
-            //Logger.log(LoggerType.INFO, "sending player to " + targetServer.getName() + " / " + targetServer.getSnowflake());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

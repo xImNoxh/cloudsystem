@@ -10,6 +10,7 @@ import de.polocloud.api.template.ITemplateService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SimpleTemplateService implements ITemplateService {
 
@@ -44,18 +45,18 @@ public class SimpleTemplateService implements ITemplateService {
     }
 
     @Override
-    public ITemplate getTemplateByName(String name){
+    public CompletableFuture<ITemplate> getTemplateByName(String name){
         for (ITemplate iTemplate : templateList) {
             if(iTemplate.getName().equalsIgnoreCase(name)){
-                return iTemplate;
+                return CompletableFuture.completedFuture(iTemplate);
             }
         }
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
-    public Collection<ITemplate> getLoadedTemplates() {
-        return this.templateList;
+    public CompletableFuture<Collection<ITemplate>> getLoadedTemplates() {
+        return CompletableFuture.completedFuture(this.templateList);
     }
 
     @Override

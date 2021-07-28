@@ -32,17 +32,21 @@ public class CloudInfoCommand extends CloudCommand {
             String name = args[2];
 
             if (args[1].equalsIgnoreCase("template")) {
-                ITemplate template = templateService.getTemplateByName(name);
+                try {
+                    ITemplate template = templateService.getTemplateByName(name).get();
 
-                if (template == null) {
-                    Logger.log(LoggerType.INFO, "no template founded.");
-                    return;
+                    if (template == null) {
+                        Logger.log(LoggerType.INFO, "no template founded.");
+                        return;
+                    }
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Template name: " + template.getName());
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Maximal services: " + template.getMaxServerCount());
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Minimal services: " + template.getMinServerCount());
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Template type: " + template.getTemplateType().name());
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Template version: " + template.getVersion().getTitle());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Template name: " + template.getName());
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Maximal services: " + template.getMaxServerCount());
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Minimal services: " + template.getMinServerCount());
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Template type: " + template.getTemplateType().name());
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Template version: " + template.getVersion().getTitle());
                 return;
             }
 

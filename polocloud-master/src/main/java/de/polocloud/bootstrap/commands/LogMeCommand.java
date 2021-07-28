@@ -4,6 +4,8 @@ import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.util.Hastebin;
+import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.*;
 
@@ -22,7 +24,6 @@ public class LogMeCommand extends CloudCommand {
         try (BufferedReader br = new BufferedReader(new FileReader(logfile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // process the line.
                 logString.append(line).append("\n");
             }
         } catch (IOException e) {
@@ -31,7 +32,7 @@ public class LogMeCommand extends CloudCommand {
 
         try {
             String url = hastebin.post(logString.toString(), true);
-            System.out.println("link: " + url);
+            Logger.log(LoggerType.INFO, "Link: " + url);
         } catch (IOException e) {
             e.printStackTrace();
         }

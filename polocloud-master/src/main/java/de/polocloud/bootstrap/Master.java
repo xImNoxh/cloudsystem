@@ -41,6 +41,7 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 public class Master implements IStartable, ITerminatable {
 
@@ -143,6 +144,7 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestCloudPlayerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(WrapperRegisterStaticServerListener.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestTemplateHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PermissionCheckResponseHandler.class));
 
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(RedirectPacketHandler.class));
@@ -156,12 +158,16 @@ public class Master implements IStartable, ITerminatable {
 
         new Thread(() -> nettyServer.start()).start();
 
-        if (this.templateService.getLoadedTemplates().size() > 0) {
-            StringBuilder builder = new StringBuilder();
-            this.templateService.getLoadedTemplates().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%),"));
-            Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
-        } else {
-            Logger.log(LoggerType.INFO, "No templates founded.");
+        try {
+            if (this.templateService.getLoadedTemplates().get().size() > 0) {
+                StringBuilder builder = new StringBuilder();
+                this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%),"));
+                Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
+            } else {
+                Logger.log(LoggerType.INFO, "No templates founded.");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
 
 

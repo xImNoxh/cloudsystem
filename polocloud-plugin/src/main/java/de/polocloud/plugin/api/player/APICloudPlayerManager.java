@@ -1,6 +1,6 @@
 package de.polocloud.plugin.api.player;
 
-import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
@@ -32,31 +32,23 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
     @Override
     public CompletableFuture<List<ICloudPlayer>> getAllOnlinePlayers() {
         CompletableFuture<List<ICloudPlayer>> completableFuture = new CompletableFuture<>();
-
         executor.execute(() -> {
-
             UUID requestId = UUID.randomUUID();
             APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.ALL, "_");
             ResponseHandler.register(requestId, completableFuture);
-
             networkClient.sendPacket(packet);
-
         });
-
         return completableFuture;
     }
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(String name) {
         CompletableFuture<ICloudPlayer> completableFuture = new CompletableFuture<>();
-
         executor.execute(() -> {
-
             UUID requestId = UUID.randomUUID();
             APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.BY_NAME, name);
             ResponseHandler.register(requestId, completableFuture);
             networkClient.sendPacket(packet);
-
         });
 
         return completableFuture;
@@ -65,15 +57,11 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid) {
         CompletableFuture<ICloudPlayer> completableFuture = new CompletableFuture<>();
-
         executor.execute(() -> {
-
             UUID requestId = UUID.randomUUID();
             APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.BY_UUID, uuid.toString());
             ResponseHandler.register(requestId, completableFuture);
-
             networkClient.sendPacket(packet);
-
         });
 
         return completableFuture;
@@ -82,17 +70,12 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
     @Override
     public CompletableFuture<Boolean> isPlayerOnline(String name) {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-
         executor.execute(() -> {
-
             UUID requestId = UUID.randomUUID();
             APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.ONLINE_NAME, name);
             ResponseHandler.register(requestId, completableFuture);
-
             networkClient.sendPacket(packet);
-
         });
-
         return completableFuture;
     }
 

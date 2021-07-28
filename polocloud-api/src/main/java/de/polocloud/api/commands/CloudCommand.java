@@ -55,6 +55,7 @@ public abstract class CloudCommand {
         String description();
         String[] aliases();
         CommandType commandType();
+
     }
 
 }

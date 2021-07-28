@@ -1,6 +1,7 @@
 package de.polocloud.api.template;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 
 public interface ITemplateService {
 
@@ -8,9 +9,9 @@ public interface ITemplateService {
 
     ITemplateSaver getTemplateSaver();
 
-    ITemplate getTemplateByName(String name);
+    CompletableFuture<ITemplate> getTemplateByName(String name);
 
-    Collection<ITemplate> getLoadedTemplates();
+    CompletableFuture<Collection<ITemplate>> getLoadedTemplates();
 
     void reloadTemplates();
 

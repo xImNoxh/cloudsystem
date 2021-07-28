@@ -5,8 +5,8 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.api.APIRequestGameServerPacket;
-import de.polocloud.api.network.protocol.packet.api.APIResponseGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
 import io.netty.channel.ChannelHandlerContext;
@@ -53,7 +53,7 @@ public class APIRequestGameServerHandler extends IPacketHandler<Packet> {
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, Collections.singletonList(gameServer), APIResponseGameServerPacket.Type.SINGLE));
                 });
             }else if(action == APIRequestGameServerPacket.Action.LIST_BY_TEMPLATE){
-                gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(value)).thenAccept(gameServer -> {
+                gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(value).get()).thenAccept(gameServer -> {
                     requestServer.sendPacket(new APIResponseGameServerPacket(requestId, (gameServer), APIResponseGameServerPacket.Type.LIST));
                 });
             }

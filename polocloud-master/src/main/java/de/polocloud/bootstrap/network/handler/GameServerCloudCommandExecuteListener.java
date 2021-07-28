@@ -9,6 +9,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudComman
 import de.polocloud.api.player.ICloudPlayerManager;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -23,7 +24,8 @@ public class GameServerCloudCommandExecuteListener extends IPacketHandler<Packet
         GameServerCloudCommandExecutePacket packet = (GameServerCloudCommandExecutePacket) obj;
 
         String[] args = packet.getCommand().split(" ");
-        List<CloudCommand> commands = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList());
+        List<CloudCommand> commands = CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key
+            -> (key.getName().equalsIgnoreCase(args[0])  || Arrays.stream(key.getAliases()).anyMatch(it -> it.equalsIgnoreCase(args[0])))).collect(Collectors.toList());
 
         for (CloudCommand command : commands) {
             try {

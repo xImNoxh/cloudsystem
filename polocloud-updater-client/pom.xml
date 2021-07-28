@@ -7,9 +7,12 @@
     <groupId>de.polocloud</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.polocloud.updater.client</groupId>
   <artifactId>polocloud-updater-client</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
   <dependencies>
     <dependency>
       <groupId>commons-io</groupId>

@@ -1,7 +1,6 @@
 package de.polocloud.bootstrap.player;
 
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.api.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
@@ -10,7 +9,6 @@ import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendToServerP
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

@@ -8,6 +8,7 @@ import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.Master;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 public class ServerCreatorRunner implements Runnable {
 
@@ -27,7 +28,12 @@ public class ServerCreatorRunner implements Runnable {
 
         while (master.isRunning()) {
 
-            Collection<ITemplate> loadedTemplates = templateService.getLoadedTemplates();
+            Collection<ITemplate> loadedTemplates = null;
+            try {
+                loadedTemplates = templateService.getLoadedTemplates().get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
 
             for (ITemplate loadedTemplate : loadedTemplates) {
                 if (creator.check(loadedTemplate)) {
