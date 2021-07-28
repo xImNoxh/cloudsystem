@@ -12,7 +12,7 @@ public class SignLayouts {
     public SignLayouts() {
 
         signLayouts.put(SignState.LOADING, new Layout[]{
-            new Layout("","Lading","...")
+            new Layout("---","Loading","...", "---")
         });
 
         signLayouts.put(SignState.FULL, new Layout[]{
@@ -20,15 +20,15 @@ public class SignLayouts {
         });
 
         signLayouts.put(SignState.ONLINE, new Layout[]{
-            new Layout("%SERVICE%","§aOnline","%ONLINE_PLAYERS% / %MAXPLAYERS%", "%MOTD%")
+            new Layout("%SERVICE%","§aOnline","%ONLINE_PLAYERS% / %MAX_PLAYERS%", "%MOTD%")
         });
 
         signLayouts.put(SignState.PLAYERS, new Layout[]{
-            new Layout("%SERVICE%","§a§lJoin","%ONLINE_PLAYERS%  / %MAXPLAYERS%", "%MOTD%")
+            new Layout("%SERVICE%","§a§lJoin","%ONLINE_PLAYERS%  / %MAX_PLAYERS%", "%MOTD%")
         });
 
         signLayouts.put(SignState.MAINTENANCE, new Layout[]{
-            new Layout("","%TEMPLATE%","§cMaintenance", "")
+            new Layout(" ","%TEMPLATE%","§cMaintenance", " ")
         });
     }
 

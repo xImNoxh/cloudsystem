@@ -3,6 +3,8 @@ package de.polocloud.signs.signs;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.signs.SignService;
+import de.polocloud.signs.bootstrap.SignBootstrap;
+import de.polocloud.signs.converter.SignConverter;
 import de.polocloud.signs.enumeration.SignState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,12 +39,14 @@ public class IGameServerSign {
     }
 
     public void writeSign(){
-        String[] content = SignService.getInstance().getSignConfig().getSignLayouts().getSignLayouts().get(signState)[0].getLines();
-        for(int i = 0; i < 4; i++) {
-            sign.setLine(i, content[i]);
-        }
-        lastInput = content;
-        sign.update();
+        Bukkit.getScheduler().runTask(SignBootstrap.getInstance(), () -> {
+            String[] content = SignService.getInstance().getSignConfig().getSignLayouts().getSignLayouts().get(signState)[0].getLines();
+            for(int i = 0; i < content.length; i++) {
+                sign.setLine(i, SignConverter.convertSignLayout(gameServer, content[i]));
+            }
+            lastInput = content;
+            sign.update();
+        });
     }
 
     public void updateSign(){

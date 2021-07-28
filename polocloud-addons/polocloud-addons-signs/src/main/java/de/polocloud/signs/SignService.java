@@ -8,6 +8,7 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.signs.commands.CloudSignsCommand;
 import de.polocloud.signs.config.SignConfig;
+import de.polocloud.signs.converter.SignConverter;
 import de.polocloud.signs.signs.IGameServerSign;
 import de.polocloud.signs.signs.cache.IGameServerSignCache;
 import de.polocloud.signs.signs.initializer.IGameServerSignInitializer;
@@ -37,6 +38,8 @@ public class SignService {
 
         this.cache = new IGameServerSignCache();
 
+
+        new SignConverter();
         new IGameServerSignInitializer();
     }
 
