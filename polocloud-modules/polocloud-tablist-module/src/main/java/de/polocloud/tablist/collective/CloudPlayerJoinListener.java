@@ -28,8 +28,8 @@ public class CloudPlayerJoinListener implements EventHandler<CloudPlayerJoinNetw
     public void handleEvent(CloudPlayerJoinNetworkEvent event) {
         ICloudPlayer player = event.getPlayer();
 
-        TablistModule.getInstance().getTablistSetExecute().execute(player, config);
-        TablistModule.getInstance().getTablistUpdateExecute().execute(player, config);
+        TablistModule.getInstance().getTablistSetExecute().execute(player, config, true);
+        TablistModule.getInstance().getTablistUpdateExecute().execute(player, config, true);
 
 
 

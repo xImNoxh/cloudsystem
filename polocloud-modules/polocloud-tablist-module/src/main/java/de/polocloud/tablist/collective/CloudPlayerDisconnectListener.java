@@ -16,7 +16,7 @@ public class CloudPlayerDisconnectListener implements EventHandler<CloudPlayerDi
     @Override
     public void handleEvent(CloudPlayerDisconnectEvent event) {
         ICloudPlayer player = event.getPlayer();
-        TablistModule.getInstance().getTablistUpdateExecute().execute(player, config);
+        TablistModule.getInstance().getTablistUpdateExecute().execute(player, config, false);
 
     }
 

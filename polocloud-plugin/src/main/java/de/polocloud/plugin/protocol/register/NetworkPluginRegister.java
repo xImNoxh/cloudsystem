@@ -219,7 +219,6 @@ public class NetworkPluginRegister extends NetworkRegister {
 
                         @Override
                         public void sendPacket(Packet packet) {
-                            System.out.println("sending redirect to master");
                             ctx.writeAndFlush(new RedirectPacket(getSnowflake(), packet));
                         }
                     });

@@ -13,6 +13,6 @@ public class CloudPlayerSwitchListener implements EventHandler<CloudPlayerSwitch
 
     @Override
     public void handleEvent(CloudPlayerSwitchServerEvent event) {
-        TablistModule.getInstance().getTablistUpdateExecute().execute(event.getPlayer(), config);
+        TablistModule.getInstance().getTablistUpdateExecute().execute(event.getPlayer(), config, true);
     }
 }

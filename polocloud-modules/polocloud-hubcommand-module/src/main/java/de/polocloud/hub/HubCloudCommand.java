@@ -10,6 +10,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.hub.config.HubConfig;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +21,13 @@ public class HubCloudCommand extends CloudCommand {
 
     @Inject
     private MasterConfig config;
+
+    private HubConfig hubConfig;
+
+    public HubCloudCommand() {
+        setAliases(CloudModule.getInstance().getHubConfig().getAliases());
+        this.hubConfig = CloudModule.getInstance().getHubConfig();
+    }
 
     @Override
     public void execute(ICommandExecutor sender, String[] args) {
@@ -32,9 +40,15 @@ public class HubCloudCommand extends CloudCommand {
             List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]).get()).get();
             IGameServer gameServer = gameServersByTemplate.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
             if(gameServer == null){
-                player.sendMessage("Es konnte kein Fallback gefunden werden...");
+                player.sendMessage(hubConfig.getNoFallback());
                 return;
             }
+
+            if(gameServer.getTemplate() == player.getMinecraftServer().getTemplate()) {
+                player.sendMessage(hubConfig.getAlreadyConnected());
+                return;
+            }
+
             player.sendTo(gameServer);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

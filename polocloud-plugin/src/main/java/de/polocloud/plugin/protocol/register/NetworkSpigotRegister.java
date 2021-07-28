@@ -45,6 +45,7 @@ public class NetworkSpigotRegister extends NetworkRegister {
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 CommandListAcceptorPacket packet = (CommandListAcceptorPacket) obj;
                 spigotBootstrap.getCommandReader().setAllowedCommands(packet.getCommandList());
+                spigotBootstrap.getCommandReader().getAllowedCommands().addAll(packet.getAliases());
             }
 
             @Override
