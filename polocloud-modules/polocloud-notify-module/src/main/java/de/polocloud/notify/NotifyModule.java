@@ -21,7 +21,6 @@ public class NotifyModule {
 
         if(notifyConfig.isUse())
         EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudCollectivesListener.class), CloudGameServerStatusChangeEvent.class);
-
     }
 
     public NotifyConfig loadNotifyConfig(Module module) {
