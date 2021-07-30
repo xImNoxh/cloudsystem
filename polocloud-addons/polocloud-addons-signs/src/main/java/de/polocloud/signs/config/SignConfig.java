@@ -8,6 +8,9 @@ import de.polocloud.signs.config.messages.SignMessages;
 public class SignConfig implements IConfig {
 
     private boolean use = true;
+    private boolean connectIfFull = false;
+    private boolean canUseConnectIfFullPermission = true;
+    private String connectIfFullPermission = "cloud.test";
 
     private SignLocationObject locationConfig = new SignLocationObject();
     private SignMessages signMessages = new SignMessages();
@@ -36,4 +39,18 @@ public class SignConfig implements IConfig {
     public SignMessages getSignMessages() {
         return signMessages;
     }
+
+    public boolean isConnectIfFull() {
+        return connectIfFull;
+    }
+
+    public boolean isCanUseConnectIfFullPermission() {
+        return canUseConnectIfFullPermission;
+    }
+
+    public String getConnectIfFullPermission() {
+        return connectIfFullPermission;
+    }
+
+
 }
