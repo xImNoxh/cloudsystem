@@ -30,7 +30,7 @@ public class SignBootstrap extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        SignService.getInstance().getSignProtectionRunnable().getTask().cancel();
     }
 
     public static SignBootstrap getInstance() {

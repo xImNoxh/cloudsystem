@@ -1,8 +1,8 @@
 package de.polocloud.plugin.bootstrap;
 
-import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.api.spigot.event.*;
@@ -66,6 +66,14 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
                         Bukkit.getPluginManager().callEvent(new CloudServerStartedEvent(server)));
                 });
 
+            });
+
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:templateMaintenanceUpdate", packet -> {
+                Bukkit.getScheduler().runTask(this, () -> {
+                    String templateName = packet.getData();
+                    CloudExecutor.getInstance().getTemplateService().getTemplateByName(templateName).thenAccept(template ->
+                        Bukkit.getPluginManager().callEvent(new TemplateMaintenanceUpdateEvent(template)));
+                });
             });
 
             CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverStopped", packet -> {
