@@ -9,7 +9,7 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
+public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     private IProtocol protocol;
 
@@ -24,7 +24,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         NettyExceptionEvent event = new NettyExceptionEvent(cause);
         EventRegistry.fireEvent(event);
 
@@ -50,9 +50,9 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet o) {
         if (o instanceof Packet) {
-            protocol.firePacketHandlers(channelHandlerContext, (Packet) o);
+            protocol.firePacketHandlers(channelHandlerContext, o);
         }
     }
 
