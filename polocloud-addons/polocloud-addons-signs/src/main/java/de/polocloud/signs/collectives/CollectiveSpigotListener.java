@@ -16,6 +16,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -30,15 +31,29 @@ public class CollectiveSpigotListener implements Listener {
 
     @EventHandler
     public void handle(PlayerInteractEvent event) {
+        if(!(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))) return;
         if (event.getClickedBlock() == null || !event.getClickedBlock().getType().equals(Material.WALL_SIGN)) return;
+
         Sign sign = (Sign) event.getClickedBlock().getState();
         IGameServerSign gameSign = signService.getCache().stream().filter(s -> s.getSign().equals(sign)).findAny().orElse(null);
         if (gameSign == null || gameSign.getGameServer() == null) return;
+
 
         Player player = event.getPlayer();
         CloudExecutor.getInstance().getCloudPlayerManager().getOnlinePlayer(player.getUniqueId()).thenAccept(key -> {
             if (key.getMinecraftServer().getSnowflake() == gameSign.getGameServer().getSnowflake()) {
                 player.sendMessage(signService.getSignConfig().getSignMessages().getAlreadySameService());
+                return;
+            }
+
+            if (!signService.getSignConfig().isConnectIfFull()) {
+                if (signService.getSignConfig().isCanUseConnectIfFullPermission()) {
+                    if (player.hasPermission(signService.getSignConfig().getConnectIfFullPermission())) {
+                        PlayerUtils.sendService(gameSign.getGameServer(), player);
+                        return;
+                    }
+                }
+                player.sendMessage(signService.getSignConfig().getSignMessages().getConnectedIfServiceIsFull());
                 return;
             }
             PlayerUtils.sendService(gameSign.getGameServer(), player);
@@ -66,7 +81,7 @@ public class CollectiveSpigotListener implements Listener {
     public void handle(CloudPlayerSwitchServerEvent event) {
         event.getTo().thenAccept(service -> {
             IGameServerSign gameServerSign = signService.getCache().stream().filter(key ->
-                key.getGameServer().getSnowflake() == service.getSnowflake()).findAny().get();
+                key.getGameServer().getSnowflake() == service.getSnowflake()).findAny().orElse(null);
             if (gameServerSign == null) return;
             gameServerSign.setGameServer(service);
             gameServerSign.displayService();
@@ -74,7 +89,7 @@ public class CollectiveSpigotListener implements Listener {
 
         event.getFrom().thenAccept(service -> {
             IGameServerSign gameServerSign = signService.getCache().stream().filter(key ->
-                key.getGameServer().getSnowflake() == service.getSnowflake()).findAny().get();
+                key.getGameServer().getSnowflake() == service.getSnowflake()).findAny().orElse(null);
             if (gameServerSign == null) return;
             gameServerSign.setGameServer(service);
             gameServerSign.displayService();
@@ -83,19 +98,17 @@ public class CollectiveSpigotListener implements Listener {
 
     @EventHandler
     public void handle(CloudServerUpdatedEvent event) {
-        IGameServerSign gameServerSign = signService.getCache().stream().filter(key ->
-            key.getGameServer().getSnowflake() == event.getGameServer().getSnowflake()).findAny().get();
+        IGameServerSign gameServerSign = signService.getCache().stream().filter(key -> key.getGameServer() != null && key.getGameServer().getSnowflake() == event.getGameServer().getSnowflake()).findAny().orElse(null);
         if (gameServerSign == null) return;
         gameServerSign.setGameServer(event.getGameServer());
         gameServerSign.displayService();
     }
 
-
     @EventHandler
     public void handle(CloudServerStoppedEvent event) {
         IGameServer gameServer = event.getGameServer();
         IGameServerSign gameServerSign = SignService.getInstance().getCache().stream().filter(key ->
-            key.getGameServer().getSnowflake() == gameServer.getSnowflake()).findAny().get();
+            key.getGameServer().getSnowflake() == gameServer.getSnowflake()).findAny().orElse(null);
         if (gameServerSign == null) return;
         gameServerSign.setGameServer(null);
         gameServerSign.writeSign();

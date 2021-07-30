@@ -62,15 +62,6 @@ public class IGameServerSign {
             if(layout.getBlockLayout().getSubId() > -1) {
                 blockState.setData(new MaterialData(material, (byte) layout.getBlockLayout().getSubId()));
             }
-
-            /*
-            System.out.println(signState.toString());
-            System.out.println(gameServer.getName());
-            System.out.println(gameServer.getOnlinePlayers());
-            System.out.println(material);
-            System.out.println(layout.getBlockLayout().getSubId());
-
-             */
             blockState.update(true);
         });
     }
@@ -86,20 +77,19 @@ public class IGameServerSign {
             return;
         }
 
-        if(gameServer.getOnlinePlayers() <= 0){
-            System.out.println(gameServer.getOnlinePlayers());
-            signState = SignState.ONLINE;
-            return;
-        }
-
-        if(template.getMaxPlayers() <= gameServer.getOnlinePlayers()){
+        if(gameServer.getOnlinePlayers() >= gameServer.getTemplate().getMaxPlayers()){
             signState = SignState.FULL;
             return;
         }
 
+        if(gameServer.getOnlinePlayers() <= 0){
+            signState = SignState.ONLINE;
+            return;
+        }
+
         if(gameServer.getOnlinePlayers() >= 1) {
-            System.out.println(gameServer.getOnlinePlayers());
             signState = SignState.PLAYERS;
+            return;
         }
         System.out.println("no sign information founded");
     }
