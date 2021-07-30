@@ -46,7 +46,7 @@ public class IGameServerSign {
             Layout layout = SignService.getInstance().getSignConfig().getSignLayouts().getSignLayouts().get(signState)[0];
             String[] content = layout.getLines();
             for(int i = 0; i < content.length; i++) {
-                sign.setLine(i, SignConverter.convertSignLayout(gameServer, content[i]));
+                sign.setLine(i, SignConverter.convertSignLayout(this, content[i]));
             }
             lastInput = content;
             sign.update();
@@ -99,11 +99,6 @@ public class IGameServerSign {
         writeSign();
     }
 
-
-    public void displayService(){
-        signState = SignState.ONLINE;
-        writeSign();
-    }
 
     public void reloadSign(Sign sign){
         this.sign = sign;

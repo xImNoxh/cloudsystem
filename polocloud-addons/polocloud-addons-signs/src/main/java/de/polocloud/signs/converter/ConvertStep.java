@@ -1,9 +1,9 @@
 package de.polocloud.signs.converter;
 
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.signs.signs.IGameServerSign;
 
 public interface ConvertStep {
 
-    Object execute(IGameServer gameServer);
+    Object execute(IGameServerSign gameServerSign);
 
 }
