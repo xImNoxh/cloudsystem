@@ -49,6 +49,7 @@ public class SignService {
         new SignConverter();
         new IGameServerSignInitializer();
 
+
         this.signProtectionRunnable = new SignProtectionRunnable();
     }
 

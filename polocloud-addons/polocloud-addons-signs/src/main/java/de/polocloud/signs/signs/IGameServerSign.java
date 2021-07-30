@@ -24,6 +24,8 @@ public class IGameServerSign {
     private Location location;
     private SignState signState = SignState.LOADING;
 
+    private Material defaultBlock;
+
     private String[] lastInput;
 
     private Sign sign;
@@ -37,11 +39,20 @@ public class IGameServerSign {
 
         if(!sign.getLocation().getChunk().isLoaded()) sign.getLocation().getChunk().load();
 
-        writeSign();
+        defaultBlock = PlayerUtils.getBlockSignAttachedTo(sign.getBlock()).getType();
+
+        writeSign(false);
     }
 
-    public void writeSign(){
+    public void writeSign(boolean clean){
         Bukkit.getScheduler().runTask(SignBootstrap.getInstance(), () -> {
+            if(clean){
+                for(int i = 0; i < 4; i++) {
+                    sign.setLine(i, SignConverter.convertSignLayout(this, " "));
+                }
+                sign.update();
+                return;
+            }
             updateState();
             Layout layout = SignService.getInstance().getSignConfig().getSignLayouts().getSignLayouts().get(signState)[0];
             String[] content = layout.getLines();
@@ -64,6 +75,11 @@ public class IGameServerSign {
             }
             blockState.update(true);
         });
+    }
+
+    public void clean(){
+        PlayerUtils.getBlockSignAttachedTo(sign.getBlock()).setType(defaultBlock);
+        writeSign(true);
     }
 
     public void updateState(){
@@ -96,7 +112,7 @@ public class IGameServerSign {
 
     public void updateSign(){
         if(lastInput == null) return;
-        writeSign();
+        writeSign(false);
     }
 
 

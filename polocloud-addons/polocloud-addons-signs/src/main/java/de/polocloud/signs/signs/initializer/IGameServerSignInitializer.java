@@ -24,7 +24,7 @@ public class IGameServerSignInitializer {
                         IGameServerSign gameServerSign = SignService.getInstance().getExecuteService().getServiceInspectExecute().getFreeTemplateSign(gameServer);
                         if (gameServerSign != null) {
                             gameServerSign.setGameServer(gameServer);
-                            gameServerSign.writeSign();
+                            gameServerSign.writeSign(false);
                         }
                     }));
                 }

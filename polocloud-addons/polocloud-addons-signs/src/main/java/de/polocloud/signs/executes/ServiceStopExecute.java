@@ -15,7 +15,7 @@ public class ServiceStopExecute {
         IGameServerSign gameServerSign = execute.execute(gameServer);
         if (gameServerSign == null) return;
         gameServerSign.setGameServer(null);
-        gameServerSign.writeSign();
+        gameServerSign.writeSign(false);
     }
 
 }
