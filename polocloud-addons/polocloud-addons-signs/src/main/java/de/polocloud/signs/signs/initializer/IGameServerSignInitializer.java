@@ -21,10 +21,10 @@ public class IGameServerSignInitializer {
             CloudExecutor.getInstance().getTemplateService().getLoadedTemplates().thenAccept(key -> {
                 for (ITemplate template : key) {
                     CloudExecutor.getInstance().getGameServerManager().getGameServersByTemplate(template).thenAccept(it -> it.forEach(gameServer -> {
-                        IGameServerSign gameServerSign = instance.getFreeTemplateSign(gameServer);
+                        IGameServerSign gameServerSign = SignService.getInstance().getExecuteService().getServiceInspectExecute().getFreeTemplateSign(gameServer);
                         if (gameServerSign != null) {
                             gameServerSign.setGameServer(gameServer);
-                            gameServerSign.displayService();
+                            gameServerSign.writeSign();
                         }
                     }));
                 }

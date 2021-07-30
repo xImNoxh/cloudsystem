@@ -1,8 +1,10 @@
 package de.polocloud.bootstrap.template;
 
+import com.google.inject.Inject;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 
 public class SimpleTemplate implements ITemplate {
 
@@ -85,6 +87,7 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
+        MasterPubSubManager.getInstance().publish("polo:event:templateMaintenanceUpdate", name);
     }
 
     @Override

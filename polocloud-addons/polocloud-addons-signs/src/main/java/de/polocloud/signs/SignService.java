@@ -8,7 +8,10 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.signs.commands.CloudSignsCommand;
 import de.polocloud.signs.config.SignConfig;
+import de.polocloud.signs.config.protection.SignProtection;
 import de.polocloud.signs.converter.SignConverter;
+import de.polocloud.signs.executes.ExecuteService;
+import de.polocloud.signs.scheduler.SignProtectionRunnable;
 import de.polocloud.signs.signs.IGameServerSign;
 import de.polocloud.signs.signs.cache.IGameServerSignCache;
 import de.polocloud.signs.signs.initializer.IGameServerSignInitializer;
@@ -27,6 +30,8 @@ public class SignService {
     private final IConfigLoader configLoader;
     private final IConfigSaver configSaver;
 
+    private final ExecuteService executeService;
+    private final SignProtectionRunnable signProtectionRunnable;
 
     public SignService() throws ExecutionException, InterruptedException {
 
@@ -34,24 +39,23 @@ public class SignService {
 
         this.configLoader = new SimpleConfigLoader();
         this.configSaver = new SimpleConfigSaver();
+
         this.signConfig = loadConfig(new File("config.json"));
 
         this.cache = new IGameServerSignCache();
 
+        this.executeService = new ExecuteService();
 
         new SignConverter();
         new IGameServerSignInitializer();
+
+        this.signProtectionRunnable = new SignProtectionRunnable();
     }
 
     private SignConfig loadConfig(File file) {
         SignConfig masterConfig = configLoader.load(SignConfig.class, file);
         configSaver.save(masterConfig, file);
         return masterConfig;
-    }
-
-    public IGameServerSign getFreeTemplateSign(IGameServer gameServer){
-        return cache.stream().filter(key -> key.getGameServer() == null &&
-            key.getTemplate().getName().equals(gameServer.getTemplate().getName())).findAny().orElse(null);
     }
 
     public SignConfig getSignConfig() {
@@ -72,5 +76,13 @@ public class SignService {
 
     public IGameServerSignCache getCache() {
         return cache;
+    }
+
+    public ExecuteService getExecuteService() {
+        return executeService;
+    }
+
+    public SignProtectionRunnable getSignProtectionRunnable() {
+        return signProtectionRunnable;
     }
 }

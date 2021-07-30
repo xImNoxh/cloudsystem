@@ -29,6 +29,7 @@ public class PlayerUtils {
         Sign s = (Sign) block.getState().getData();
         Block attachedBlock = block.getRelative(s.getAttachedFace());
         return attachedBlock;
+
     }
 
 }
