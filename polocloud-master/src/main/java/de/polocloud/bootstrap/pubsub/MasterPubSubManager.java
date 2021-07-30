@@ -12,6 +12,12 @@ public class MasterPubSubManager {
 
     private final Map<String, List<ChannelHandlerContext>> subscriberMap = new ConcurrentHashMap<>();
 
+    private static MasterPubSubManager instance;
+
+    public MasterPubSubManager() {
+        instance = this;
+    }
+
     public void subscribe(ChannelHandlerContext ctx, String channel) {
         List<ChannelHandlerContext> channelHandlerContextList;
 
@@ -48,4 +54,7 @@ public class MasterPubSubManager {
         }
     }
 
+    public static MasterPubSubManager getInstance() {
+        return instance;
+    }
 }
