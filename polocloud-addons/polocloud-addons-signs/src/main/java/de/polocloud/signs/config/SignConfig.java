@@ -4,6 +4,7 @@ import de.polocloud.api.config.IConfig;
 import de.polocloud.signs.config.layout.SignLayouts;
 import de.polocloud.signs.config.locations.SignLocationObject;
 import de.polocloud.signs.config.messages.SignMessages;
+import de.polocloud.signs.config.protection.SignProtection;
 
 public class SignConfig implements IConfig {
 
@@ -12,9 +13,10 @@ public class SignConfig implements IConfig {
     private boolean canUseConnectIfFullPermission = true;
     private String connectIfFullPermission = "cloud.test";
 
-    private SignLocationObject locationConfig = new SignLocationObject();
     private SignMessages signMessages = new SignMessages();
     private SignLayouts signLayouts = new SignLayouts();
+    private SignProtection signProtection = new SignProtection();
+    private SignLocationObject locationConfig = new SignLocationObject();
 
     public SignLayouts getSignLayouts() {
         return signLayouts;
@@ -52,5 +54,7 @@ public class SignConfig implements IConfig {
         return connectIfFullPermission;
     }
 
-
+    public SignProtection getSignProtection() {
+        return signProtection;
+    }
 }
