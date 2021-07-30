@@ -36,7 +36,7 @@ public class CloudInfoCommand extends CloudCommand {
                     ITemplate template = templateService.getTemplateByName(name).get();
 
                     if (template == null) {
-                        Logger.log(LoggerType.INFO, "no template founded.");
+                        Logger.log(LoggerType.INFO, "No template found.");
                         return;
                     }
                     Logger.log(LoggerType.INFO, Logger.PREFIX + "Template name: " + template.getName());

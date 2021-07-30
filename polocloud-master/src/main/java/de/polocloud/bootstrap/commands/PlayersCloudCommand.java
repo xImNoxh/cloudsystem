@@ -41,7 +41,7 @@ public class PlayersCloudCommand extends CloudCommand {
 
                         if (args[1].equalsIgnoreCase("kick")) {
                             playerManager.getOnlinePlayer(targetName).get().kick(message);
-                            Logger.log(LoggerType.INFO, "Der Spieler " + targetName + " wurde gekickt!");
+                            Logger.log(LoggerType.INFO, "The player " + targetName + " was kicked!");
                         } else if (args[1].equalsIgnoreCase("message")) {
                             playerManager.getOnlinePlayer(targetName).get().sendMessage(message);
                             Logger.log(LoggerType.INFO, "sent!");
@@ -60,7 +60,7 @@ public class PlayersCloudCommand extends CloudCommand {
 
 
                     } else {
-                        Logger.log(LoggerType.INFO, "Der Spieler " + targetName + " wurde nicht gefunden!");
+                        Logger.log(LoggerType.INFO, "The player " + targetName + " is not founded!");
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
@@ -69,7 +69,7 @@ public class PlayersCloudCommand extends CloudCommand {
 
             }
         } else {
-            Logger.log(LoggerType.INFO, "players <kick/message/send> <player> <message/serverName>");
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "players <kick/message/send> <player> <message/serverName>");
         }
 
     }

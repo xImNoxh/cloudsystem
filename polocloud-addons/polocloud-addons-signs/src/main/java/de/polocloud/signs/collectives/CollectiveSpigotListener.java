@@ -5,6 +5,7 @@ import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.api.spigot.event.CloudPlayerSwitchServerEvent;
 import de.polocloud.plugin.api.spigot.event.CloudServerStartedEvent;
 import de.polocloud.plugin.api.spigot.event.CloudServerStoppedEvent;
+import de.polocloud.plugin.api.spigot.event.CloudServerUpdatedEvent;
 import de.polocloud.signs.SignService;
 import de.polocloud.signs.bootstrap.SignBootstrap;
 import de.polocloud.signs.signs.IGameServerSign;
@@ -79,6 +80,16 @@ public class CollectiveSpigotListener implements Listener {
             gameServerSign.displayService();
         });
     }
+
+    @EventHandler
+    public void handle(CloudServerUpdatedEvent event) {
+        IGameServerSign gameServerSign = signService.getCache().stream().filter(key ->
+            key.getGameServer().getSnowflake() == event.getGameServer().getSnowflake()).findAny().get();
+        if (gameServerSign == null) return;
+        gameServerSign.setGameServer(event.getGameServer());
+        gameServerSign.displayService();
+    }
+
 
     @EventHandler
     public void handle(CloudServerStoppedEvent event) {

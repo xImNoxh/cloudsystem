@@ -10,7 +10,7 @@ import de.polocloud.api.commands.ICommandExecutor;
     description = "stop the server",
     aliases = "", commandType = CommandType.CONSOLE
 )
-public class ClouldStopCommand extends CloudCommand {
+public class CloudStopCommand extends CloudCommand {
 
     @Override
     public void execute(ICommandExecutor commandSender, String[] args) {

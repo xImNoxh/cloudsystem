@@ -2,6 +2,7 @@ package de.polocloud.signs.config.layout;
 
 public class BlockLayout {
 
+    private boolean use = true;
     private int id;
     private int subId;
 
@@ -16,5 +17,9 @@ public class BlockLayout {
 
     public int getSubId() {
         return subId;
+    }
+
+    public boolean isUse() {
+        return use;
     }
 }

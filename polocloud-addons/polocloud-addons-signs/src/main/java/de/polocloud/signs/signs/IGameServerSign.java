@@ -11,7 +11,9 @@ import de.polocloud.signs.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.material.MaterialData;
 
 public class IGameServerSign {
 
@@ -35,14 +37,12 @@ public class IGameServerSign {
 
         if(!sign.getLocation().getChunk().isLoaded()) sign.getLocation().getChunk().load();
 
-        if(template.isMaintenance()){
-            signState = SignState.MAINTENANCE;
-        }
         writeSign();
     }
 
     public void writeSign(){
         Bukkit.getScheduler().runTask(SignBootstrap.getInstance(), () -> {
+            updateState();
             Layout layout = SignService.getInstance().getSignConfig().getSignLayouts().getSignLayouts().get(signState)[0];
             String[] content = layout.getLines();
             for(int i = 0; i < content.length; i++) {
@@ -51,9 +51,57 @@ public class IGameServerSign {
             lastInput = content;
             sign.update();
 
-            PlayerUtils.getBlockSignAttachedTo(sign.getBlock()).setTypeIdAndData(layout.getBlockLayout().getId(),
-                (byte) layout.getBlockLayout().getSubId(), false);
+            if(!layout.getBlockLayout().isUse()) return;
+            BlockState blockState = PlayerUtils.getBlockSignAttachedTo(sign.getBlock()).getState();
+            Material material = Material.getMaterial(layout.getBlockLayout().getId());
+
+            if(material == null) return;
+
+            blockState.setType(material);
+
+            if(layout.getBlockLayout().getSubId() > -1) {
+                blockState.setData(new MaterialData(material, (byte) layout.getBlockLayout().getSubId()));
+            }
+
+            /*
+            System.out.println(signState.toString());
+            System.out.println(gameServer.getName());
+            System.out.println(gameServer.getOnlinePlayers());
+            System.out.println(material);
+            System.out.println(layout.getBlockLayout().getSubId());
+
+             */
+            blockState.update(true);
         });
+    }
+
+    public void updateState(){
+        if(template.isMaintenance()){
+            signState = SignState.MAINTENANCE;
+            return;
+        }
+
+        if(gameServer == null){
+            signState = SignState.LOADING;
+            return;
+        }
+
+        if(gameServer.getOnlinePlayers() <= 0){
+            System.out.println(gameServer.getOnlinePlayers());
+            signState = SignState.ONLINE;
+            return;
+        }
+
+        if(template.getMaxPlayers() <= gameServer.getOnlinePlayers()){
+            signState = SignState.FULL;
+            return;
+        }
+
+        if(gameServer.getOnlinePlayers() >= 1) {
+            System.out.println(gameServer.getOnlinePlayers());
+            signState = SignState.PLAYERS;
+        }
+        System.out.println("no sign information founded");
     }
 
     public void updateSign(){

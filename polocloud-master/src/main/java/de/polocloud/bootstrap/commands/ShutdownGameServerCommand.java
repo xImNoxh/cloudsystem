@@ -37,6 +37,6 @@ public class ShutdownGameServerCommand extends CloudCommand {
                 e.printStackTrace();
             }
         }
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use follwoing command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "shutdown <name-id>");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use following command: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "shutdown <name-id>");
     }
 }

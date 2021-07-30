@@ -85,7 +85,7 @@ public class Master implements IStartable, ITerminatable {
 
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ClouldStopCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudStopCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownGameServerCommand(gameServerManager));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudHelpCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudEditCommand(templateService, gameServerManager));
@@ -162,7 +162,7 @@ public class Master implements IStartable, ITerminatable {
             if (this.templateService.getLoadedTemplates().get().size() > 0) {
                 StringBuilder builder = new StringBuilder();
                 this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%),"));
-                Logger.log(LoggerType.INFO, "Founded templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
+                Logger.log(LoggerType.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
             } else {
                 Logger.log(LoggerType.INFO, "No templates founded.");
             }

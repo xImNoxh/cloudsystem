@@ -63,14 +63,14 @@ public class GameServerCloudCommand extends CloudCommand {
                     e.printStackTrace();
                 }
                 if (template == null) {
-                    Logger.log(LoggerType.INFO, "No template founded!");
+                    Logger.log(LoggerType.INFO, "No template found!");
                     return;
                 }
 
                 Optional<WrapperClient> optionalWrapperClient = this.wrapperClientManager.getWrapperClients().stream().findAny();
 
                 if (!optionalWrapperClient.isPresent()) {
-                    Logger.log(LoggerType.INFO, "No wrapper founded!");
+                    Logger.log(LoggerType.INFO, "No wrapper connected!");
                     return;
                 }
 

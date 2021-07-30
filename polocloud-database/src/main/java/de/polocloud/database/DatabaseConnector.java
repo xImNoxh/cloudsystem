@@ -17,7 +17,7 @@ public class DatabaseConnector {
             Logger.log(LoggerType.INFO, "Successfully connected to mysql server.");
         } catch (SQLException exception) {
             exception.printStackTrace();
-            Logger.log(LoggerType.INFO, "Can't connect to the mysql service.");
+            Logger.log(LoggerType.INFO, "Couldn’t connect to the mysql service.");
             Logger.log(LoggerType.INFO, "You can change the settings in the config.json.");
         }
     }
