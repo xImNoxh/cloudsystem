@@ -79,7 +79,7 @@ public class CollectiveProxyEvents implements Listener {
         }
     }
 
-    @org.bukkit.event.EventHandler
+    @EventHandler
     public void handlePluginMessage(PluginMessageEvent event) {
         if (event.getTag().equals("MC|BSign") || event.getTag().equals("MC|BEdit")) event.setCancelled(true);
     }
