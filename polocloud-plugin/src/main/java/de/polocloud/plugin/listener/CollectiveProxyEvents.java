@@ -79,6 +79,11 @@ public class CollectiveProxyEvents implements Listener {
         }
     }
 
+    @org.bukkit.event.EventHandler
+    public void handlePluginMessage(PluginMessageEvent event) {
+        if (event.getTag().equals("MC|BSign") || event.getTag().equals("MC|BEdit")) event.setCancelled(true);
+    }
+
     @EventHandler
     public void handle(ServerConnectedEvent event) {
         networkClient.sendPacket(new GameServerPlayerUpdatePacket(event.getPlayer().getUniqueId(), event.getPlayer().getName(), event.getServer().getInfo().getName()));
