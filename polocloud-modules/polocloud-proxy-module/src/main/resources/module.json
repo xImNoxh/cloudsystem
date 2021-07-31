@@ -1,0 +1,6 @@
+{
+  "name": "Proxy",
+  "version": "0.1.Alpha",
+  "author": "HttpMarco",
+  "main": "de.polocloud.proxy.bootstrap.ProxyBootstrap"
+}
