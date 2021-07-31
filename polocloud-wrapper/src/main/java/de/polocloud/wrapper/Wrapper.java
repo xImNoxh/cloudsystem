@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-
 public class Wrapper implements IStartable, ITerminatable {
 
     private CloudAPI cloudAPI;
@@ -42,93 +41,99 @@ public class Wrapper implements IStartable, ITerminatable {
 
     public Wrapper() {
 
-        config = loadConfig();
+        config = loadWrapperConfig();
 
-        Executor executor = Executors.newCachedThreadPool();
-        //start all static servers
+        requestStaticServersStart();
 
-        EventRegistry.registerListener(new EventHandler<ChannelActiveEvent>() {
-            @Override
-            public void handleEvent(ChannelActiveEvent event) {
-                executor.execute(() -> {
+        checkAndDeleteTmpFolder();
 
-                    for (String staticServer : config.getStaticServers()) {
-                        executor.execute(() -> {
-
-                            String[] split = staticServer.split(",");
-                            String serverName = split[0];
-                            int port = Integer.parseInt(split[1]);
-                            int memory = Integer.parseInt(split[2]);
-                            Logger.log(LoggerType.INFO, "Starting server " + serverName + " on port " + port);
-                            ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + memory + "M -Xmx" + memory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
-                            try {
-                                processBuilder.directory(new File("static/" + serverName));
-
-                                String name = serverName.split("#")[0];
-                                long snowflake = Long.parseLong(serverName.split("#")[1]);
-
-                                Logger.log(LoggerType.INFO, "start with " + name + "/" + snowflake + "(" + serverName + ")");
-                                event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflake));
-
-                                Process process = processBuilder.start();
-                                process.waitFor();
-                            } catch (IOException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        });
-
-                    }
-                });
-
-            }
-        }, ChannelActiveEvent.class);
-
-
-        File tmpFile = new File("tmp");
-        File apiFile = new File("templates/PoloCloud-API.jar");
-        if (tmpFile.exists()) {
-            try {
-                FileUtils.forceDelete(tmpFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (!apiFile.getParentFile().exists()) {
-            apiFile.getParentFile().mkdirs();
-        }
-        String baseUrl = "http://37.114.60.129:8870";
-        String downloadUrl = baseUrl + "/updater/download/api";
-        String versionUrl = baseUrl + "/updater/version/api";
-
-
-        UpdateClient updateClient = new UpdateClient(downloadUrl, apiFile, versionUrl, config.getApiVersion());
-        boolean download = updateClient.download(true);
-        if (download) {
-            config.setApiVersion(updateClient.getFetchedVersion());
-            IConfigSaver saver = new SimpleConfigSaver();
-            saver.save(config, new File("config.json"));
-            Logger.log(LoggerType.INFO, "updated API to version " + config.getApiVersion());
-        }
-
-        while (!apiFile.exists()) {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
+        checkPoloCloudAPI();
 
         String[] masterAddress = config.getMasterAddress().split(":");
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
 
-
         CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
     }
 
+    private void requestStaticServersStart(){
+        Executor executor = Executors.newCachedThreadPool();
 
-    private WrapperConfig loadConfig() {
+        EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> executor.execute(() ->{
+            for (String staticServer : config.getStaticServers()) {
+                executor.execute(() ->{
+                    String[] properties = staticServer.split(",");
+                    String serverName = properties[0];
+                    int port = Integer.parseInt(properties[1]);
+                    int processMemory = Integer.parseInt(properties[2]);
+                    Logger.log(LoggerType.INFO, "Starting static server » " + serverName + " on port » " + port + "...");
+                    ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + processMemory + "M -Xmx" + processMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
+                    try{
+                        processBuilder.directory(new File("static/" + serverName));
+
+                        String name = serverName.split("#")[0];
+                        long snowflakeID = Long.parseLong(serverName.split("#")[1]);
+
+                        Logger.log(LoggerType.INFO, "Starting static server with " + name + "/" + snowflakeID + "(" + serverName + ")...");
+                        event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflakeID));
+
+                        Process process = processBuilder.start();
+                        process.waitFor();
+                    }catch (IOException | InterruptedException exception){
+                        exception.printStackTrace();
+                        Logger.log(LoggerType.ERROR, "Unexpected error while starting Server » " + serverName + " occured! Skipping...\n" +
+                            "Please report this error.");
+                    }
+                });
+            }
+        }), ChannelActiveEvent.class);
+    }
+
+    private void checkAndDeleteTmpFolder(){
+        File tmpFile = new File("tmp");
+        if (tmpFile.exists()) {
+            try {
+                FileUtils.forceDelete(tmpFile);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+                Logger.log(LoggerType.ERROR, "Unexpected error while deleting tmp Folder! Cloud may react abnormal!\n" +
+                    "Please report this error.");
+            }
+        }
+    }
+
+    private void checkPoloCloudAPI(){
+        File apiJarFile = new File("templates/PoloCloud-API.jar");
+
+        if (!apiJarFile.getParentFile().exists()) {
+            apiJarFile.getParentFile().mkdirs();
+        }
+
+        String baseUrl = "http://37.114.60.129:8870";
+        String apiDownloadURL = baseUrl + "/updater/download/api";
+        String apiVersionURL = baseUrl + "/updater/version/api";
+
+        UpdateClient updateClient = new UpdateClient(apiDownloadURL, apiJarFile, apiVersionURL, config.getApiVersion());
+        boolean download = updateClient.download(true);
+        if (download) {
+            Logger.log(LoggerType.INFO, "Found new PoloCloud-API Version! (" + config.getApiVersion() + " -> " + updateClient.getFetchedVersion() + ") updating...");
+            config.setApiVersion(updateClient.getFetchedVersion());
+            IConfigSaver saver = new SimpleConfigSaver();
+            saver.save(config, new File("config.json"));
+            Logger.log(LoggerType.INFO, ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "update PoloCloud-API! (" + config.getApiVersion() + ")");
+        }
+
+        while (!apiJarFile.exists()) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+                Logger.log(LoggerType.ERROR, "Unexpected error while checking PoloCloud-API Jar!\n" +
+                    "Please report this error.");
+            }
+        }
+    }
+
+    private WrapperConfig loadWrapperConfig() {
 
         File configFile = new File("config.json");
         IConfigLoader configLoader = new SimpleConfigLoader();
@@ -143,27 +148,26 @@ public class Wrapper implements IStartable, ITerminatable {
 
     @Override
     public void start() {
-
-        Logger.log(LoggerType.INFO, "Trying to start wrapper...");
+        Logger.log(LoggerType.INFO, "Trying to start the wrapper...");
 
         this.nettyClient = this.cloudAPI.getGuice().getInstance(SimpleNettyClient.class);
         new Thread(() -> {
             this.nettyClient.start();
-
         }).start();
 
-        Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "started.");
+        Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "started.");
         try {
             Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException exception) {
+            exception.printStackTrace();
+            Logger.log(LoggerType.ERROR, "Unexpected error while waiting for the NettyClient!\n" +
+                "Please report this error.");
         }
         this.nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
         //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
 
         this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
         this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config));
-
     }
 
     @Override
@@ -171,3 +175,4 @@ public class Wrapper implements IStartable, ITerminatable {
         return this.nettyClient.terminate();
     }
 }
+
