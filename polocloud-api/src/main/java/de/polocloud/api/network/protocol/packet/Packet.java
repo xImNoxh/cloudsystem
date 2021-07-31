@@ -99,6 +99,7 @@ public abstract class Packet {
         byteBuf.writeInt(gameServer.getPort());
         byteBuf.writeLong(gameServer.getPing());
         byteBuf.writeLong(gameServer.getStartTime());
+        byteBuf.writeInt(gameServer.getMaxPlayers());
     }
 
     protected IGameServer readGameServer(ByteBuf byteBuf) {
@@ -116,6 +117,7 @@ public abstract class Packet {
         long ping = byteBuf.readLong();
 
         long startTime = byteBuf.readLong();
+        int maxPlayers = byteBuf.readInt();
 
         return new IGameServer() {
             @Override
@@ -192,6 +194,16 @@ public abstract class Packet {
             @Override
             public String getMotd() {
                 return motd;
+            }
+
+            @Override
+            public int getMaxPlayers() {
+                return maxPlayers;
+            }
+
+            @Override
+            public void setMaxPlayers(int players) {
+                throw new NotImplementedException();
             }
         };
 
