@@ -31,68 +31,37 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public CompletableFuture<List<ICloudPlayer>> getAllOnlinePlayers() {
-        CompletableFuture<List<ICloudPlayer>> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> {
-            UUID requestId = UUID.randomUUID();
-            APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.ALL, "_");
-            ResponseHandler.register(requestId, completableFuture);
-            networkClient.sendPacket(packet);
-        });
-        return completableFuture;
+        return (CompletableFuture<List<ICloudPlayer>>) sendPlayerData(new CompletableFuture<List<ICloudPlayer>>(), APIRequestCloudPlayerPacket.Action.ALL, "_");
     }
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(String name) {
-        CompletableFuture<ICloudPlayer> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> {
-            UUID requestId = UUID.randomUUID();
-            APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.BY_NAME, name);
-            ResponseHandler.register(requestId, completableFuture);
-            networkClient.sendPacket(packet);
-        });
-
-        return completableFuture;
+        return (CompletableFuture<ICloudPlayer>) sendPlayerData(new CompletableFuture<ICloudPlayer>(), APIRequestCloudPlayerPacket.Action.BY_NAME, name);
     }
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid) {
-        CompletableFuture<ICloudPlayer> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> {
-            UUID requestId = UUID.randomUUID();
-            APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.BY_UUID, uuid.toString());
-            ResponseHandler.register(requestId, completableFuture);
-            networkClient.sendPacket(packet);
-        });
-
-        return completableFuture;
+        return (CompletableFuture<ICloudPlayer>) sendPlayerData(new CompletableFuture<ICloudPlayer>(), APIRequestCloudPlayerPacket.Action.BY_UUID, uuid.toString());
     }
 
     @Override
     public CompletableFuture<Boolean> isPlayerOnline(String name) {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> {
-            UUID requestId = UUID.randomUUID();
-            APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.ONLINE_NAME, name);
-            ResponseHandler.register(requestId, completableFuture);
-            networkClient.sendPacket(packet);
-        });
-        return completableFuture;
+        return (CompletableFuture<Boolean>) sendPlayerData(new CompletableFuture<Boolean>(), APIRequestCloudPlayerPacket.Action.ONLINE_NAME, name);
     }
 
     @Override
     public CompletableFuture<Boolean> isPlayerOnline(UUID uuid) {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-
-        executor.execute(() -> {
-
-            UUID requestId = UUID.randomUUID();
-            APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, APIRequestCloudPlayerPacket.Action.ONLINE_UUID, uuid.toString());
-            ResponseHandler.register(requestId, completableFuture);
-
-            networkClient.sendPacket(packet);
-
-        });
-
-        return completableFuture;
+        return (CompletableFuture<Boolean>) sendPlayerData(new CompletableFuture<Boolean>(), APIRequestCloudPlayerPacket.Action.ONLINE_UUID, uuid.toString());
     }
+
+    public CompletableFuture<?> sendPlayerData(CompletableFuture<?> future, APIRequestCloudPlayerPacket.Action action, String data) {
+        executor.execute(() -> {
+            UUID requestId = UUID.randomUUID();
+            APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, action, data);
+            ResponseHandler.register(requestId, future);
+            networkClient.sendPacket(packet);
+        });
+        return future;
+    }
+
 }

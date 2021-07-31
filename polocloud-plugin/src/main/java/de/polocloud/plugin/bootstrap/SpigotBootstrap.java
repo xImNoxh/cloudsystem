@@ -6,7 +6,6 @@ import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.api.spigot.event.*;
-import de.polocloud.plugin.bootstrap.command.TestCloudCommand;
 import de.polocloud.plugin.commands.CommandReader;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
@@ -24,11 +23,8 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
     @Override
     public void onEnable() {
-
         this.commandReader = new CommandReader();
         new CloudPlugin(this, this);
-
-        getCommand("testCloud").setExecutor(new TestCloudCommand());
     }
 
     @Override
@@ -133,15 +129,12 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
     @Override
     public void shutdown() {
         new Thread(() -> {
-
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             System.exit(-1);
-
         }).start();
 
         Bukkit.shutdown();
@@ -151,8 +144,4 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
         return commandReader;
     }
 
-    @Override
-    public int getMaxPlayers() {
-        return Bukkit.getMaxPlayers();
-    }
 }

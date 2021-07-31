@@ -48,7 +48,6 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     @Override
     public void shutdown() {
-        ProxyServer.getInstance().getPlayers().forEach(it -> it.disconnect());
         ProxyServer.getInstance().stop();
     }
 
@@ -57,13 +56,4 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
         new StatisticProxyDeviceRunnable(this, networkClient);
     }
 
-    @Override
-    public int getMaxPlayers() {
-        int players = 0;
-        for (ListenerInfo listener : ProxyServer.getInstance().getConfigurationAdapter().getListeners()) {
-            players = listener.getMaxPlayers();
-            break;
-        }
-        return players;
-    }
 }

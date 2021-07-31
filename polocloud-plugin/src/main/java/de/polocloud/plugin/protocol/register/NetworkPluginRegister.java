@@ -76,57 +76,9 @@ public class NetworkPluginRegister extends NetworkRegister {
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 APIResponseCloudPlayerPacket packet = (APIResponseCloudPlayerPacket) obj;
                 UUID requestId = packet.getRequestId();
-                List<ICloudPlayer> incomming = packet.getResponse();
                 List<ICloudPlayer> response = packet.getResponse();
-                APIResponseCloudPlayerPacket.Type type = packet.getType();
 
                 CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
-/*
-                for (int i = 0; i < incomming.size(); i++) {
-                    ICloudPlayer incommingObj = incomming.get(i);
-                    response.add(new ICloudPlayer() {
-                        @Override
-                        public UUID getUUID() {
-                            return incommingObj.getUUID();
-                        }
-
-                        @Override
-                        public IGameServer getProxyServer() {
-                            return incommingObj.getProxyServer();
-                        }
-
-                        @Override
-                        public IGameServer getMinecraftServer() {
-                            return incommingObj.getMinecraftServer();
-                        }
-
-                        @Override
-                        public void sendMessage(String message) {
-                            //TODO
-                            throw new NotImplementedException();
-                        }
-
-                        @Override
-                        public void sendTo(IGameServer gameServer) {
-                            //TODO
-                            throw new NotImplementedException();
-                        }
-
-                        @Override
-                        public void kick(String message) {
-                            //TODO
-                            throw new NotImplementedException();
-                        }
-
-                        @Override
-                        public String getName() {
-                            return incommingObj.getName();
-                        }
-                    });
-                }
-
-
- */
 
                 if (packet.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
                     completableFuture.complete(response.get(0));
@@ -230,6 +182,16 @@ public class NetworkPluginRegister extends NetworkRegister {
                         @Override
                         public String getMotd() {
                             return gameserver.getMotd();
+                        }
+
+                        @Override
+                        public int getMaxPlayers() {
+                            return gameserver.getMaxPlayers();
+                        }
+
+                        @Override
+                        public void setMaxPlayers(int players) {
+                            gameserver.setMaxPlayers(players);
                         }
                     });
                 }

@@ -25,12 +25,13 @@ public class CloudExecutor {
 
     public CloudExecutor(IPacketSender sender, IProtocol protocol) {
 
+        instance = this;
+
         gameServerManager = new APIGameServerManager();
         cloudPlayerManager = new APICloudPlayerManager();
         templateService = new APITemplateManager();
 
         this.protocol = protocol;
-        instance = this;
         this.pubSubManager = new SimplePubSubManager(sender, protocol);
     }
 

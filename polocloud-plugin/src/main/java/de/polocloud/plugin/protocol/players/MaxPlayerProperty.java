@@ -11,7 +11,10 @@ public class MaxPlayerProperty {
 
     public MaxPlayerProperty(BootstrapFunction bootstrapFunction) {
         this.bootstrapFunction = bootstrapFunction;
-        maxPlayers = bootstrapFunction.getMaxPlayers();
+
+
+        //TODO IMPORTANT
+        maxPlayers = 10000;
     }
 
     public BootstrapFunction getBootstrapFunction() {

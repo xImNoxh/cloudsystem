@@ -19,17 +19,9 @@ import java.util.concurrent.Executors;
 public class APITemplateManager implements ITemplateService {
 
     private final ExecutorService executor;
-    private final NetworkClient networkClient;
 
     public APITemplateManager() {
         this.executor = Executors.newCachedThreadPool();
-        networkClient = CloudPlugin.getInstance().getNetworkClient();
-    }
-
-    public void sendRequest(CompletableFuture<?> type, APIRequestTemplatePacket.Action action, String value){
-        UUID uuid = UUID.randomUUID();
-        ResponseHandler.register(uuid, type);
-        networkClient.sendPacket(new APIRequestTemplatePacket(uuid, action, value));
     }
 
     @Override
@@ -44,21 +36,27 @@ public class APITemplateManager implements ITemplateService {
 
     @Override
     public CompletableFuture<ITemplate> getTemplateByName(String name) {
-        CompletableFuture<ITemplate> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> sendRequest(completableFuture, APIRequestTemplatePacket.Action.NAME, name));
-        return completableFuture;
+        return (CompletableFuture<ITemplate>) sendRequest( new CompletableFuture<ITemplate>(), APIRequestTemplatePacket.Action.NAME, name);
     }
 
     @Override
     public CompletableFuture<Collection<ITemplate>> getLoadedTemplates() {
-        CompletableFuture<Collection<ITemplate>> completableFuture = new CompletableFuture<>();
-        executor.execute(() -> sendRequest(completableFuture, APIRequestTemplatePacket.Action.ALL, "_"));
-        return completableFuture;
+        return (CompletableFuture<Collection<ITemplate>>) sendRequest(new CompletableFuture<Collection<ITemplate>>(), APIRequestTemplatePacket.Action.ALL, "_");
+
     }
 
     @Override
     public void reloadTemplates() {
         return;
+    }
+
+    public CompletableFuture<?> sendRequest(CompletableFuture<?> future, APIRequestTemplatePacket.Action action, String value){
+        executor.execute(() -> {
+            UUID uuid = UUID.randomUUID();
+            ResponseHandler.register(uuid, future);
+            CloudPlugin.getInstance().getNetworkClient().sendPacket(new APIRequestTemplatePacket(uuid, action, value));
+        });
+        return future;
     }
 
 }

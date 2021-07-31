@@ -31,10 +31,6 @@ public class CloudPlugin {
         bootstrapFunction.initStatisticChannel(networkClient);
         bootstrapFunction.registerEvents(networkClient);
         networkRegisterFunction.callNetwork(networkClient);
-
-
-
-
     }
 
     public static CloudPlugin getInstance() {
