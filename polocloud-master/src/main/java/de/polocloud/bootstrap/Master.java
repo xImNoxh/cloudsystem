@@ -34,7 +34,6 @@ import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
-import de.polocloud.database.DatabaseService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -54,8 +53,6 @@ public class Master implements IStartable, ITerminatable {
     private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
-
-    private DatabaseService databaseService;
 
     private final MasterModuleLoader moduleLoader;
 
@@ -170,7 +167,6 @@ public class Master implements IStartable, ITerminatable {
     @Override
     public boolean terminate() {
         this.running = false;
-        if(databaseService != null) databaseService.connector().disconnect();
         return this.nettyServer.terminate();
     }
 
@@ -208,10 +204,6 @@ public class Master implements IStartable, ITerminatable {
 
     public MasterModuleLoader getModuleLoader() {
         return moduleLoader;
-    }
-
-    public DatabaseService getDatabaseService() {
-        return databaseService;
     }
 
 
