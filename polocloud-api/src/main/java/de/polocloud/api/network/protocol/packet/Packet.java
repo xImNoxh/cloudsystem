@@ -88,6 +88,7 @@ public abstract class Packet {
     protected void writeGameServer(ByteBuf byteBuf, IGameServer gameServer) {
 
         writeString(byteBuf, gameServer.getName());
+        writeString(byteBuf, gameServer.getMotd());
         writeString(byteBuf, gameServer.getStatus().toString());
         byteBuf.writeLong(gameServer.getSnowflake());
 
@@ -98,12 +99,12 @@ public abstract class Packet {
         byteBuf.writeInt(gameServer.getPort());
         byteBuf.writeLong(gameServer.getPing());
         byteBuf.writeLong(gameServer.getStartTime());
-
     }
 
     protected IGameServer readGameServer(ByteBuf byteBuf) {
 
         String name = readString(byteBuf);
+        String motd = readString(byteBuf);
         GameServerStatus status = GameServerStatus.valueOf(readString(byteBuf));
         long snowflake = byteBuf.readLong();
 
@@ -181,6 +182,16 @@ public abstract class Packet {
             public void sendPacket(Packet packet) {
                 //TODO
                 throw new NotImplementedException();
+            }
+
+            @Override
+            public void setMotd(String motd) {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public String getMotd() {
+                return motd;
             }
         };
 

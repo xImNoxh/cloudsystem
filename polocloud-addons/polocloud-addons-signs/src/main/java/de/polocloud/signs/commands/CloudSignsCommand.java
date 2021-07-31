@@ -48,20 +48,7 @@ public class CloudSignsCommand implements CommandExecutor {
             SignService.getInstance().getSignConfig().getLocationConfig().getLocations().add(new ConfigSignLocation(
                 block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), group));
             IConfigSaver configSaver = SignService.getInstance().getConfigSaver();
-            configSaver.save(SignService.getInstance().getSignConfig(), new File("config.json"));
-
-            //adding direct a sign
-
-            CloudExecutor.getInstance().getTemplateService().getTemplateByName(group).thenAccept(key -> {
-                try {
-                    ExecuteService service = SignService.getInstance().getExecuteService();
-                    IGameServer gameServer = service.getServiceInspectExecute().getGameServerWithNoSign(key);
-                    if(gameServer == null) return;
-                    service.getServiceUpdateExecute().update(service.getServiceInspectExecute().getFreeTemplateSign(gameServer), gameServer);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
+            configSaver.save(SignService.getInstance().getSignConfig(), new File("plugins/sign/config.json"));
             return false;
         }
 
@@ -86,7 +73,7 @@ public class CloudSignsCommand implements CommandExecutor {
 
             IConfigSaver configSaver = SignService.getInstance().getConfigSaver();
             SignService.getInstance().getSignConfig().getLocationConfig().getLocations().remove(gameSign);
-            configSaver.save(SignService.getInstance().getSignConfig(), new File("config.json"));
+            configSaver.save(SignService.getInstance().getSignConfig(), new File("plugins/sign/config.json"));
             SignService.getInstance().getCache().remove(gameSign);
 
             player.sendMessage(signMessages.getRemoveSign());

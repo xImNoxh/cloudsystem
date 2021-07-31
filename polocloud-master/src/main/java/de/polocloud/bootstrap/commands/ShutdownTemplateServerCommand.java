@@ -31,8 +31,14 @@ public class ShutdownTemplateServerCommand extends CloudCommand {
 
         if (args.length == 2) {
             ITemplate template = null;
+
             try {
                 template = templateService.getTemplateByName(args[1]).get();
+
+                if(template == null){
+                    Logger.log(LoggerType.INFO, "This template does not exists§8.");
+                    return;
+                }
 
                 ITemplate finalTemplate = template;
                 List<IGameServer> servers = gameServerManager.getGameServers().get().stream().filter(key -> key.getTemplate().equals(finalTemplate.getName())).collect(Collectors.toList());

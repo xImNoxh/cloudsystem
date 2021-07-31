@@ -8,6 +8,7 @@ import de.polocloud.bootstrap.template.SimpleTemplate;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.setup.FutureAnswer;
 import de.polocloud.setup.Setup;
 import de.polocloud.setup.SetupBuilder;
 import de.polocloud.setup.Step;
@@ -16,6 +17,7 @@ import de.polocloud.setup.accepter.StepAnswer;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CreateTemplateSetup extends StepAcceptor implements Setup {
 
@@ -37,7 +39,13 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
             .addStep("What is the amount of max players?", isInteger())
             .addStep("What is the maximal memory of this service", isInteger())
             .addStep("What is the template type of this service?", TemplateType.MINECRAFT.getDisplayName(), TemplateType.PROXY.getDisplayName())
-            .addStep("What is the game version?", GameServerVersion.prettyValues())
+            .addStep("What is the game version?", new FutureAnswer() {
+                @Override
+                public Object[] findPossibleAnswers(SetupBuilder steps) {
+                    TemplateType templateType = TemplateType.valueOf(setupBuilder.getAnswers().get(5).getAnswer().toUpperCase());
+                    return GameServerVersion.prettyValues(templateType);
+                }
+            })
             .addStep("What is name of the Wrapper(s) ?")
             .addStep("Static ? (true/false)", isBoolean())
             .addStep("ServerCreateThreshold ? (0-100)%", isInteger());

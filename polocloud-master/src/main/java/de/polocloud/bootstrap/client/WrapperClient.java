@@ -3,8 +3,8 @@ package de.polocloud.bootstrap.client;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.logger.log.Logger;
@@ -23,13 +23,13 @@ public class WrapperClient implements IPacketSender {
     }
 
     public void startServer(IGameServer gameServer) {
-        Logger.log(LoggerType.INFO, "Trying to start server " + ConsoleColors.LIGHT_BLUE.getAnsiCode()+ gameServer.getName() + ConsoleColors.GRAY.getAnsiCode() +" on " +  getName() + ".");
+        Logger.log(LoggerType.INFO, "Trying to start server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() + ConsoleColors.GRAY.getAnsiCode() + " on " + getName() + ".");
+
         sendPacket(new MasterRequestServerStartPacket(
             gameServer.getTemplate().getName(),
             gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
-            gameServer.getTemplate().getTemplateType() == TemplateType.PROXY,  gameServer.getTemplate().getMaxMemory(),
-            gameServer.getTemplate().getMaxPlayers(), gameServer.getName(), gameServer.getTemplate().getMotd(), gameServer.getTemplate().isStatic()));
-
+            gameServer.getTemplate().getTemplateType() == TemplateType.PROXY, gameServer.getTemplate().getMaxMemory(),
+            gameServer.getTemplate().getMaxPlayers(), gameServer.getName(), gameServer.getMotd(), gameServer.getTemplate().isStatic()));
         EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
 
     }
@@ -43,7 +43,7 @@ public class WrapperClient implements IPacketSender {
         this.chx.writeAndFlush(object);
     }
 
-    public ChannelHandlerContext getConnection(){
+    public ChannelHandlerContext getConnection() {
         return this.chx;
     }
 

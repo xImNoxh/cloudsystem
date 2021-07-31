@@ -23,19 +23,22 @@ public class SimpleGameServer implements IGameServer {
     private ITemplate template;
     private long startTime;
 
+    private String motd;
+
     private long ping = -1;
 
     private int port;
 
     private List<ICloudPlayer> cloudPlayers = new ArrayList<>();
 
-    public SimpleGameServer(String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime) {
+    public SimpleGameServer(String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd) {
         this.name = name;
         this.status = status;
         this.ctx = ctx;
         this.snowflake = snowflake;
         this.template = template;
         this.startTime = startTime;
+        this.motd = motd;
     }
 
     @Override
@@ -117,6 +120,16 @@ public class SimpleGameServer implements IGameServer {
 
     public ChannelHandlerContext getCtx() {
         return ctx;
+    }
+
+    @Override
+    public void setMotd(String motd) {
+        this.motd = motd;
+    }
+
+    @Override
+    public String getMotd() {
+        return motd;
     }
 
     @Override

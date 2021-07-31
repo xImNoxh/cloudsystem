@@ -34,7 +34,7 @@ public class PacketRegistry {
         registerPacket(100, APIResponseGameServerPacket.class);
         registerPacket(101, APIRequestGameServerPacket.class);
 
-        registerPacket(102, ProxyMotdUpdatePacket.class);
+        registerPacket(102,  ProxyMotdUpdatePacket.class);
         registerPacket(103, GameServerControlPlayerPacket.class);
         registerPacket(104, GameServerExecuteCommandPacket.class);
         registerPacket(105, GameServerMaintenanceUpdatePacket.class);

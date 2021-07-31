@@ -103,7 +103,8 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
 
 
             Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-                ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() + ".");
+                ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() +
+                ". (" + (System.currentTimeMillis() - gameServer.getStartTime()) + "ms)");
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

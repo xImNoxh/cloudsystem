@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>PoloCloudv1</artifactId>
+    <artifactId>PoloCloud</artifactId>
     <groupId>de.polocloud</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
@@ -50,7 +50,6 @@
     </repository>
   </repositories>
   <dependencies>
-    <!--This adds the Spigot API artifact to the build -->
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>

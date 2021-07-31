@@ -4,35 +4,29 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ProxyMotdUpdatePacket extends Packet {
-    //TODO reimplement
-    /*
-        private ICloudMotd cloudMotd;
 
-        private boolean inUse;
+    private List<String> motd;
 
-        public ProxyMotdUpdatePacket() {
-        }
+    public ProxyMotdUpdatePacket(List<String> motd) {
+        this.motd = motd;
+    }
 
-        public ProxyMotdUpdatePacket(ICloudMotd cloudMotd) {
-            this.cloudMotd = cloudMotd;
-        }
-
-        public ICloudMotd getCloudMotd() {
-            return cloudMotd;
-        }
-
-
-
-     */
     @Override
     public void write(ByteBuf byteBuf) throws IOException {
-
+        for (String inputs : motd) {
+            writeString(byteBuf, inputs);
+        }
     }
 
     @Override
     public void read(ByteBuf byteBuf) throws IOException {
+        motd.add(readString(byteBuf));
+    }
 
+    public List<String> getMotd() {
+        return motd;
     }
 }

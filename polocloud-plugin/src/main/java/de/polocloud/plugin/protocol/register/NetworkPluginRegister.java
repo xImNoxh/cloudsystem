@@ -221,6 +221,16 @@ public class NetworkPluginRegister extends NetworkRegister {
                         public void sendPacket(Packet packet) {
                             ctx.writeAndFlush(new RedirectPacket(getSnowflake(), packet));
                         }
+
+                        @Override
+                        public void setMotd(String motd) {
+                            throw new NotImplementedException();
+                        }
+
+                        @Override
+                        public String getMotd() {
+                            return gameserver.getMotd();
+                        }
                     });
                 }
 
