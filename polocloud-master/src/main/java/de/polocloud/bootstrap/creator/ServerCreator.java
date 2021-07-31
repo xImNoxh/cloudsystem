@@ -34,7 +34,7 @@ public abstract class ServerCreator {
         }
 
         long id = snowflake.nextId();
-        SimpleGameServer gameServer = new SimpleGameServer(template.getName() + "-" + generateServerId(template), GameServerStatus.PENDING, null, id, template, System.currentTimeMillis(), template.getMotd());
+        SimpleGameServer gameServer = new SimpleGameServer(template.getName() + "-" + generateServerId(template), GameServerStatus.PENDING, null, id, template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
         gameServerManager.registerGameServer(gameServer);
 
         client.startServer(gameServer);

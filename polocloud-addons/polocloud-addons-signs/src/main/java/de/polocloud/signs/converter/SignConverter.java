@@ -12,9 +12,9 @@ public class SignConverter {
 
     public SignConverter() {
         converts.put("%SERVICE%", signService -> signService.getGameServer() == null ? "null" : signService.getGameServer().getName());
-        converts.put("%MAX_PLAYERS%", signService ->  signService.getGameServer() == null ? "null" : signService.getTemplate().getMaxPlayers());
+        converts.put("%MAX_PLAYERS%", signService ->  signService.getGameServer() == null ? "null" : signService.getGameServer().getMaxPlayers());
         converts.put("%ONLINE_PLAYERS%", signService ->  signService.getGameServer() == null ? "null" : signService.getGameServer().getOnlinePlayers());
-        converts.put("%MOTD%", signService ->  signService.getGameServer() == null ? "null" :  signService.getTemplate().getMotd());
+        converts.put("%MOTD%", signService ->  signService.getGameServer() == null ? "null" :  signService.getGameServer().getMotd());
         converts.put("%GROUP%", signService ->  signService.getGameServer() == null ? "null" : signService.getTemplate().getName());
         converts.put("%TEMPLATE%", signService ->  signService.getTemplate().getName());
     }
