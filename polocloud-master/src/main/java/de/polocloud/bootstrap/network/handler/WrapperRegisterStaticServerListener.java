@@ -30,7 +30,7 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler<Packet> 
         IGameServer gameServer = null;
         try {
             ITemplate template = templateService.getTemplateByName(packet.getTemplateName()).get();
-            gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd());
+            gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

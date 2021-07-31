@@ -39,6 +39,10 @@ public interface IGameServer extends Serializable {
 
     String getMotd();
 
+    int getMaxPlayers();
+
+    void setMaxPlayers(int players);
+
 
 
 

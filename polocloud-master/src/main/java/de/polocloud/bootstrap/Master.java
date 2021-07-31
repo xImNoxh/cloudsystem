@@ -21,7 +21,6 @@ import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.bootstrap.config.MasterConfig;
-import de.polocloud.bootstrap.config.database.DatabaseSupport;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
@@ -114,17 +113,10 @@ public class Master implements IStartable, ITerminatable {
 
         IConfigSaver configSaver = new SimpleConfigSaver();
         configSaver.save(masterConfig, configFile);
-        activeDatabaseSupport(masterConfig);
 
         return masterConfig;
     }
 
-    private void activeDatabaseSupport(MasterConfig masterConfig) {
-        DatabaseSupport databaseSupport = masterConfig.getDatabaseSupport();
-        if (databaseSupport.isUse()) {
-            databaseService = new DatabaseService(databaseSupport.getHostname(), databaseSupport.getUsername(), databaseSupport.getPassword(), databaseSupport.getDatabase(), databaseSupport.getPort());
-        }
-    }
 
     @Override
     public void start() {

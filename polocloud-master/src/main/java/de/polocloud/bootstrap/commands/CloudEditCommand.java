@@ -99,7 +99,7 @@ public class CloudEditCommand extends CloudCommand {
                             try {
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
                                     gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY)
-                                        ? messages.getNetworkIsFull() : messages.getServiceIsFull(), template.getMaxPlayers()));
+                                        ? messages.getNetworkIsFull() : messages.getServiceIsFull(), gameServer.getMaxPlayers()));
                                 }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();

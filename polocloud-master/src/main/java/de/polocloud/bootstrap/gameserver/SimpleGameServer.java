@@ -23,6 +23,7 @@ public class SimpleGameServer implements IGameServer {
     private ITemplate template;
     private long startTime;
 
+    private int maxPlayers;
     private String motd;
 
     private long ping = -1;
@@ -31,7 +32,7 @@ public class SimpleGameServer implements IGameServer {
 
     private List<ICloudPlayer> cloudPlayers = new ArrayList<>();
 
-    public SimpleGameServer(String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd) {
+    public SimpleGameServer(String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers) {
         this.name = name;
         this.status = status;
         this.ctx = ctx;
@@ -39,6 +40,7 @@ public class SimpleGameServer implements IGameServer {
         this.template = template;
         this.startTime = startTime;
         this.motd = motd;
+        this.maxPlayers = maxPlayers;
     }
 
     @Override
@@ -137,5 +139,15 @@ public class SimpleGameServer implements IGameServer {
         if (this.ctx != null) {
             this.ctx.writeAndFlush(packet);
         }
+    }
+
+    @Override
+    public int getMaxPlayers() {
+        return this.maxPlayers;
+    }
+
+    @Override
+    public void setMaxPlayers(int players) {
+        this.maxPlayers = players;
     }
 }
