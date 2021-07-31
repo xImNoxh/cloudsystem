@@ -7,6 +7,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class SqlTemplateSaver implements ITemplateSaver {
     @Override
     public void save(ITemplate template) {
-        throw new NotImplementedException();
+        //TODO
+        return;
     }
 }
