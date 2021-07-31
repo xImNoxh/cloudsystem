@@ -24,6 +24,7 @@
     <module>polocloud-modules</module>
     <module>polocloud-addons</module>
       <module>polocloud-modules/polocloud-permission-module</module>
+    <module>polocloud-modules/polocloud-proxy-module</module>
   </modules>
 
   <properties>
