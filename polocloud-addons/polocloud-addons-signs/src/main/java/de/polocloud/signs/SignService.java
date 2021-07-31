@@ -40,7 +40,11 @@ public class SignService {
         this.configLoader = new SimpleConfigLoader();
         this.configSaver = new SimpleConfigSaver();
 
-        this.signConfig = loadConfig(new File("config.json"));
+
+        File configPath = new File("plugins/sign/");
+        if(!configPath.exists()) configPath.mkdirs();
+
+        this.signConfig = loadConfig(new File("plugins/sign/config.json"));
 
         this.cache = new IGameServerSignCache();
 
@@ -48,6 +52,7 @@ public class SignService {
 
         new SignConverter();
         new IGameServerSignInitializer();
+
 
         this.signProtectionRunnable = new SignProtectionRunnable();
     }

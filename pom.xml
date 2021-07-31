@@ -5,11 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>de.polocloud</groupId>
-  <artifactId>PoloCloudv1</artifactId>
+  <artifactId>PoloCloud</artifactId>
   <packaging>pom</packaging>
+
   <version>1.0-SNAPSHOT</version>
+
   <modules>
-    <module>polocloud-database</module>
     <module>polocloud-master</module>
     <module>polocloud-api</module>
     <module>polocloud-logger</module>
@@ -22,6 +23,7 @@
     <module>polocloud-launcher</module>
     <module>polocloud-modules</module>
     <module>polocloud-addons</module>
+      <module>polocloud-modules/polocloud-permission-module</module>
   </modules>
 
   <properties>
@@ -71,23 +73,6 @@
         </configuration>
       </plugin>
       <!-- Shading -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <createDependencyReducedPom>false</createDependencyReducedPom>
-          <shadedArtifactAttached>true</shadedArtifactAttached>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 

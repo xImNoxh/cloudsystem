@@ -1,12 +1,15 @@
 package de.polocloud.setup;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Step {
 
     private final String question;
-    private final Predicate<String> acceptor;
-    private final String[] defaultAnswers;
+    private Predicate<String> acceptor;
+    private String[] defaultAnswers;
+    private FutureAnswer futureAnswer;
+
     private String answer;
     private Step nextStep;
 
@@ -22,6 +25,12 @@ public class Step {
         this.defaultAnswers = defaultAnswers;
     }
 
+    public Step(String question, Predicate<String> acceptor, FutureAnswer futureAnswer) {
+        this.question = question;
+        this.acceptor = acceptor;
+        this.futureAnswer = futureAnswer;
+    }
+
 
     public Step addStep(String question, Predicate<String> acceptor, String... possibleAnswers){
         Step step = new Step(question, acceptor, possibleAnswers);
@@ -30,7 +39,6 @@ public class Step {
     }
 
     public Step addStep(String question, Object... possibleAnswers){
-
         String[] s = new String[possibleAnswers.length];
         for (int i = 0; i < s.length; i++) {
             s[i] = possibleAnswers[i].toString();
@@ -40,6 +48,12 @@ public class Step {
 
     public Step addStep(String question, String... possibleAnswers){
         Step step = new Step(question, o -> true, possibleAnswers);
+        nextStep = step;
+        return step;
+    }
+
+    public Step addStep(String question, FutureAnswer futureAnswer){
+        Step step = new Step(question, o -> true, futureAnswer);
         nextStep = step;
         return step;
     }
@@ -58,6 +72,10 @@ public class Step {
 
     public String[] getDefaultAnswers() {
         return defaultAnswers;
+    }
+
+    public FutureAnswer getFutureAnswer() {
+        return futureAnswer;
     }
 
     public void setAnswer(String answer) {

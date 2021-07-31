@@ -112,9 +112,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                         ProxyServer.getInstance().getPlayer(uuid).connect(serverInfo);
                     }
                 }
-
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerSendToServerPacket.class;
@@ -134,9 +132,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                 if (ProxyServer.getInstance().getPlayer(uuid) != null) {
                     ProxyServer.getInstance().getPlayer(uuid).disconnect(message);
                 }
-
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerKickPacket.class;
@@ -151,7 +147,6 @@ public class NetworkProxyRegister extends NetworkRegister {
                 GameServerUnregisterPacket packet = (GameServerUnregisterPacket) obj;
                 ProxyServer.getInstance().getServers().remove(packet.getName());
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return GameServerUnregisterPacket.class;
@@ -169,7 +164,6 @@ public class NetworkProxyRegister extends NetworkRegister {
                     "PoloCloud", false
                 ));
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterRequestServerListUpdatePacket.class;
@@ -191,7 +185,6 @@ public class NetworkProxyRegister extends NetworkRegister {
                 }
                 loginEvent.completeIntent(plugin);
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerRequestJoinResponsePacket.class;
@@ -206,7 +199,6 @@ public class NetworkProxyRegister extends NetworkRegister {
                 ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;
 
             }
-
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return ProxyMotdUpdatePacket.class;

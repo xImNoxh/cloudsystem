@@ -103,7 +103,7 @@ public class CollectiveSpigotListener implements Listener {
         List<IGameServerSign> gameServerSign = cache.stream().filter(key -> key.getTemplate().getName().equals(event.getTemplate().getName())).collect(Collectors.toList());
         for (IGameServerSign sign : gameServerSign) {
             sign.setTemplate(event.getTemplate());
-            sign.writeSign();
+            sign.writeSign(false);
         }
     }
 
@@ -112,7 +112,7 @@ public class CollectiveSpigotListener implements Listener {
         IGameServerSign gameServerSign = executeService.getServiceInspectExecute().execute(event.getGameServer());
         if (gameServerSign == null) return;
         gameServerSign.setGameServer(null);
-        gameServerSign.writeSign();
+        gameServerSign.writeSign(false);
     }
 
 }

@@ -7,6 +7,7 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
+import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
@@ -28,7 +29,8 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler<Packet> 
         Logger.log(LoggerType.INFO, "register static server with id " + packet.getSnowflake());
         IGameServer gameServer = null;
         try {
-            gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), templateService.getTemplateByName(packet.getTemplateName()).get(), System.currentTimeMillis());
+            ITemplate template = templateService.getTemplateByName(packet.getTemplateName()).get();
+            gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

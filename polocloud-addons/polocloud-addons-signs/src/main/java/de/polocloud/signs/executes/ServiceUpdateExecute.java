@@ -8,7 +8,7 @@ public class ServiceUpdateExecute {
     public void update(IGameServerSign sign, IGameServer gameServer){
         if(sign == null) return;
         sign.setGameServer(gameServer);
-        sign.writeSign();
+        sign.writeSign(false);
     }
 
 }

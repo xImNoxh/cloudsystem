@@ -1,9 +1,13 @@
 package de.polocloud.signs.commands;
 
 import de.polocloud.api.config.saver.IConfigSaver;
-import de.polocloud.api.config.saver.SimpleConfigSaver;
+import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.signs.SignService;
+import de.polocloud.signs.config.messages.SignMessages;
+import de.polocloud.signs.executes.ExecuteService;
 import de.polocloud.signs.signs.ConfigSignLocation;
+import de.polocloud.signs.signs.IGameServerSign;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -13,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public class CloudSignsCommand implements CommandExecutor {
 
@@ -20,30 +25,63 @@ public class CloudSignsCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
 
-        Block block = player.getTargetBlock((Set<Material>) null, 3);
+        SignMessages signMessages = SignService.getInstance().getSignConfig().getSignMessages();
+        if (args.length == 2 && (args[0].equalsIgnoreCase("add"))) {
 
-        String group = args[0];
+            Block block = player.getTargetBlock((Set<Material>) null, 5);
 
-        if(block == null){
-            player.sendMessage("no block");
+            String group = args[1];
+
+            if (block == null || !block.getType().equals(Material.WALL_SIGN)) {
+                player.sendMessage(signMessages.getNoSignDetected());
+                return false;
+            }
+
+
+            if (SignService.getInstance().getCache().alreadySign(block.getLocation())) {
+                player.sendMessage(signMessages.getAlreadySignDetected());
+                return false;
+            }
+
+            player.sendMessage(signMessages.getSetSign().replace("%template%", group));
+
+            SignService.getInstance().getSignConfig().getLocationConfig().getLocations().add(new ConfigSignLocation(
+                block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), group));
+            IConfigSaver configSaver = SignService.getInstance().getConfigSaver();
+            configSaver.save(SignService.getInstance().getSignConfig(), new File("plugins/sign/config.json"));
             return false;
         }
 
-        if(!block.getType().equals(Material.WALL_SIGN)){
-           player.sendMessage("no wall sign");
+        if (args.length == 1 && args[0].equalsIgnoreCase("remove")) {
+
+            Block block = player.getTargetBlock((Set<Material>) null, 5);
+
+            if (block == null || !block.getType().equals(Material.WALL_SIGN)) {
+                player.sendMessage(signMessages.getNoSignDetected());
+                return false;
+            }
+
+
+            if (!SignService.getInstance().getCache().alreadySign(block.getLocation())) {
+                player.sendMessage(signMessages.getNoSignInput());
+                return false;
+            }
+
+            IGameServerSign gameSign = SignService.getInstance().getCache().stream().filter(s -> s.getLocation().equals(block.getLocation())).findAny().orElse(null);
+            gameSign.clean();
+
+
+            IConfigSaver configSaver = SignService.getInstance().getConfigSaver();
+            SignService.getInstance().getSignConfig().getLocationConfig().getLocations().remove(gameSign);
+            configSaver.save(SignService.getInstance().getSignConfig(), new File("plugins/sign/config.json"));
+            SignService.getInstance().getCache().remove(gameSign);
+
+            player.sendMessage(signMessages.getRemoveSign());
             return false;
+
         }
 
-        player.sendMessage("adding sign " + group);
-
-
-        SignService.getInstance().getSignConfig().getLocationConfig().getLocations().add(new ConfigSignLocation(
-            block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), group));
-        IConfigSaver configSaver = SignService.getInstance().getConfigSaver();
-        configSaver.save(SignService.getInstance().getSignConfig(), new File("config.json"));
-
-
-
+        player.sendMessage(signMessages.getCommandHelp());
         return false;
     }
 }

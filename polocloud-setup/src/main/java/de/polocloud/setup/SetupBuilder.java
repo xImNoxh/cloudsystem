@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SetupBuilder {
 
@@ -67,6 +68,12 @@ public class SetupBuilder {
 
     public void sendQuestion(Step step) {
         Logger.log(LoggerType.INFO, Logger.PREFIX + step.getQuestion());
+
+        if(step.getFutureAnswer() != null){
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Possible Answers : " + String.join(", ", getStringFromObject(step.getFutureAnswer().findPossibleAnswers(this))));
+            return;
+        }
+
         if (step.getDefaultAnswers().length > 0) {
             Logger.log(LoggerType.INFO, Logger.PREFIX + "Possible Answers : " + getAnswerKeys(step));
         }
@@ -88,9 +95,26 @@ public class SetupBuilder {
         this.stepAnswer = stepAnswer;
     }
 
+    public List<Step> getAnswers() {
+        return answers;
+    }
+
     public boolean isPossibleAnswer(Step step, String value) {
+
+        if(step.getFutureAnswer() != null){
+            String[] answers = getStringFromObject(step.getFutureAnswer().findPossibleAnswers(this));
+            return Arrays.stream(answers).noneMatch(type -> type.equalsIgnoreCase(value));
+        }
+
         return step.getDefaultAnswers().length > 0 && Arrays.stream(step.getDefaultAnswers()).noneMatch(type -> type.equalsIgnoreCase(value));
     }
 
+    public String[] getStringFromObject(Object[] args){
+        String[] content = new String[args.length];
+        for(int i = 0; i < args.length; i++){
+            content[i] = args[i].toString();
+        }
+        return content;
+    }
 
 }

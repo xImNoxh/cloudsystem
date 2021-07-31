@@ -15,7 +15,6 @@ public class MasterRequestServerStartPacket extends Packet {
     private int memory, maxPlayers;
     private String serverName;
     private String motd;
-
     private boolean isStatic;
 
     public MasterRequestServerStartPacket() {

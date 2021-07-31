@@ -17,7 +17,7 @@ public class SignProtectionRunnable {
 
     public SignProtectionRunnable() {
         this.signProtection = SignService.getInstance().getSignConfig().getSignProtection();
-        run();
+        if(signProtection.isUse()) run();
     }
 
     public void run(){
