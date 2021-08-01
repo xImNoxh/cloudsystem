@@ -27,11 +27,12 @@ public class ProxyModule {
         instance = this;
 
         this.proxyConfig = loadProxyConfig(module);
-        this.cache = new ProxyGameServerCache();
         this.motdInfoService = new MotdInfoService();
 
-        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerStatusUpdateListener.class), CloudGameServerStatusChangeEvent.class);
-        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerChangeMaintenanceListener.class), CloudGameServerMaintenanceUpdateEvent.class);
+        EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(GameServerStatusUpdateListener.class), CloudGameServerStatusChangeEvent.class);
+        EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(GameServerChangeMaintenanceListener.class), CloudGameServerMaintenanceUpdateEvent.class);
+
+        this.cache = new ProxyGameServerCache();
     }
 
     public ProxyConfig loadProxyConfig(Module module) {

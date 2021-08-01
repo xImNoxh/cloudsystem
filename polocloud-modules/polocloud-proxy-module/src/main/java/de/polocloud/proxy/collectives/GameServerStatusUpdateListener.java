@@ -12,7 +12,6 @@ public class GameServerStatusUpdateListener implements EventHandler<CloudGameSer
     @Override
     public void handleEvent(CloudGameServerStatusChangeEvent event) {
 
-        System.out.println("Handling event wooho");
         IGameServer gameServer = event.getGameServer();
         if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)) return;
 

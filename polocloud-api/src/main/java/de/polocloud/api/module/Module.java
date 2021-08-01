@@ -26,7 +26,7 @@ public abstract class Module {
 
     public abstract void onLoad();
 
-    public abstract void onReload();
+    public abstract boolean onReload();
 
     public abstract void onShutdown();
 
