@@ -2,10 +2,10 @@ package de.polocloud.api.network.client;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import de.polocloud.api.network.protocol.packet.PacketRegistry;
-import de.polocloud.api.network.protocol.packet.handler.*;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.network.protocol.packet.PacketRegistry;
+import de.polocloud.api.network.protocol.packet.handler.*;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -33,7 +33,7 @@ public class SimpleNettyClient implements INettyClient {
 
     private ChannelFuture channelFuture;
     private Channel channel;
-
+    private NetworkHandler networkHandler;
 
     public SimpleNettyClient() {
 
@@ -43,15 +43,11 @@ public class SimpleNettyClient implements INettyClient {
         this.host = host;
         this.port = port;
         this.protocol = protocol;
-
-
     }
-
-    private NetworkHandler networkHandler;
 
     @Override
     public void start() {
-        PacketRegistry.registerDefaultPackets();
+        PacketRegistry.registerDefaultInternalPackets();
 
         networkHandler = new NetworkHandler(protocol);
 
@@ -84,8 +80,6 @@ public class SimpleNettyClient implements INettyClient {
         } finally {
             System.out.println("Netty thread stopped.");
         }
-
-
     }
 
     @Override
@@ -101,7 +95,6 @@ public class SimpleNettyClient implements INettyClient {
         }
         networkHandler.getChannelHandlerContext().writeAndFlush(packet);
     }
-
 
     @Override
     public IProtocol getProtocol() {

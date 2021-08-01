@@ -1,6 +1,5 @@
 package de.polocloud.api.network.protocol.packet.api.template;
 
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.template.ITemplate;
 import io.netty.buffer.ByteBuf;
@@ -8,7 +7,6 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 public class APIResponseTemplatePacket extends Packet {
@@ -53,7 +51,6 @@ public class APIResponseTemplatePacket extends Packet {
         }
 
         type = Type.valueOf(readString(byteBuf));
-
     }
 
     public UUID getRequestId() {

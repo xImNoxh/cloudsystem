@@ -35,10 +35,11 @@ public class WrapperRegisterStaticServerPacket extends Packet {
         return serverName;
     }
 
-    public String getTemplateName(){
+    public String getTemplateName() {
         return serverName.split("-")[0];
     }
-    public long getSnowflake(){
+    
+    public long getSnowflake() {
         return snowflake;
     }
 

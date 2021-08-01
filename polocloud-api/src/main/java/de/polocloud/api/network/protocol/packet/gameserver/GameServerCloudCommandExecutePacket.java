@@ -12,6 +12,7 @@ public class GameServerCloudCommandExecutePacket extends Packet {
     private String command;
 
     public GameServerCloudCommandExecutePacket() {
+        
     }
 
     public GameServerCloudCommandExecutePacket(UUID uuid, String command) {

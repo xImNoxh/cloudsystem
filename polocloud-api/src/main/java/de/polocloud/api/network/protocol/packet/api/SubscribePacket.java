@@ -9,9 +9,10 @@ public class SubscribePacket extends Packet {
 
     private String channel;
 
-    public SubscribePacket(){
-
+    public SubscribePacket() {
+        
     }
+
     public SubscribePacket(String channel) {
         this.channel = channel;
     }

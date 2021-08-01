@@ -18,6 +18,7 @@ public class MasterRequestServerStartPacket extends Packet {
     private boolean isStatic;
 
     public MasterRequestServerStartPacket() {
+        
     }
 
     public MasterRequestServerStartPacket(String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers, String serverName, String motd, boolean isStatic) {

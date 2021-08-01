@@ -9,7 +9,6 @@ public class ChannelActiveEvent implements CloudEvent {
 
     public ChannelActiveEvent(ChannelHandlerContext chx) {
         this.chx = chx;
-
     }
 
     public ChannelHandlerContext getChx() {

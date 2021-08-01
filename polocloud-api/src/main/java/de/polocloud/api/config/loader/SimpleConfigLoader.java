@@ -2,7 +2,6 @@ package de.polocloud.api.config.loader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.inject.Inject;
 import de.polocloud.api.config.IConfig;
 
 import java.io.File;
@@ -13,10 +12,9 @@ public class SimpleConfigLoader implements IConfigLoader {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-
     @Override
     public <T> T load(Class<? extends IConfig> configClass, File file) {
-        if(!file.exists()){
+        if (!file.exists()) {
             try {
                 return (T) configClass.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {

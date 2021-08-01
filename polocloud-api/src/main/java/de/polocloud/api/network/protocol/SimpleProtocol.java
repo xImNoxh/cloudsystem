@@ -19,8 +19,7 @@ public class SimpleProtocol implements IProtocol {
 
 
     private Map<Class<? extends Packet>, List<IPacketHandler<Packet>>> packetHandlerMap = new HashMap<>();
-
-
+    
     @Override
     public void registerPacketHandler(IPacketHandler<Packet> packetHandler) {
         List<IPacketHandler<Packet>> list;

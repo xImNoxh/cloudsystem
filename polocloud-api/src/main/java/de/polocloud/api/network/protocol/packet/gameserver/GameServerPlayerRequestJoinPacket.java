@@ -11,6 +11,7 @@ public class GameServerPlayerRequestJoinPacket extends Packet {
     private UUID uuid;
 
     public GameServerPlayerRequestJoinPacket() {
+        
     }
 
     public GameServerPlayerRequestJoinPacket(UUID uuid) {

@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public class APIRequestGameServerPacket extends Packet {
 
-
     private UUID requestId;
     private Action action;
     private String value;
@@ -56,7 +55,6 @@ public class APIRequestGameServerPacket extends Packet {
     }
 
     public enum Action {
-
         NAME,
         SNOWFLAKE,
         ALL,

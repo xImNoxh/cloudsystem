@@ -15,6 +15,7 @@ public class PermissionCheckResponsePacket extends Packet {
     private UUID request;
 
     public PermissionCheckResponsePacket() {
+
     }
 
     public PermissionCheckResponsePacket(UUID request, String permission, UUID player, boolean response) {
@@ -52,12 +53,12 @@ public class PermissionCheckResponsePacket extends Packet {
         return permission;
     }
 
-    public boolean isResponse() {
-        return response;
-    }
-
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public boolean isResponse() {
+        return response;
     }
 
     public void setResponse(boolean response) {

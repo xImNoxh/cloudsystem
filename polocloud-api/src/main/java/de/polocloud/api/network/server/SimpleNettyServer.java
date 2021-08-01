@@ -1,9 +1,9 @@
 package de.polocloud.api.network.server;
 
 import com.google.inject.Inject;
+import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.network.protocol.packet.handler.*;
-import de.polocloud.api.network.protocol.IProtocol;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,8 +11,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
 
 import javax.inject.Named;
 
@@ -27,7 +25,7 @@ public class SimpleNettyServer implements INettyServer {
 
     @Override
     public void start() {
-        PacketRegistry.registerDefaultPackets();
+        PacketRegistry.registerDefaultInternalPackets();
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -50,15 +48,14 @@ public class SimpleNettyServer implements INettyServer {
         } catch (Exception exc) {
             exc.printStackTrace();
         }
-        System.out.println("starting server on port " + this.port);
+        System.out.println("Starting new Server on port » " + this.port);
     }
 
     @Override
     public boolean terminate() {
         return true;
     }
-
-
+    
     @Override
     public IProtocol getProtocol() {
         return protocol;

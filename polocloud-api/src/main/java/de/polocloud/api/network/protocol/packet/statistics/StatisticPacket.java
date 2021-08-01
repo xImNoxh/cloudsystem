@@ -12,6 +12,7 @@ public class StatisticPacket extends Packet {
     private long timestamp;
 
     public StatisticPacket() {
+
     }
 
     public StatisticPacket(long currentMemory, int tps, long timestamp) {
@@ -19,7 +20,6 @@ public class StatisticPacket extends Packet {
         this.tps = tps;
         this.timestamp = timestamp;
     }
-
 
     @Override
     public void write(ByteBuf byteBuf) throws IOException {
@@ -46,6 +46,5 @@ public class StatisticPacket extends Packet {
     public long getCurrentMemory() {
         return currentMemory;
     }
-
-
+    
 }

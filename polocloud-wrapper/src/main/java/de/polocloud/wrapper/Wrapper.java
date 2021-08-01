@@ -6,9 +6,9 @@ import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
-import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
@@ -55,32 +55,32 @@ public class Wrapper implements IStartable, ITerminatable {
         CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
     }
 
-    private void requestStaticServersStart(){
+    private void requestStaticServersStart() {
         Executor executor = Executors.newCachedThreadPool();
 
-        EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> executor.execute(() ->{
+        EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> executor.execute(() -> {
             for (String staticServer : config.getStaticServers()) {
-                executor.execute(() ->{
+                executor.execute(() -> {
                     String[] properties = staticServer.split(",");
                     String serverName = properties[0];
                     int port = Integer.parseInt(properties[1]);
                     int processMemory = Integer.parseInt(properties[2]);
-                    Logger.log(LoggerType.INFO, "Starting static server » " + serverName + " on port » " + port + "...");
+                    Logger.log(LoggerType.INFO, "Starting static server » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + serverName + ConsoleColors.GRAY.getAnsiCode() + " on port » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + port + ConsoleColors.GRAY.getAnsiCode() + "...");
                     ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + processMemory + "M -Xmx" + processMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
-                    try{
+                    try {
                         processBuilder.directory(new File("static/" + serverName));
 
                         String name = serverName.split("#")[0];
                         long snowflakeID = Long.parseLong(serverName.split("#")[1]);
 
-                        Logger.log(LoggerType.INFO, "Starting static server with " + name + "/" + snowflakeID + "(" + serverName + ")...");
+                        Logger.log(LoggerType.INFO, "Starting static server with " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() + "/" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + ConsoleColors.GRAY.getAnsiCode() + snowflakeID + "(" + serverName + ")...");
                         event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflakeID));
 
                         Process process = processBuilder.start();
                         process.waitFor();
-                    }catch (IOException | InterruptedException exception){
+                    } catch (IOException | InterruptedException exception) {
                         exception.printStackTrace();
-                        Logger.log(LoggerType.ERROR, "Unexpected error while starting Server » " + serverName + " occured! Skipping...\n" +
+                        Logger.log(LoggerType.ERROR, "Unexpected error while starting Server » " + serverName + " occurred! Skipping...\n" +
                             "Please report this error.");
                     }
                 });
@@ -88,7 +88,7 @@ public class Wrapper implements IStartable, ITerminatable {
         }), ChannelActiveEvent.class);
     }
 
-    private void checkAndDeleteTmpFolder(){
+    private void checkAndDeleteTmpFolder() {
         File tmpFile = new File("tmp");
         if (tmpFile.exists()) {
             try {
@@ -101,7 +101,7 @@ public class Wrapper implements IStartable, ITerminatable {
         }
     }
 
-    private void checkPoloCloudAPI(){
+    private void checkPoloCloudAPI() {
         File apiJarFile = new File("templates/PoloCloud-API.jar");
 
         if (!apiJarFile.getParentFile().exists()) {

@@ -11,6 +11,7 @@ public class GameServerMaintenanceUpdatePacket extends Packet {
     private String message;
 
     public GameServerMaintenanceUpdatePacket() {
+        
     }
 
     public GameServerMaintenanceUpdatePacket(boolean state, String message) {

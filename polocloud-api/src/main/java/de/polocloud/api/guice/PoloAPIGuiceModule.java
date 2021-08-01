@@ -10,7 +10,7 @@ import de.polocloud.api.util.Snowflake;
 
 public class PoloAPIGuiceModule extends AbstractModule {
 
-    //load from config/sql
+    //load from config
     private int serverStartPort = 8869;
     private int protocolThreadSize = 8;
 
@@ -29,7 +29,5 @@ public class PoloAPIGuiceModule extends AbstractModule {
 
         bind(int.class).annotatedWith(Names.named("setting_server_start_port")).toInstance(this.serverStartPort);
         bind(int.class).annotatedWith(Names.named("setting_protocol_threadSize")).toInstance(this.protocolThreadSize);
-
-
     }
 }

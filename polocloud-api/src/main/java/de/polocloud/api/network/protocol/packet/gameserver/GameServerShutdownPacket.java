@@ -7,7 +7,9 @@ import java.io.IOException;
 
 public class GameServerShutdownPacket extends Packet {
 
-    public GameServerShutdownPacket() { }
+    public GameServerShutdownPacket() {
+        
+    }
 
     @Override
     public void write(ByteBuf byteBuf) throws IOException {

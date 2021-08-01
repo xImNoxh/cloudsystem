@@ -11,15 +11,17 @@ public class MasterRequestServerListUpdatePacket extends Packet {
     private String host;
     private int port;
     private long snowflake;
+
     public MasterRequestServerListUpdatePacket() {
+
     }
+
     public MasterRequestServerListUpdatePacket(String name, String host, int port, long snowflake) {
         this.host = host;
         this.port = port;
         this.snowflake = snowflake;
         this.name = name;
     }
-
 
     @Override
     public void write(ByteBuf byteBuf) throws IOException {

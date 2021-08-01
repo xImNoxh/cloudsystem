@@ -2,7 +2,7 @@ package de.polocloud.api.event.gameserver;
 
 import de.polocloud.api.gameserver.IGameServer;
 
-public class CloudGameServerStatusChangeEvent extends GameServerEvent{
+public class CloudGameServerStatusChangeEvent extends GameServerEvent {
 
     private Status status;
 
@@ -16,11 +16,9 @@ public class CloudGameServerStatusChangeEvent extends GameServerEvent{
     }
 
     public enum Status {
-
         STARTING,
         RUNNING,
         STOPPING,
-
     }
 
 }

@@ -10,7 +10,10 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class SimplePubSubManager implements IPubSubManager {
@@ -64,6 +67,5 @@ public class SimplePubSubManager implements IPubSubManager {
         channelList.add(consumer);
         this.sender.sendPacket(new SubscribePacket(channel));
         subMap.put(channel, channelList);
-
     }
 }

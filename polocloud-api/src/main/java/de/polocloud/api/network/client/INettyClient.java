@@ -8,4 +8,5 @@ import de.polocloud.api.network.protocol.packet.IPacketSender;
 public interface INettyClient extends IStartable, ITerminatable, IPacketSender {
 
     IProtocol getProtocol();
+    
 }

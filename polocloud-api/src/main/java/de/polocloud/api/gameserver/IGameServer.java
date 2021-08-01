@@ -43,7 +43,4 @@ public interface IGameServer extends Serializable {
 
     void setMaxPlayers(int players);
 
-
-
-
 }
