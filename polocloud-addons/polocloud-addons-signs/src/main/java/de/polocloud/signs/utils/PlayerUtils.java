@@ -13,7 +13,6 @@ import java.io.IOException;
 public class PlayerUtils {
 
     public static void sendService(IGameServer gameServer, Player player) {
-
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
         try {
@@ -29,7 +28,6 @@ public class PlayerUtils {
         Sign s = (Sign) block.getState().getData();
         Block attachedBlock = block.getRelative(s.getAttachedFace());
         return attachedBlock;
-
     }
 
 }

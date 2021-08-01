@@ -45,14 +45,13 @@ public class CollectiveSpigotListener implements Listener {
         if (!(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)))
             return;
         if (event.getClickedBlock() == null || !event.getClickedBlock().getType().equals(Material.WALL_SIGN)) return;
-        Sign sign = (Sign) event.getClickedBlock().getState();
-        IGameServerSign gameSign = cache.stream().filter(s -> s.getSign().equals(sign)).findAny().orElse(null);
+        IGameServerSign gameSign = cache.stream().filter(s -> s.getSign().equals(event.getClickedBlock().getState())).findAny().orElse(null);
+        if (gameSign == null || gameSign.getGameServer() == null) return;
         Player player = event.getPlayer();
         if (gameSign.getTemplate().isMaintenance()) {
             player.sendMessage(signConfig.getSignMessages().getMaintenanceConnected());
             return;
         }
-        if (gameSign == null || gameSign.getGameServer() == null) return;
         CloudExecutor.getInstance().getCloudPlayerManager().getOnlinePlayer(player.getUniqueId()).thenAccept(key -> {
             if (key.getMinecraftServer().getSnowflake() == gameSign.getGameServer().getSnowflake()) {
                 player.sendMessage(signService.getSignConfig().getSignMessages().getAlreadySameService());

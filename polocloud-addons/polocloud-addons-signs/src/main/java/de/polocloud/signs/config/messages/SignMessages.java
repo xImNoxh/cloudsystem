@@ -2,7 +2,7 @@ package de.polocloud.signs.config.messages;
 
 public class SignMessages {
 
-    private String alreadySameService = "§7Du bist mit dem gleichen Service schon verbunden§8.";
+    private String alreadySameService = "§7You are already connected with this service§8.";
     private String connectedIfServiceIsFull = "§cThis service is already full!";
     private String maintenanceConnected = "§cThis Template is in maintenance§8...";
     private String noSignDetected = "§7This block is not a instance of a Sign§8.";

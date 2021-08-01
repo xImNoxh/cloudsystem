@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 public class SignBootstrap extends JavaPlugin {
 
@@ -20,8 +21,10 @@ public class SignBootstrap extends JavaPlugin {
 
         try {
             new SignService();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (ExecutionException | InterruptedException exception) {
+            exception.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, "Failed to start SignService! The SignAddon will be react abnormal.\n" +
+                "Please report this error.");
         }
 
         new CollectiveSpigotListener();
