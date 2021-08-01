@@ -22,8 +22,8 @@ public class CloudModule extends Module {
     }
 
     @Override
-    public void onReload() {
-
+    public boolean onReload() {
+        return false;
     }
 
     @Override

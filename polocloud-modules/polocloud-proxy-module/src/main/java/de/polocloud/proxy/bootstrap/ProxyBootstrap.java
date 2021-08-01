@@ -11,8 +11,8 @@ public class ProxyBootstrap extends Module {
     }
 
     @Override
-    public void onReload() {
-
+    public boolean onReload() {
+        return true;
     }
 
     @Override

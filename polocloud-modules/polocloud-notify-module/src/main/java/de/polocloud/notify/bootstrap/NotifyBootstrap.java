@@ -11,8 +11,8 @@ public class NotifyBootstrap extends Module {
     }
 
     @Override
-    public void onReload() {
-
+    public boolean onReload() {
+        return true;
     }
 
     @Override

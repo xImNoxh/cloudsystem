@@ -12,7 +12,6 @@ import de.polocloud.tablist.collective.CloudPlayerDisconnectListener;
 import de.polocloud.tablist.collective.CloudPlayerJoinListener;
 import de.polocloud.tablist.collective.CloudPlayerSwitchListener;
 import de.polocloud.tablist.config.TablistConfig;
-import de.polocloud.tablist.executes.TablistExecute;
 import de.polocloud.tablist.executes.TablistSetExecute;
 import de.polocloud.tablist.executes.TablistUpdateExecute;
 import de.polocloud.tablist.scheduler.IntervalRunnable;

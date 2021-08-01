@@ -12,8 +12,8 @@ public class TablistBootstrap extends Module {
     }
 
     @Override
-    public void onReload() {
-
+    public boolean onReload() {
+        return false;
     }
 
     @Override
