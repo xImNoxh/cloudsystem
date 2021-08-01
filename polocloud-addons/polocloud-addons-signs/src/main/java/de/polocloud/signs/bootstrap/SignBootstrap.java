@@ -23,7 +23,7 @@ public class SignBootstrap extends JavaPlugin {
             new SignService();
         } catch (ExecutionException | InterruptedException exception) {
             exception.printStackTrace();
-            Bukkit.getLogger().log(Level.SEVERE, "Failed to start SignService! The SignAddon will be react abnormal.\n" +
+            Bukkit.getLogger().log(Level.SEVERE, "Failed to start SignService! The SignAddon will react abnormal.\n" +
                 "Please report this error.");
         }
 
