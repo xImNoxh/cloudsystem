@@ -31,34 +31,35 @@ public class MasterModuleLoader {
         this.file = new File("modules/");
     }
 
-    public void loadModules() {
+    public void loadModules(boolean prefix, ModuleData... ignored) {
         if (!file.exists()) {
             file.mkdir();
         }
 
-        List<ModuleData> moduleData = findModuleData(file);
+        List<ModuleData> moduleData = findModuleData(file, ignored);
 
         for (ModuleData data : moduleData) {
             try {
+                long time = System.currentTimeMillis();
                 Class<?> aClass = getClass().getClassLoader().loadClass(Module.class.getName());
                 ModuleClassLoader loader = new ModuleClassLoader(new URL[]{data.getFile().toURL()}, Thread.currentThread().getContextClassLoader(), cache);
 
                 Class<?> cl = loader.loadClass(data.getMain());
 
                 Class[] interfaces = cl.getInterfaces();
-                boolean isplugin = false;
+                boolean isPlugin = false;
 
-                for (int y = 0; y < interfaces.length && !isplugin; y++) {
+                for (int y = 0; y < interfaces.length && !isPlugin; y++) {
                     if (interfaces[y].equals(Module.class)) {
-                        isplugin = true;
+                        isPlugin = true;
                     }
                 }
 
                 Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
                 cache.put(module, new ModuleLocalCache(loader, data));
                 module.onLoad();
-                Logger.log(LoggerType.INFO, "Module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() +
-                    ConsoleColors.GRAY.getAnsiCode() + " Loaded (Author: " + data.getAuthor() + ")");
+                Logger.log(LoggerType.INFO, (prefix ? Logger.PREFIX : "") + "The module is now " +
+                    ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() + ConsoleColors.GRAY.getAnsiCode() + " loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
             } catch (MalformedURLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -66,7 +67,7 @@ public class MasterModuleLoader {
 
     }
 
-    private List<ModuleData> findModuleData(File directory) {
+    private List<ModuleData> findModuleData(File directory, ModuleData... ignored) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException("directory has to be a directory");
         }
@@ -84,7 +85,9 @@ public class MasterModuleLoader {
                 try (InputStreamReader reader = new InputStreamReader(jarFile.getInputStream(entry))) {
                     ModuleData module = gson.fromJson(reader, ModuleData.class);
                     module.setFile(it);
-                    moduleData.add(module);
+                    if (Arrays.stream(ignored).noneMatch(b -> b.getName().equalsIgnoreCase(module.getName()) && b.getMain().equalsIgnoreCase(module.getName()))) {
+                        moduleData.add(module);
+                    }
                 }
 
             } catch (IOException e) {
