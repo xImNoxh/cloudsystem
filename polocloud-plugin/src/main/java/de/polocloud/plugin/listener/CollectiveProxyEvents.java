@@ -34,25 +34,26 @@ public class CollectiveProxyEvents implements Listener {
     @EventHandler
     public void handle(ProxyPingEvent event) {
         event.getResponse().getPlayers().setMax(CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers());
+        event.getResponse().setDescription(CloudPlugin.getInstance().getMotdUpdateCache().getMotd());
     }
 
     @EventHandler
-    public void handle(PostLoginEvent event){
+    public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if(CloudPlugin.getInstance().getState() == null){
+        if (CloudPlugin.getInstance().getState() == null) {
             event.getPlayer().disconnect("");
             return;
         }
 
-        if(CloudPlugin.getInstance().getState().isMaintenance()  && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance") ){
+        if (CloudPlugin.getInstance().getState().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
             event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getState().getKickMessage()));
             return;
         }
 
         MaxPlayerProperty maxPlayerProperty = CloudPlugin.getInstance().getMaxPlayerProperty();
 
-        if(ProxyServer.getInstance().getPlayers().size()-1 >= maxPlayerProperty.getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+        if (ProxyServer.getInstance().getPlayers().size() - 1 >= maxPlayerProperty.getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
             event.getPlayer().disconnect(CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
             return;
         }
@@ -61,7 +62,7 @@ public class CollectiveProxyEvents implements Listener {
     @EventHandler
     public void handle(LoginEvent event) {
 
-        if(CloudPlugin.getInstance().getState() == null){
+        if (CloudPlugin.getInstance().getState() == null) {
             event.setCancelled(true);
             return;
         }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class SimpleCloudPlayerManager implements ICloudPlayerManager {
 
@@ -35,7 +36,7 @@ public class SimpleCloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid) {
-        return CompletableFuture.completedFuture(this.cloudPlayers.stream().filter(key -> key.getUUID().equals(uuid)).findAny().orElse(null));
+        return CompletableFuture.completedFuture(this.cloudPlayers.stream().filter(key -> key.getUUID().toString().equalsIgnoreCase(uuid.toString())).findAny().orElse(null));
     }
 
     @Override
@@ -45,7 +46,11 @@ public class SimpleCloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public CompletableFuture<Boolean> isPlayerOnline(UUID uuid) {
-        return CompletableFuture.completedFuture(getOnlinePlayer(uuid) != null);
-
+        try {
+            return CompletableFuture.completedFuture(getOnlinePlayer(uuid).get() != null);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return CompletableFuture.completedFuture(false);
     }
 }

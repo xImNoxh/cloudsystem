@@ -10,7 +10,7 @@ import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplate
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
@@ -34,7 +34,7 @@ public class PacketRegistry {
         registerPacket(100, APIResponseGameServerPacket.class);
         registerPacket(101, APIRequestGameServerPacket.class);
 
-        registerPacket(102,  ProxyMotdUpdatePacket.class);
+        registerPacket(102,  GameServerMotdUpdatePacket.class);
         registerPacket(103, GameServerControlPlayerPacket.class);
         registerPacket(104, GameServerExecuteCommandPacket.class);
         registerPacket(105, GameServerMaintenanceUpdatePacket.class);

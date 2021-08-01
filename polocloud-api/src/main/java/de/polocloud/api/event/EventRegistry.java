@@ -1,6 +1,5 @@
 package de.polocloud.api.event;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,18 +21,14 @@ public class EventRegistry {
         eventList.add(eventHandler);
 
         eventMap.put(eventClass, eventList);
-
     }
 
     public static void fireEvent(CloudEvent event) {
         if (eventMap.containsKey(event.getClass())) {
-
             List<EventHandler<?>> eventHandlers = eventMap.get(event.getClass());
-
             for (EventHandler eventHandler : eventHandlers) {
                 eventHandler.handleEvent(event);
             }
-
         }
     }
 

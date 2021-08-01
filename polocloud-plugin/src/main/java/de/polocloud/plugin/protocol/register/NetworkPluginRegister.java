@@ -8,10 +8,7 @@ import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
@@ -46,6 +43,7 @@ public class NetworkPluginRegister extends NetworkRegister {
         registerGameServerShutdownPacket();
         registerMaxPlayersUpdatePacket();
         registerAPIHandler();
+        registerGameServerMotdUpdatePacket();
 
     }
 
@@ -176,7 +174,7 @@ public class NetworkPluginRegister extends NetworkRegister {
 
                         @Override
                         public void setMotd(String motd) {
-                            throw new NotImplementedException();
+                            sendPacket(new GameServerMotdUpdatePacket(motd));
                         }
 
                         @Override
@@ -191,7 +189,7 @@ public class NetworkPluginRegister extends NetworkRegister {
 
                         @Override
                         public void setMaxPlayers(int players) {
-                            gameserver.setMaxPlayers(players);
+                            throw new NotImplementedException();
                         }
                     });
                 }
@@ -264,6 +262,21 @@ public class NetworkPluginRegister extends NetworkRegister {
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return GameServerShutdownPacket.class;
+            }
+        });
+    }
+
+    public void registerGameServerMotdUpdatePacket() {
+        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                GameServerMotdUpdatePacket packet = (GameServerMotdUpdatePacket) obj;
+                CloudPlugin.getInstance().getMotdUpdateCache().setMotd(packet.getMotd());
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return GameServerMotdUpdatePacket.class;
             }
         });
     }

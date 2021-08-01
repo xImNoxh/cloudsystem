@@ -11,6 +11,7 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.ITemplate;
@@ -25,7 +26,6 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
@@ -58,13 +58,15 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
                 gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ?
                     messages.getProxyMaintenanceMessage() : messages.getGroupMaintenanceMessage()));
 
-            if(gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)){
+            if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)) {
                 gameServer.sendPacket(new CommandListAcceptorPacket());
             }
 
             gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(
                 gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? messages.getNetworkIsFull() : messages.getServiceIsFull()
                 , gameServer.getTemplate().getMaxPlayers()));
+
+            gameServer.sendPacket(new GameServerMotdUpdatePacket(gameServer.getMotd()));
 
             gameServer.setStatus(GameServerStatus.RUNNING);
 

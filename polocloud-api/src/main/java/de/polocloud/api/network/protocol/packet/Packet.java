@@ -3,6 +3,7 @@ package de.polocloud.api.network.protocol.packet;
 import com.google.gson.Gson;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.GameServerVersion;
@@ -188,7 +189,7 @@ public abstract class Packet {
 
             @Override
             public void setMotd(String motd) {
-                throw new NotImplementedException();
+                sendPacket(new GameServerMotdUpdatePacket(motd));
             }
 
             @Override

@@ -26,6 +26,8 @@ public abstract class Module {
 
     public abstract void onLoad();
 
+    public abstract void onReload();
+
     public abstract void onShutdown();
 
     public ITemplateService getTemplateService() {

@@ -34,6 +34,7 @@ public class CollectiveSpigotEvents implements Listener {
     @EventHandler
     public void handle(ServerListPingEvent event) {
         event.setMaxPlayers(CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers());
+        event.setMotd(CloudPlugin.getInstance().getMotdUpdateCache().getMotd());
     }
 
     @EventHandler

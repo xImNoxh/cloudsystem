@@ -12,8 +12,13 @@ public class TablistBootstrap extends Module {
     }
 
     @Override
+    public void onReload() {
+
+    }
+
+    @Override
     public void onShutdown() {
         IntervalRunnable intervalRunnable = TablistModule.getInstance().getIntervalRunnable();
-        if(intervalRunnable != null) intervalRunnable.destroy();
+        if (intervalRunnable != null) intervalRunnable.destroy();
     }
 }
