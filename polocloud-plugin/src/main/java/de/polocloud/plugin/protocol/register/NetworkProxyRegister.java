@@ -48,11 +48,8 @@ public class NetworkProxyRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 PermissionCheckResponsePacket packet = (PermissionCheckResponsePacket) obj;
-
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getPlayer());
-                if (player != null) {
-                    packet.setResponse(player.hasPermission(packet.getPermission()));
-                }
+                if (player != null) packet.setResponse(player.hasPermission(packet.getPermission()));
                 networkClient.sendPacket(packet);
             }
             @Override

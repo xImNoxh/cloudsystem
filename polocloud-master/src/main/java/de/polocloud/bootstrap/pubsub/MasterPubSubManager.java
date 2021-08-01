@@ -20,19 +20,8 @@ public class MasterPubSubManager {
 
     public void subscribe(ChannelHandlerContext ctx, String channel) {
         List<ChannelHandlerContext> channelHandlerContextList;
-
-        if (subscriberMap.containsKey(channel)) {
-            channelHandlerContextList = subscriberMap.get(channel);
-        } else {
-            channelHandlerContextList = new ArrayList<>();
-        }
-
-        if (channelHandlerContextList.contains(ctx)) {
-            channelHandlerContextList.remove(ctx);
-        } else {
-            channelHandlerContextList.add(ctx);
-        }
-
+        channelHandlerContextList = subscriberMap.containsKey(channel) ? subscriberMap.get(channel) : new ArrayList<>();
+        boolean use = channelHandlerContextList.contains(ctx) ? channelHandlerContextList.remove(ctx) : channelHandlerContextList.add(ctx);
         subscriberMap.put(channel, channelHandlerContextList);
 
     }
@@ -42,12 +31,9 @@ public class MasterPubSubManager {
     }
 
     public void publish(PublishPacket packet) {
-
         String channel = packet.getChannel();
-
         if (subscriberMap.containsKey(channel)) {
             List<ChannelHandlerContext> channelHandlerContextList = subscriberMap.get(channel);
-
             for (ChannelHandlerContext channelHandlerContext : channelHandlerContextList) {
                 channelHandlerContext.writeAndFlush(packet);
             }

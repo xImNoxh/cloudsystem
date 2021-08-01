@@ -28,27 +28,24 @@ public class ChannelInactiveListener implements EventHandler<ChannelInactiveEven
     public void handleEvent(ChannelInactiveEvent event) {
         ChannelHandlerContext ctx = event.getChx();
 
-        for (WrapperClient wrapperClient : wrapperClientManager.getWrapperClients()) {
-            if (wrapperClient.getConnection().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())) {
-                Logger.log(LoggerType.INFO, "Wrapper " + wrapperClient.getName() + " disconnected!");
-                wrapperClientManager.removeWrapper(wrapperClient);
-                return;
-            }
-        }
+        wrapperClientManager.getWrapperClients().stream().filter(key -> sameChannel(key.getConnection(), ctx)).forEach(it -> {
+            Logger.log(LoggerType.INFO, "Wrapper " + it.getName() + " disconnected!");
+            wrapperClientManager.removeWrapper(it);
+        });
 
         try {
-            for (IGameServer o : gameServerManager.getGameServers().get()) {
-                SimpleGameServer gameServer = (SimpleGameServer) o;
-                if (gameServer.getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())) {
-                    Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-                        ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() + "!");
-                    gameServerManager.unregisterGameServer(gameServer);
-                    return;
-                }
-            }
+            gameServerManager.getGameServers().get().stream().filter(key -> sameChannel(((SimpleGameServer) key).getCtx(), ctx)).forEach(key -> {
+                Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + key.getName() +
+                    ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() + "!");
+                gameServerManager.unregisterGameServer(key);
+            });
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean sameChannel(ChannelHandlerContext ct, ChannelHandlerContext ctx){
+        return ct.channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText());
     }
 
 

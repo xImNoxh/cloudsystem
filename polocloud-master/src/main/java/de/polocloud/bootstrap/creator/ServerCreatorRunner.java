@@ -27,18 +27,11 @@ public class ServerCreatorRunner implements Runnable {
     public void run() {
 
         while (master.isRunning()) {
-
-            Collection<ITemplate> loadedTemplates = null;
             try {
-                loadedTemplates = templateService.getLoadedTemplates().get();
+                Collection<ITemplate> loadedTemplates = templateService.getLoadedTemplates().get();
+                loadedTemplates.stream().filter(key -> creator.check(key)).forEach(it -> creator.startServer(it));
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
-            }
-
-            for (ITemplate loadedTemplate : loadedTemplates) {
-                if (creator.check(loadedTemplate)) {
-                    creator.startServer(loadedTemplate);
-                }
             }
 
             try {

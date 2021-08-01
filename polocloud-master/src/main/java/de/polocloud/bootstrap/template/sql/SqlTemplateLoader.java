@@ -8,7 +8,6 @@ import java.util.Collection;
 public class SqlTemplateLoader implements ITemplateLoader {
     @Override
     public Collection<ITemplate> loadTemplates() {
-        //TODO
         return null;
     }
 }

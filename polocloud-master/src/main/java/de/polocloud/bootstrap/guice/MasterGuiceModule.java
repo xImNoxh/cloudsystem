@@ -27,7 +27,8 @@ public class MasterGuiceModule extends AbstractModule {
 
     private MasterPubSubManager pubSubManager = new MasterPubSubManager();
 
-    public MasterGuiceModule(MasterConfig masterConfig, Master master, IWrapperClientManager wrapperClientManager, IGameServerManager gameServerManager, ITemplateService templateService, ICloudPlayerManager cloudPlayerManager) {
+    public MasterGuiceModule(MasterConfig masterConfig, Master master, IWrapperClientManager wrapperClientManager,
+                             IGameServerManager gameServerManager, ITemplateService templateService, ICloudPlayerManager cloudPlayerManager) {
         this.masterConfig = masterConfig;
         this.master = master;
         this.wrapperClientManager = wrapperClientManager;

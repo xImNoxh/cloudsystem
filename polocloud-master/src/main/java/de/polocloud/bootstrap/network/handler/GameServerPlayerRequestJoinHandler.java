@@ -42,7 +42,6 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler<Packet> {
             List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]).get()).get();
             IGameServer targetServer = null;
             if (gameServersByTemplate != null) {
-
                 for (IGameServer iGameServer : gameServersByTemplate) {
                     if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
 

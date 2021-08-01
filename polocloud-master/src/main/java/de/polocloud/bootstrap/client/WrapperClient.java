@@ -6,6 +6,7 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
+import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -25,13 +26,11 @@ public class WrapperClient implements IPacketSender {
     public void startServer(IGameServer gameServer) {
         Logger.log(LoggerType.INFO, "Trying to start server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() + ConsoleColors.GRAY.getAnsiCode() + " on " + getName() + ".");
 
-        sendPacket(new MasterRequestServerStartPacket(
-            gameServer.getTemplate().getName(),
-            gameServer.getTemplate().getVersion(), gameServer.getSnowflake(),
-            gameServer.getTemplate().getTemplateType() == TemplateType.PROXY, gameServer.getTemplate().getMaxMemory(),
-            gameServer.getTemplate().getMaxPlayers(), gameServer.getName(), gameServer.getMotd(), gameServer.getTemplate().isStatic()));
-        EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
+        ITemplate template = gameServer.getTemplate();
+        sendPacket(new MasterRequestServerStartPacket(template.getName(), template.getVersion(), gameServer.getSnowflake(),
+            isProxy(template), template.getMaxMemory(), template.getMaxPlayers(), gameServer.getName(), gameServer.getMotd(), template.isStatic()));
 
+        EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
     }
 
     public String getName() {
@@ -45,6 +44,10 @@ public class WrapperClient implements IPacketSender {
 
     public ChannelHandlerContext getConnection() {
         return this.chx;
+    }
+
+    public boolean isProxy(ITemplate template){
+        return template.getTemplateType() == TemplateType.PROXY;
     }
 
 }

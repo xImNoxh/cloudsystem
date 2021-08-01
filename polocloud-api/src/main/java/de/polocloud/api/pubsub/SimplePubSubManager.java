@@ -60,17 +60,9 @@ public class SimplePubSubManager implements IPubSubManager {
 
     @Override
     public void subscribe(String channel, Consumer<PublishPacket> consumer) {
-        List<Consumer<PublishPacket>> channelList;
-        if (subMap.containsKey(channel)) {
-            channelList = subMap.get(channel);
-        } else {
-            channelList = new CopyOnWriteArrayList<>();
-        }
-
+        List<Consumer<PublishPacket>> channelList = subMap.containsKey(channel) ? subMap.get(channel) : new CopyOnWriteArrayList<>();
         channelList.add(consumer);
-
         this.sender.sendPacket(new SubscribePacket(channel));
-
         subMap.put(channel, channelList);
 
     }

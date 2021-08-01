@@ -13,11 +13,8 @@ public class WrapperGuiceModule extends AbstractModule {
         this.masterPort = masterPort;
     }
 
-
     @Override
     protected void configure() {
-
-
         bind(String.class).annotatedWith(Names.named("setting_client_host")).toInstance(this.masterHost);
         bind(int.class).annotatedWith(Names.named("setting_client_port")).toInstance(this.masterPort);
     }

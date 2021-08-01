@@ -55,6 +55,7 @@ public class CollectiveSpigotEvents implements Listener {
 
         if (Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
+            return;
         }
 
         networkClient.sendPacket(new GameServerControlPlayerPacket(player.getUniqueId()));

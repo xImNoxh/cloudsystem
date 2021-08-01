@@ -47,6 +47,7 @@ public class CollectiveProxyEvents implements Listener {
 
         if(CloudPlugin.getInstance().getState().isMaintenance()  && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance") ){
             event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getState().getKickMessage()));
+            return;
         }
 
         MaxPlayerProperty maxPlayerProperty = CloudPlugin.getInstance().getMaxPlayerProperty();

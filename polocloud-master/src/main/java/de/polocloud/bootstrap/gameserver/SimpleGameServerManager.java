@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class SimpleGameServerManager implements IGameServerManager {
 
@@ -27,24 +28,12 @@ public class SimpleGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByName(String name) {
-
-        for (IGameServer iGameServer : gameServerList) {
-            if (iGameServer.getName().equalsIgnoreCase(name)) {
-                return CompletableFuture.completedFuture(iGameServer);
-            }
-        }
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.completedFuture(gameServerList.stream().filter(key -> key.getName().equalsIgnoreCase(name)).findAny().orElse(null));
     }
 
     @Override
     public CompletableFuture<IGameServer> getGameSererBySnowflake(long snowflake) {
-
-        for (IGameServer iGameServer : gameServerList) {
-            if (iGameServer.getSnowflake() == snowflake) {
-                return CompletableFuture.completedFuture(iGameServer);
-            }
-        }
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.completedFuture(gameServerList.stream().filter(key -> key.getSnowflake() == snowflake).findAny().orElse(null));
     }
 
     @Override
@@ -54,33 +43,16 @@ public class SimpleGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<List<IGameServer>> getGameServersByTemplate(ITemplate template) {
-
         if (template == null) {
             return CompletableFuture.completedFuture(null);
         }
-
-        List<IGameServer> result = new ArrayList<>();
-
-        for (IGameServer iGameServer : gameServerList) {
-            if (iGameServer.getTemplate().getName().equalsIgnoreCase(template.getName())) {
-                result.add(iGameServer);
-            }
-        }
-        return CompletableFuture.completedFuture(result);
+        return CompletableFuture.completedFuture(gameServerList.stream().filter(key ->
+            key.getTemplate().getName().equalsIgnoreCase(template.getName())).collect(Collectors.toList()));
     }
 
     @Override
     public CompletableFuture<List<IGameServer>> getGameServersByType(TemplateType type) {
-
-
-        List<IGameServer> result = new ArrayList<>();
-
-        for (IGameServer iGameServer : gameServerList) {
-            if (iGameServer.getTemplate().getTemplateType().equals(type)) {
-                result.add(iGameServer);
-            }
-        }
-        return CompletableFuture.completedFuture(result);
+        return CompletableFuture.completedFuture(gameServerList.stream().filter(key -> key.getTemplate().getTemplateType().equals(type)).collect(Collectors.toList()));
     }
 
     @Override
@@ -92,13 +64,10 @@ public class SimpleGameServerManager implements IGameServerManager {
     public void unregisterGameServer(IGameServer gameServer) {
         gameServerList.remove(gameServer);
         try {
-            for (IGameServer proxyGameServer : getGameServersByType(TemplateType.PROXY).get()) {
-                proxyGameServer.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
-            }
+            getGameServersByType(TemplateType.PROXY).get().forEach(it -> it.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName())));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-
         pubSubManager.publish("polo:event:serverStopped", gameServer.getName());
         EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STOPPING));
 
@@ -107,18 +76,12 @@ public class SimpleGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByConnection(ChannelHandlerContext ctx) {
-
         try {
-            for (IGameServer gameServer : getGameServers().get()) {
-                if (gameServer.getStatus().equals(GameServerStatus.RUNNING) &&
-                    ((SimpleGameServer) gameServer).getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())) {
-                    return CompletableFuture.completedFuture(gameServer);
-                }
-            }
+            return  CompletableFuture.completedFuture(getGameServers().get().stream().filter(key -> key.getStatus().equals(GameServerStatus.RUNNING) &&
+                ((SimpleGameServer) key).getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())).findAny().orElse(null));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-
         return CompletableFuture.completedFuture(null);
     }
 }

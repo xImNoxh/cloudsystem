@@ -32,8 +32,6 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
         SetupBuilder setupBuilder = new SetupBuilder(this);
         Step step = setupBuilder.createStep("What is the name of the new template?");
 
-
-        //TODO get all possible Wrapper names
         step.addStep("What is the minimum amount of services?", isInteger())
             .addStep("What is the maximal amount of services?", isInteger())
             .addStep("What is the amount of max players?", isInteger())

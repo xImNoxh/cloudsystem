@@ -54,71 +54,48 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
 
         EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> {
 
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverStarted", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverStarted", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String serverName = packet.getData();
+                CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
+                    Bukkit.getPluginManager().callEvent(new CloudServerStartedEvent(server)));
+            }));
 
-                    String serverName = packet.getData();
-                    CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
-                        Bukkit.getPluginManager().callEvent(new CloudServerStartedEvent(server)));
-                });
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:templateMaintenanceUpdate", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String templateName = packet.getData();
+                CloudExecutor.getInstance().getTemplateService().getTemplateByName(templateName).thenAccept(template ->
+                    Bukkit.getPluginManager().callEvent(new TemplateMaintenanceUpdateEvent(template)));
+            }));
 
-            });
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverStopped", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String serverName = packet.getData();
+                CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
+                    Bukkit.getPluginManager().callEvent(new CloudServerStoppedEvent(server)));
+            }));
 
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:templateMaintenanceUpdate", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
-                    String templateName = packet.getData();
-                    CloudExecutor.getInstance().getTemplateService().getTemplateByName(templateName).thenAccept(template ->
-                        Bukkit.getPluginManager().callEvent(new TemplateMaintenanceUpdateEvent(template)));
-                });
-            });
-
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverStopped", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
-
-                    String serverName = packet.getData();
-                    CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
-                        Bukkit.getPluginManager().callEvent(new CloudServerStoppedEvent(server)));
-                });
-
-            });
-
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverUpdated", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
-
-                    String serverName = packet.getData();
-                    CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
-                        Bukkit.getPluginManager().callEvent(new CloudServerUpdatedEvent(server)));
-                });
-
-            });
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:serverUpdated", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String serverName = packet.getData();
+                CloudExecutor.getInstance().getGameServerManager().getGameServerByName(serverName).thenAccept(server ->
+                    Bukkit.getPluginManager().callEvent(new CloudServerUpdatedEvent(server)));
+            }));
 
 
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerJoin", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
-                    String playerName = packet.getData();
-                    Bukkit.getPluginManager().callEvent(new CloudPlayerJoinNetworkEvent(playerName));
-                });
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerJoin", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String playerName = packet.getData();
+                Bukkit.getPluginManager().callEvent(new CloudPlayerJoinNetworkEvent(playerName));
+            }));
 
-            });
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerQuit", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String playerName = packet.getData();
+                Bukkit.getPluginManager().callEvent(new CloudPlayerQuitNetworkEvent(playerName));
+            }));
 
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerQuit", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
-                    String playerName = packet.getData();
-                    Bukkit.getPluginManager().callEvent(new CloudPlayerQuitNetworkEvent(playerName));
-                });
-
-            });
-
-            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerSwitch", packet -> {
-                Bukkit.getScheduler().runTask(this, () -> {
-                    String[] data = packet.getData().split(",");
-                    String playerName = data[0];
-                    String to = data[1];
-                    String from = data[2];
-                    Bukkit.getPluginManager().callEvent(new CloudPlayerSwitchServerEvent(playerName, from, to));
-                });
-
-            });
+            CloudExecutor.getInstance().getPubSubManager().subscribe("polo:event:playerSwitch", packet -> Bukkit.getScheduler().runTask(this, () -> {
+                String[] data = packet.getData().split(",");
+                String playerName = data[0];
+                String to = data[1];
+                String from = data[2];
+                Bukkit.getPluginManager().callEvent(new CloudPlayerSwitchServerEvent(playerName, from, to));
+            }));
 
 
         }, ChannelActiveEvent.class);

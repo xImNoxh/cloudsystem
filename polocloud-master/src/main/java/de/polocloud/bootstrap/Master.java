@@ -62,7 +62,6 @@ public class Master implements IStartable, ITerminatable {
     public Master() {
         instance = this;
 
-
         this.wrapperClientManager = new SimpleWrapperClientManager();
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();

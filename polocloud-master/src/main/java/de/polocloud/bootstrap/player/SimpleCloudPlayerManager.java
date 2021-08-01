@@ -30,26 +30,12 @@ public class SimpleCloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(String name) {
-
-        for (ICloudPlayer cloudPlayer : this.cloudPlayers) {
-            if (cloudPlayer.getName().equalsIgnoreCase(name)) {
-                return CompletableFuture.completedFuture(cloudPlayer);
-            }
-        }
-
-        return null;
+        return CompletableFuture.completedFuture(this.cloudPlayers.stream().filter(key -> key.getName().equalsIgnoreCase(name)).findAny().orElse(null));
     }
 
     @Override
     public CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid) {
-
-        for (ICloudPlayer cloudPlayer : this.cloudPlayers) {
-            if (cloudPlayer.getUUID().toString().equalsIgnoreCase(uuid.toString())) {
-                return CompletableFuture.completedFuture(cloudPlayer);
-            }
-        }
-
-        return null;
+        return CompletableFuture.completedFuture(this.cloudPlayers.stream().filter(key -> key.getUUID().equals(uuid)).findAny().orElse(null));
     }
 
     @Override

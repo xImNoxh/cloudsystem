@@ -34,23 +34,20 @@ public abstract class ServerCreator {
         }
 
         long id = snowflake.nextId();
-        SimpleGameServer gameServer = new SimpleGameServer(template.getName() + "-" + generateServerId(template), GameServerStatus.PENDING, null, id, template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
-        gameServerManager.registerGameServer(gameServer);
+        String name = template.getName() + "-" + generateServerId(template);
 
+        SimpleGameServer gameServer = new SimpleGameServer(name, GameServerStatus.PENDING, null, id, template,
+            System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
+        gameServerManager.registerGameServer(gameServer);
         client.startServer(gameServer);
     }
 
     private int generateServerId(ITemplate template) {
         int currentId = 1;
-
         boolean found = false;
-
         while (!found) {
-
             try {
-                IGameServer gameServerByName = gameServerManager.getGameServerByName(template.getName() + "-" + currentId).get();
-
-                if (gameServerByName == null) {
+                if (gameServerManager.getGameServerByName(template.getName() + "-" + currentId).get() == null) {
                     found = true;
                 } else {
                     currentId++;
@@ -59,31 +56,21 @@ public abstract class ServerCreator {
                 e.printStackTrace();
             }
         }
-
         return currentId;
     }
 
     public abstract boolean check(ITemplate template);
 
     protected WrapperClient getSuitableWrapper(ITemplate template) {
-
-
         List<WrapperClient> wrapperClients = wrapperClientManager.getWrapperClients();
 
-        if (wrapperClients.isEmpty()) {
-            return null;
-        }
+        if (wrapperClients.isEmpty()) return null;
 
         List<WrapperClient> suitableWrappers = new ArrayList<>();
 
-        for (WrapperClient wrapperClient : wrapperClients) {
-            if (Arrays.asList(template.getWrapperNames()).contains(wrapperClient.getName())) {
-                suitableWrappers.add(wrapperClient);
-            }
-        }
-        if (suitableWrappers.isEmpty()) {
-            return null;
-        }
+        wrapperClients.stream().filter(key -> Arrays.asList(template.getWrapperNames()).contains(key.getName())).forEach(it -> suitableWrappers.add(it));
+
+        if (suitableWrappers.isEmpty()) return null;
         return suitableWrappers.get(ThreadLocalRandom.current().nextInt(suitableWrappers.size()));
 
     }

@@ -70,25 +70,17 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
 
             ITemplate template = gameServer.getTemplate();
             if (template.getTemplateType() == TemplateType.MINECRAFT) {
-
                 try {
-                    List<IGameServer> proxyGameServerList = gameServerManager.getGameServersByType(TemplateType.PROXY).get();
-
-
-                    for (IGameServer proxyGameServer : proxyGameServerList) {
-                        if (proxyGameServer.getStatus() == GameServerStatus.RUNNING) {
-                            proxyGameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(),
-                                gameServer.getSnowflake())); //TODO update host
-                        }
-                    }
+                    gameServerManager.getGameServersByType(TemplateType.PROXY).get().stream().filter(key -> key.getStatus() == GameServerStatus.RUNNING).forEach(it -> {
+                        it.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake()));
+                        //TODO update host
+                    });
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    List<IGameServer> serverList = gameServerManager.getGameServersByType(TemplateType.MINECRAFT).get();
-
-                    for (IGameServer iGameServer : serverList) {
+                    for (IGameServer iGameServer : gameServerManager.getGameServersByType(TemplateType.MINECRAFT).get()) {
                         gameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", iGameServer.getPort(),
                             iGameServer.getSnowflake())); //TODO update host
                     }
@@ -99,8 +91,6 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
 
             pubSubManager.publish("polo:event:serverStarted", gameServer.getName());
             EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
-
-
 
             Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
                 ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() +

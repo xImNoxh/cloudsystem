@@ -196,11 +196,7 @@ public class NetworkPluginRegister extends NetworkRegister {
                     });
                 }
 
-                if (packet.getType() == APIResponseGameServerPacket.Type.SINGLE) {
-                    completableFuture.complete(response.get(0));
-                } else {
-                    completableFuture.complete(response);
-                }
+                completableFuture.complete((packet.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
 
             }
 
@@ -214,15 +210,12 @@ public class NetworkPluginRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 APIResponseTemplatePacket packet = (APIResponseTemplatePacket) obj;
-                UUID requestId = packet.getRequestId();
                 List<ITemplate> response = packet.getResponse().stream().collect(Collectors.toList());
-                CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
-                if (packet.getType() == APIResponseTemplatePacket.Type.SINGLE) {
-                    completableFuture.complete(response.get(0));
-                } else {
-                    completableFuture.complete(response);
-                }
+
+                ResponseHandler.getCompletableFuture(packet.getRequestId(), true).complete(
+                    packet.getType() == APIResponseTemplatePacket.Type.SINGLE ? response.get(0) : response);
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return APIResponseTemplatePacket.class;

@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -40,6 +41,7 @@ public class MasterModuleLoader {
 
                 Class[] interfaces = cl.getInterfaces();
                 boolean isplugin = false;
+
                 for (int y = 0; y < interfaces.length && !isplugin; y++) {
                     if (interfaces[y].equals(Module.class)) {
                         isplugin = true;
@@ -65,27 +67,22 @@ public class MasterModuleLoader {
 
         File[] files = directory.listFiles();
 
-        for (File file : files) {
-            if (file.isFile() && file.exists() && file.getName().endsWith(".jar")) {
-
-                try (JarFile jarFile = new JarFile(file)) {
-                    JarEntry entry = jarFile.getJarEntry("module.json");
-                    if (entry == null) {
-                        throw new FileNotFoundException("Cannot find \"module.json\" file");
-                    }
-                    try (InputStreamReader reader = new InputStreamReader(jarFile.getInputStream(entry))) {
-                        ModuleData module = gson.fromJson(reader, ModuleData.class);
-                        module.setFile(file);
-                        moduleData.add(module);
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+        Arrays.stream(files).filter(key -> key.isFile() && key.exists() && key.getName().endsWith(".jar")).forEach(it -> {
+            try (JarFile jarFile = new JarFile(it)) {
+                JarEntry entry = jarFile.getJarEntry("module.json");
+                if (entry == null) {
+                    throw new FileNotFoundException("Cannot find \"module.json\" file");
+                }
+                try (InputStreamReader reader = new InputStreamReader(jarFile.getInputStream(entry))) {
+                    ModuleData module = gson.fromJson(reader, ModuleData.class);
+                    module.setFile(it);
+                    moduleData.add(module);
                 }
 
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }
-
+        });
         return moduleData;
     }
 

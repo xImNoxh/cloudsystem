@@ -22,10 +22,7 @@ public class SimpleTemplateService implements ITemplateService {
 
     public SimpleTemplateService() {
 
-
-
     }
-
 
     public void load(CloudAPI cloudAPI, TemplateStorage templateStorage){
         this.templateLoader = cloudAPI.getGuice().getInstance(templateStorage.getTemplateLoader());
@@ -46,12 +43,7 @@ public class SimpleTemplateService implements ITemplateService {
 
     @Override
     public CompletableFuture<ITemplate> getTemplateByName(String name){
-        for (ITemplate iTemplate : templateList) {
-            if(iTemplate.getName().equalsIgnoreCase(name)){
-                return CompletableFuture.completedFuture(iTemplate);
-            }
-        }
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.completedFuture(templateList.stream().filter(key -> key.getName().equalsIgnoreCase(name)).findAny().orElse(null));
     }
 
     @Override
