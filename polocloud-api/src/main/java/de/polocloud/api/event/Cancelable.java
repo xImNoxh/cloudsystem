@@ -13,11 +13,11 @@ public abstract class Cancelable {
         this.cancelMessage = cancelMessage;
     }
 
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
-    }
-
     public boolean isCanceled() {
         return canceled;
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
     }
 }

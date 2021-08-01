@@ -14,6 +14,7 @@ public class MasterPlayerRequestJoinResponsePacket extends Packet {
     private long snowflake;
 
     public MasterPlayerRequestJoinResponsePacket() {
+
     }
 
     public MasterPlayerRequestJoinResponsePacket(UUID uuid, String serviceName, long snowflake) {

@@ -7,16 +7,17 @@ import java.io.IOException;
 
 public class GameServerMaxPlayersUpdatePacket extends Packet {
 
-
     private String message;
     private int maxPlayers;
+
+    public GameServerMaxPlayersUpdatePacket() {
+
+    }
 
     public GameServerMaxPlayersUpdatePacket(String message, int maxPlayers) {
         this.message = message;
         this.maxPlayers = maxPlayers;
     }
-
-    public GameServerMaxPlayersUpdatePacket() { }
 
     @Override
     public void write(ByteBuf byteBuf) throws IOException {

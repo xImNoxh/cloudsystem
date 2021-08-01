@@ -4,12 +4,12 @@ import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
-public class RedirectPacket extends Packet{
+public class RedirectPacket extends Packet {
 
     private long snowflake;
     private Packet packet;
 
-    public RedirectPacket(){
+    public RedirectPacket() {
 
     }
 
@@ -18,7 +18,6 @@ public class RedirectPacket extends Packet{
         this.packet = packet;
     }
 
-
     @Override
     public void write(ByteBuf byteBuf) throws IOException {
         byteBuf.writeLong(snowflake);
@@ -26,7 +25,6 @@ public class RedirectPacket extends Packet{
         int packetId = PacketRegistry.getPacketId(packet.getClass());
         byteBuf.writeInt(packetId);
         packet.write(byteBuf);
-
     }
 
     @Override
@@ -42,8 +40,6 @@ public class RedirectPacket extends Packet{
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public Packet getPacket() {
@@ -53,4 +49,5 @@ public class RedirectPacket extends Packet{
     public long getSnowflake() {
         return snowflake;
     }
+    
 }

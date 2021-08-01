@@ -1,6 +1,7 @@
 package de.polocloud.api.network.protocol.packet;
 
-import de.polocloud.api.network.protocol.packet.api.*;
+import de.polocloud.api.network.protocol.packet.api.PublishPacket;
+import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
@@ -30,11 +31,11 @@ public class PacketRegistry {
         packetMap.put(id, packet);
     }
 
-    public static void registerDefaultPackets() {
+    public static void registerDefaultInternalPackets() {
         registerPacket(100, APIResponseGameServerPacket.class);
         registerPacket(101, APIRequestGameServerPacket.class);
 
-        registerPacket(102,  ProxyMotdUpdatePacket.class);
+        registerPacket(102, ProxyMotdUpdatePacket.class);
         registerPacket(103, GameServerControlPlayerPacket.class);
         registerPacket(104, GameServerExecuteCommandPacket.class);
         registerPacket(105, GameServerMaintenanceUpdatePacket.class);

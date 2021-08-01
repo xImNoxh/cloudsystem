@@ -1,6 +1,5 @@
 package de.polocloud.api.network.protocol.packet.api.cloudplayer;
 
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import io.netty.buffer.ByteBuf;
@@ -17,7 +16,7 @@ public class APIResponseCloudPlayerPacket extends Packet {
     private Type type;
 
     public APIResponseCloudPlayerPacket() {
-
+        
     }
 
     public APIResponseCloudPlayerPacket(UUID requestId, List<ICloudPlayer> response, Type type) {
@@ -47,7 +46,7 @@ public class APIResponseCloudPlayerPacket extends Packet {
 
         requestId = UUID.fromString(readString(byteBuf));
         response = new ArrayList<>();
-        int size= byteBuf.readInt();
+        int size = byteBuf.readInt();
 
         for (int i = 0; i < size; i++) {
             ICloudPlayer cloudPlayer = readCloudPlayer(byteBuf);

@@ -2,7 +2,6 @@ package de.polocloud.api.config.saver;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.inject.Inject;
 import de.polocloud.api.config.IConfig;
 
 import java.io.File;
@@ -16,7 +15,6 @@ public class SimpleConfigSaver implements IConfigSaver {
     @Override
     public void save(IConfig config, File file) {
         try {
-
             FileWriter writer = new FileWriter(file);
             gson.toJson(config, writer);
             writer.flush();
@@ -24,6 +22,5 @@ public class SimpleConfigSaver implements IConfigSaver {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

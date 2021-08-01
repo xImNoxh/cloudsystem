@@ -11,6 +11,7 @@ public class WrapperLoginPacket extends Packet {
     private String key;
 
     public WrapperLoginPacket() {
+        
     }
 
     public WrapperLoginPacket(String name, String key) {

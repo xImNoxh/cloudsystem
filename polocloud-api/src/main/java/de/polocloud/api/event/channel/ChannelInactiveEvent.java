@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class ChannelInactiveEvent implements CloudEvent {
 
-    private ChannelHandlerContext chx;
+    private final ChannelHandlerContext chx;
 
     public ChannelInactiveEvent(ChannelHandlerContext chx) {
         this.chx = chx;

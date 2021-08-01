@@ -4,8 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.commands.CommandPool;
-import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.api.commands.types.ConsoleExecutor;
 
 public class PoloCloudAPI extends CloudAPI {
@@ -37,4 +37,5 @@ public class PoloCloudAPI extends CloudAPI {
     public ICommandExecutor getConsoleExecutor() {
         return commandSender;
     }
+
 }

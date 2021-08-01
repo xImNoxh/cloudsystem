@@ -49,5 +49,4 @@ public class GameServerPlayerUpdatePacket extends Packet {
         return uuid;
     }
 
-
 }

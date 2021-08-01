@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public class APIRequestCloudPlayerPacket extends Packet {
 
-
     private UUID requestId;
     private Action action;
     private String value;
@@ -51,13 +50,11 @@ public class APIRequestCloudPlayerPacket extends Packet {
     }
 
     public enum Action {
-
         ALL,
         BY_NAME,
         BY_UUID,
         ONLINE_UUID,
-        ONLINE_NAME
-        ;
+        ONLINE_NAME;
     }
 
 }
