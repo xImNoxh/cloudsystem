@@ -13,7 +13,6 @@ import de.polocloud.plugin.listener.CollectiveSpigotEvents;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 import de.polocloud.plugin.protocol.register.NetworkSpigotRegister;
-import de.polocloud.plugin.scheduler.spigot.StatisticSpigotDeviceRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,10 +43,6 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
         new NetworkPluginRegister(networkClient, this);
     }
 
-    @Override
-    public void initStatisticChannel(NetworkClient networkClient) {
-        new StatisticSpigotDeviceRunnable(this, networkClient);
-    }
 
     @Override
     public void registerEvents(NetworkClient networkClient) {
