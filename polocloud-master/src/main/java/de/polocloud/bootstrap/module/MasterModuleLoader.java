@@ -11,10 +11,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +21,15 @@ import java.util.jar.JarFile;
 
 public class MasterModuleLoader {
 
-    private Gson gson = new Gson();
+    private Gson gson;
+    private ModuleCache cache;
+    private File file;
 
-    private File file = new File("modules/");
+    public MasterModuleLoader(ModuleCache cache) {
+        this.gson = new Gson();
+        this.cache = cache;
+        this.file = new File("modules/");
+    }
 
     public void loadModules() {
         if (!file.exists()) {
@@ -37,7 +41,9 @@ public class MasterModuleLoader {
         for (ModuleData data : moduleData) {
             try {
                 Class<?> aClass = getClass().getClassLoader().loadClass(Module.class.getName());
-                Class<?> cl = new URLClassLoader(new URL[]{data.getFile().toURL()}, Thread.currentThread().getContextClassLoader()).loadClass(data.getMain());
+                ModuleClassLoader loader = new ModuleClassLoader(new URL[]{data.getFile().toURL()}, Thread.currentThread().getContextClassLoader(), cache);
+
+                Class<?> cl = loader.loadClass(data.getMain());
 
                 Class[] interfaces = cl.getInterfaces();
                 boolean isplugin = false;
@@ -47,10 +53,12 @@ public class MasterModuleLoader {
                         isplugin = true;
                     }
                 }
+
                 Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
+                cache.put(module, loader);
                 module.onLoad();
                 Logger.log(LoggerType.INFO, "Module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() +
-                    ConsoleColors.GRAY.getAnsiCode() +" Loaded (Author: " + data.getAuthor() + ")");
+                    ConsoleColors.GRAY.getAnsiCode() + " Loaded (Author: " + data.getAuthor() + ")");
             } catch (MalformedURLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

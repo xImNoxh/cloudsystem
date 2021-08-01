@@ -13,6 +13,11 @@ public class PartyBootstrap extends Module {
     }
 
     @Override
+    public void onReload() {
+
+    }
+
+    @Override
     public void onShutdown() {
 
     }

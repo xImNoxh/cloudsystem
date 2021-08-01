@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.template;
 
-import com.google.inject.Inject;
+import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.gameserver.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
@@ -29,7 +30,7 @@ public class SimpleTemplate implements ITemplate {
 
     private String[] wrapperNames;
 
-    public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, int serverCreateThreshold, String[] wrapperNames){
+    public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, int serverCreateThreshold, String[] wrapperNames) {
         this.name = name;
         this.staticServer = staticServer;
         this.maxServerCount = maxServerCount;
@@ -87,7 +88,9 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
+
         MasterPubSubManager.getInstance().publish("polo:event:templateMaintenanceUpdate", name);
+        EventRegistry.fireEvent(new CloudGameServerMaintenanceUpdateEvent(this));
     }
 
     @Override

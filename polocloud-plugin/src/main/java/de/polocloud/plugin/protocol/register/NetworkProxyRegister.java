@@ -4,7 +4,6 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -35,7 +34,6 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerMasterRequestServerListUpdatePacket();
         registerMasterPlayerRequestResponsePacket();
         registerGameServerUnregisterPacket();
-        registerCloudMotdUpdatePacket();
         registerMasterPlayerKickPacket();
         registerMasterSendMessagePacket();
         registerMasterSendPlayerToPacket();
@@ -43,7 +41,7 @@ public class NetworkProxyRegister extends NetworkRegister {
         registerTablistUpdatePacket();
     }
 
-    private void registerPermissionCheckPacket(NetworkClient networkClient){
+    private void registerPermissionCheckPacket(NetworkClient networkClient) {
         getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
@@ -52,6 +50,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                 if (player != null) packet.setResponse(player.hasPermission(packet.getPermission()));
                 networkClient.sendPacket(packet);
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return PermissionCheckResponsePacket.class;
@@ -59,16 +58,17 @@ public class NetworkProxyRegister extends NetworkRegister {
         });
     }
 
-    public void registerTablistUpdatePacket(){
+    public void registerTablistUpdatePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 ProxyTablistUpdatePacket packet = (ProxyTablistUpdatePacket) obj;
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
-                if(player != null) {
+                if (player != null) {
                     player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
                 }
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return ProxyTablistUpdatePacket.class;
@@ -87,6 +87,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                     ProxyServer.getInstance().getPlayer(uuid).sendMessage(message);
                 }
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerSendMessagePacket.class;
@@ -110,6 +111,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                     }
                 }
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerSendToServerPacket.class;
@@ -130,6 +132,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                     ProxyServer.getInstance().getPlayer(uuid).disconnect(message);
                 }
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerKickPacket.class;
@@ -144,6 +147,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                 GameServerUnregisterPacket packet = (GameServerUnregisterPacket) obj;
                 ProxyServer.getInstance().getServers().remove(packet.getName());
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return GameServerUnregisterPacket.class;
@@ -161,6 +165,7 @@ public class NetworkProxyRegister extends NetworkRegister {
                     "PoloCloud", false
                 ));
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterRequestServerListUpdatePacket.class;
@@ -182,23 +187,10 @@ public class NetworkProxyRegister extends NetworkRegister {
                 }
                 loginEvent.completeIntent(plugin);
             }
+
             @Override
             public Class<? extends Packet> getPacketClass() {
                 return MasterPlayerRequestJoinResponsePacket.class;
-            }
-        });
-    }
-
-    public void registerCloudMotdUpdatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                ProxyMotdUpdatePacket packet = (ProxyMotdUpdatePacket) obj;
-
-            }
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return ProxyMotdUpdatePacket.class;
             }
         });
     }

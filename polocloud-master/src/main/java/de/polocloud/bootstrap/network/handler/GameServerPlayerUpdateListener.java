@@ -48,9 +48,8 @@ public class GameServerPlayerUpdateListener extends IPacketHandler<Packet> {
 
 
             ICloudPlayer cloudPlayer;
-            boolean isOnline = false;
-            if (playerManager.isPlayerOnline(uuid).get()) {
-                isOnline = true;
+            boolean isOnline;
+            if (isOnline = playerManager.isPlayerOnline(uuid).get()) {
                 cloudPlayer = playerManager.getOnlinePlayer(uuid).get();
             } else {
                 cloudPlayer = new SimpleCloudPlayer(name, uuid);
@@ -75,8 +74,8 @@ public class GameServerPlayerUpdateListener extends IPacketHandler<Packet> {
             IGameServer to = cloudPlayer.getMinecraftServer();
 
             if (isOnline) {
-                pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
-                pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
+                pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());;
+                if(from != null) pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
                 EventRegistry.fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
             }
 

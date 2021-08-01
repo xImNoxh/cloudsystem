@@ -16,9 +16,14 @@ public class CloudModule extends Module {
         instance = this;
         hubConfig = loadHubConfig();
 
-        if(hubConfig.getUse()) {
+        if (hubConfig.getUse()) {
             CloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(HubCloudCommand.class));
         }
+    }
+
+    @Override
+    public void onReload() {
+
     }
 
     @Override
@@ -28,7 +33,7 @@ public class CloudModule extends Module {
 
     public HubConfig loadHubConfig() {
         File configPath = new File("modules/hub/");
-        if(!configPath.exists()) configPath.mkdirs();
+        if (!configPath.exists()) configPath.mkdirs();
         File configFile = new File("modules/hub/config.json");
         HubConfig hubConfig = getConfigLoader().load(HubConfig.class, configFile);
         getConfigSaver().save(hubConfig, configFile);

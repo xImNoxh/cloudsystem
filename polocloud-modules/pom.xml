@@ -13,19 +13,18 @@
   <packaging>pom</packaging>
   <modules>
     <module>polocloud-hubcommand-module</module>
-      <module>polocloud-party-module</module>
-      <module>polocloud-notify-module</module>
-      <module>polocloud-whitelist-module</module>
-      <module>polocloud-tablist-module</module>
+    <module>polocloud-party-module</module>
+    <module>polocloud-notify-module</module>
+    <module>polocloud-whitelist-module</module>
+    <module>polocloud-tablist-module</module>
+    <module>polocloud-permission-module</module>
+    <module>polocloud-proxy-module</module>
   </modules>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
-
-
-
 
 
 </project>

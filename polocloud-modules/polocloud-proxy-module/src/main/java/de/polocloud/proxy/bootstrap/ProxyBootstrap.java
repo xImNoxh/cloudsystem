@@ -11,6 +11,11 @@ public class ProxyBootstrap extends Module {
     }
 
     @Override
+    public void onReload() {
+
+    }
+
+    @Override
     public void onShutdown() {
 
     }

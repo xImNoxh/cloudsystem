@@ -25,9 +25,7 @@ public class EventRegistry {
 
     public static void fireEvent(CloudEvent event) {
         if (eventMap.containsKey(event.getClass())) {
-
             List<EventHandler<?>> eventHandlers = eventMap.get(event.getClass());
-
             for (EventHandler eventHandler : eventHandlers) {
                 eventHandler.handleEvent(event);
             }

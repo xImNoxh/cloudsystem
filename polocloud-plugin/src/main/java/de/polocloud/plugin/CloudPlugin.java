@@ -1,10 +1,10 @@
 package de.polocloud.plugin;
 
-import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
+import de.polocloud.plugin.protocol.motd.MotdUpdateCache;
 import de.polocloud.plugin.protocol.players.MaxPlayerProperty;
 
 public class CloudPlugin {
@@ -14,6 +14,7 @@ public class CloudPlugin {
     private MaintenanceState state;
     private MaxPlayerProperty maxPlayerProperty;
 
+    private MotdUpdateCache motdUpdateCache;
 
     private BootstrapFunction bootstrapFunction;
     private NetworkClient networkClient;
@@ -23,7 +24,9 @@ public class CloudPlugin {
         instance = this;
 
         this.bootstrapFunction = bootstrapFunction;
-        maxPlayerProperty = new MaxPlayerProperty(this.bootstrapFunction);
+        this.maxPlayerProperty = new MaxPlayerProperty(this.bootstrapFunction);
+
+        this.motdUpdateCache = new MotdUpdateCache();
 
         this.networkClient = new NetworkClient();
         this.networkClient.connect(bootstrapFunction.getNetworkPort());
@@ -55,5 +58,9 @@ public class CloudPlugin {
 
     public MaxPlayerProperty getMaxPlayerProperty() {
         return maxPlayerProperty;
+    }
+
+    public MotdUpdateCache getMotdUpdateCache() {
+        return motdUpdateCache;
     }
 }
