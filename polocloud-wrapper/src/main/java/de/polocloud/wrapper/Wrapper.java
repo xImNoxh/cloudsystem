@@ -47,7 +47,9 @@ public class Wrapper implements IStartable, ITerminatable {
 
         checkAndDeleteTmpFolder();
 
-        checkPoloCloudAPI();
+        //Removed for Development purposes!
+        //Before release, please remove this comment!
+        //checkPoloCloudAPI();
 
         String[] masterAddress = config.getMasterAddress().split(":");
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));

@@ -70,6 +70,11 @@ public abstract class Packet {
             }
 
             @Override
+            public void sendToFallback() {
+                throw new NotImplementedException();
+            }
+
+            @Override
             public String getName() {
                 return name;
             }
@@ -132,6 +137,11 @@ public abstract class Packet {
             }
 
             @Override
+            public void setStatus(GameServerStatus status) {
+                throw new NotImplementedException();
+            }
+
+            @Override
             public long getSnowflake() {
                 return snowflake;
             }
@@ -143,11 +153,6 @@ public abstract class Packet {
 
             @Override
             public List<ICloudPlayer> getCloudPlayers() {
-                throw new NotImplementedException();
-            }
-
-            @Override
-            public void setStatus(GameServerStatus status) {
                 throw new NotImplementedException();
             }
 
@@ -178,18 +183,13 @@ public abstract class Packet {
 
             @Override
             public void stop() {
-                sendPacket(new GameServerShutdownPacket());
+                sendPacket(new GameServerShutdownPacket(name));
             }
 
             @Override
             public void sendPacket(Packet packet) {
                 //TODO
                 throw new NotImplementedException();
-            }
-
-            @Override
-            public void setMotd(String motd) {
-                sendPacket(new GameServerMotdUpdatePacket(motd));
             }
 
             @Override
@@ -201,6 +201,12 @@ public abstract class Packet {
             public int getMaxPlayers() {
                 return maxPlayers;
             }
+
+            @Override
+            public void setMotd(String motd) {
+                sendPacket(new GameServerMotdUpdatePacket(motd));
+            }
+
 
             @Override
             public void setMaxPlayers(int players) {
@@ -268,12 +274,6 @@ public abstract class Packet {
             }
 
             @Override
-            public void setMaxPlayers(int maxPlayers) {
-                //TODO send packet to server ? or block ?
-                throw new NotImplementedException();
-            }
-
-            @Override
             public int getMaxMemory() {
                 return maxMemory;
             }
@@ -286,6 +286,16 @@ public abstract class Packet {
             @Override
             public boolean isMaintenance() {
                 return maintenance;
+            }            @Override
+            public void setMaxPlayers(int maxPlayers) {
+                //TODO send packet to server ? or block ?
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public void setMaintenance(boolean state) {
+                //TODO
+                throw new NotImplementedException();
             }
 
             @Override
@@ -305,12 +315,6 @@ public abstract class Packet {
             }
 
             @Override
-            public void setMaintenance(boolean state) {
-                //TODO
-                throw new NotImplementedException();
-            }
-
-            @Override
             public String[] getWrapperNames() {
                 return wrapperNames;
             }
@@ -324,6 +328,10 @@ public abstract class Packet {
             public String getName() {
                 return name;
             }
+
+
+
+
         };
 
     }

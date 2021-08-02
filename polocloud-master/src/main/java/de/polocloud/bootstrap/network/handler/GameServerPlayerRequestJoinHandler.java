@@ -1,7 +1,6 @@
 package de.polocloud.bootstrap.network.handler;
 
 import com.google.inject.Inject;
-import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
@@ -10,15 +9,14 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerReque
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class GameServerPlayerRequestJoinHandler extends IPacketHandler<Packet> {
 
@@ -38,35 +36,19 @@ public class GameServerPlayerRequestJoinHandler extends IPacketHandler<Packet> {
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         GameServerPlayerRequestJoinPacket packet = (GameServerPlayerRequestJoinPacket) obj;
         UUID uuid = packet.getUuid();
-        try {
-            List<IGameServer> gameServersByTemplate = gameServerManager.getGameServersByTemplate(templateService.getTemplateByName(config.getProperties().getFallback()[0]).get()).get();
-            IGameServer targetServer = null;
-            if (gameServersByTemplate != null) {
-                for (IGameServer iGameServer : gameServersByTemplate) {
-                    if (iGameServer.getStatus() == GameServerStatus.RUNNING) {
-
-                        if (targetServer == null) {
-                            targetServer = iGameServer;
-                        } else {
-                            if (targetServer.getCloudPlayers().size() >= iGameServer.getCloudPlayers().size()) {
-                                targetServer = iGameServer;
-                            }
-                        }
-                    }
-                    if (targetServer == null) {
-                        ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
-                        return;
-                    }
-                }
-            } else {
-                ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
-                return;
-            }
-            ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, targetServer.getName(), targetServer.getSnowflake()));
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        List<IGameServer> searchedServer = Master.getInstance().getFallbackSearchService().searchForTemplate(null, false);
+        if (searchedServer == null || searchedServer.isEmpty()) {
+            ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
+            return;
         }
 
+        IGameServer gameServer = searchedServer.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
+
+        if (gameServer == null) {
+            ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, "", -1));
+            return;
+        }
+        ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, gameServer.getName(), gameServer.getSnowflake()));
     }
 
     @Override

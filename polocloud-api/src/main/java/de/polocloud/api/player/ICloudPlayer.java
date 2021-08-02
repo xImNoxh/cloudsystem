@@ -25,5 +25,7 @@ public interface ICloudPlayer extends INamable, Serializable, ICommandExecutor {
     CompletableFuture<Boolean> hasPermissions(String permission);
 
     void kick(String message);
-    
+
+    void sendToFallback();
+
 }

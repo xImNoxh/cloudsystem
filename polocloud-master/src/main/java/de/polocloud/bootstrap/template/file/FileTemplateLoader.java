@@ -7,11 +7,12 @@ import de.polocloud.api.template.ITemplateLoader;
 import de.polocloud.bootstrap.template.SimpleTemplate;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class FileTemplateLoader implements ITemplateLoader {
 
@@ -33,15 +34,13 @@ public class FileTemplateLoader implements ITemplateLoader {
 
         for (File file : baseDir.listFiles()) {
             try {
-                if(file.isFile()){
+                if (file.isFile()) {
                     templates.add(loadTemplate(file));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-
         return templates;
     }
 

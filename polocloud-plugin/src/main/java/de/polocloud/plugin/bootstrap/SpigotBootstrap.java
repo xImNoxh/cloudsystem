@@ -101,15 +101,16 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
     @Override
     public void shutdown() {
         new Thread(() -> {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            long started = System.currentTimeMillis();
+            while (Bukkit.getOnlinePlayers().size() != 0) {
+                //If the server is stuck with moving one player after 10 seconds it will automaticly shutdown
+                if ((System.currentTimeMillis() - started) > 10000) {
+                    Bukkit.shutdown();
+                    break;
+                }
             }
-            System.exit(-1);
+            Bukkit.shutdown();
         }).start();
-
-        Bukkit.shutdown();
     }
 
     public CommandReader getCommandReader() {

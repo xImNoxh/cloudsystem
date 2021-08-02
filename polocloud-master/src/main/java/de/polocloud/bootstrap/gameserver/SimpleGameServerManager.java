@@ -6,7 +6,6 @@ import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
@@ -70,14 +69,12 @@ public class SimpleGameServerManager implements IGameServerManager {
         }
         pubSubManager.publish("polo:event:serverStopped", gameServer.getName());
         EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STOPPING));
-
-
     }
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByConnection(ChannelHandlerContext ctx) {
         try {
-            return  CompletableFuture.completedFuture(getGameServers().get().stream().filter(key -> key.getStatus().equals(GameServerStatus.RUNNING) &&
+            return CompletableFuture.completedFuture(getGameServers().get().stream().filter(key -> key.getStatus().equals(GameServerStatus.RUNNING) &&
                 ((SimpleGameServer) key).getCtx().channel().id().asLongText().equalsIgnoreCase(ctx.channel().id().asLongText())).findAny().orElse(null));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

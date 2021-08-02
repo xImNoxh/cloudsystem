@@ -8,6 +8,7 @@ import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendMessagePa
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.bootstrap.Master;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +29,6 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         this.name = name;
         this.uuid = uuid;
     }
-
 
     @Override
     public String getName() {
@@ -88,5 +88,15 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     @Override
     public void kick(String message) {
         getProxyServer().sendPacket(new MasterPlayerKickPacket(getUUID(), message));
+    }
+
+    @Override
+    public void sendToFallback() {
+        IGameServer gameServer = Master.getInstance().getFallbackSearchService().searchForGameServerWithCurrentServer(Master.getInstance().getFallbackSearchService().searchForTemplate(this, false), getMinecraftServer());
+        if (gameServer == null) {
+            kick("§cThe server you were on went down, but no fallback server was found!");
+            return;
+        }
+        sendTo(gameServer);
     }
 }
