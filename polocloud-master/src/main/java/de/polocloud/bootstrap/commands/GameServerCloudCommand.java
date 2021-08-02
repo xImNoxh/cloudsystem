@@ -77,7 +77,7 @@ public class GameServerCloudCommand extends CloudCommand {
                 WrapperClient wrapperClient = optionalWrapperClient.get();
 
                 long id = snowflake.nextId();
-                SimpleGameServer gameServer = new SimpleGameServer(templateName + "-" + generateServerId(template),
+                SimpleGameServer gameServer = new SimpleGameServer(template.getName() + "-" + generateServerId(template),
                     GameServerStatus.PENDING, null, id, template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                 gameServerManager.registerGameServer(gameServer);
                 wrapperClient.startServer(gameServer);

@@ -9,7 +9,6 @@ import java.util.LinkedList;
 public class Properties implements IConfig {
 
     private String wrapperKey = "--Polo--";
-    private String[] fallback = new String[]{"Lobby"};
     private boolean logPlayerConnections = true;
     private int maxSimultaneouslyStartingTemplates = 2;
     private int port = 8869;
@@ -29,10 +28,6 @@ public class Properties implements IConfig {
 
     public String getWrapperKey() {
         return wrapperKey;
-    }
-
-    public String[] getFallback() {
-        return fallback;
     }
 
     public LinkedList<FallbackProperty> getFallbackProperties() {

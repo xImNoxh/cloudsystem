@@ -1,5 +1,6 @@
 package de.polocloud.plugin.listener;
 
+import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
@@ -29,6 +30,12 @@ public class CollectiveProxyEvents implements Listener {
         this.networkLoginCache = networkLoginCache;
 
         ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
+    }
+
+    @EventHandler
+    public void handle(ServerKickEvent event) {
+        event.setCancelled(true);
+        networkClient.sendPacket(new APIRequestPlayerMoveFallbackPacket(event.getPlayer().getName()));
     }
 
     @EventHandler

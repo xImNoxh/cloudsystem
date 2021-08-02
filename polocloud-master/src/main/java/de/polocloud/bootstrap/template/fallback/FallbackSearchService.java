@@ -3,6 +3,8 @@ package de.polocloud.bootstrap.template.fallback;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.logger.log.Logger;
@@ -25,7 +27,6 @@ public class FallbackSearchService {
     public List<IGameServer> searchForTemplate(ICloudPlayer cloudPlayer, boolean hubCommand) {
         try {
             for (FallbackProperty fallbackProperty : masterConfig.getProperties().getFallbackProperties()) {
-                //Checking the permission of the player
                 if ((cloudPlayer == null && !fallbackProperty.getFallbackPermission().equals(""))) {
                     continue;
                 }
@@ -34,15 +35,23 @@ public class FallbackSearchService {
                     continue;
                 }
 
-                //Get all servers of the template
-                List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getGameServersByTemplate(Master.getInstance().getTemplateService().getTemplateByName(fallbackProperty.getTemplateName()).get()).get();
+                ITemplate template = Master.getInstance().getTemplateService().getTemplateByName(fallbackProperty.getTemplateName()).get();
+                if (template.getTemplateType().equals(TemplateType.PROXY)) {
+                    Logger.log(LoggerType.WARNING, "A fallback server in the config.json was a proxy server. A proxy server is not compatible as a fallback server!");
+                    continue;
+                }
+                List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getGameServersByTemplate(template).get();
 
-                //Check if the list with the Servers of the template is empty
                 if (gameServersByTemplate.isEmpty()) {
                     continue;
                 } else {
-                    //Found a template returning
                     gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer.getStatus() == GameServerStatus.RUNNING).collect(Collectors.toList());
+                    if (cloudPlayer != null) {
+                        gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer != cloudPlayer.getMinecraftServer()).collect(Collectors.toList());
+                    }
+                    if (gameServersByTemplate.isEmpty()) {
+                        continue;
+                    }
                     return gameServersByTemplate;
                 }
             }
@@ -60,13 +69,6 @@ public class FallbackSearchService {
             return null;
         }
         return gameServers.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
-    }
-
-    public IGameServer searchForGameServerWithCurrentServer(List<IGameServer> gameServers, IGameServer currentServer) {
-        if (gameServers == null || gameServers.isEmpty()) {
-            return null;
-        }
-        return gameServers.stream().filter(iGameServer -> iGameServer != currentServer).max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
     }
 
     public boolean isOnFallback(ICloudPlayer iCloudPlayer) {
