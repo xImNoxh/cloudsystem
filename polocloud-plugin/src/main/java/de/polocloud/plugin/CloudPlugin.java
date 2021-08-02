@@ -31,7 +31,6 @@ public class CloudPlugin {
         this.networkClient = new NetworkClient();
         this.networkClient.connect(bootstrapFunction.getNetworkPort());
 
-        bootstrapFunction.initStatisticChannel(networkClient);
         bootstrapFunction.registerEvents(networkClient);
         networkRegisterFunction.callNetwork(networkClient);
     }
@@ -44,12 +43,12 @@ public class CloudPlugin {
         return networkClient;
     }
 
-    public void setState(MaintenanceState state) {
-        this.state = state;
-    }
-
     public MaintenanceState getState() {
         return state;
+    }
+
+    public void setState(MaintenanceState state) {
+        this.state = state;
     }
 
     public BootstrapFunction getBootstrapFunction() {
