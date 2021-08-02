@@ -4,6 +4,7 @@ import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
@@ -11,7 +12,6 @@ import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplate
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
@@ -35,7 +35,7 @@ public class PacketRegistry {
         registerPacket(100, APIResponseGameServerPacket.class);
         registerPacket(101, APIRequestGameServerPacket.class);
 
-        registerPacket(102,  GameServerMotdUpdatePacket.class);
+        registerPacket(102, GameServerMotdUpdatePacket.class);
         registerPacket(103, GameServerControlPlayerPacket.class);
         registerPacket(104, GameServerExecuteCommandPacket.class);
         registerPacket(105, GameServerMaintenanceUpdatePacket.class);
@@ -79,6 +79,7 @@ public class PacketRegistry {
 
 
         registerPacket(133, RedirectPacket.class);
+        registerPacket(134, APIRequestPlayerMoveFallbackPacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {

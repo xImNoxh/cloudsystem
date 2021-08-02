@@ -6,19 +6,19 @@ public class HubConfig implements IConfig {
 
     private Boolean use = true;
     private String[] aliases = new String[]{"l", "lobby", "leave"};
-    private String noFallback = "§cEs konnte kein Fallback gefunden werden...";
-    private String alreadyConnected = "§cDu bist bereits auf einer Lobby verbunden!";
+    private String noService = "§cEs wurde kein verfügbarer Fallback Server gefunden!";
+    private String alreadyConnected = "§cDu bist bereits mit einem Fallback Server verbunden!";
 
     public Boolean getUse() {
         return use;
     }
 
-    public String getNoFallback() {
-        return noFallback;
-    }
-
     public String getAlreadyConnected() {
         return alreadyConnected;
+    }
+
+    public String getNoService() {
+        return noService;
     }
 
     public String[] getAliases() {

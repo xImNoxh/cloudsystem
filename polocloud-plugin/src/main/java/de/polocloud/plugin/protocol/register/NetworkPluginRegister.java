@@ -6,6 +6,7 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
@@ -118,6 +119,11 @@ public class NetworkPluginRegister extends NetworkRegister {
                         }
 
                         @Override
+                        public void setStatus(GameServerStatus status) {
+                            throw new NotImplementedException();
+                        }
+
+                        @Override
                         public long getSnowflake() {
                             return gameserver.getSnowflake();
                         }
@@ -130,11 +136,6 @@ public class NetworkPluginRegister extends NetworkRegister {
                         @Override
                         public List<ICloudPlayer> getCloudPlayers() {
                             return gameserver.getCloudPlayers();
-                        }
-
-                        @Override
-                        public void setStatus(GameServerStatus status) {
-                            throw new NotImplementedException();
                         }
 
                         @Override
@@ -164,7 +165,7 @@ public class NetworkPluginRegister extends NetworkRegister {
 
                         @Override
                         public void stop() {
-                            sendPacket(new GameServerShutdownPacket());
+                            sendPacket(new GameServerShutdownPacket(gameserver.getName()));
                         }
 
                         @Override
@@ -173,13 +174,13 @@ public class NetworkPluginRegister extends NetworkRegister {
                         }
 
                         @Override
-                        public void setMotd(String motd) {
-                            sendPacket(new GameServerMotdUpdatePacket(motd));
+                        public String getMotd() {
+                            return gameserver.getMotd();
                         }
 
                         @Override
-                        public String getMotd() {
-                            return gameserver.getMotd();
+                        public void setMotd(String motd) {
+                            sendPacket(new GameServerMotdUpdatePacket(motd));
                         }
 
                         @Override
@@ -256,6 +257,14 @@ public class NetworkPluginRegister extends NetworkRegister {
         getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
+                GameServerShutdownPacket packet = (GameServerShutdownPacket) obj;
+                CloudExecutor.getInstance().getCloudPlayerManager().getAllOnlinePlayers().thenAccept(iCloudPlayers -> {
+                    for (ICloudPlayer iCloudPlayer : iCloudPlayers) {
+                        if (packet.getServerName().equalsIgnoreCase(iCloudPlayer.getMinecraftServer().getName())) {
+                            CloudPlugin.getInstance().getNetworkClient().sendPacket(new APIRequestPlayerMoveFallbackPacket(iCloudPlayer.getName()));
+                        }
+                    }
+                });
                 bootstrapFunction.shutdown();
             }
 

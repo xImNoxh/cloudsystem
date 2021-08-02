@@ -55,6 +55,11 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
+    public void setStatus(GameServerStatus status) {
+        this.status = status;
+    }
+
+    @Override
     public long getSnowflake() {
         return this.snowflake;
     }
@@ -70,17 +75,12 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public void setStatus(GameServerStatus status) {
-        this.status = status;
-    }
-
-    @Override
     public int getPort() {
         return this.port;
     }
 
-    public void setPing(long ping) {
-        this.ping = ping;
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Override
@@ -88,13 +88,8 @@ public class SimpleGameServer implements IGameServer {
         return this.ping;
     }
 
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setCtx(ChannelHandlerContext ctx) {
-        this.ctx = ctx;
+    public void setPing(long ping) {
+        this.ping = ping;
     }
 
     @Override
@@ -118,22 +113,26 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void stop() {
-        sendPacket(new GameServerShutdownPacket());
+        sendPacket(new GameServerShutdownPacket(name));
     }
 
     public ChannelHandlerContext getCtx() {
         return ctx;
     }
 
-    @Override
-    public void setMotd(String motd) {
-        this.motd = motd;
-        sendPacket(new GameServerMotdUpdatePacket(this.motd));
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
     }
 
     @Override
     public String getMotd() {
         return motd;
+    }
+
+    @Override
+    public void setMotd(String motd) {
+        this.motd = motd;
+        sendPacket(new GameServerMotdUpdatePacket(this.motd));
     }
 
     @Override

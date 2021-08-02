@@ -35,31 +35,29 @@ import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
+import de.polocloud.bootstrap.template.fallback.FallbackProperty;
+import de.polocloud.bootstrap.template.fallback.FallbackSearchService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 
 public class Master implements IStartable, ITerminatable {
 
-    private final CloudAPI cloudAPI;
-
-    private SimpleNettyServer nettyServer;
-
     public static Master instance;
-
+    private final CloudAPI cloudAPI;
     private final ITemplateService templateService;
     private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
-
+    private final FallbackSearchService fallbackSearchService;
     private final ModuleCache moduleCache;
     private final MasterModuleLoader moduleLoader;
-
+    private SimpleNettyServer nettyServer;
     private boolean running = false;
-
 
     public Master() {
         instance = this;
@@ -69,9 +67,11 @@ public class Master implements IStartable, ITerminatable {
         this.templateService = new SimpleTemplateService();
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
 
+        MasterConfig masterConfig = loadConfig();
 
-        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(loadConfig(), this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
+        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
+        this.fallbackSearchService = new FallbackSearchService(masterConfig);
         this.moduleCache = new ModuleCache();
         this.moduleLoader = new MasterModuleLoader(moduleCache);
 
@@ -104,6 +104,10 @@ public class Master implements IStartable, ITerminatable {
 
     }
 
+    public static Master getInstance() {
+        return instance;
+    }
+
     private MasterConfig loadConfig() {
 
         File configFile = new File("config.json");
@@ -111,12 +115,16 @@ public class Master implements IStartable, ITerminatable {
 
         MasterConfig masterConfig = configLoader.load(MasterConfig.class, configFile);
 
+        //Sorting the Fallbacks after the FallbackPriority, to make it faster
+        if (!masterConfig.getProperties().getFallbackProperties().isEmpty()) {
+            masterConfig.getProperties().getFallbackProperties().sort(Comparator.comparingInt(FallbackProperty::getPriority));
+        }
+
         IConfigSaver configSaver = new SimpleConfigSaver();
         configSaver.save(masterConfig, configFile);
 
         return masterConfig;
     }
-
 
     @Override
     public void start() {
@@ -138,6 +146,7 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(WrapperRegisterStaticServerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestTemplateHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PermissionCheckResponseHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestPlayerMoveFallbackHandler.class));
 
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(RedirectPacketHandler.class));
 
@@ -166,7 +175,6 @@ public class Master implements IStartable, ITerminatable {
         Logger.log(LoggerType.INFO, "The master is " + ConsoleColors.GREEN.getAnsiCode() + "successfully" + ConsoleColors.GRAY.getAnsiCode() + " started.");
     }
 
-
     @Override
     public boolean terminate() {
         this.running = false;
@@ -175,10 +183,6 @@ public class Master implements IStartable, ITerminatable {
 
     public boolean isRunning() {
         return running;
-    }
-
-    public static Master getInstance() {
-        return instance;
     }
 
     public IGameServerManager getGameServerManager() {
@@ -211,5 +215,9 @@ public class Master implements IStartable, ITerminatable {
 
     public ModuleCache getModuleCache() {
         return moduleCache;
+    }
+
+    public FallbackSearchService getFallbackSearchService() {
+        return fallbackSearchService;
     }
 }
