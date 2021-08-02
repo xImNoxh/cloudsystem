@@ -16,7 +16,7 @@ public class CloudReloadCommand extends CloudCommand {
         long start = System.currentTimeMillis();
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Starting cloud reload...");
         Master.getInstance().getModuleCache().unloadModules();
-        Master.getInstance().getModuleLoader().loadModules();
+        Master.getInstance().getModuleLoader().loadModules(true);
 
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Cloud " + ConsoleColors.GREEN.getAnsiCode() + "complete "
             + ConsoleColors.GRAY.getAnsiCode() + "reload. (" + (System.currentTimeMillis() - start) + "ms)");

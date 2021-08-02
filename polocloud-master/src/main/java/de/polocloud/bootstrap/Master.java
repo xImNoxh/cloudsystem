@@ -98,7 +98,7 @@ public class Master implements IStartable, ITerminatable {
 
         Thread runnerThread = new Thread(PoloCloudAPI.getInstance().getGuice().getInstance(ServerCreatorRunner.class));
 
-        this.moduleLoader.loadModules();
+        this.moduleLoader.loadModules(false);
 
         runnerThread.start();
 

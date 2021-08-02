@@ -28,7 +28,7 @@ public class ModuleCache extends ConcurrentHashMap<Module, ModuleLocalCache> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Logger.log(Logger.PREFIX + "Module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleName + " unloaded...");
+                Logger.log(Logger.PREFIX + "The module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleName + ConsoleColors.GRAY.getAnsiCode() + " unloaded...");
             }
         }
     }
