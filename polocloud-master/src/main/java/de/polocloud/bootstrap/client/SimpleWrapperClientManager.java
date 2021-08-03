@@ -14,6 +14,10 @@ public class SimpleWrapperClientManager implements IWrapperClientManager {
         return this.clientList;
     }
 
+    public WrapperClient getWrapperClientByName(String wrapperName) {
+        return clientList.stream().filter(wrapperClient -> wrapperClient.getName().equalsIgnoreCase(wrapperName)).findFirst().orElse(null);
+    }
+
     @Override
     public void registerWrapperClient(WrapperClient wrapperClient) {
         clientList.add(wrapperClient);

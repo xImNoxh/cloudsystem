@@ -20,6 +20,10 @@ import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
 import de.polocloud.bootstrap.commands.*;
+import de.polocloud.bootstrap.commands.version2.GameServerCommand;
+import de.polocloud.bootstrap.commands.version2.StopCommand;
+import de.polocloud.bootstrap.commands.version2.TemplateCommand;
+import de.polocloud.bootstrap.commands.version2.WrapperCommand;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
@@ -82,19 +86,32 @@ public class Master implements IStartable, ITerminatable {
         EventRegistry.registerListener(new NettyExceptionListener(), NettyExceptionEvent.class);
 
 
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudStopCommand());
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownGameServerCommand(gameServerManager));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudHelpCommand());
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudEditCommand(templateService, gameServerManager));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudInfoCommand(this.templateService, this.gameServerManager));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownTemplateServerCommand(this.gameServerManager, this.templateService));
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCloudCommand(this.templateService));
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudStopCommand());
+        //OLDCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownGameServerCommand(gameServerManager));
+
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudEditCommand(templateService, gameServerManager));
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudInfoCommand(this.templateService, this.gameServerManager));
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new ShutdownTemplateServerCommand(this.gameServerManager, this.templateService));
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCopyCommand(this.gameServerManager));
+
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new LogMeCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudReloadCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new PlayersCloudCommand(this.cloudPlayerManager, gameServerManager));
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudHelpCommand());
+
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCommand(templateService, gameServerManager));
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerExecuteCommand(this.gameServerManager));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(GameServerCloudCommand.class));
+        //OLDPoloCloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(GameServerCloudCommand.class));
+
+
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(GameServerCommand.class));
+
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(WrapperCommand.class));
+
 
         Thread runnerThread = new Thread(PoloCloudAPI.getInstance().getGuice().getInstance(ServerCreatorRunner.class));
 
@@ -151,6 +168,7 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestTemplateHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PermissionCheckResponseHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestPlayerMoveFallbackHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerCopyResponseHandler.class));
 
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(RedirectPacketHandler.class));
 

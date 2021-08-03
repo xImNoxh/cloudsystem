@@ -22,8 +22,10 @@ import de.polocloud.updater.UpdateClient;
 import de.polocloud.wrapper.commands.StopCommand;
 import de.polocloud.wrapper.config.WrapperConfig;
 import de.polocloud.wrapper.guice.WrapperGuiceModule;
+import de.polocloud.wrapper.network.handler.APIRequestGameServerCopyHandler;
 import de.polocloud.wrapper.network.handler.MasterLoginResponsePacketHandler;
 import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
+import de.polocloud.wrapper.network.handler.WrapperRequestShutdownHandler;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -33,6 +35,8 @@ import java.util.concurrent.Executors;
 
 public class Wrapper implements IStartable, ITerminatable {
 
+    private static Wrapper instance;
+
     private CloudAPI cloudAPI;
 
     private SimpleNettyClient nettyClient;
@@ -40,6 +44,7 @@ public class Wrapper implements IStartable, ITerminatable {
     private WrapperConfig config;
 
     public Wrapper() {
+        instance = this;
 
         config = loadWrapperConfig();
 
@@ -53,6 +58,10 @@ public class Wrapper implements IStartable, ITerminatable {
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
 
         CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+    }
+
+    public static Wrapper getInstance() {
+        return instance;
     }
 
     private void requestStaticServersStart() {
@@ -181,11 +190,17 @@ public class Wrapper implements IStartable, ITerminatable {
 
         this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
         this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config));
+        this.nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
+        this.nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
     }
 
     @Override
     public boolean terminate() {
         return this.nettyClient.terminate();
+    }
+
+    public SimpleNettyClient getNettyClient() {
+        return nettyClient;
     }
 }
 
