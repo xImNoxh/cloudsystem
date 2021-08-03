@@ -80,15 +80,6 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
-            } else {
-                try {
-                    for (IGameServer iGameServer : gameServerManager.getGameServersByType(TemplateType.MINECRAFT).get()) {
-                        gameServer.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", iGameServer.getPort(),
-                            iGameServer.getSnowflake())); //TODO update host
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
             }
 
             pubSubManager.publish("polo:event:serverStarted", gameServer.getName());

@@ -36,6 +36,10 @@ public class HubCloudCommand extends CloudCommand {
             return;
         }
 
+        if (Master.getInstance().getFallbackSearchService().isOnFallback(player)) {
+            player.sendMessage(hubConfig.getAlreadyConnected());
+            return;
+        }
 
         List<IGameServer> chosenFallbackServers = Master.getInstance().getFallbackSearchService().searchForTemplate(player, true);
 
@@ -50,11 +54,7 @@ public class HubCloudCommand extends CloudCommand {
             player.sendMessage(hubConfig.getNoService());
             return;
         }
-
-        if (gameServer.getTemplate() == player.getMinecraftServer().getTemplate()) {
-            player.sendMessage(hubConfig.getAlreadyConnected());
-            return;
-        }
+        
 
         player.sendTo(gameServer);
     }

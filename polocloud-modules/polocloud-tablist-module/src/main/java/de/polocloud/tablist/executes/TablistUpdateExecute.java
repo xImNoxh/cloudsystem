@@ -15,9 +15,7 @@ public class TablistUpdateExecute implements TablistExecute {
     public void execute(ICloudPlayer iCloudPlayer, MasterConfig masterConfig, boolean playerUpdate) {
         if (!canUpdate) return;
         CloudPlayerTabCache cloudPlayerTabCache = TablistModule.getInstance().getCloudPlayerTabCache();
-        System.out.println("update");
         cloudPlayerTabCache.keySet().forEach(key -> {
-            System.out.println(key.toString());
             if (true || !key.equals(iCloudPlayer.getUUID())) {
                 Master.getInstance().getCloudPlayerManager().getOnlinePlayer(key).thenAccept(player -> {
                     String[] args = AttributeConverter.convertTab(cloudPlayerTabCache.get(key).getTabs()[0].getHeader(), cloudPlayerTabCache.get(key).getTabs()[0].getFooter(), player);

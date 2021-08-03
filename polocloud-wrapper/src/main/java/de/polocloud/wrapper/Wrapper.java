@@ -47,9 +47,7 @@ public class Wrapper implements IStartable, ITerminatable {
 
         checkAndDeleteTmpFolder();
 
-        //Removed for Development purposes!
-        //Before release, please remove this comment!
-        //checkPoloCloudAPI();
+        checkPoloCloudAPI();
 
         String[] masterAddress = config.getMasterAddress().split(":");
         this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
@@ -104,6 +102,7 @@ public class Wrapper implements IStartable, ITerminatable {
     }
 
     private void checkPoloCloudAPI() {
+        Logger.log(LoggerType.INFO, "Checking PoloCloud-API Version...");
         File apiJarFile = new File("templates/PoloCloud-API.jar");
 
         if (!apiJarFile.getParentFile().exists()) {
@@ -115,13 +114,25 @@ public class Wrapper implements IStartable, ITerminatable {
         String apiVersionURL = baseUrl + "/updater/version/api";
 
         UpdateClient updateClient = new UpdateClient(apiDownloadURL, apiJarFile, apiVersionURL, config.getApiVersion());
-        boolean download = updateClient.download(true);
+
+        boolean download;
+        String currentversion;
+        if (apiJarFile.exists()) {
+            download = updateClient.download(false);
+            currentversion = config.getApiVersion();
+        } else {
+            download = updateClient.download(true);
+            currentversion = "First download";
+        }
+
         if (download) {
-            Logger.log(LoggerType.INFO, "Found new PoloCloud-API Version! (" + config.getApiVersion() + " -> " + updateClient.getFetchedVersion() + ") updating...");
+            Logger.log(LoggerType.INFO, "Found new PoloCloud-API Version! (" + currentversion + " -> " + updateClient.getFetchedVersion() + ") updating...");
             config.setApiVersion(updateClient.getFetchedVersion());
             IConfigSaver saver = new SimpleConfigSaver();
             saver.save(config, new File("config.json"));
             Logger.log(LoggerType.INFO, ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "update PoloCloud-API! (" + config.getApiVersion() + ")");
+        } else {
+            Logger.log(LoggerType.INFO, "No update for PoloCloud-API found!");
         }
 
         while (!apiJarFile.exists()) {

@@ -92,11 +92,12 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public void sendToFallback() {
-        IGameServer gameServer = Master.getInstance().getFallbackSearchService().searchForGameServerWithCurrentServer(Master.getInstance().getFallbackSearchService().searchForTemplate(this, false), getMinecraftServer());
+        IGameServer gameServer = Master.getInstance().getFallbackSearchService().searchForGameServer(Master.getInstance().getFallbackSearchService().searchForTemplate(this, false));
         if (gameServer == null) {
             kick("§cThe server you were on went down, but no fallback server was found!");
             return;
         }
+        sendMessage("§cThe server you were on went down, you have been moved to a fallback server! §8(§b" + gameServer.getName() + "§8)");
         sendTo(gameServer);
     }
 }

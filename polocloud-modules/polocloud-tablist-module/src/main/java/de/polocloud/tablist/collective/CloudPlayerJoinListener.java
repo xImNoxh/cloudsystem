@@ -4,14 +4,8 @@ import com.google.inject.Inject;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.tablist.TablistModule;
-import de.polocloud.tablist.cache.CloudPlayerTabCache;
-import de.polocloud.tablist.config.Tab;
-
-import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 
 public class CloudPlayerJoinListener implements EventHandler<CloudPlayerJoinNetworkEvent> {
 
@@ -30,8 +24,5 @@ public class CloudPlayerJoinListener implements EventHandler<CloudPlayerJoinNetw
 
         TablistModule.getInstance().getTablistSetExecute().execute(player, config, true);
         TablistModule.getInstance().getTablistUpdateExecute().execute(player, config, true);
-
-
-
     }
 }

@@ -20,7 +20,6 @@ public class TablistConfig implements IConfig {
         return tabs;
     }
 
-
     public boolean isActiveModule() {
         return activeModule;
     }

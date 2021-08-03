@@ -118,6 +118,10 @@ public class Master implements IStartable, ITerminatable {
         //Sorting the Fallbacks after the FallbackPriority, to make it faster
         if (!masterConfig.getProperties().getFallbackProperties().isEmpty()) {
             masterConfig.getProperties().getFallbackProperties().sort(Comparator.comparingInt(FallbackProperty::getPriority));
+        } else {
+            Logger.log(LoggerType.WARNING, "No fallbacks are registered in config.json! The Cloud don't find any fallbacks, so you can't join!");
+            Logger.log(LoggerType.INFO, "Adding a default Lobby fallback!");
+            masterConfig.getProperties().getFallbackProperties().add(new FallbackProperty("Lobby", "", false, 1));
         }
 
         IConfigSaver configSaver = new SimpleConfigSaver();

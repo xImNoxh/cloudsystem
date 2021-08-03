@@ -160,6 +160,7 @@ public class NetworkProxyRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterRequestServerListUpdatePacket packet = (MasterRequestServerListUpdatePacket) obj;
+                
                 ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
                     packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
                     "PoloCloud", false

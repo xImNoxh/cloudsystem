@@ -6,7 +6,6 @@ import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
@@ -257,14 +256,6 @@ public class NetworkPluginRegister extends NetworkRegister {
         getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                GameServerShutdownPacket packet = (GameServerShutdownPacket) obj;
-                CloudExecutor.getInstance().getCloudPlayerManager().getAllOnlinePlayers().thenAccept(iCloudPlayers -> {
-                    for (ICloudPlayer iCloudPlayer : iCloudPlayers) {
-                        if (packet.getServerName().equalsIgnoreCase(iCloudPlayer.getMinecraftServer().getName())) {
-                            CloudPlugin.getInstance().getNetworkClient().sendPacket(new APIRequestPlayerMoveFallbackPacket(iCloudPlayer.getName()));
-                        }
-                    }
-                });
                 bootstrapFunction.shutdown();
             }
 
