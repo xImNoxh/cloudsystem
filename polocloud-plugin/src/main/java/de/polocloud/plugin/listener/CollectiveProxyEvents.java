@@ -34,8 +34,10 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ServerKickEvent event) {
-        event.setCancelled(true);
-        networkClient.sendPacket(new APIRequestPlayerMoveFallbackPacket(event.getPlayer().getName()));
+        if (event.getKickReason().contains("Server closed")) {
+            event.setCancelled(true);
+            networkClient.sendPacket(new APIRequestPlayerMoveFallbackPacket(event.getPlayer().getName()));
+        }
     }
 
     @EventHandler

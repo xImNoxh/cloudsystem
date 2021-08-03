@@ -97,6 +97,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
             kick("§cThe server you were on went down, but no fallback server was found!");
             return;
         }
+        sendMessage("§cThe server you were on went down, you have been moved to a fallback server! §8(§b" + gameServer.getName() + "§8)");
         sendTo(gameServer);
     }
 }

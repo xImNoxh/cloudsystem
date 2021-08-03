@@ -36,6 +36,12 @@ public class FallbackSearchService {
                 }
 
                 ITemplate template = Master.getInstance().getTemplateService().getTemplateByName(fallbackProperty.getTemplateName()).get();
+
+                if (template == null) {
+                    Logger.log(LoggerType.WARNING, "The template for the fallback server with the template name " + fallbackProperty.getTemplateName() + ":" + fallbackProperty.getPriority() + " wasn't found! Please check your config.json! Skipping...");
+                    continue;
+                }
+
                 if (template.getTemplateType().equals(TemplateType.PROXY)) {
                     Logger.log(LoggerType.WARNING, "A fallback server in the config.json was a proxy server. A proxy server is not compatible as a fallback server!");
                     continue;
