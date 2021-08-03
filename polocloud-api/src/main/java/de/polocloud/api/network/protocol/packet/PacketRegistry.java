@@ -5,6 +5,8 @@ import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyPacket;
+import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
@@ -80,6 +82,8 @@ public class PacketRegistry {
 
         registerPacket(133, RedirectPacket.class);
         registerPacket(134, APIRequestPlayerMoveFallbackPacket.class);
+        registerPacket(135, APIRequestGameServerCopyPacket.class);
+        registerPacket(136, APIRequestGameServerCopyResponsePacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {

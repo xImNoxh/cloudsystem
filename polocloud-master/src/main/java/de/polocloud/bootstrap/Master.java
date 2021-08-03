@@ -92,6 +92,7 @@ public class Master implements IStartable, ITerminatable {
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new LogMeCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new CloudReloadCommand());
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new PlayersCloudCommand(this.cloudPlayerManager, gameServerManager));
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerCopyCommand(this.gameServerManager));
 
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(new GameServerExecuteCommand(this.gameServerManager));
         PoloCloudAPI.getInstance().getCommandPool().registerCommand(CloudAPI.getInstance().getGuice().getInstance(GameServerCloudCommand.class));
@@ -151,6 +152,7 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestTemplateHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PermissionCheckResponseHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestPlayerMoveFallbackHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerCopyResponseHandler.class));
 
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(RedirectPacketHandler.class));
 
