@@ -1,16 +1,16 @@
 package de.polocloud.bootstrap.client;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimpleWrapperClientManager implements IWrapperClientManager {
 
-    private List<WrapperClient> clientList = new ArrayList<>();
+    private CopyOnWriteArrayList<WrapperClient> clientList = Lists.newCopyOnWriteArrayList();
 
 
     @Override
-    public List<WrapperClient> getWrapperClients() {
+    public CopyOnWriteArrayList<WrapperClient> getWrapperClients() {
         return this.clientList;
     }
 
