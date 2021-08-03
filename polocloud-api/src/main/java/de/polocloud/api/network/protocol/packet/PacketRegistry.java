@@ -19,6 +19,7 @@ import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
+import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,6 +85,7 @@ public class PacketRegistry {
         registerPacket(134, APIRequestPlayerMoveFallbackPacket.class);
         registerPacket(135, APIRequestGameServerCopyPacket.class);
         registerPacket(136, APIRequestGameServerCopyResponsePacket.class);
+        registerPacket(137, WrapperRequestShutdownPacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
