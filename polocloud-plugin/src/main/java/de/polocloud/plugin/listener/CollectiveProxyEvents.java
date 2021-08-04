@@ -9,6 +9,7 @@ import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import de.polocloud.plugin.protocol.players.MaxPlayerProperty;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
@@ -34,7 +35,7 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ServerKickEvent event) {
-        if (event.getKickReason().contains("Server closed")) {
+        if (BaseComponent.toPlainText(event.getKickReasonComponent()).equalsIgnoreCase("Server closed")) {
             event.setCancelled(true);
             networkClient.sendPacket(new APIRequestPlayerMoveFallbackPacket(event.getPlayer().getName()));
         }
