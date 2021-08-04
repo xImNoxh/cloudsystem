@@ -24,7 +24,7 @@ public class CloudPlugin {
         this.networkClient = new NetworkClient();
         this.networkClient.connect(bootstrapFunction.getNetworkPort());
 
-        bootstrapFunction.registerEvents(networkClient);
+        bootstrapFunction.registerEvents(this);
         networkRegisterFunction.callNetwork(networkClient);
     }
 

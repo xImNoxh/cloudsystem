@@ -1,6 +1,6 @@
 package de.polocloud.plugin.function;
 
-import de.polocloud.plugin.protocol.NetworkClient;
+import de.polocloud.plugin.CloudPlugin;
 
 public interface BootstrapFunction {
 
@@ -8,7 +8,7 @@ public interface BootstrapFunction {
 
     int getNetworkPort();
 
-    void registerEvents(NetworkClient networkClient);
+    void registerEvents(CloudPlugin cloudPlugin);
 
     void shutdown();
 

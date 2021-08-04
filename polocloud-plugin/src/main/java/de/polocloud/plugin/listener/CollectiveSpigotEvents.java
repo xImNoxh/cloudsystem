@@ -5,6 +5,8 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlay
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.SpigotBootstrap;
 import de.polocloud.plugin.protocol.NetworkClient;
+import de.polocloud.plugin.protocol.property.GameServerProperty;
+import de.polocloud.plugin.protocol.property.Property;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,20 +23,25 @@ import java.util.List;
 public class CollectiveSpigotEvents implements Listener {
 
     private SpigotBootstrap spigotBootstrap;
+
+    private GameServerProperty property;
     private NetworkClient networkClient;
+
+
     private Plugin plugin;
 
-    public CollectiveSpigotEvents(Plugin plugin, NetworkClient networkClient, SpigotBootstrap spigotBootstrap) {
+    public CollectiveSpigotEvents(Plugin plugin, CloudPlugin cloudPlugin, SpigotBootstrap spigotBootstrap) {
         this.plugin = plugin;
         this.spigotBootstrap = spigotBootstrap;
-        this.networkClient = networkClient;
+        this.property = cloudPlugin.getProperty();
+        this.networkClient = cloudPlugin.getNetworkClient();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
     public void handle(ServerListPingEvent event) {
-        event.setMaxPlayers(CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers());
-        event.setMotd(CloudPlugin.getInstance().getProperty().getGameServerMotd());
+        event.setMaxPlayers(property.getGameServerMaxPlayers());
+        event.setMotd(property.getGameServerMotd());
     }
 
     @EventHandler
@@ -45,13 +52,13 @@ public class CollectiveSpigotEvents implements Listener {
 
         Player player = event.getPlayer();
 
-        if (CloudPlugin.getInstance().getProperty().isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CloudPlugin.getInstance().getProperty().getGameServerMaintenanceMessage());
+        if (property.isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, property.getGameServerMaintenanceMessage());
             return;
         }
 
-        if (Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL, CloudPlugin.getInstance().getProperty().getGameServerMaxPlayersMessage());
+        if (Bukkit.getOnlinePlayers().size() >= property.getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL,property.getGameServerMaxPlayersMessage());
             return;
         }
 

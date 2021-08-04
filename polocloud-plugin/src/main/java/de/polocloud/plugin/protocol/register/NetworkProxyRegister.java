@@ -1,7 +1,5 @@
 package de.polocloud.plugin.protocol.register;
 
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
@@ -9,7 +7,7 @@ import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
-import io.netty.channel.ChannelHandlerContext;
+import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -22,176 +20,67 @@ import java.util.UUID;
 
 public class NetworkProxyRegister extends NetworkRegister {
 
-    private Plugin plugin;
+    public NetworkProxyRegister(CloudPlugin cloudPlugin, Plugin plugin) {
+        super(cloudPlugin.getNetworkClient());
 
-    public NetworkProxyRegister(NetworkClient networkClient, Plugin plugin) {
-        super(networkClient);
+        NetworkClient networkClient = cloudPlugin.getNetworkClient();
+        GameServerProperty property = cloudPlugin.getProperty();
 
-        this.plugin = plugin;
+        register((channelHandlerContext, packet) -> {
+            PermissionCheckResponsePacket object = (PermissionCheckResponsePacket) packet;
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(object.getPlayer());
+            if (player != null) object.setResponse(player.hasPermission(object.getPermission()));
+            networkClient.sendPacket(object);
+        }, PermissionCheckResponsePacket.class)
 
-        registerMasterRequestServerListUpdatePacket();
-        registerMasterPlayerRequestResponsePacket();
-        registerGameServerUnregisterPacket();
-        registerMasterPlayerKickPacket();
-        registerMasterSendMessagePacket();
-        registerMasterSendPlayerToPacket();
-        registerPermissionCheckPacket(networkClient);
-        registerTablistUpdatePacket();
-    }
+            .register((channelHandlerContext, packet) -> {
+                ProxyTablistUpdatePacket object = (ProxyTablistUpdatePacket) packet;
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(object.getUuid());
+                if (player != null)
+                    player.setTabHeader(new TextComponent(object.getHeader()), new TextComponent(object.getFooter()));
+            }, ProxyTablistUpdatePacket.class)
 
-    private void registerPermissionCheckPacket(NetworkClient networkClient) {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                PermissionCheckResponsePacket packet = (PermissionCheckResponsePacket) obj;
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getPlayer());
-                if (player != null) packet.setResponse(player.hasPermission(packet.getPermission()));
-                networkClient.sendPacket(packet);
-            }
+            .register((channelHandlerContext, packet) -> {
+                MasterPlayerSendMessagePacket object = (MasterPlayerSendMessagePacket) packet;
+                UUID uuid = object.getUuid();
+                if (ProxyServer.getInstance().getPlayer(uuid) != null)
+                    ProxyServer.getInstance().getPlayer(uuid).sendMessage(new TextComponent(object.getMessage()));
+            }, MasterPlayerSendMessagePacket.class)
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return PermissionCheckResponsePacket.class;
-            }
-        });
-    }
-
-    public void registerTablistUpdatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                ProxyTablistUpdatePacket packet = (ProxyTablistUpdatePacket) obj;
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
-                if (player != null) {
-                    player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
-                }
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return ProxyTablistUpdatePacket.class;
-            }
-        });
-    }
-
-    private void registerMasterSendMessagePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterPlayerSendMessagePacket packet = (MasterPlayerSendMessagePacket) obj;
-                UUID uuid = packet.getUuid();
-                String message = packet.getMessage();
+            .register((channelHandlerContext, packet) -> {
+                MasterPlayerSendToServerPacket object = (MasterPlayerSendToServerPacket) packet;
+                UUID uuid = object.getUuid();
                 if (ProxyServer.getInstance().getPlayer(uuid) != null) {
-                    ProxyServer.getInstance().getPlayer(uuid).sendMessage(message);
+                    ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(object.getTargetServer());
+                    if (serverInfo != null) ProxyServer.getInstance().getPlayer(uuid).connect(serverInfo);
                 }
-            }
+            }, MasterPlayerSendToServerPacket.class)
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return MasterPlayerSendMessagePacket.class;
-            }
-        });
-    }
+            .register((channelHandlerContext, packet) -> {
+                MasterPlayerKickPacket object = (MasterPlayerKickPacket) packet;
+                UUID uuid = object.getUuid();
+                if (ProxyServer.getInstance().getPlayer(uuid) != null)
+                    ProxyServer.getInstance().getPlayer(uuid).disconnect(new TextComponent(object.getMessage()));
+            }, MasterPlayerKickPacket.class)
 
-    private void registerMasterSendPlayerToPacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterPlayerSendToServerPacket packet = (MasterPlayerSendToServerPacket) obj;
+            .register((channelHandlerContext, packet) -> ProxyServer.getInstance().getServers().remove(((GameServerUnregisterPacket) packet).getName()), GameServerUnregisterPacket.class)
 
-                UUID uuid = packet.getUuid();
-                String targetServer = packet.getTargetServer();
-
-                if (ProxyServer.getInstance().getPlayer(uuid) != null) {
-                    ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(targetServer);
-                    if (serverInfo != null) {
-                        ProxyServer.getInstance().getPlayer(uuid).connect(serverInfo);
-                    }
-                }
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return MasterPlayerSendToServerPacket.class;
-            }
-        });
-    }
-
-    private void registerMasterPlayerKickPacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterPlayerKickPacket packet = (MasterPlayerKickPacket) obj;
-
-                UUID uuid = packet.getUuid();
-                String message = packet.getMessage();
-
-                if (ProxyServer.getInstance().getPlayer(uuid) != null) {
-                    ProxyServer.getInstance().getPlayer(uuid).disconnect(message);
-                }
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return MasterPlayerKickPacket.class;
-            }
-        });
-    }
-
-    private void registerGameServerUnregisterPacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                GameServerUnregisterPacket packet = (GameServerUnregisterPacket) obj;
-                ProxyServer.getInstance().getServers().remove(packet.getName());
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return GameServerUnregisterPacket.class;
-            }
-        });
-    }
-
-    public void registerMasterRequestServerListUpdatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterRequestServerListUpdatePacket packet = (MasterRequestServerListUpdatePacket) obj;
-                
-                ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
-                    packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
+            .register((channelHandlerContext, packet) -> {
+                MasterRequestServerListUpdatePacket object = (MasterRequestServerListUpdatePacket) packet;
+                ProxyServer.getInstance().getServers().put(object.getName(), ProxyServer.getInstance().constructServerInfo(
+                    object.getName(), InetSocketAddress.createUnresolved(object.getHost(), object.getPort()),
                     "PoloCloud", false
                 ));
-            }
+            }, MasterRequestServerListUpdatePacket.class)
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return MasterRequestServerListUpdatePacket.class;
-            }
-        });
-    }
-
-    public void registerMasterPlayerRequestResponsePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterPlayerRequestJoinResponsePacket packet = (MasterPlayerRequestJoinResponsePacket) obj;
-                LoginEvent loginEvent = CloudPlugin.getInstance().getProperty().getGameServerLoginEvents().remove(packet.getUuid());
-                if (packet.getSnowflake() == -1) {
+            .register((channelHandlerContext, packet) -> {
+                MasterPlayerRequestJoinResponsePacket object = (MasterPlayerRequestJoinResponsePacket) packet;
+                LoginEvent loginEvent = CloudPlugin.getInstance().getProperty().getGameServerLoginEvents().remove(object.getUuid());
+                if (object.getSnowflake() == -1) {
                     loginEvent.setCancelled(true);
-                    loginEvent.setCancelReason("§cEs wurde kein fallback Server gefunden!");
-                } else {
-                    CloudPlugin.getInstance().getProperty().getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
-                }
+                    loginEvent.setCancelReason(new TextComponent("§cEs wurde kein fallback Server gefunden!"));
+                } else property.getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), object.getServiceName());
                 loginEvent.completeIntent(plugin);
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return MasterPlayerRequestJoinResponsePacket.class;
-            }
-        });
+            }, MasterPlayerRequestJoinResponsePacket.class);
     }
-
 }
