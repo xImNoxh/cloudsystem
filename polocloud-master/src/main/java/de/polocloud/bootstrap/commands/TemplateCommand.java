@@ -1,4 +1,4 @@
-package de.polocloud.bootstrap.commands.version2;
+package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
@@ -44,6 +44,8 @@ public class TemplateCommand extends CloudCommand {
                         Logger.log(LoggerType.INFO, value.getTitle());
                     }
                     return;
+                } else {
+                    sendHelp();
                 }
             } else if (args.length == 3) {
                 if (args[1].equalsIgnoreCase("shutdown") || args[1].equalsIgnoreCase("stop")) {
@@ -163,7 +165,6 @@ public class TemplateCommand extends CloudCommand {
         } catch (ExecutionException | InterruptedException exception) {
             exception.printStackTrace();
         }
-
 
     }
 
