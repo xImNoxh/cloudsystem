@@ -83,11 +83,11 @@ public class GameServerCommand extends CloudCommand {
 
                         WrapperClient wrapperClient = optionalWrapperClient.get();
 
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                         SimpleGameServer newGameServer = new SimpleGameServer(template.getName() + "-" + searchForAvailableID(template),
                             GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                         gameServerManager.registerGameServer(newGameServer);
                         wrapperClient.startServer(newGameServer);
-                        Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                     }
 
                 } else if (args[1].equalsIgnoreCase("info")) {
@@ -159,11 +159,11 @@ public class GameServerCommand extends CloudCommand {
                         WrapperClient wrapperClient = optionalWrapperClient.get();
 
                         for (int i = 0; i < amount; i++) {
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                             SimpleGameServer newGameServer = new SimpleGameServer(template.getName() + "-" + searchForAvailableID(template),
                                 GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                             gameServerManager.registerGameServer(newGameServer);
                             wrapperClient.startServer(newGameServer);
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                         }
                         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully requested start for » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + amount + ConsoleColors.GRAY.getAnsiCode() + " servers!");
                     }
