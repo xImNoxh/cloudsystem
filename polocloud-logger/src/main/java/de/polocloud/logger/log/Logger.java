@@ -11,8 +11,8 @@ import java.util.Date;
 
 public class Logger {
 
-    private static ConsoleReader consoleReader;
     public static String PREFIX = ConsoleColors.LIGHT_BLUE.getAnsiCode() + "PoloCloud " + ConsoleColors.GRAY.getAnsiCode() + "» ";
+    private static ConsoleReader consoleReader;
 
     public static void boot() {
         try {
@@ -23,19 +23,23 @@ public class Logger {
         }
     }
 
-    public static void logErr(String message){
+    public static void logErr(String message) {
         LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + LoggerType.ERROR + "] » " + message));
     }
 
     public static void log(LoggerType loggerType, String message) {
         try {
-            consoleReader.println(ConsoleColors.GRAY.getAnsiCode() + message);
+            if (!loggerType.equals(LoggerType.INFO)) {
+                consoleReader.println(ConsoleColors.GRAY.getAnsiCode() + "[" + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY.getAnsiCode() + "] " + message);
+            } else {
+                consoleReader.println(ConsoleColors.GRAY.getAnsiCode() + message);
+            }
             consoleReader.drawLine();
             consoleReader.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + loggerType.getLabel() + "] » " + message));
+        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY.getAnsiCode() + "] » " + message));
     }
 
     public static void log(String message) {

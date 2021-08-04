@@ -12,7 +12,6 @@ import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ConsoleReadThread extends Thread {
@@ -39,15 +38,15 @@ public class ConsoleReadThread extends Thread {
 
                     String[] args = line.split(" ");
 
-                    if(PoloCloudAPI.getInstance() != null) {
+                    if (PoloCloudAPI.getInstance() != null) {
                         ICommandPool commandPool = PoloCloudAPI.getInstance().getCommandPool();
                         List<CloudCommand> commands = commandPool.getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList());
 
-                        if(commands.size() == 0){
+                        if (commands.size() == 0) {
                             Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknown command... Please use the " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "help " + ConsoleColors.GRAY.getAnsiCode() + "command.");
-                        }else {
+                        } else {
                             for (CloudCommand command : commands) {
-                                if(command.getCommandType().equals(CommandType.CONSOLE) || command.getCommandType().equals(CommandType.INGAME_CONSOLE)) {
+                                if (command.getCommandType().equals(CommandType.CONSOLE) || command.getCommandType().equals(CommandType.INGAME_CONSOLE)) {
                                     command.execute(CloudAPI.getInstance().getConsoleExecutor(), args);
                                 }
                             }

@@ -1,4 +1,4 @@
-package de.polocloud.bootstrap.commands.version2;
+package de.polocloud.bootstrap.commands;
 
 import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
@@ -8,6 +8,7 @@ import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
@@ -83,11 +84,11 @@ public class GameServerCommand extends CloudCommand {
 
                         WrapperClient wrapperClient = optionalWrapperClient.get();
 
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                         SimpleGameServer newGameServer = new SimpleGameServer(template.getName() + "-" + searchForAvailableID(template),
                             GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                         gameServerManager.registerGameServer(newGameServer);
                         wrapperClient.startServer(newGameServer);
-                        Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                     }
 
                 } else if (args[1].equalsIgnoreCase("info")) {
@@ -159,11 +160,11 @@ public class GameServerCommand extends CloudCommand {
                         WrapperClient wrapperClient = optionalWrapperClient.get();
 
                         for (int i = 0; i < amount; i++) {
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                             SimpleGameServer newGameServer = new SimpleGameServer(template.getName() + "-" + searchForAvailableID(template),
                                 GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                             gameServerManager.registerGameServer(newGameServer);
                             wrapperClient.startServer(newGameServer);
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                         }
                         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully requested start for » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + amount + ConsoleColors.GRAY.getAnsiCode() + " servers!");
                     }
@@ -205,6 +206,26 @@ public class GameServerCommand extends CloudCommand {
                 } else {
                     sendHelp();
                 }
+            } else if (args.length >= 4) {
+                if (args[1].equalsIgnoreCase("execute")) {
+                    String name = args[2];
+                    IGameServer gameServer = gameServerManager.getGameServerByName(name).get();
+                    if (gameServer == null) {
+                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The gameserver » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() + " isn't online!");
+                        return;
+                    }
+
+                    String command = "";
+                    for (int i = 3; i < args.length; i++) {
+                        command += args[i] + " ";
+                    }
+                    command = command.substring(0, command.length() - 1);
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "processing...");
+                    gameServer.sendPacket(new GameServerExecuteCommandPacket(command));
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully executed command » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command + ConsoleColors.GRAY.getAnsiCode() + " on server » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command + ConsoleColors.GRAY.getAnsiCode() + "!");
+                } else {
+                    sendHelp();
+                }
             } else {
                 sendHelp();
             }
@@ -225,6 +246,8 @@ public class GameServerCommand extends CloudCommand {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "gameserver copy <server> worlds/entire " + ConsoleColors.GRAY.getAnsiCode() + "to copy the temproy file of a server into its template");
         Logger.newLine();
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "gameserver info <server> " + ConsoleColors.GRAY.getAnsiCode() + "to get information of a gameserver");
+        Logger.newLine();
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "gameserver execute <server> <command> " + ConsoleColors.GRAY.getAnsiCode() + "to execuet a command on a gameserver");
         Logger.newLine();
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Gameserver]----");
     }
