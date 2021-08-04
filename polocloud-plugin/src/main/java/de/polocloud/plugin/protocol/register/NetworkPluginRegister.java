@@ -36,73 +36,35 @@ public class NetworkPluginRegister extends NetworkRegister {
 
         this.bootstrapFunction = bootstrapFunction;
 
-        enableCloudExecutor();
-
-        registerGameServerExecutePacket();
-        registerMaintenanceStatePacket();
-        registerGameServerShutdownPacket();
-        registerMaxPlayersUpdatePacket();
-        registerAPIHandler();
-        registerGameServerMotdUpdatePacket();
-
-    }
-
-    private void enableCloudExecutor() {
         new CloudExecutor(getNetworkClient(), getNetworkClient().getClient().getProtocol());
-    }
 
-    public void registerMaxPlayersUpdatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                GameServerMaxPlayersUpdatePacket packet = (GameServerMaxPlayersUpdatePacket) obj;
 
-                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAX_PLAYERS_MESSAGE, packet.getMessage());
-                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAX_PLAYERS_STATE, packet.getMaxPlayers());
-            }
+        register((channelHandlerContext, packet) -> {
+            GameServerMaxPlayersUpdatePacket object = (GameServerMaxPlayersUpdatePacket) packet;
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return GameServerMaxPlayersUpdatePacket.class;
-            }
-        });
-    }
+            CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAX_PLAYERS_MESSAGE, object.getMessage());
+            CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAX_PLAYERS_STATE, object.getMaxPlayers());
+        }, GameServerMaxPlayersUpdatePacket.class)
 
-    public void registerAPIHandler() {
-
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                APIResponseCloudPlayerPacket packet = (APIResponseCloudPlayerPacket) obj;
-                UUID requestId = packet.getRequestId();
-                List<ICloudPlayer> response = packet.getResponse();
-
+            .register((channelHandlerContext, packet) -> {
+                APIResponseCloudPlayerPacket object = (APIResponseCloudPlayerPacket) packet;
+                UUID requestId = object.getRequestId();
+                List<ICloudPlayer> response = object.getResponse();
                 CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
-
-                if (packet.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
+                if (object.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
                     completableFuture.complete(response.get(0));
-                } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.LIST) {
+                } else if (object.getType() == APIResponseCloudPlayerPacket.Type.LIST) {
                     completableFuture.complete(response);
-                } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.BOOLEAN) {
+                } else if (object.getType() == APIResponseCloudPlayerPacket.Type.BOOLEAN) {
                     completableFuture.complete(!response.isEmpty());
                 }
+            }, APIResponseCloudPlayerPacket.class)
 
+            .register((channelHandlerContext, packet) -> {
+                APIResponseGameServerPacket object = (APIResponseGameServerPacket) packet;
 
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return APIResponseCloudPlayerPacket.class;
-            }
-        });
-
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                APIResponseGameServerPacket packet = (APIResponseGameServerPacket) obj;
-
-                UUID requestId = packet.getRequestId();
-                List<IGameServer> tmp = packet.getResponse();
+                UUID requestId = object.getRequestId();
+                List<IGameServer> tmp = object.getResponse();
                 List<IGameServer> response = new ArrayList<>();
                 CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
 
@@ -170,7 +132,7 @@ public class NetworkPluginRegister extends NetworkRegister {
 
                         @Override
                         public void sendPacket(Packet packet) {
-                            ctx.writeAndFlush(new RedirectPacket(getSnowflake(), packet));
+                            channelHandlerContext.writeAndFlush(new RedirectPacket(getSnowflake(), packet));
                         }
 
                         @Override
@@ -195,49 +157,30 @@ public class NetworkPluginRegister extends NetworkRegister {
                     });
                 }
 
-                completableFuture.complete((packet.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
+                completableFuture.complete((object.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
+            }, APIResponseGameServerPacket.class)
 
-            }
+            .register((channelHandlerContext, packet) -> {
+                APIResponseTemplatePacket object = (APIResponseTemplatePacket) packet;
+                List<ITemplate> response = object.getResponse().stream().collect(Collectors.toList());
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return APIResponseGameServerPacket.class;
-            }
-        });
+                ResponseHandler.getCompletableFuture(object.getRequestId(), true).complete(
+                    object.getType() == APIResponseTemplatePacket.Type.SINGLE ? response.get(0) : response);
+            }, APIResponseTemplatePacket.class)
 
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                APIResponseTemplatePacket packet = (APIResponseTemplatePacket) obj;
-                List<ITemplate> response = packet.getResponse().stream().collect(Collectors.toList());
+            .register((channelHandlerContext, packet) -> {
+                GameServerMaintenanceUpdatePacket object = (GameServerMaintenanceUpdatePacket) packet;
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAINTENANCE_STATE, object.isState());
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAINTENANCE_MESSAGE, object.getMessage());
+            }, GameServerMaintenanceUpdatePacket.class);
 
-                ResponseHandler.getCompletableFuture(packet.getRequestId(), true).complete(
-                    packet.getType() == APIResponseTemplatePacket.Type.SINGLE ? response.get(0) : response);
-            }
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return APIResponseTemplatePacket.class;
-            }
-        });
+        registerGameServerExecutePacket();
+        registerGameServerShutdownPacket();
+        registerGameServerMotdUpdatePacket();
 
     }
 
-    public void registerMaintenanceStatePacket() {
-        getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                GameServerMaintenanceUpdatePacket maintenanceUpdatePacket = (GameServerMaintenanceUpdatePacket) obj;
-                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAINTENANCE_STATE, maintenanceUpdatePacket.isState());
-                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAINTENANCE_MESSAGE, maintenanceUpdatePacket.getMessage());
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return GameServerMaintenanceUpdatePacket.class;
-            }
-        });
-    }
 
     public void registerGameServerExecutePacket() {
         getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {

@@ -12,48 +12,20 @@ import org.bukkit.Bukkit;
 
 public class NetworkSpigotRegister extends NetworkRegister {
 
-    private NetworkClient networkClient;
-    private SpigotBootstrap spigotBootstrap;
-
     public NetworkSpigotRegister(NetworkClient networkClient, SpigotBootstrap spigotBootstrap) {
         super(networkClient);
-        this.networkClient = networkClient;
-        this.spigotBootstrap = spigotBootstrap;
 
-        registerMasterKickPlayerPacket();
+        register((channelHandlerContext, packet) -> {
+            MasterPlayerKickPacket object = (MasterPlayerKickPacket) packet;
+            if (Bukkit.getPlayer(object.getUuid()) != null) {
+                Bukkit.getPlayer(object.getUuid()).kickPlayer(object.getMessage());
+            }
+        }, MasterPlayerKickPacket.class).register((channelHandlerContext, packet) -> {
+            CommandListAcceptorPacket object = (CommandListAcceptorPacket) packet;
+            spigotBootstrap.getCommandReader().setAllowedCommands(object.getCommandList());
+            spigotBootstrap.getCommandReader().getAllowedCommands().addAll(object.getAliases());
+        }, CommandListAcceptorPacket.class);
     }
-
-
-    public void registerMasterKickPlayerPacket() {
-        networkClient.registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                MasterPlayerKickPacket packet = (MasterPlayerKickPacket) obj;
-                if (Bukkit.getPlayer(packet.getUuid()) != null) {
-                    Bukkit.getPlayer(packet.getUuid()).kickPlayer(packet.getMessage());
-                }
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return MasterPlayerKickPacket.class;
-            }
-        });
-
-        networkClient.registerPacketHandler(new IPacketHandler<Packet>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                CommandListAcceptorPacket packet = (CommandListAcceptorPacket) obj;
-                spigotBootstrap.getCommandReader().setAllowedCommands(packet.getCommandList());
-                spigotBootstrap.getCommandReader().getAllowedCommands().addAll(packet.getAliases());
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return CommandListAcceptorPacket.class;
-            }
-        });
-    }
-
 
 }
+

@@ -6,6 +6,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerReque
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
+import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -20,11 +21,13 @@ import java.util.UUID;
 public class CollectiveProxyEvents implements Listener {
 
     private Plugin plugin;
+    private GameServerProperty property;
     private NetworkClient networkClient;
 
-    public CollectiveProxyEvents(Plugin plugin, NetworkClient networkClient) {
+    public CollectiveProxyEvents(Plugin plugin, CloudPlugin cloudPlugin) {
         this.plugin = plugin;
-        this.networkClient = networkClient;
+        this.property = cloudPlugin.getProperty();
+        this.networkClient = cloudPlugin.getNetworkClient();
 
         ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
     }
@@ -39,21 +42,21 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ProxyPingEvent event) {
-        event.getResponse().getPlayers().setMax(CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers());
-        event.getResponse().setDescription(CloudPlugin.getInstance().getProperty().getGameServerMotd());
+        event.getResponse().getPlayers().setMax(property.getGameServerMaxPlayers());
+        event.getResponse().setDescription(property.getGameServerMotd());
     }
 
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if (CloudPlugin.getInstance().getProperty().isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
-            event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getProperty().getGameServerMaintenanceMessage()));
+        if (property.isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(property.getGameServerMaintenanceMessage()));
             return;
         }
 
-        if (ProxyServer.getInstance().getPlayers().size() - 1 >= CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.getPlayer().disconnect(CloudPlugin.getInstance().getProperty().getGameServerMaxPlayersMessage());
+        if (ProxyServer.getInstance().getPlayers().size() - 1 >= property.getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+            event.getPlayer().disconnect(property.getGameServerMaxPlayersMessage());
             return;
         }
     }
@@ -62,15 +65,15 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(LoginEvent event) {
 
         UUID requestId = UUID.randomUUID();
-        CloudPlugin.getInstance().getProperty().getGameServerLoginEvents().put(requestId, event);
+        property.getGameServerLoginEvents().put(requestId, event);
         event.registerIntent(this.plugin);
         networkClient.sendPacket(new GameServerPlayerRequestJoinPacket(requestId));
     }
 
     @EventHandler
     public void handle(ServerConnectEvent event) {
-        if (CloudPlugin.getInstance().getProperty().getGameServerLoginServers().containsKey(event.getPlayer().getUniqueId())) {
-            String targetServer = CloudPlugin.getInstance().getProperty().getGameServerLoginServers().remove(event.getPlayer().getUniqueId());
+        if (property.getGameServerLoginServers().containsKey(event.getPlayer().getUniqueId())) {
+            String targetServer = property.getGameServerLoginServers().remove(event.getPlayer().getUniqueId());
             event.setTarget(ProxyServer.getInstance().getServerInfo(targetServer));
         }
     }

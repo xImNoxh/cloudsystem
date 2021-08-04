@@ -12,10 +12,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class ProxyBootstrap extends Plugin implements BootstrapFunction, NetworkRegisterFunction {
 
+    private CloudPlugin cloudPlugin;
 
     @Override
     public void onEnable() {
-        new CloudPlugin(this, this);
+        cloudPlugin = new CloudPlugin(this, this);
     }
 
     @Override
@@ -30,13 +31,13 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     @Override
     public void callNetwork(NetworkClient networkClient) {
-        new NetworkProxyRegister(networkClient, this);
+        new NetworkProxyRegister(cloudPlugin, this);
         new NetworkPluginRegister(networkClient, this);
     }
 
     @Override
-    public void registerEvents(NetworkClient networkClient) {
-        new CollectiveProxyEvents(this, networkClient);
+    public void registerEvents(CloudPlugin cloudPlugin) {
+        new CollectiveProxyEvents(this, cloudPlugin);
     }
 
     @Override
