@@ -41,15 +41,18 @@ public class TablistModule {
         if (tablistConfig.isActiveModule()) {
             this.attributeConverter = new AttributeConverter();
             this.tablistSetExecute = new TablistSetExecute();
-            EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerJoinListener.class), CloudPlayerJoinNetworkEvent.class);
-            EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerDisconnectListener.class), CloudPlayerDisconnectEvent.class);
-            EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerSwitchListener.class), CloudPlayerSwitchServerEvent.class);
+            EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerJoinListener.class), CloudPlayerJoinNetworkEvent.class);
+            EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerDisconnectListener.class), CloudPlayerDisconnectEvent.class);
+            EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(CloudPlayerSwitchListener.class), CloudPlayerSwitchServerEvent.class);
 
             intervalRunnable = new IntervalRunnable(tablistConfig);
         }
 
     }
 
+    public static TablistModule getInstance() {
+        return instance;
+    }
 
     public TablistUpdateExecute getTablistUpdateExecute() {
         return tablistUpdateExecute;
@@ -84,10 +87,6 @@ public class TablistModule {
 
     public void setTablistConfig(TablistConfig tablistConfig) {
         this.tablistConfig = tablistConfig;
-    }
-
-    public static TablistModule getInstance() {
-        return instance;
     }
 
     public CloudPlayerTabCache getTabCache() {

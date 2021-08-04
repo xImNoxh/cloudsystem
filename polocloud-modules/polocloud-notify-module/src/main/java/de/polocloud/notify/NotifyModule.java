@@ -19,13 +19,17 @@ public class NotifyModule {
         instance = this;
         notifyConfig = loadNotifyConfig(module);
 
-        if(notifyConfig.isUse())
-        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(CloudCollectivesListener.class), CloudGameServerStatusChangeEvent.class);
+        if (notifyConfig.isUse())
+            EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(CloudCollectivesListener.class), CloudGameServerStatusChangeEvent.class);
+    }
+
+    public static NotifyModule getInstance() {
+        return instance;
     }
 
     public NotifyConfig loadNotifyConfig(Module module) {
         File configPath = new File("modules/notify-system/");
-        if(!configPath.exists()) configPath.mkdirs();
+        if (!configPath.exists()) configPath.mkdirs();
         File configFile = new File("modules/notify-system/config.json");
         NotifyConfig masterConfig = module.getConfigLoader().load(NotifyConfig.class, configFile);
         module.getConfigSaver().save(masterConfig, configFile);
@@ -34,9 +38,5 @@ public class NotifyModule {
 
     public NotifyConfig getNotifyConfig() {
         return notifyConfig;
-    }
-
-    public static NotifyModule getInstance() {
-        return instance;
     }
 }
