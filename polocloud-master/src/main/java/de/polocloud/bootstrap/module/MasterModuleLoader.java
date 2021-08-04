@@ -64,7 +64,58 @@ public class MasterModuleLoader {
                 e.printStackTrace();
             }
         }
+    }
 
+    public ModuleData loadModuleData(File file) {
+        if (!file.exists() || !file.isFile() || !file.getName().endsWith(".jar")) {
+            return null;
+        }
+        try (JarFile jarFile = new JarFile(file)) {
+            JarEntry entry = jarFile.getJarEntry("module.json");
+            if (entry == null) {
+                throw new FileNotFoundException("Cannot find \"module.json\" file");
+            }
+            try (InputStreamReader reader = new InputStreamReader(jarFile.getInputStream(entry))) {
+                ModuleData module = gson.fromJson(reader, ModuleData.class);
+                module.setFile(file);
+                return module;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void loadModule(File file) {
+        ModuleData moduleData = loadModuleData(file);
+        if (moduleData == null) {
+            return;
+        }
+        try {
+            long time = System.currentTimeMillis();
+            Class<?> aClass = getClass().getClassLoader().loadClass(Module.class.getName());
+            ModuleClassLoader loader = new ModuleClassLoader(new URL[]{moduleData.getFile().toURL()}, Thread.currentThread().getContextClassLoader(), cache);
+
+            Class<?> cl = loader.loadClass(moduleData.getMain());
+
+            Class[] interfaces = cl.getInterfaces();
+            boolean isPlugin = false;
+
+            for (int y = 0; y < interfaces.length && !isPlugin; y++) {
+                if (interfaces[y].equals(Module.class)) {
+                    isPlugin = true;
+                }
+            }
+
+            Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
+            cache.put(module, new ModuleLocalCache(loader, moduleData));
+            module.onLoad();
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "The module » " +
+                ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleData.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
+        } catch (MalformedURLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<ModuleData> findModuleData(File directory, ModuleData... ignored) {
