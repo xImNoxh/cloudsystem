@@ -5,7 +5,6 @@ import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.listener.CollectiveProxyEvents;
 import de.polocloud.plugin.protocol.NetworkClient;
-import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 import de.polocloud.plugin.protocol.register.NetworkProxyRegister;
 import net.md_5.bungee.api.ProxyServer;
@@ -13,11 +12,9 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class ProxyBootstrap extends Plugin implements BootstrapFunction, NetworkRegisterFunction {
 
-    private NetworkLoginCache networkLoginCache;
 
     @Override
     public void onEnable() {
-        this.networkLoginCache = new NetworkLoginCache();
         new CloudPlugin(this, this);
     }
 
@@ -33,13 +30,13 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     @Override
     public void callNetwork(NetworkClient networkClient) {
-        new NetworkProxyRegister(networkClient, networkLoginCache, this);
+        new NetworkProxyRegister(networkClient, this);
         new NetworkPluginRegister(networkClient, this);
     }
 
     @Override
     public void registerEvents(NetworkClient networkClient) {
-        new CollectiveProxyEvents(this, networkClient, networkLoginCache);
+        new CollectiveProxyEvents(this, networkClient);
     }
 
     @Override

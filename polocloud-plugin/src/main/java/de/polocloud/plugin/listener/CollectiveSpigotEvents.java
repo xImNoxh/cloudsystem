@@ -33,8 +33,8 @@ public class CollectiveSpigotEvents implements Listener {
 
     @EventHandler
     public void handle(ServerListPingEvent event) {
-        event.setMaxPlayers(CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers());
-        event.setMotd(CloudPlugin.getInstance().getMotdUpdateCache().getMotd());
+        event.setMaxPlayers(CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers());
+        event.setMotd(CloudPlugin.getInstance().getProperty().getGameServerMotd());
     }
 
     @EventHandler
@@ -42,20 +42,16 @@ public class CollectiveSpigotEvents implements Listener {
 
         if (event.getResult().equals(PlayerLoginEvent.Result.KICK_FULL)) event.allow();
 
-        if (CloudPlugin.getInstance().getState() == null) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "");
-            return;
-        }
 
         Player player = event.getPlayer();
 
-        if (CloudPlugin.getInstance().getState().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CloudPlugin.getInstance().getState().getKickMessage());
+        if (CloudPlugin.getInstance().getProperty().isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, CloudPlugin.getInstance().getProperty().getGameServerMaintenanceMessage());
             return;
         }
 
-        if (Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL, CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
+        if (Bukkit.getOnlinePlayers().size() >= CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, CloudPlugin.getInstance().getProperty().getGameServerMaxPlayersMessage());
             return;
         }
 

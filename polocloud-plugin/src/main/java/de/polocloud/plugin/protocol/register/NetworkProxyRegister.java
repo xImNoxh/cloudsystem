@@ -6,9 +6,9 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterP
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
+import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
-import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
 import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -23,13 +23,11 @@ import java.util.UUID;
 public class NetworkProxyRegister extends NetworkRegister {
 
     private Plugin plugin;
-    private NetworkLoginCache networkLoginCache;
 
-    public NetworkProxyRegister(NetworkClient networkClient, NetworkLoginCache networkLoginCache, Plugin plugin) {
+    public NetworkProxyRegister(NetworkClient networkClient, Plugin plugin) {
         super(networkClient);
 
         this.plugin = plugin;
-        this.networkLoginCache = networkLoginCache;
 
         registerMasterRequestServerListUpdatePacket();
         registerMasterPlayerRequestResponsePacket();
@@ -179,12 +177,12 @@ public class NetworkProxyRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 MasterPlayerRequestJoinResponsePacket packet = (MasterPlayerRequestJoinResponsePacket) obj;
-                LoginEvent loginEvent = networkLoginCache.getLoginEvents().remove(packet.getUuid());
+                LoginEvent loginEvent = CloudPlugin.getInstance().getProperty().getGameServerLoginEvents().remove(packet.getUuid());
                 if (packet.getSnowflake() == -1) {
                     loginEvent.setCancelled(true);
                     loginEvent.setCancelReason("§cEs wurde kein fallback Server gefunden!");
                 } else {
-                    networkLoginCache.getLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
+                    CloudPlugin.getInstance().getProperty().getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
                 }
                 loginEvent.completeIntent(plugin);
             }

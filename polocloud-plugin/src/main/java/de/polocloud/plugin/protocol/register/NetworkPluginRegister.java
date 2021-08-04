@@ -17,7 +17,7 @@ import de.polocloud.plugin.api.CloudExecutor;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
-import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
+import de.polocloud.plugin.protocol.property.Property;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang.NotImplementedException;
 
@@ -56,8 +56,9 @@ public class NetworkPluginRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerMaxPlayersUpdatePacket packet = (GameServerMaxPlayersUpdatePacket) obj;
-                CloudPlugin.getInstance().getMaxPlayerProperty().setMaxPlayers(packet.getMaxPlayers());
-                CloudPlugin.getInstance().getMaxPlayerProperty().setMessage(packet.getMessage());
+
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAX_PLAYERS_MESSAGE, packet.getMessage());
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAX_PLAYERS_STATE, packet.getMaxPlayers());
             }
 
             @Override
@@ -227,7 +228,8 @@ public class NetworkPluginRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerMaintenanceUpdatePacket maintenanceUpdatePacket = (GameServerMaintenanceUpdatePacket) obj;
-                CloudPlugin.getInstance().setState(new MaintenanceState(maintenanceUpdatePacket.isState(), maintenanceUpdatePacket.getMessage()));
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAINTENANCE_STATE, maintenanceUpdatePacket.isState());
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MAINTENANCE_MESSAGE, maintenanceUpdatePacket.getMessage());
             }
 
             @Override
@@ -271,7 +273,7 @@ public class NetworkPluginRegister extends NetworkRegister {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
                 GameServerMotdUpdatePacket packet = (GameServerMotdUpdatePacket) obj;
-                CloudPlugin.getInstance().getMotdUpdateCache().setMotd(packet.getMotd());
+                CloudPlugin.getInstance().getProperty().getProperties().put(Property.MOTD, packet.getMotd());
             }
 
             @Override

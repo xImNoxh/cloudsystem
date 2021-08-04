@@ -6,8 +6,6 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerReque
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
-import de.polocloud.plugin.protocol.connections.NetworkLoginCache;
-import de.polocloud.plugin.protocol.players.MaxPlayerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -23,12 +21,10 @@ public class CollectiveProxyEvents implements Listener {
 
     private Plugin plugin;
     private NetworkClient networkClient;
-    private NetworkLoginCache networkLoginCache;
 
-    public CollectiveProxyEvents(Plugin plugin, NetworkClient networkClient, NetworkLoginCache networkLoginCache) {
+    public CollectiveProxyEvents(Plugin plugin, NetworkClient networkClient) {
         this.plugin = plugin;
         this.networkClient = networkClient;
-        this.networkLoginCache = networkLoginCache;
 
         ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
     }
@@ -43,28 +39,21 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ProxyPingEvent event) {
-        event.getResponse().getPlayers().setMax(CloudPlugin.getInstance().getMaxPlayerProperty().getMaxPlayers());
-        event.getResponse().setDescription(CloudPlugin.getInstance().getMotdUpdateCache().getMotd());
+        event.getResponse().getPlayers().setMax(CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers());
+        event.getResponse().setDescription(CloudPlugin.getInstance().getProperty().getGameServerMotd());
     }
 
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if (CloudPlugin.getInstance().getState() == null) {
-            event.getPlayer().disconnect("");
+        if (CloudPlugin.getInstance().getProperty().isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getProperty().getGameServerMaintenanceMessage()));
             return;
         }
 
-        if (CloudPlugin.getInstance().getState().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
-            event.getPlayer().disconnect(TextComponent.fromLegacyText(CloudPlugin.getInstance().getState().getKickMessage()));
-            return;
-        }
-
-        MaxPlayerProperty maxPlayerProperty = CloudPlugin.getInstance().getMaxPlayerProperty();
-
-        if (ProxyServer.getInstance().getPlayers().size() - 1 >= maxPlayerProperty.getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.getPlayer().disconnect(CloudPlugin.getInstance().getMaxPlayerProperty().getMessage());
+        if (ProxyServer.getInstance().getPlayers().size() - 1 >= CloudPlugin.getInstance().getProperty().getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+            event.getPlayer().disconnect(CloudPlugin.getInstance().getProperty().getGameServerMaxPlayersMessage());
             return;
         }
     }
@@ -72,21 +61,16 @@ public class CollectiveProxyEvents implements Listener {
     @EventHandler
     public void handle(LoginEvent event) {
 
-        if (CloudPlugin.getInstance().getState() == null) {
-            event.setCancelled(true);
-            return;
-        }
-
         UUID requestId = UUID.randomUUID();
-        networkLoginCache.getLoginEvents().put(requestId, event);
+        CloudPlugin.getInstance().getProperty().getGameServerLoginEvents().put(requestId, event);
         event.registerIntent(this.plugin);
         networkClient.sendPacket(new GameServerPlayerRequestJoinPacket(requestId));
     }
 
     @EventHandler
     public void handle(ServerConnectEvent event) {
-        if (networkLoginCache.getLoginServers().containsKey(event.getPlayer().getUniqueId())) {
-            String targetServer = networkLoginCache.getLoginServers().remove(event.getPlayer().getUniqueId());
+        if (CloudPlugin.getInstance().getProperty().getGameServerLoginServers().containsKey(event.getPlayer().getUniqueId())) {
+            String targetServer = CloudPlugin.getInstance().getProperty().getGameServerLoginServers().remove(event.getPlayer().getUniqueId());
             event.setTarget(ProxyServer.getInstance().getServerInfo(targetServer));
         }
     }

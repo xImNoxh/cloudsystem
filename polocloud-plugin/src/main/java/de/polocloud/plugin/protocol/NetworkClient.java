@@ -62,8 +62,6 @@ public class NetworkClient implements IPacketSender {
         this.port = port;
         this.cloudAPI = new PoloCloudAPI();
 
-        String path = null;
-
         new Thread(() -> {
             this.client.start();
             System.exit(-1);

@@ -3,18 +3,13 @@ package de.polocloud.plugin;
 import de.polocloud.plugin.function.BootstrapFunction;
 import de.polocloud.plugin.function.NetworkRegisterFunction;
 import de.polocloud.plugin.protocol.NetworkClient;
-import de.polocloud.plugin.protocol.maintenance.MaintenanceState;
-import de.polocloud.plugin.protocol.motd.MotdUpdateCache;
-import de.polocloud.plugin.protocol.players.MaxPlayerProperty;
+import de.polocloud.plugin.protocol.property.GameServerProperty;
 
 public class CloudPlugin {
 
     private static CloudPlugin instance;
 
-    private MaintenanceState state;
-    private MaxPlayerProperty maxPlayerProperty;
-
-    private MotdUpdateCache motdUpdateCache;
+    private GameServerProperty property;
 
     private BootstrapFunction bootstrapFunction;
     private NetworkClient networkClient;
@@ -24,15 +19,17 @@ public class CloudPlugin {
         instance = this;
 
         this.bootstrapFunction = bootstrapFunction;
-        this.maxPlayerProperty = new MaxPlayerProperty(this.bootstrapFunction);
-
-        this.motdUpdateCache = new MotdUpdateCache();
+        this.property = new GameServerProperty();
 
         this.networkClient = new NetworkClient();
         this.networkClient.connect(bootstrapFunction.getNetworkPort());
 
         bootstrapFunction.registerEvents(networkClient);
         networkRegisterFunction.callNetwork(networkClient);
+    }
+
+    public GameServerProperty getProperty() {
+        return property;
     }
 
     public static CloudPlugin getInstance() {
@@ -43,23 +40,7 @@ public class CloudPlugin {
         return networkClient;
     }
 
-    public MaintenanceState getState() {
-        return state;
-    }
-
-    public void setState(MaintenanceState state) {
-        this.state = state;
-    }
-
     public BootstrapFunction getBootstrapFunction() {
         return bootstrapFunction;
-    }
-
-    public MaxPlayerProperty getMaxPlayerProperty() {
-        return maxPlayerProperty;
-    }
-
-    public MotdUpdateCache getMotdUpdateCache() {
-        return motdUpdateCache;
     }
 }
