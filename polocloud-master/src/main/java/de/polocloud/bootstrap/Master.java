@@ -29,6 +29,7 @@ import de.polocloud.bootstrap.listener.ChannelInactiveListener;
 import de.polocloud.bootstrap.listener.NettyExceptionListener;
 import de.polocloud.bootstrap.module.MasterModuleLoader;
 import de.polocloud.bootstrap.module.ModuleCache;
+import de.polocloud.bootstrap.network.SimplePacketService;
 import de.polocloud.bootstrap.network.handler.*;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
@@ -143,6 +144,7 @@ public class Master implements IStartable, ITerminatable {
         Logger.log(LoggerType.INFO, "Trying to start master...");
 
         this.nettyServer = this.cloudAPI.getGuice().getInstance(SimpleNettyServer.class);
+        this.cloudAPI.getGuice().getInstance(SimplePacketService.class);
 
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(WrapperLoginPacketHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerRegisterPacketHandler.class));
@@ -151,9 +153,7 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerUpdateListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerDisconnectListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerControlPlayerListener.class));
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerCloudCommandExecuteListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerHandler.class));
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestCloudPlayerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(WrapperRegisterStaticServerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestTemplateHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PermissionCheckResponseHandler.class));
