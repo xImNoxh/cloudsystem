@@ -33,6 +33,7 @@ import de.polocloud.bootstrap.network.handler.*;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
+import de.polocloud.bootstrap.setup.AskForDefaultTemplateCreationOnStartup;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
 import de.polocloud.bootstrap.template.fallback.FallbackProperty;
@@ -98,7 +99,6 @@ public class Master implements IStartable, ITerminatable {
         this.moduleLoader.loadModules(false);
 
         runnerThread.start();
-
     }
 
     public static Master getInstance() {
@@ -125,6 +125,16 @@ public class Master implements IStartable, ITerminatable {
         configSaver.save(masterConfig, configFile);
 
         return masterConfig;
+    }
+
+    public void askOnFirstStartToCreateDefaultTemplates() {
+        try {
+            if (templateService.getLoadedTemplates().get().size() == 0) {
+                new AskForDefaultTemplateCreationOnStartup(templateService).sendSetup();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -173,8 +183,8 @@ public class Master implements IStartable, ITerminatable {
             e.printStackTrace();
         }
 
-
         Logger.log(LoggerType.INFO, "The master is " + ConsoleColors.GREEN.getAnsiCode() + "successfully" + ConsoleColors.GRAY.getAnsiCode() + " started.");
+        askOnFirstStartToCreateDefaultTemplates();
     }
 
     @Override
