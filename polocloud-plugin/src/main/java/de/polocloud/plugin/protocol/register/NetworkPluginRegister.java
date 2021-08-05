@@ -131,6 +131,11 @@ public class NetworkPluginRegister extends NetworkRegister {
                         }
 
                         @Override
+                        public void terminate() {
+                            gameserver.terminate();
+                        }
+
+                        @Override
                         public void sendPacket(Packet packet) {
                             channelHandlerContext.writeAndFlush(new RedirectPacket(getSnowflake(), packet));
                         }

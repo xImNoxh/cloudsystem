@@ -5,8 +5,11 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.protocol.packet.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
+import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.logger.log.Logger;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.List;
 
 public class SimpleGameServer implements IGameServer {
 
+    private WrapperClient wrapper;
     private String name;
     private GameServerStatus status;
     private ChannelHandlerContext ctx;
@@ -33,7 +37,8 @@ public class SimpleGameServer implements IGameServer {
 
     private List<ICloudPlayer> cloudPlayers = new ArrayList<>();
 
-    public SimpleGameServer(String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers) {
+    public SimpleGameServer(WrapperClient wrapper, String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers) {
+        this.wrapper = wrapper;
         this.name = name;
         this.status = status;
         this.ctx = ctx;
@@ -114,6 +119,12 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void stop() {
         sendPacket(new GameServerShutdownPacket(name));
+    }
+
+    @Override
+    public void terminate() {
+        Logger.log("Sending Terminate Packet to Wrapper " + wrapper.getName());
+        wrapper.sendPacket(new MasterRequestsServerTerminatePacket(getSnowflake()));
     }
 
     public ChannelHandlerContext getCtx() {

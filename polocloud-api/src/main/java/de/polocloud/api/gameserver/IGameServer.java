@@ -33,6 +33,8 @@ public interface IGameServer extends Serializable {
 
     void stop();
 
+    void terminate();
+
     void sendPacket(Packet packet);
 
     void setMotd(String motd);

@@ -187,6 +187,12 @@ public abstract class Packet {
             }
 
             @Override
+            public void terminate() {
+                //TODO
+                throw new NotImplementedException();
+            }
+
+            @Override
             public void sendPacket(Packet packet) {
                 //TODO
                 throw new NotImplementedException();

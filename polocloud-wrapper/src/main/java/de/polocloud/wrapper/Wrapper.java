@@ -22,10 +22,8 @@ import de.polocloud.updater.UpdateClient;
 import de.polocloud.wrapper.commands.StopCommand;
 import de.polocloud.wrapper.config.WrapperConfig;
 import de.polocloud.wrapper.guice.WrapperGuiceModule;
-import de.polocloud.wrapper.network.handler.APIRequestGameServerCopyHandler;
-import de.polocloud.wrapper.network.handler.MasterLoginResponsePacketHandler;
-import de.polocloud.wrapper.network.handler.MasterRequestServerStartListener;
-import de.polocloud.wrapper.network.handler.WrapperRequestShutdownHandler;
+import de.polocloud.wrapper.network.handler.*;
+import de.polocloud.wrapper.process.ProcessManager;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -42,6 +40,8 @@ public class Wrapper implements IStartable, ITerminatable {
     private SimpleNettyClient nettyClient;
 
     private WrapperConfig config;
+
+    private ProcessManager processManager;
 
     public Wrapper() {
         instance = this;
@@ -177,6 +177,8 @@ public class Wrapper implements IStartable, ITerminatable {
             this.nettyClient.start();
         }).start();
 
+        this.processManager = new ProcessManager();
+
         Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "started.");
         try {
             Thread.sleep(500);
@@ -189,9 +191,10 @@ public class Wrapper implements IStartable, ITerminatable {
         //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
 
         this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
-        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config));
+        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config, processManager));
         this.nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
         this.nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
+        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestsServerTerminatePacketHandler(processManager));
     }
 
     @Override

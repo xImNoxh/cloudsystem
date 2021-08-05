@@ -10,6 +10,7 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.config.WrapperConfig;
 import de.polocloud.wrapper.config.properties.BungeeProperties;
+import de.polocloud.wrapper.process.ProcessManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.io.FileUtils;
 
@@ -24,12 +25,13 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
 
     private Executor executor = Executors.newCachedThreadPool();
     private WrapperConfig config;
+    private ProcessManager processManager;
 
     private IConfigSaver configSaver = new SimpleConfigSaver();
 
-    public MasterRequestServerStartListener(WrapperConfig config) {
-
+    public MasterRequestServerStartListener(WrapperConfig config, ProcessManager processManager) {
         this.config = config;
+        this.processManager = processManager;
     }
 
     @Override
@@ -94,6 +96,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
             processBuilder.directory(serverDirectory);
 
             Process process = processBuilder.start();
+            processManager.addProcess(snowflake, process);
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -152,6 +155,8 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
         Process process = null;
         try {
             process = processBuilder.start();
+            processManager.addProcess(snowflake, process);
+
             process.waitFor();
 
             //FileUtils.deleteDirectory(serverDirectory);

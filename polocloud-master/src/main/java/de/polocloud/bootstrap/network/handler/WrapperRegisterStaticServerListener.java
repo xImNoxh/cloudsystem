@@ -9,6 +9,7 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
@@ -23,6 +24,9 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler<Packet> 
     @Inject
     private IGameServerManager gameServerManager;
 
+    @Inject
+    private IWrapperClientManager wrapperClientManager;
+
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         WrapperRegisterStaticServerPacket packet = (WrapperRegisterStaticServerPacket) obj;
@@ -30,7 +34,7 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler<Packet> 
         IGameServer gameServer = null;
         try {
             ITemplate template = templateService.getTemplateByName(packet.getTemplateName()).get();
-            gameServer = new SimpleGameServer(packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
+            gameServer = new SimpleGameServer(wrapperClientManager.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

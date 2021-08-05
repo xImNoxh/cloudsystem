@@ -57,7 +57,12 @@ public class GameServerCommand extends CloudCommand {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The gameserver » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() + " isn't online!");
                         return;
                     } else {
-                        gameServer.stop();
+                        if (gameServer.getStatus() == GameServerStatus.RUNNING) {
+                            gameServer.stop();
+                        }else{
+                            gameServer.terminate();
+                            Logger.log("Server is not Running... Terminating Process");
+                        }
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "You " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "stopped the gameserver » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() + "!");
                     }
                     return;
@@ -85,7 +90,7 @@ public class GameServerCommand extends CloudCommand {
                         WrapperClient wrapperClient = optionalWrapperClient.get();
 
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
-                        SimpleGameServer newGameServer = new SimpleGameServer(template.getName() + "-" + searchForAvailableID(template),
+                        SimpleGameServer newGameServer = new SimpleGameServer(wrapperClient, template.getName() + "-" + searchForAvailableID(template),
                             GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                         gameServerManager.registerGameServer(newGameServer);
                         wrapperClient.startServer(newGameServer);
@@ -161,7 +166,7 @@ public class GameServerCommand extends CloudCommand {
 
                         for (int i = 0; i < amount; i++) {
                             Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
-                            SimpleGameServer newGameServer = new SimpleGameServer(template.getName() + "-" + searchForAvailableID(template),
+                            SimpleGameServer newGameServer = new SimpleGameServer(wrapperClient, template.getName() + "-" + searchForAvailableID(template),
                                 GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
                             gameServerManager.registerGameServer(newGameServer);
                             wrapperClient.startServer(newGameServer);
