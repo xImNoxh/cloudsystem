@@ -3,6 +3,7 @@ package de.polocloud.api.network.protocol.packet;
 import com.google.gson.Gson;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
@@ -106,6 +107,7 @@ public abstract class Packet {
         byteBuf.writeLong(gameServer.getPing());
         byteBuf.writeLong(gameServer.getStartTime());
         byteBuf.writeInt(gameServer.getMaxPlayers());
+        byteBuf.writeInt(gameServer.getServiceVisibility().ordinal());
     }
 
     protected IGameServer readGameServer(ByteBuf byteBuf) {
@@ -124,6 +126,7 @@ public abstract class Packet {
 
         long startTime = byteBuf.readLong();
         int maxPlayers = byteBuf.readInt();
+        ServiceVisibility serviceVisibility = ServiceVisibility.values()[byteBuf.readInt()];
 
         return new IGameServer() {
             @Override
@@ -217,6 +220,16 @@ public abstract class Packet {
             @Override
             public void setMaxPlayers(int players) {
                 throw new NotImplementedException();
+            }
+
+            @Override
+            public void setVisible(ServiceVisibility serviceVisibility) {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public ServiceVisibility getServiceVisibility() {
+                return serviceVisibility;
             }
         };
 

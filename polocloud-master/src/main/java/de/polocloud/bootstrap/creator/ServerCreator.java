@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
@@ -37,7 +38,7 @@ public abstract class ServerCreator {
         String name = template.getName() + "-" + generateServerId(template);
 
         SimpleGameServer gameServer = new SimpleGameServer(client,name, GameServerStatus.PENDING, null, id, template,
-            System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
+            System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers(), ServiceVisibility.INVISIBLE);
         gameServerManager.registerGameServer(gameServer);
         client.startServer(gameServer);
     }

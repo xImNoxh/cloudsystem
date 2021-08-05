@@ -6,6 +6,7 @@ import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
@@ -69,6 +70,7 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
             gameServer.sendPacket(new GameServerMotdUpdatePacket(gameServer.getMotd()));
 
             gameServer.setStatus(GameServerStatus.RUNNING);
+            gameServer.setVisible(ServiceVisibility.VISIBLE);
 
             ITemplate template = gameServer.getTemplate();
             if (template.getTemplateType() == TemplateType.MINECRAFT) {
