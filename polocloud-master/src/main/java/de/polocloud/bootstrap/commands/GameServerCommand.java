@@ -7,6 +7,7 @@ import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.template.ITemplate;
@@ -91,7 +92,7 @@ public class GameServerCommand extends CloudCommand {
 
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                         SimpleGameServer newGameServer = new SimpleGameServer(wrapperClient, template.getName() + "-" + searchForAvailableID(template),
-                            GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
+                            GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers(), ServiceVisibility.INVISIBLE);
                         gameServerManager.registerGameServer(newGameServer);
                         wrapperClient.startServer(newGameServer);
                     }
@@ -167,7 +168,7 @@ public class GameServerCommand extends CloudCommand {
                         for (int i = 0; i < amount; i++) {
                             Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting start...");
                             SimpleGameServer newGameServer = new SimpleGameServer(wrapperClient, template.getName() + "-" + searchForAvailableID(template),
-                                GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
+                                GameServerStatus.PENDING, null, snowflake.nextId(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers(), ServiceVisibility.INVISIBLE);
                             gameServerManager.registerGameServer(newGameServer);
                             wrapperClient.startServer(newGameServer);
                         }

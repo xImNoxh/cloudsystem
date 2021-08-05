@@ -2,6 +2,7 @@ package de.polocloud.bootstrap.gameserver;
 
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
@@ -22,6 +23,8 @@ public class SimpleGameServer implements IGameServer {
     private GameServerStatus status;
     private ChannelHandlerContext ctx;
 
+    private ServiceVisibility serviceVisibility;
+
     private long totalMemory = 0;
 
     private long snowflake;
@@ -37,7 +40,7 @@ public class SimpleGameServer implements IGameServer {
 
     private List<ICloudPlayer> cloudPlayers = new ArrayList<>();
 
-    public SimpleGameServer(WrapperClient wrapper, String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers) {
+    public SimpleGameServer(WrapperClient wrapper, String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers, ServiceVisibility serviceVisibility) {
         this.wrapper = wrapper;
         this.name = name;
         this.status = status;
@@ -47,6 +50,7 @@ public class SimpleGameServer implements IGameServer {
         this.startTime = startTime;
         this.motd = motd;
         this.maxPlayers = maxPlayers;
+        this.serviceVisibility = serviceVisibility;
     }
 
     @Override
@@ -161,5 +165,16 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setMaxPlayers(int players) {
         this.maxPlayers = players;
+    }
+
+
+    @Override
+    public void setVisible(ServiceVisibility serviceVisibility) {
+        this.serviceVisibility = serviceVisibility;
+    }
+
+    @Override
+    public ServiceVisibility getServiceVisibility() {
+        return serviceVisibility;
     }
 }

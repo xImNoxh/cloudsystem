@@ -2,6 +2,7 @@ package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.RedirectPacket;
@@ -158,6 +159,16 @@ public class NetworkPluginRegister extends NetworkRegister {
                         @Override
                         public void setMaxPlayers(int players) {
                             throw new NotImplementedException();
+                        }
+
+                        @Override
+                        public void setVisible(ServiceVisibility serviceVisibility) {
+                            throw new NotImplementedException();
+                        }
+
+                        @Override
+                        public ServiceVisibility getServiceVisibility() {
+                            return gameserver.getServiceVisibility();
                         }
                     });
                 }

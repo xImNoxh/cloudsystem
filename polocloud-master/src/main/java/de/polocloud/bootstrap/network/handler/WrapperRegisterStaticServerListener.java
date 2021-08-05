@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
@@ -34,7 +35,7 @@ public class WrapperRegisterStaticServerListener extends IPacketHandler<Packet> 
         IGameServer gameServer = null;
         try {
             ITemplate template = templateService.getTemplateByName(packet.getTemplateName()).get();
-            gameServer = new SimpleGameServer(wrapperClientManager.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers());
+            gameServer = new SimpleGameServer(wrapperClientManager.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING, null, packet.getSnowflake(), template, System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers(), ServiceVisibility.INVISIBLE);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
