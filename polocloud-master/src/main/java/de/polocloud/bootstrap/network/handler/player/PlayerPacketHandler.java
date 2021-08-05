@@ -3,10 +3,15 @@ package de.polocloud.bootstrap.network.handler.player;
 import com.google.inject.Inject;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
+import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
+
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerPacketHandler extends PlayerPacketServiceController {
 
@@ -21,6 +26,12 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
 
         new SimplePacketHandler<APIRequestCloudPlayerPacket>(APIRequestCloudPlayerPacket.class, (ctx, packet) ->
             sendICloudPlayerAPIResponse(playerManager, ctx, packet));
+
+        new SimplePacketHandler<APIRequestPlayerMoveFallbackPacket>(APIRequestPlayerMoveFallbackPacket.class, packet ->
+            playerManager.getOnlinePlayer(packet.getPlayername()).thenAccept(player -> sendToFallback(player)));
+
+        new SimplePacketHandler<PermissionCheckResponsePacket>(PermissionCheckResponsePacket.class, packet ->
+            ResponseHandler.getCompletableFuture(packet.getRequest(), true).complete(packet.isResponse()));
 
         new SimplePacketHandler<GameServerPlayerRequestJoinPacket>(GameServerPlayerRequestJoinPacket.class,
             (ctx, packet) -> getSearchedFallback(packet, (iGameServers, uuid) -> {

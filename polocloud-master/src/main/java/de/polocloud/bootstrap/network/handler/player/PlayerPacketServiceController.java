@@ -87,6 +87,10 @@ public abstract class PlayerPacketServiceController {
         return list == null || list.isEmpty();
     }
 
+    public void sendToFallback(ICloudPlayer player){
+        if (player != null) player.sendToFallback();
+    }
+
     public void sendMasterPlayerRequestJoinResponsePacket(ChannelHandlerContext ctx, UUID uuid, String serviceName, long snowflake){
         ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, serviceName, snowflake));
     }
