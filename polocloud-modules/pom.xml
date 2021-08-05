@@ -19,6 +19,7 @@
     <module>polocloud-tablist-module</module>
     <module>polocloud-permission-module</module>
     <module>polocloud-proxy-module</module>
+      <module>polocloud-webinterface-module</module>
   </modules>
 
   <properties>
