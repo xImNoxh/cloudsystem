@@ -14,6 +14,9 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     private CloudPlugin cloudPlugin;
 
+    public static int maxPlayers = 0;
+    public static int onlinePlayers = 0;
+
     @Override
     public void onEnable() {
         cloudPlugin = new CloudPlugin(this);

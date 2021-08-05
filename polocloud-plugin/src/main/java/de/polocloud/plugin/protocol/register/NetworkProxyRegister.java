@@ -1,13 +1,16 @@
 package de.polocloud.plugin.protocol.register;
 
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
 import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.bootstrap.ProxyBootstrap;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.NetworkRegister;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
+import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -17,6 +20,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class NetworkProxyRegister extends NetworkRegister {
 
@@ -82,6 +86,18 @@ public class NetworkProxyRegister extends NetworkRegister {
                 } else
                     property.getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), object.getServiceName());
                 loginEvent.completeIntent(plugin);
-            }, MasterPlayerRequestJoinResponsePacket.class);
+            }, MasterPlayerRequestJoinResponsePacket.class)
+
+            .register((channelHandlerContext, obj) -> {
+                MasterUpdatePlayerInfoPacket packet = (MasterUpdatePlayerInfoPacket) obj;
+
+                System.out.println("updating player count " + packet.getOnlinePlayers() + "/" + packet.getMaxPlayers());
+                ProxyBootstrap.maxPlayers = packet.getMaxPlayers();
+                ProxyBootstrap.onlinePlayers = packet.getOnlinePlayers();
+
+
+            }, MasterUpdatePlayerInfoPacket.class);
+
+        ;
     }
 }

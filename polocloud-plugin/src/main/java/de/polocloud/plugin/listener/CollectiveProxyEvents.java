@@ -5,6 +5,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisco
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.bootstrap.ProxyBootstrap;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
@@ -42,7 +43,8 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ProxyPingEvent event) {
-        event.getResponse().getPlayers().setMax(property.getGameServerMaxPlayers());
+        event.getResponse().getPlayers().setMax(ProxyBootstrap.maxPlayers);
+        event.getResponse().getPlayers().setOnline(ProxyBootstrap.onlinePlayers);
         event.getResponse().setDescription(property.getGameServerMotd());
     }
 

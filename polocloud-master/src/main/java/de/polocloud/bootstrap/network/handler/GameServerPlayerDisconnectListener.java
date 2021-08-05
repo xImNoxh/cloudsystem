@@ -3,11 +3,15 @@ package de.polocloud.bootstrap.network.handler;
 import com.google.inject.Inject;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
+import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
+import de.polocloud.api.network.protocol.packet.master.MasterUpdatePlayerInfoPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import de.polocloud.logger.log.Logger;
@@ -25,6 +29,9 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler<Packet> {
 
     @Inject
     private MasterConfig masterConfig;
+
+    @Inject
+    private IGameServerManager gameServerManager;
 
     @Inject
     private MasterPubSubManager pubSubManager;
@@ -63,11 +70,21 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler<Packet> {
 
         playerManager.unregister(onlinePlayer);
 
-        if(masterConfig.getProperties().isLogPlayerConnections())
-        Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now disconnected!");
+        if(masterConfig.getProperties().isLogPlayerConnections()){
+            Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now disconnected!");
+        }
 
         pubSubManager.publish("polo:event:playerQuit", uuid.toString());
         EventRegistry.fireEvent(new CloudPlayerDisconnectEvent(onlinePlayer));
+
+        gameServerManager.getGameServersByType(TemplateType.PROXY).thenAccept(proxyServerList -> {
+            playerManager.getAllOnlinePlayers().thenAccept(players -> {
+                for (IGameServer iGameServer : proxyServerList) {
+                    iGameServer.sendPacket(new MasterUpdatePlayerInfoPacket(players.size(), iGameServer.getTemplate().getMaxPlayers()));
+                }
+            });
+        });
+
 
 
     }

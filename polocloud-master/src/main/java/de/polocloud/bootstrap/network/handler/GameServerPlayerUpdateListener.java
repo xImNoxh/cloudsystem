@@ -9,8 +9,10 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
+import de.polocloud.api.network.protocol.packet.master.MasterUpdatePlayerInfoPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.player.SimpleCloudPlayer;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
@@ -59,6 +61,15 @@ public class GameServerPlayerUpdateListener extends IPacketHandler<Packet> {
 
                 pubSubManager.publish("polo:event:playerJoin", cloudPlayer.getName());
                 EventRegistry.fireEvent(new CloudPlayerJoinNetworkEvent(cloudPlayer));
+
+                gameServerManager.getGameServersByType(TemplateType.PROXY).thenAccept(proxyServerList -> {
+                    playerManager.getAllOnlinePlayers().thenAccept(players -> {
+                        for (IGameServer iGameServer : proxyServerList) {
+                            iGameServer.sendPacket(new MasterUpdatePlayerInfoPacket(players.size(), iGameServer.getTemplate().getMaxPlayers()));
+                        }
+                    });
+                });
+
             }
 
             IGameServer from = cloudPlayer.getMinecraftServer();
@@ -74,8 +85,10 @@ public class GameServerPlayerUpdateListener extends IPacketHandler<Packet> {
             IGameServer to = cloudPlayer.getMinecraftServer();
 
             if (isOnline) {
-                pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());;
-                if(from != null) pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
+                pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
+                ;
+                if (from != null)
+                    pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
                 EventRegistry.fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
             }
 

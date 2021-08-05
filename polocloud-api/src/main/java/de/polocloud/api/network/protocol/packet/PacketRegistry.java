@@ -88,6 +88,7 @@ public class PacketRegistry {
         registerPacket(137, WrapperRequestShutdownPacket.class);
 
         registerPacket(138, MasterRequestsServerTerminatePacket.class);
+        registerPacket(139, MasterUpdatePlayerInfoPacket.class);
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
