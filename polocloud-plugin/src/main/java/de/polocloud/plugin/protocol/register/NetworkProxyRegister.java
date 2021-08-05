@@ -20,17 +20,16 @@ import java.util.UUID;
 
 public class NetworkProxyRegister extends NetworkRegister {
 
-    public NetworkProxyRegister(CloudPlugin cloudPlugin, Plugin plugin) {
-        super(cloudPlugin.getNetworkClient());
-
-        NetworkClient networkClient = cloudPlugin.getNetworkClient();
+    public NetworkProxyRegister(NetworkClient client, CloudPlugin cloudPlugin, Plugin plugin) {
+        super(client);
+        System.out.println("Register Proxy Network Listeners!!!" + cloudPlugin);
         GameServerProperty property = cloudPlugin.getProperty();
 
         register((channelHandlerContext, packet) -> {
             PermissionCheckResponsePacket object = (PermissionCheckResponsePacket) packet;
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(object.getPlayer());
             if (player != null) object.setResponse(player.hasPermission(object.getPermission()));
-            networkClient.sendPacket(object);
+            getNetworkClient().sendPacket(object);
         }, PermissionCheckResponsePacket.class)
 
             .register((channelHandlerContext, packet) -> {
@@ -67,6 +66,7 @@ public class NetworkProxyRegister extends NetworkRegister {
 
             .register((channelHandlerContext, packet) -> {
                 MasterRequestServerListUpdatePacket object = (MasterRequestServerListUpdatePacket) packet;
+
                 ProxyServer.getInstance().getServers().put(object.getName(), ProxyServer.getInstance().constructServerInfo(
                     object.getName(), InetSocketAddress.createUnresolved(object.getHost(), object.getPort()),
                     "PoloCloud", false
@@ -79,7 +79,8 @@ public class NetworkProxyRegister extends NetworkRegister {
                 if (object.getSnowflake() == -1) {
                     loginEvent.setCancelled(true);
                     loginEvent.setCancelReason(new TextComponent("§cEs wurde kein fallback Server gefunden!"));
-                } else property.getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), object.getServiceName());
+                } else
+                    property.getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), object.getServiceName());
                 loginEvent.completeIntent(plugin);
             }, MasterPlayerRequestJoinResponsePacket.class);
     }

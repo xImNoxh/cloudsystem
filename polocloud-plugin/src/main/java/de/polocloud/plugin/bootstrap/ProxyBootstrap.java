@@ -16,7 +16,8 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     @Override
     public void onEnable() {
-        cloudPlugin = new CloudPlugin(this, this);
+        cloudPlugin = new CloudPlugin(this);
+        cloudPlugin.callListeners(this);
     }
 
     @Override
@@ -31,7 +32,8 @@ public class ProxyBootstrap extends Plugin implements BootstrapFunction, Network
 
     @Override
     public void callNetwork(NetworkClient networkClient) {
-        new NetworkProxyRegister(cloudPlugin, this);
+        System.out.println("NetworkClient ? " + networkClient);
+        new NetworkProxyRegister(networkClient, cloudPlugin, this);
         new NetworkPluginRegister(networkClient, this);
     }
 

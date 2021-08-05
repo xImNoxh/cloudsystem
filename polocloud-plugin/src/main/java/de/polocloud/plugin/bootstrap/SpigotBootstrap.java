@@ -30,7 +30,8 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
     @Override
     public void onEnable() {
         this.commandReader = new CommandReader();
-        new CloudPlugin(this, this);
+        CloudPlugin cloudPlugin = new CloudPlugin(this);
+        cloudPlugin.callListeners(this);
     }
 
     @Override

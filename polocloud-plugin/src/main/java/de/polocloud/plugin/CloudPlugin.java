@@ -14,7 +14,7 @@ public class CloudPlugin {
     private BootstrapFunction bootstrapFunction;
     private NetworkClient networkClient;
 
-    public CloudPlugin(BootstrapFunction bootstrapFunction, NetworkRegisterFunction networkRegisterFunction) {
+    public CloudPlugin(BootstrapFunction bootstrapFunction) {
 
         instance = this;
 
@@ -24,6 +24,9 @@ public class CloudPlugin {
         this.networkClient = new NetworkClient();
         this.networkClient.connect(bootstrapFunction.getNetworkPort());
 
+    }
+
+    public void callListeners(NetworkRegisterFunction networkRegisterFunction){
         bootstrapFunction.registerEvents(this);
         networkRegisterFunction.callNetwork(networkClient);
     }
