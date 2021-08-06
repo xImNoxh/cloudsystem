@@ -6,11 +6,9 @@ import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 public class WrapperPacketHandler extends WrapperHandlerController {
@@ -36,14 +34,15 @@ public class WrapperPacketHandler extends WrapperHandlerController {
         });
 
         new SimplePacketHandler<WrapperLoginPacket>(WrapperLoginPacket.class, (ctx, packet) -> {
-            getLoginResponse(config, packet, response -> {
-                Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
-                WrapperClient wrapperClient = new WrapperClient(packet.getName(), ctx);
-                wrapperClient.sendPacket(getMasterLoginResponsePacket(response));
+            getLoginResponse(config, packet, (response, client) -> {
+                client.sendPacket(getMasterLoginResponsePacket(response));
                 if (!response) {
                     ctx.close();
-                } else wrapperClientManager.registerWrapperClient(wrapperClient);
-            });
+                    return;
+                }
+                wrapperClientManager.registerWrapperClient(client);
+                sendWrapperSuccessfully(packet);
+            }, ctx);
         });
     }
 }

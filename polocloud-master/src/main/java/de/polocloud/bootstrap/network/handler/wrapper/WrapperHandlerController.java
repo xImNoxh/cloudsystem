@@ -8,12 +8,16 @@ import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticSer
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
+import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
+import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class WrapperHandlerController {
@@ -41,9 +45,12 @@ public abstract class WrapperHandlerController {
         return System.currentTimeMillis();
     }
 
-    public void getLoginResponse(MasterConfig config, WrapperLoginPacket packet, Consumer<Boolean> response) {
-        response.accept(config.getProperties().getWrapperKey().equals(packet.getKey()));
+    public void getLoginResponse(MasterConfig config, WrapperLoginPacket packet, BiConsumer<Boolean, WrapperClient> response, ChannelHandlerContext ctx) {
+        response.accept(config.getProperties().getWrapperKey().equals(packet.getKey()), new WrapperClient(packet.getName(), ctx));
     }
 
+    public void sendWrapperSuccessfully(WrapperLoginPacket packet){
+        Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
+    }
 
 }
