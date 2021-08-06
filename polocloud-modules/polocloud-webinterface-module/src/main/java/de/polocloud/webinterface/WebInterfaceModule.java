@@ -12,7 +12,6 @@ import de.polocloud.webinterface.handler.PostLoginPageHandler;
 import de.polocloud.webinterface.security.PasswordManager;
 import de.polocloud.webinterface.user.WebUserManager;
 import io.javalin.Javalin;
-import io.javalin.http.staticfiles.Location;
 
 import java.io.File;
 
