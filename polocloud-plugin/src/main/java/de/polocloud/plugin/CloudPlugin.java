@@ -26,17 +26,17 @@ public class CloudPlugin {
 
     }
 
-    public void callListeners(NetworkRegisterFunction networkRegisterFunction){
-        bootstrapFunction.registerEvents(this);
+    public static CloudPlugin getInstance() {
+        return instance;
+    }
+
+    public void callListeners(NetworkRegisterFunction networkRegisterFunction) {
         networkRegisterFunction.callNetwork(networkClient);
+        bootstrapFunction.registerEvents(this);
     }
 
     public GameServerProperty getProperty() {
         return property;
-    }
-
-    public static CloudPlugin getInstance() {
-        return instance;
     }
 
     public NetworkClient getNetworkClient() {
