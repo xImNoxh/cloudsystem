@@ -6,9 +6,13 @@ import de.polocloud.api.CloudAPI;
 import de.polocloud.api.module.Module;
 import de.polocloud.webinterface.command.WebInterfaceCommand;
 import de.polocloud.webinterface.config.WebInterfaceConfig;
+import de.polocloud.webinterface.handler.DashboardPageHandler;
+import de.polocloud.webinterface.handler.LoginPageHandler;
+import de.polocloud.webinterface.handler.PostLoginPageHandler;
 import de.polocloud.webinterface.security.PasswordManager;
 import de.polocloud.webinterface.user.WebUserManager;
 import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
 
 import java.io.File;
 
@@ -37,7 +41,13 @@ public class WebInterfaceModule extends Module {
         Thread.currentThread().setContextClassLoader(WebInterfaceModule.class.getClassLoader());
 
         this.javalin = Javalin.create(config -> {
+            config.addStaticFiles("dashboard/");
         });
+
+        this.javalin.get("/", new LoginPageHandler());
+        this.javalin.get("/dashboard", new DashboardPageHandler());
+
+        this.javalin.post("/post/login", new PostLoginPageHandler());
 
         this.javalin.start(config.getNetwork().getPort());
 
@@ -62,6 +72,7 @@ public class WebInterfaceModule extends Module {
         if (this.config.getSecurity().getSalt() == null) {
             this.config.getSecurity().generateNewSalt();
         }
+
 
         getConfigSaver().save(this.config, configFile);
 
