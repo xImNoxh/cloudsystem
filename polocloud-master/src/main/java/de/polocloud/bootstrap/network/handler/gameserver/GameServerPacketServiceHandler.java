@@ -8,14 +8,12 @@ import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 
-import java.util.UUID;
-
-public class GameServerHandler extends GameServerPacketController {
+public class GameServerPacketServiceHandler extends GameServerPacketController {
 
     @Inject
     public ICloudPlayerManager playerManager;
 
-    public GameServerHandler() {
+    public GameServerPacketServiceHandler() {
 
         new SimplePacketHandler<APIRequestGameServerCopyResponsePacket>(APIRequestGameServerCopyResponsePacket.class, packet ->
             Logger.log(packet.isFailed() ? LoggerType.ERROR : LoggerType.INFO, packet.isFailed() ?

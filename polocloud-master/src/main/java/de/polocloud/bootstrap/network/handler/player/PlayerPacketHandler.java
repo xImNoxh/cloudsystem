@@ -3,6 +3,8 @@ package de.polocloud.bootstrap.network.handler.player;
 import com.google.inject.Inject;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
+import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
+import de.polocloud.api.event.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
@@ -10,17 +12,23 @@ import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMov
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterUpdatePlayerInfoPacket;
 import de.polocloud.api.network.response.ResponseHandler;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
+import de.polocloud.bootstrap.player.SimpleCloudPlayer;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
+
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class PlayerPacketHandler extends PlayerPacketServiceController {
 
@@ -58,6 +66,47 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 callDisconnectEvent(pubSubManager, cloudPlayer);
                 updateProxyInfoService(serverManager,playerManager);
             });
+        });
+
+        new SimplePacketHandler<GameServerPlayerUpdatePacket>(GameServerPlayerUpdatePacket.class, (ctx, packet) -> {
+            String name = packet.getName();
+            UUID uuid = packet.getUuid();
+            callCurrentServices(serverManager, packet.getTargetServer(), (targetServer, proxyServer) -> {
+                ICloudPlayer cloudPlayer = null;
+                boolean isOnline = false;
+                try {
+                    if (isOnline = playerManager.isPlayerOnline(uuid).get()) {
+                        cloudPlayer = playerManager.getOnlinePlayer(uuid).get();
+                    } else {
+                        cloudPlayer = new SimpleCloudPlayer(name, uuid);
+                        ((SimpleCloudPlayer) cloudPlayer).setProxyGameServer(proxyServer);
+                        cloudPlayer.getProxyServer().getCloudPlayers().add(cloudPlayer);
+                        playerManager.register(cloudPlayer);
+
+                        callConnectEvent(pubSubManager, cloudPlayer);
+                        updateProxyInfoService(serverManager, playerManager);
+
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                IGameServer from = cloudPlayer.getMinecraftServer();
+
+                if (cloudPlayer.getMinecraftServer() != null) cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
+
+                ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
+                targetServer.getCloudPlayers().add(cloudPlayer);
+
+                IGameServer to = cloudPlayer.getMinecraftServer();
+
+                if (isOnline) {
+                    pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
+                    if (from != null) pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
+                    EventRegistry.fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
+                }
+                sendConnectMessage(masterConfig, cloudPlayer);
+            }, ctx);
         });
 
         new SimplePacketHandler<GameServerPlayerRequestJoinPacket>(GameServerPlayerRequestJoinPacket.class,

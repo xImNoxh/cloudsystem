@@ -5,6 +5,7 @@ import de.polocloud.api.CloudAPI;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
+import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
@@ -81,9 +82,15 @@ public abstract class PlayerPacketServiceController {
             proxyServerList.forEach(it -> it.sendPacket(new MasterUpdatePlayerInfoPacket(players.size(), it.getTemplate().getMaxPlayers())))));
     }
 
+    public void callConnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer){
+        pubSubManager.publish("polo:event:playerJoin", cloudPlayer.getName());
+        EventRegistry.fireEvent(new CloudPlayerJoinNetworkEvent(cloudPlayer));
+    }
+
     public void callDisconnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer) {
         pubSubManager.publish("polo:event:playerQuit", cloudPlayer.getUUID().toString());
         EventRegistry.fireEvent(new CloudPlayerDisconnectEvent(cloudPlayer));
+
     }
 
     public List<CloudCommand> getPossibleCommand(String[] args) {
@@ -118,6 +125,14 @@ public abstract class PlayerPacketServiceController {
         return action.equals(APIRequestCloudPlayerPacket.Action.ONLINE_NAME) || action.equals(APIRequestCloudPlayerPacket.Action.BY_NAME);
     }
 
+    public void callCurrentServices(IGameServerManager serverManager, String snow, BiConsumer<IGameServer, IGameServer> service, ChannelHandlerContext ctx){
+        try {
+            service.accept(serverManager.getGameServerByName(snow).get(), serverManager.getGameServerByConnection(ctx).get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     public IGameServer getNextFallback(List<IGameServer> fallbacks) {
         return fallbacks.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
     }
@@ -128,6 +143,12 @@ public abstract class PlayerPacketServiceController {
 
     public void sendToFallback(ICloudPlayer player) {
         if (player != null) player.sendToFallback();
+    }
+
+    public void sendConnectMessage(MasterConfig masterConfig, ICloudPlayer cloudPlayer) {
+        if (masterConfig.getProperties().isLogPlayerConnections())
+            Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN + cloudPlayer.getName() + ConsoleColors.GRAY +
+                " is playing on " + cloudPlayer.getMinecraftServer().getName() + "(" + cloudPlayer.getProxyServer().getName() + ")");
     }
 
     public void sendDisconnectMessage(MasterConfig masterConfig, GameServerPlayerDisconnectPacket placket) {

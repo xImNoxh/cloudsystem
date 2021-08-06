@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public abstract class WrapperHandlerController {
+public abstract class WrapperHandlerServiceController {
 
     public void getTemplateByName(ITemplateService service, WrapperRegisterStaticServerPacket packet, Consumer<ITemplate> tmp) {
         try {

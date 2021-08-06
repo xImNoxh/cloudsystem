@@ -11,7 +11,7 @@ import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 
-public class WrapperPacketHandler extends WrapperHandlerController {
+public class WrapperPacketHandlerService extends WrapperHandlerServiceController {
 
     @Inject
     private ITemplateService templateService;
@@ -25,7 +25,7 @@ public class WrapperPacketHandler extends WrapperHandlerController {
     @Inject
     private MasterConfig config;
 
-    public WrapperPacketHandler() {
+    public WrapperPacketHandlerService() {
 
         new SimplePacketHandler<WrapperRegisterStaticServerPacket>(WrapperRegisterStaticServerPacket.class, (ctx, packet) -> {
             Logger.log(LoggerType.INFO, "register static server with id " + packet.getSnowflake());
