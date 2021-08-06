@@ -37,25 +37,19 @@ public abstract class PageHandler implements Handler {
 
         if (sessionID == null) {
             webUser = null;
-            System.out.println(1);
         } else {
-            System.out.println(2);
 
             WebUser webUser = WebInterfaceModule.getInstance().getWebUserManager().getUserBySessionID(sessionID);
             if (webUser == null) {
-                System.out.println(3);
                 this.webUser = null;
             } else {
-                System.out.println(4);
                 this.webUser = webUser;
             }
         }
 
         if (this.webUser == null) {
-            System.out.println(5);
 
             if (!isLoginPage()) {
-                System.out.println(6);
 
                 ctx.redirect("/");
                 return;
@@ -63,11 +57,9 @@ public abstract class PageHandler implements Handler {
         }else{
             if(isLoginPage()){
                 ctx.redirect("/dashboard");
-                System.out.println(8);
                 return;
             }
         }
-        System.out.println(7);
 
         String render = template.render(templateContext);
         ctx.status(200);
