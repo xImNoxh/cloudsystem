@@ -29,8 +29,8 @@ public class ChannelInactiveListener implements EventHandler<ChannelInactiveEven
         });
 
         gameServerManager.getGameServerByConnection(ctx).thenAccept(iGameServer -> {
-            Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + iGameServer.getName() +
-                ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.RED.getAnsiCode() + "disconnected" + ConsoleColors.GRAY.getAnsiCode() + "!");
+            Logger.log(LoggerType.INFO, "The service " + ConsoleColors.LIGHT_BLUE + iGameServer.getName() +
+                ConsoleColors.GRAY + " is now " + ConsoleColors.RED + "disconnected" + ConsoleColors.GRAY + "!");
             gameServerManager.unregisterGameServer(iGameServer);
         });
     }

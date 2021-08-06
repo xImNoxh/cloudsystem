@@ -23,8 +23,8 @@ public class ReloadCommand extends CloudCommand {
                 Master.getInstance().getModuleCache().unloadModules();
                 Master.getInstance().getModuleLoader().loadModules(true);
 
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Cloud " + ConsoleColors.GREEN.getAnsiCode() + "completed "
-                    + ConsoleColors.GRAY.getAnsiCode() + "reload. (" + (System.currentTimeMillis() - start) + "ms)");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Cloud " + ConsoleColors.GREEN + "completed "
+                    + ConsoleColors.GRAY + "reload. (" + (System.currentTimeMillis() - start) + "ms)");
             } else {
                 sendHelp();
             }
@@ -33,11 +33,11 @@ public class ReloadCommand extends CloudCommand {
                 String moduleName = args[2];
                 Module module = Master.getInstance().getModuleCache().getModuleByName(moduleName);
                 if (module == null) {
-                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The module » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleName + ConsoleColors.GRAY.getAnsiCode() + " isn't loaded!");
+                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The module » " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + " isn't loaded!");
                     return;
                 }
                 long started = System.currentTimeMillis();
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Reloading » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + Master.getInstance().getModuleCache().get(module).getModuleData().getName() + ConsoleColors.GRAY.getAnsiCode() + "...");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "Reloading » " + ConsoleColors.LIGHT_BLUE + Master.getInstance().getModuleCache().get(module).getModuleData().getName() + ConsoleColors.GRAY + "...");
                 File moduleFile = Master.getInstance().getModuleCache().get(module).getModuleData().getFile();
                 Master.getInstance().getModuleCache().unloadModule(module);
                 Master.getInstance().getModuleLoader().loadModule(moduleFile);
@@ -52,11 +52,8 @@ public class ReloadCommand extends CloudCommand {
 
     private void sendHelp() {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Reload]----");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "reload all " + ConsoleColors.GRAY.getAnsiCode() + "to reload the clouds");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "reload module <module> " + ConsoleColors.GRAY.getAnsiCode() + "to reload a module");
-        Logger.newLine();
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "reload all " + ConsoleColors.GRAY + "to reload the clouds");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "reload module <module> " + ConsoleColors.GRAY + "to reload a module");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Reload]----");
     }
 }

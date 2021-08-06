@@ -21,12 +21,12 @@ public class HelpCommand extends CloudCommand {
         int console = 0;
         for (CloudCommand command : Master.getInstance().getCloudAPI().getCommandPool().getAllCachedCommands()) {
             Logger.newLine();
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "--[" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command.getName() + "-Command" + ConsoleColors.GRAY.getAnsiCode() + "]--");
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "Name » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command.getName());
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "Description » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command.getDescription());
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "Aliases » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + Arrays.toString(command.getAliases()));
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "Type » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command.getCommandType());
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "--[/" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + command.getName() + ConsoleColors.GRAY.getAnsiCode() + "]--");
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "--[" + ConsoleColors.LIGHT_BLUE + command.getName() + "-Command" + ConsoleColors.GRAY + "]--");
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Name » " + ConsoleColors.LIGHT_BLUE + command.getName());
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Description » " + ConsoleColors.LIGHT_BLUE + command.getDescription());
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Aliases » " + ConsoleColors.LIGHT_BLUE + Arrays.toString(command.getAliases()));
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Type » " + ConsoleColors.LIGHT_BLUE + command.getCommandType());
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "--[/" + ConsoleColors.LIGHT_BLUE + command.getName() + ConsoleColors.GRAY + "]--");
             if (command.getCommandType().equals(CommandType.CONSOLE)) {
                 console++;
             } else if (command.getCommandType().equals(CommandType.INGAME_CONSOLE)) {
@@ -38,11 +38,11 @@ public class HelpCommand extends CloudCommand {
         Logger.newLine();
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Found » ");
         Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Ingame-Commands » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + ingame);
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Ingame-Commands » " + ConsoleColors.LIGHT_BLUE + ingame);
         Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Ingame-Console-Commands » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + ingameConsole);
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Ingame-Console-Commands » " + ConsoleColors.LIGHT_BLUE + ingameConsole);
         Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Console-Commands » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + console);
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Console-Commands » " + ConsoleColors.LIGHT_BLUE + console);
         Logger.newLine();
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Help]----");
     }

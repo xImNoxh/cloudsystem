@@ -33,7 +33,7 @@ public class ConsoleReadThread extends Thread {
             try {
                 this.consoleReader.setPrompt("");
                 this.consoleReader.resetPromptLine("", "", 0);
-                while ((line = this.consoleReader.readLine(colorString(Logger.PREFIX))) != null && !line.trim().isEmpty()) {
+                while ((line = this.consoleReader.readLine(Logger.PREFIX)) != null && !line.trim().isEmpty()) {
                     this.consoleReader.setPrompt("");
 
                     String[] args = line.split(" ");
@@ -43,7 +43,7 @@ public class ConsoleReadThread extends Thread {
                         List<CloudCommand> commands = commandPool.getAllCachedCommands().stream().filter(key -> key.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList());
 
                         if (commands.size() == 0) {
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknown command... Please use the " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "help " + ConsoleColors.GRAY.getAnsiCode() + "command.");
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknown command... Please use the " + ConsoleColors.LIGHT_BLUE + "help " + ConsoleColors.GRAY + "command.");
                         } else {
                             for (CloudCommand command : commands) {
                                 if (command.getCommandType().equals(CommandType.CONSOLE) || command.getCommandType().equals(CommandType.INGAME_CONSOLE)) {
@@ -59,11 +59,4 @@ public class ConsoleReadThread extends Thread {
             }
         }
     }
-
-    public String colorString(String text) {
-        for (ConsoleColors consoleColour : ConsoleColors.values())
-            text = text.replace('§' + "" + consoleColour.getIndex(), consoleColour.getAnsiCode());
-        return text;
-    }
-
 }

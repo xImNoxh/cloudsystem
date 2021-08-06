@@ -149,7 +149,6 @@ public class Master implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerRegisterPacketHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerUpdateListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPlayerDisconnectListener.class));
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerControlPlayerListener.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestGameServerHandler.class));
         this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(APIRequestTemplateHandler.class));
 
@@ -168,7 +167,7 @@ public class Master implements IStartable, ITerminatable {
             if (this.templateService.getLoadedTemplates().get().size() > 0) {
                 StringBuilder builder = new StringBuilder();
                 this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%),"));
-                Logger.log(LoggerType.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + builder.substring(0, builder.length() - 1));
+                Logger.log(LoggerType.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 1));
             } else {
                 Logger.log(LoggerType.INFO, "No templates founded.");
             }
@@ -176,7 +175,7 @@ public class Master implements IStartable, ITerminatable {
             e.printStackTrace();
         }
 
-        Logger.log(LoggerType.INFO, "The master is " + ConsoleColors.GREEN.getAnsiCode() + "successfully" + ConsoleColors.GRAY.getAnsiCode() + " started.");
+        Logger.log(LoggerType.INFO, "The master is " + ConsoleColors.GREEN + "successfully" + ConsoleColors.GRAY + " started.");
         askOnFirstStartToCreateDefaultTemplates();
     }
 

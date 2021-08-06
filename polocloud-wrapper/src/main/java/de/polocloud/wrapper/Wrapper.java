@@ -74,7 +74,7 @@ public class Wrapper implements IStartable, ITerminatable {
                     String serverName = properties[0];
                     int port = Integer.parseInt(properties[1]);
                     int processMemory = Integer.parseInt(properties[2]);
-                    Logger.log(LoggerType.INFO, "Starting static server » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + serverName + ConsoleColors.GRAY.getAnsiCode() + " on port » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + port + ConsoleColors.GRAY.getAnsiCode() + "...");
+                    Logger.log(LoggerType.INFO, "Starting static server » " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port » " + ConsoleColors.LIGHT_BLUE + port + ConsoleColors.GRAY + "...");
                     ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + processMemory + "M -Xmx" + processMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
                     try {
                         processBuilder.directory(new File("static/" + serverName));
@@ -82,7 +82,7 @@ public class Wrapper implements IStartable, ITerminatable {
                         String name = serverName.split("#")[0];
                         long snowflakeID = Long.parseLong(serverName.split("#")[1]);
 
-                        Logger.log(LoggerType.INFO, "Starting static server with " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() + "/" + ConsoleColors.LIGHT_BLUE.getAnsiCode() + ConsoleColors.GRAY.getAnsiCode() + snowflakeID + "(" + serverName + ")...");
+                        Logger.log(LoggerType.INFO, "Starting static server with " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + "/" + ConsoleColors.LIGHT_BLUE + ConsoleColors.GRAY + snowflakeID + "(" + serverName + ")...");
                         event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflakeID));
 
                         Process process = processBuilder.start();
@@ -139,7 +139,7 @@ public class Wrapper implements IStartable, ITerminatable {
             config.setApiVersion(updateClient.getFetchedVersion());
             IConfigSaver saver = new SimpleConfigSaver();
             saver.save(config, new File("config.json"));
-            Logger.log(LoggerType.INFO, ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "update PoloCloud-API! (" + config.getApiVersion() + ")");
+            Logger.log(LoggerType.INFO, ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "update PoloCloud-API! (" + config.getApiVersion() + ")");
         } else {
             Logger.log(LoggerType.INFO, "No update for PoloCloud-API found!");
         }
@@ -179,7 +179,7 @@ public class Wrapper implements IStartable, ITerminatable {
 
         this.processManager = new ProcessManager();
 
-        Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "started.");
+        Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
         try {
             Thread.sleep(500);
         } catch (InterruptedException exception) {

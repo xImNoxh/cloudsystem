@@ -71,7 +71,7 @@ public class GameServerPlayerDisconnectListener extends IPacketHandler<Packet> {
         playerManager.unregister(onlinePlayer);
 
         if(masterConfig.getProperties().isLogPlayerConnections()){
-            Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + packet.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now disconnected!");
+            Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN + packet.getName() + ConsoleColors.GRAY + " is now disconnected!");
         }
 
         pubSubManager.publish("polo:event:playerQuit", uuid.toString());

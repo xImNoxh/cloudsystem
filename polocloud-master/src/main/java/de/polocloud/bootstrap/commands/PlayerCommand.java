@@ -34,12 +34,12 @@ public class PlayerCommand extends CloudCommand {
                 String server = args[3];
                 ICloudPlayer cloudPlayer = cloudPlayerManager.getOnlinePlayer(player).get();
                 if (cloudPlayer == null) {
-                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The player » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + player + ConsoleColors.GRAY.getAnsiCode() + " isn't online!");
+                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The player » " + ConsoleColors.LIGHT_BLUE + player + ConsoleColors.GRAY + " isn't online!");
                     return;
                 }
                 IGameServer gameServer = gameServerManager.getGameServerByName(server).get();
                 if (gameServer == null) {
-                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The gameserver » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + server + ConsoleColors.GRAY.getAnsiCode() + " isn't online!");
+                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The gameserver » " + ConsoleColors.LIGHT_BLUE + server + ConsoleColors.GRAY + " isn't online!");
                     return;
                 }
                 if (gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY)) {
@@ -48,15 +48,15 @@ public class PlayerCommand extends CloudCommand {
                 }
                 Logger.log(LoggerType.INFO, Logger.PREFIX + "sending...");
                 cloudPlayer.sendTo(gameServer);
-                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "sent player » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + cloudPlayer.getName() + ConsoleColors.GRAY.getAnsiCode() +
-                    " to server » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() + ConsoleColors.GRAY.getAnsiCode() + "!");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "sent player » " + ConsoleColors.LIGHT_BLUE + cloudPlayer.getName() + ConsoleColors.GRAY +
+                    " to server » " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "!");
             } else if (args.length >= 4) {
                 if (args[2].equalsIgnoreCase("kick") || args[2].equalsIgnoreCase("message")) {
                     String type = args[2];
                     String player = args[1];
                     ICloudPlayer cloudPlayer = cloudPlayerManager.getOnlinePlayer(player).get();
                     if (cloudPlayer == null) {
-                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The player » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + player + ConsoleColors.GRAY.getAnsiCode() + " isn't online!");
+                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The player » " + ConsoleColors.LIGHT_BLUE + player + ConsoleColors.GRAY + " isn't online!");
                         return;
                     }
 
@@ -71,11 +71,11 @@ public class PlayerCommand extends CloudCommand {
                     if (type.equalsIgnoreCase("kick")) {
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "kicking...");
                         cloudPlayer.kick(message);
-                        Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "kicked player » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + cloudPlayer.getName() + ConsoleColors.GRAY.getAnsiCode() + "! (Message » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + message + ConsoleColors.GRAY.getAnsiCode() + ")");
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "kicked player » " + ConsoleColors.LIGHT_BLUE + cloudPlayer.getName() + ConsoleColors.GRAY + "! (Message » " + ConsoleColors.LIGHT_BLUE + message + ConsoleColors.GRAY + ")");
                     } else if (type.equalsIgnoreCase("message")) {
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "messaging...");
                         cloudPlayer.sendMessage(message);
-                        Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "messaged player » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + cloudPlayer.getName() + ConsoleColors.GRAY.getAnsiCode() + "! (Message » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + message + ConsoleColors.GRAY.getAnsiCode() + ")");
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "messaged player » " + ConsoleColors.LIGHT_BLUE + cloudPlayer.getName() + ConsoleColors.GRAY + "! (Message » " + ConsoleColors.LIGHT_BLUE + message + ConsoleColors.GRAY + ")");
                     }
                 } else {
                     sendHelp();
@@ -91,13 +91,9 @@ public class PlayerCommand extends CloudCommand {
 
     private void sendHelp() {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Player]----");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "player <player> message <message...> " + ConsoleColors.GRAY.getAnsiCode() + "to send a message to a player");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "player <player> kick <message...> " + ConsoleColors.GRAY.getAnsiCode() + "to kick a player with a message");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "player <player> send <server> " + ConsoleColors.GRAY.getAnsiCode() + "to send a player to a gameserver");
-        Logger.newLine();
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "player <player> message <message...> " + ConsoleColors.GRAY + "to send a message to a player");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "player <player> kick <message...> " + ConsoleColors.GRAY + "to kick a player with a message");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "player <player> send <server> " + ConsoleColors.GRAY + "to send a player to a gameserver");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Player]----");
     }
 }

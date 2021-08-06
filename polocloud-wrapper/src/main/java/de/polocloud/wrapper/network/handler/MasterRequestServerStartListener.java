@@ -43,8 +43,8 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
         int maxPlayers = packet.getMaxPlayers();
         long snowFlake = packet.getSnowflake();
 
-        Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() +
-            packet.getServerName() + ConsoleColors.GRAY.getAnsiCode() + " server with template " + templateName + " (#" + snowFlake + ")");
+        Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE +
+            packet.getServerName() + ConsoleColors.GRAY + " server with template " + templateName + " (#" + snowFlake + ")");
 
         File serverFile = new File("storage/version/" + packet.getVersion().getTitle() + ".jar");
         if (!serverFile.exists()) {
@@ -55,7 +55,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Logger.log(LoggerType.INFO, "Downloading " + ConsoleColors.GREEN.getAnsiCode() + "successfully " + ConsoleColors.GRAY.getAnsiCode() + "completed.");
+            Logger.log(LoggerType.INFO, "Downloading " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "completed.");
         }
 
         createDefaultTemplateDirectory(templateName);
@@ -141,12 +141,12 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
         ProcessBuilder processBuilder;
         if (isProxy) {
             processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M proxy.jar").split(" "));
-            Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + serverName + ConsoleColors.GRAY.getAnsiCode() + " on default port...");
+            Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on default port...");
 
         } else {
             int port = generatePort();
             processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
-            Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + serverName + ConsoleColors.GRAY.getAnsiCode() + " on port " + port + "...");
+            Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port " + port + "...");
 
         }
 

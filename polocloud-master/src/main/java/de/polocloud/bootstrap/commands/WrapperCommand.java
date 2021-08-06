@@ -27,13 +27,13 @@ public class WrapperCommand extends CloudCommand {
                 String wrapperName = args[2];
                 WrapperClient wrapperClient = wrapperClientManager.getWrapperClientByName(wrapperName);
                 if (wrapperClient == null) {
-                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The wrapper » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + wrapperName + ConsoleColors.GRAY.getAnsiCode() + " isn't connected!");
+                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The wrapper » " + ConsoleColors.LIGHT_BLUE + wrapperName + ConsoleColors.GRAY + " isn't connected!");
                     return;
                 }
                 wrapperName = wrapperClient.getName();
                 Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting shutdown...");
                 wrapperClient.sendPacket(new WrapperRequestShutdownPacket());
-                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "request shutdown of wrapper » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + wrapperName + ConsoleColors.GRAY.getAnsiCode() + "!");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "request shutdown of wrapper » " + ConsoleColors.LIGHT_BLUE + wrapperName + ConsoleColors.GRAY + "!");
             } else if (args[1].equalsIgnoreCase("info")) {
                 Logger.log(LoggerType.INFO, Logger.PREFIX + "Stay tuned?!");
             } else {
@@ -46,11 +46,8 @@ public class WrapperCommand extends CloudCommand {
 
     private void sendHelp() {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Wrapper]----");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "wrapper stop/shutdown <wrapper> " + ConsoleColors.GRAY.getAnsiCode() + "to shutdown a wrapper");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "gameserver info <server> " + ConsoleColors.GRAY.getAnsiCode() + "to get information of a gameserver");
-        Logger.newLine();
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "wrapper stop/shutdown <wrapper> " + ConsoleColors.GRAY + "to shutdown a wrapper");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver info <server> " + ConsoleColors.GRAY + "to get information of a gameserver");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Wrapper]----");
     }
 }

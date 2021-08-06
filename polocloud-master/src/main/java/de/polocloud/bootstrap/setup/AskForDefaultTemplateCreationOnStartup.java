@@ -42,7 +42,7 @@ public class AskForDefaultTemplateCreationOnStartup extends StepAcceptor impleme
                     template = new SimpleTemplate("Lobby", false, 2, 1, TemplateType.MINECRAFT, GameServerVersion.PAPERSPIGOT_1_8_8, 50, 512, true, "A default Polo Service", 100, new String[]{"Wrapper-1"});
                     templateService.getTemplateSaver().save(template);
                     templateService.reloadTemplates();
-                    Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "finished fast start!");
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "finished fast start!");
                     Logger.log(LoggerType.INFO, Logger.PREFIX + "Starting servers if a wrapper is online...");
                 } else {
                     Logger.log(LoggerType.INFO, Logger.PREFIX + "You have declined fast start.");

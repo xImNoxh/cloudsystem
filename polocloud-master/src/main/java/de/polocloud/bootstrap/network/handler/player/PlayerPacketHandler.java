@@ -11,8 +11,6 @@ import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 
-import java.util.concurrent.CompletableFuture;
-
 public class PlayerPacketHandler extends PlayerPacketServiceController {
 
     @Inject

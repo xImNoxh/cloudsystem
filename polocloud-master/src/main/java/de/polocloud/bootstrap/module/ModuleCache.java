@@ -29,7 +29,7 @@ public class ModuleCache extends ConcurrentHashMap<Module, ModuleLocalCache> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Logger.log(Logger.PREFIX + "The module " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleName + ConsoleColors.GRAY.getAnsiCode() + " unloaded...");
+                Logger.log(Logger.PREFIX + "The module " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + " unloaded...");
             }
         }
     }
@@ -47,10 +47,10 @@ public class ModuleCache extends ConcurrentHashMap<Module, ModuleLocalCache> {
             remove(module);
 
             urlClassLoader.close();
-            Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "unloaded module » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleName + ConsoleColors.GRAY.getAnsiCode() + "!");
+            Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "unloaded module » " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + "!");
         } catch (IOException exception) {
             exception.printStackTrace();
-            Logger.log(LoggerType.ERROR, Logger.PREFIX + ConsoleColors.RED.getAnsiCode() + "Failed to unload module » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + get(module).getModuleData().getName() + ConsoleColors.RED.getAnsiCode() + "!" + ConsoleColors.GRAY.getAnsiCode());
+            Logger.log(LoggerType.ERROR, Logger.PREFIX + ConsoleColors.RED + "Failed to unload module » " + ConsoleColors.LIGHT_BLUE + get(module).getModuleData().getName() + ConsoleColors.RED + "!" + ConsoleColors.GRAY);
             return;
         }
     }

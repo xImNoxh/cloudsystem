@@ -87,8 +87,8 @@ public class GameServerRegisterPacketHandler extends IPacketHandler<Packet> {
             pubSubManager.publish("polo:event:serverStarted", gameServer.getName());
             EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
 
-            Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() +
-                ConsoleColors.GRAY.getAnsiCode() + " is now " + ConsoleColors.GREEN.getAnsiCode() + "connected" + ConsoleColors.GRAY.getAnsiCode() +
+            Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE + gameServer.getName() +
+                ConsoleColors.GRAY + " is now " + ConsoleColors.GREEN + "connected" + ConsoleColors.GRAY +
                 ". (" + (System.currentTimeMillis() - gameServer.getStartTime()) + "ms)");
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

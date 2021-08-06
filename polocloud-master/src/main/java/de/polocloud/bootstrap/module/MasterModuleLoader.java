@@ -59,7 +59,7 @@ public class MasterModuleLoader {
                 cache.put(module, new ModuleLocalCache(loader, data));
                 module.onLoad();
                 Logger.log(LoggerType.INFO, (prefix ? Logger.PREFIX : "") + "The module is now " +
-                    ConsoleColors.LIGHT_BLUE.getAnsiCode() + data.getName() + ConsoleColors.GRAY.getAnsiCode() + " loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
+                    ConsoleColors.LIGHT_BLUE + data.getName() + ConsoleColors.GRAY + " loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
             } catch (MalformedURLException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -112,7 +112,7 @@ public class MasterModuleLoader {
             cache.put(module, new ModuleLocalCache(loader, moduleData));
             module.onLoad();
             Logger.log(LoggerType.INFO, Logger.PREFIX + "The module » " +
-                ConsoleColors.LIGHT_BLUE.getAnsiCode() + moduleData.getName() + ConsoleColors.GRAY.getAnsiCode() + " is now loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
+                ConsoleColors.LIGHT_BLUE + moduleData.getName() + ConsoleColors.GRAY + " is now loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
         } catch (MalformedURLException | ClassNotFoundException e) {
             e.printStackTrace();
         }

@@ -24,7 +24,7 @@ public class WrapperClient implements IPacketSender {
     }
 
     public void startServer(IGameServer gameServer) {
-        Logger.log(LoggerType.INFO, "Trying to start server " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + gameServer.getName() + ConsoleColors.GRAY.getAnsiCode() + " on " + getName() + ".");
+        Logger.log(LoggerType.INFO, "Trying to start server " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + " on " + getName() + ".");
 
         ITemplate template = gameServer.getTemplate();
         sendPacket(new MasterRequestServerStartPacket(template.getName(), template.getVersion(), gameServer.getSnowflake(),

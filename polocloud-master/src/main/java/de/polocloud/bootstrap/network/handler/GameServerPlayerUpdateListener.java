@@ -93,7 +93,7 @@ public class GameServerPlayerUpdateListener extends IPacketHandler<Packet> {
             }
 
             if (masterConfig.getProperties().isLogPlayerConnections())
-                Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN.getAnsiCode() + name + ConsoleColors.GRAY.getAnsiCode() +
+                Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN + name + ConsoleColors.GRAY +
                     " is playing on " + targetServer.getName() + "(" + proxyServer.getName() + ")");
         } catch (Exception e) {
             e.printStackTrace();

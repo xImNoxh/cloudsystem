@@ -52,22 +52,22 @@ public class TemplateCommand extends CloudCommand {
                     String templateName = args[2];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
-                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + templateName + ConsoleColors.GRAY.getAnsiCode() + " doesn't exists!");
+                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                     } else {
-                        Logger.log(LoggerType.INFO, Logger.PREFIX + "Stopping template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + template.getName() + ConsoleColors.GRAY.getAnsiCode() + "...");
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + "Stopping template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "...");
                         List<IGameServer> gameServersInTemplate = gameServerManager.getGameServersByTemplate(template).get();
                         int size = gameServersInTemplate.size();
                         for (IGameServer gameServer : gameServersInTemplate) {
                             gameServer.stop();
                         }
-                        Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "stopped " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + size + ConsoleColors.GRAY.getAnsiCode() + " servers of template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + template.getName() + ConsoleColors.GRAY.getAnsiCode() + "!");
+                        Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "stopped " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + " servers of template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "!");
                     }
                     return;
                 } else if (args[1].equalsIgnoreCase("info")) {
                     String templateName = args[2];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
-                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + templateName + ConsoleColors.GRAY.getAnsiCode() + " doesn't exists!");
+                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                     } else {
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Information]----");
                         Logger.newLine();
@@ -92,7 +92,7 @@ public class TemplateCommand extends CloudCommand {
                     String templateName = args[2];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
-                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + templateName + ConsoleColors.GRAY.getAnsiCode() + " doesn't exists!");
+                        Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                     } else {
 
                         if (args[3].equalsIgnoreCase("set")) {
@@ -115,7 +115,7 @@ public class TemplateCommand extends CloudCommand {
                                             "messages.getProxyMaintenanceMessage() Check TemplateCommand:98" : "messages.getGroupMaintenanceMessage() Check TemplateCommand:98"));
                                 }
 
-                                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "updated the maintenance state of the template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + template.getName() + ConsoleColors.GRAY.getAnsiCode() + "! (New state » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + state + ConsoleColors.GRAY.getAnsiCode() + ")");
+                                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maintenance state of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + state + ConsoleColors.GRAY + ")");
                             } else if (args[4].equalsIgnoreCase("maxplayers")) {
                                 String amountString = args[5];
                                 int amount;
@@ -133,26 +133,19 @@ public class TemplateCommand extends CloudCommand {
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
                                     gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
                                 }
-                                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN.getAnsiCode() + "Successfully " + ConsoleColors.GRAY.getAnsiCode() + "updated the maximal players of the template » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + template.getName() + ConsoleColors.GRAY.getAnsiCode() + "! (New state » " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + amount + ConsoleColors.GRAY.getAnsiCode() + ")");
+                                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maximal players of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + ")");
                                 return;
                             } else {
-                                Logger.newLine();
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Template-Edit]----");
-                                Logger.newLine();
-                                Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY.getAnsiCode() + "to set the maintenance mode of a template");
-                                Logger.newLine();
-                                Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY.getAnsiCode() + "to set the maximal players of a template");
-                                Logger.newLine();
+                                Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY + "to set the maintenance mode of a template");
+                                Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY + "to set the maximal players of a template");
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Template-Edit]----");
                             }
                         } else {
                             Logger.newLine();
                             Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Template-Edit]----");
-                            Logger.newLine();
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY.getAnsiCode() + "to set the maintenance mode of a template");
-                            Logger.newLine();
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY.getAnsiCode() + "to set the maximal players of a template");
-                            Logger.newLine();
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY + "to set the maintenance mode of a template");
+                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY + "to set the maximal players of a template");
                             Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Template-Edit]----");
                         }
                     }
@@ -169,21 +162,13 @@ public class TemplateCommand extends CloudCommand {
     }
 
     private void sendHelp() {
-        Logger.newLine();
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Template]----");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template create " + ConsoleColors.GRAY.getAnsiCode() + "to create a new template");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template versions " + ConsoleColors.GRAY.getAnsiCode() + "to show all available versions for a template");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template info <template> " + ConsoleColors.GRAY.getAnsiCode() + "to get information about a template");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template shutdown <template> " + ConsoleColors.GRAY.getAnsiCode() + "to shutdown a entire template");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY.getAnsiCode() + "to set the maintenance mode of a template");
-        Logger.newLine();
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE.getAnsiCode() + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY.getAnsiCode() + "to set the maximal players of a template");
-        Logger.newLine();
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template create " + ConsoleColors.GRAY + "to create a new template");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template versions " + ConsoleColors.GRAY + "to show all available versions for a template");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template info <template> " + ConsoleColors.GRAY + "to get information about a template");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template shutdown <template> " + ConsoleColors.GRAY + "to shutdown a entire template");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY + "to set the maintenance mode of a template");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY + "to set the maximal players of a template");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Template]----");
     }
 }
