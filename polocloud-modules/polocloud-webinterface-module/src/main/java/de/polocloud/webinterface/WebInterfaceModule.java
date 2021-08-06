@@ -6,6 +6,11 @@ import de.polocloud.api.CloudAPI;
 import de.polocloud.api.module.Module;
 import de.polocloud.webinterface.command.WebInterfaceCommand;
 import de.polocloud.webinterface.config.WebInterfaceConfig;
+import de.polocloud.webinterface.handler.DashboardPageHandler;
+import de.polocloud.webinterface.handler.LoginPageHandler;
+import de.polocloud.webinterface.handler.PostLoginPageHandler;
+import de.polocloud.webinterface.security.PasswordManager;
+import de.polocloud.webinterface.user.WebUserManager;
 import io.javalin.Javalin;
 
 import java.io.File;
@@ -14,6 +19,9 @@ public class WebInterfaceModule extends Module {
 
     private WebInterfaceConfig config;
     private Javalin javalin;
+
+    private PasswordManager passwordManager;
+    private WebUserManager webUserManager;
 
     private static WebInterfaceModule instance;
 
@@ -24,19 +32,28 @@ public class WebInterfaceModule extends Module {
         instance = this;
         this.loadConfig();
 
+        this.passwordManager = new PasswordManager();
+        this.webUserManager = new WebUserManager();
+
         //change context ClassLoader to prevent Dependency-Collision
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(WebInterfaceModule.class.getClassLoader());
 
         this.javalin = Javalin.create(config -> {
+            config.addStaticFiles("dashboard/");
         });
 
-        this.javalin.start(config.getPort());
+        this.javalin.get("/", new LoginPageHandler());
+        this.javalin.get("/dashboard", new DashboardPageHandler());
+
+        this.javalin.post("/post/login", new PostLoginPageHandler());
+
+        this.javalin.start(config.getNetwork().getPort());
 
         //change back to original ContextClassLoader
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        CloudAPI.getInstance().getCommandPool().registerCommand(new WebInterfaceCommand());
+        CloudAPI.getInstance().getCommandPool().registerCommand(new WebInterfaceCommand(config));
     }
 
     private void loadConfig() {
@@ -51,6 +68,10 @@ public class WebInterfaceModule extends Module {
 
         File configFile = new File("modules/WebInterface/config.json");
         this.config = getConfigLoader().load(WebInterfaceConfig.class, configFile);
+        if (this.config.getSecurity().getSalt() == null) {
+            this.config.getSecurity().generateNewSalt();
+        }
+
 
         getConfigSaver().save(this.config, configFile);
 
@@ -64,6 +85,18 @@ public class WebInterfaceModule extends Module {
     @Override
     public void onShutdown() {
         this.javalin.stop();
+    }
+
+    public PasswordManager getPasswordManager() {
+        return passwordManager;
+    }
+
+    public WebInterfaceConfig getConfig() {
+        return config;
+    }
+
+    public WebUserManager getWebUserManager() {
+        return webUserManager;
     }
 
     public static WebInterfaceModule getInstance() {
