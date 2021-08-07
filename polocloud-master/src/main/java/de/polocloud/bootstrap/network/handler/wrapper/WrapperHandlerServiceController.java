@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.network.handler.wrapper;
 
+import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.master.MasterLoginResponsePacket;
@@ -22,16 +23,25 @@ import java.util.function.Consumer;
 
 public abstract class WrapperHandlerServiceController {
 
-    public void getTemplateByName(ITemplateService service, WrapperRegisterStaticServerPacket packet, Consumer<ITemplate> tmp) {
+    @Inject
+    private ITemplateService tmpService;
+
+    @Inject
+    private MasterConfig masterConfig;
+
+    @Inject
+    private IWrapperClientManager wrapperClientManager;
+
+    public void getTemplateByName(WrapperRegisterStaticServerPacket packet, Consumer<ITemplate> tmp) {
         try {
-            tmp.accept(service.getTemplateByName(packet.getTemplateName()).get());
+            tmp.accept(tmpService.getTemplateByName(packet.getTemplateName()).get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
 
-    public SimpleGameServer createNewService(IWrapperClientManager client, ChannelHandlerContext ctx, ITemplate template, WrapperRegisterStaticServerPacket packet) {
-        return new SimpleGameServer(client.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING,
+    public SimpleGameServer createNewService(ChannelHandlerContext ctx, ITemplate template, WrapperRegisterStaticServerPacket packet) {
+        return new SimpleGameServer(wrapperClientManager.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING,
             null, packet.getSnowflake(), template, getCurrentMillis(), template.getMotd(), template.getMaxPlayers(), ServiceVisibility.INVISIBLE);
     }
 
@@ -45,8 +55,8 @@ public abstract class WrapperHandlerServiceController {
         return System.currentTimeMillis();
     }
 
-    public void getLoginResponse(MasterConfig config, WrapperLoginPacket packet, BiConsumer<Boolean, WrapperClient> response, ChannelHandlerContext ctx) {
-        response.accept(config.getProperties().getWrapperKey().equals(packet.getKey()), new WrapperClient(packet.getName(), ctx));
+    public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, WrapperClient> response, ChannelHandlerContext ctx) {
+        response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new WrapperClient(packet.getName(), ctx));
     }
 
     public void sendWrapperSuccessfully(WrapperLoginPacket packet){

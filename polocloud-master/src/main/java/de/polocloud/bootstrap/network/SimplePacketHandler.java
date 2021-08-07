@@ -1,8 +1,10 @@
 package de.polocloud.bootstrap.network;
 
 import com.google.common.collect.Lists;
+import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.bootstrap.Master;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -54,4 +56,5 @@ public class SimplePacketHandler<T extends Packet> extends IPacketHandler<Packet
     public Consumer<T> getAction() {
         return action;
     }
+
 }
