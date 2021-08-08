@@ -49,6 +49,7 @@ public class HubCloudCommand extends CloudCommand {
             return;
         }
 
+
         IGameServer gameServer = chosenFallbackServers.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
         if (gameServer == null) {
             player.sendMessage(hubConfig.getNoService());

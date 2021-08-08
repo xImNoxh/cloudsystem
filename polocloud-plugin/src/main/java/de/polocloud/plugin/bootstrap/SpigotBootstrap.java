@@ -4,7 +4,6 @@ import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.plugin.CloudPlugin;
@@ -18,6 +17,7 @@ import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 import de.polocloud.plugin.protocol.register.NetworkSpigotRegister;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -87,8 +87,15 @@ public class SpigotBootstrap extends JavaPlugin implements BootstrapFunction, Ne
         new CollectiveSpigotEvents(this, cloudPlugin, this);
     }
 
-    public void subscribe(String id, Consumer<PublishPacket> call){
-        CloudExecutor.getInstance().getPubSubManager().subscribe(id, publishPacket -> Bukkit.getScheduler().runTask(this, () -> call.accept(publishPacket)));
+    public void subscribe(String id, Consumer<PublishPacket> call) {
+        try {
+            if (isEnabled()) {
+                CloudExecutor.getInstance().getPubSubManager().subscribe(id, publishPacket -> Bukkit.getScheduler().runTask(this, () -> call.accept(publishPacket)));
+            }
+        } catch (IllegalPluginAccessException exception) {
+            System.out.println("Event subscribe illegal plugin access exception " + exception.getStackTrace().toString());
+            //TODO Bugfix with shutdown
+        }
     }
 
     @Override

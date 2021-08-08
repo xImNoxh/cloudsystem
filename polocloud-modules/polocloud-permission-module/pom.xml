@@ -4,14 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>polocloud-modules</artifactId>
-    <groupId>de.polocloud</groupId>
+    <groupId>de.polocloud.modules</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>de.polocloud.modules.permissions</groupId>
   <artifactId>polocloud-permission-module</artifactId>
+
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <modules>
+    <module>permission-api</module>
+    <module>permission-master</module>
+    <module>permission-services</module>
+  </modules>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>

@@ -4,12 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>polocloud-modules</artifactId>
-    <groupId>de.polocloud</groupId>
+    <groupId>de.polocloud.modules</groupId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <groupId>de.polocloud.modules.webinterface</groupId>
   <artifactId>polocloud-webinterface-module</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>

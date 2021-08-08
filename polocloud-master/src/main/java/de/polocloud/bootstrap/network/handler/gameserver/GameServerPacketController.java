@@ -42,8 +42,11 @@ public abstract class GameServerPacketController {
     @Inject
     private MasterConfig masterConfig;
 
+    /*
     @Inject
     private IPubSubManager subManager;
+
+     */
 
     public void getGameServerByConnection(ChannelHandlerContext ctx, Consumer<IGameServer> server) {
         try {
@@ -131,7 +134,7 @@ public abstract class GameServerPacketController {
     }
 
     public void callServerStartedEvent(IGameServer gameServer){
-        subManager.publish("polo:event:serverStarted", gameServer.getName());
+      //  subManager.publish("polo:event:serverStarted", gameServer.getName());
         EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
     }
 

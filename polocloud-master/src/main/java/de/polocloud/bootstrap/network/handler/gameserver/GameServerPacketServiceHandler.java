@@ -8,7 +8,6 @@ import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlayerPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
@@ -22,7 +21,7 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
     public IGameServerManager gameServerManager;
 
     @Inject
-    ITemplateService templateService;
+    public ITemplateService templateService;
 
     public GameServerPacketServiceHandler() {
 
