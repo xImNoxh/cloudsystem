@@ -30,7 +30,6 @@ import de.polocloud.bootstrap.listener.NettyExceptionListener;
 import de.polocloud.bootstrap.module.MasterModuleLoader;
 import de.polocloud.bootstrap.module.ModuleCache;
 import de.polocloud.bootstrap.network.SimplePacketService;
-import de.polocloud.bootstrap.network.handler.*;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
@@ -119,7 +118,7 @@ public class Master implements IStartable, ITerminatable {
         } else {
             Logger.log(LoggerType.WARNING, "No fallbacks are registered in config.json! The Cloud don't find any fallbacks, so you can't join!");
             Logger.log(LoggerType.INFO, "Adding a default Lobby fallback!");
-            masterConfig.getProperties().getFallbackProperties().add(new FallbackProperty("Lobby", "", false, 1));
+            masterConfig.getProperties().getFallbackProperties().add(new FallbackProperty("Lobby", "", true, 1));
         }
 
         IConfigSaver configSaver = new SimpleConfigSaver();
