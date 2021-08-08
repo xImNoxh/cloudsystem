@@ -1,9 +1,11 @@
 package de.polocloud.permission.api.group;
 
+import de.polocloud.permission.api.entity.PermissionEntity;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class PermissionGroup implements IPermissionGroup {
+public class PermissionGroup extends PermissionEntity implements IPermissionGroup {
 
     private final String name;
     private int priority;
@@ -14,6 +16,7 @@ public class PermissionGroup implements IPermissionGroup {
         this.priority = priority;
         this.inheritedPermissionGroups = new HashSet<>();
     }
+
 
     @Override
     public void addInheritedPermissionGroup(IPermissionGroup permissionGroup) {

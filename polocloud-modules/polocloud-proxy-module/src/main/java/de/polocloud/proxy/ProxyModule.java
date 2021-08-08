@@ -32,6 +32,7 @@ public class ProxyModule {
         EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(GameServerStatusUpdateListener.class), CloudGameServerStatusChangeEvent.class);
         EventRegistry.registerModuleListener(module, PoloCloudAPI.getInstance().getGuice().getInstance(GameServerChangeMaintenanceListener.class), CloudGameServerMaintenanceUpdateEvent.class);
 
+
         this.cache = new ProxyGameServerCache();
     }
 

@@ -20,5 +20,4 @@ public interface IPermissionGroup extends IPermissionEntity {
 
     void clearInheritedPermissionGroups();
 
-
 }

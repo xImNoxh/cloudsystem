@@ -1,11 +1,12 @@
 package de.polocloud.permission.api.player;
 
+import de.polocloud.permission.api.entity.IPermissionEntity;
 import de.polocloud.permission.api.group.IPermissionGroup;
 
 import java.util.Set;
 import java.util.UUID;
 
-public interface IPermissionPlayer {
+public interface IPermissionPlayer extends IPermissionEntity {
 
     UUID getUniqueId();
 
