@@ -1,7 +1,0 @@
-name: Permissions
-version: 1.0
-author: HttpMarco
-main: de.polocloud.permission.bootstrap.waterfall.WaterfallBootstrap
-
-commands:
-    rank:

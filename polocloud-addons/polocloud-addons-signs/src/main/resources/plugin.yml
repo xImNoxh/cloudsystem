@@ -1,8 +1,0 @@
-name: CloudSigns
-version: 1.0
-author: HttpMarco
-main: de.polocloud.signs.bootstrap.SignBootstrap
-depend:
-    - PoloCloud-Plugin
-commands:
-  cloudsigns:

@@ -17,11 +17,7 @@
     <module>polocloud-bootstrap</module>
     <module>polocloud-plugin</module>
     <module>polocloud-setup</module>
-    <module>polocloud-updater-client</module>
-    <module>polocloud-updater-server</module>
     <module>polocloud-launcher</module>
-    <module>polocloud-modules</module>
-    <module>polocloud-addons</module>
   </modules>
 
   <properties>

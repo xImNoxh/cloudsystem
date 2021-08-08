@@ -1,6 +1,0 @@
-{
-  "name": "WebInterface",
-  "version": "0.1.Alpha",
-  "author": "Max_DE",
-  "main": "de.polocloud.webinterface.WebInterfaceModule"
-}
