@@ -1,8 +1,8 @@
 package de.polocloud.bootstrap.module;
 
 import com.google.gson.Gson;
-import de.polocloud.api.CloudAPI;
-import de.polocloud.api.module.Module;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.module.CloudModule;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -41,7 +41,7 @@ public class MasterModuleLoader {
         for (ModuleData data : moduleData) {
             try {
                 long time = System.currentTimeMillis();
-                Class<?> aClass = getClass().getClassLoader().loadClass(Module.class.getName());
+                Class<?> aClass = getClass().getClassLoader().loadClass(CloudModule.class.getName());
                 ModuleClassLoader loader = new ModuleClassLoader(new URL[]{data.getFile().toURL()}, Thread.currentThread().getContextClassLoader(), cache);
 
                 Class<?> cl = loader.loadClass(data.getMain());
@@ -50,12 +50,12 @@ public class MasterModuleLoader {
                 boolean isPlugin = false;
 
                 for (int y = 0; y < interfaces.length && !isPlugin; y++) {
-                    if (interfaces[y].equals(Module.class)) {
+                    if (interfaces[y].equals(CloudModule.class)) {
                         isPlugin = true;
                     }
                 }
 
-                Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
+                CloudModule module = (CloudModule) PoloCloudAPI.getInstance().getGuice().getInstance(cl);
                 cache.put(module, new ModuleLocalCache(loader, data));
                 module.onLoad();
                 Logger.log(LoggerType.INFO, (prefix ? Logger.PREFIX : "") + "The module is now " +
@@ -94,7 +94,7 @@ public class MasterModuleLoader {
         }
         try {
             long time = System.currentTimeMillis();
-            Class<?> aClass = getClass().getClassLoader().loadClass(Module.class.getName());
+            Class<?> aClass = getClass().getClassLoader().loadClass(CloudModule.class.getName());
             ModuleClassLoader loader = new ModuleClassLoader(new URL[]{moduleData.getFile().toURL()}, Thread.currentThread().getContextClassLoader(), cache);
 
             Class<?> cl = loader.loadClass(moduleData.getMain());
@@ -103,12 +103,12 @@ public class MasterModuleLoader {
             boolean isPlugin = false;
 
             for (int y = 0; y < interfaces.length && !isPlugin; y++) {
-                if (interfaces[y].equals(Module.class)) {
+                if (interfaces[y].equals(CloudModule.class)) {
                     isPlugin = true;
                 }
             }
 
-            Module module = (Module) CloudAPI.getInstance().getGuice().getInstance(cl);
+            CloudModule module = (CloudModule) PoloCloudAPI.getInstance().getGuice().getInstance(cl);
             cache.put(module, new ModuleLocalCache(loader, moduleData));
             module.onLoad();
             Logger.log(LoggerType.INFO, Logger.PREFIX + "The module » " +

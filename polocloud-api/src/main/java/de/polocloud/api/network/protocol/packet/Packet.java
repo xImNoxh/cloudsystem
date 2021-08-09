@@ -305,7 +305,9 @@ public abstract class Packet {
             @Override
             public boolean isMaintenance() {
                 return maintenance;
-            }            @Override
+            }
+
+            @Override
             public void setMaxPlayers(int maxPlayers) {
                 //TODO send packet to server ? or block ?
                 throw new NotImplementedException();
@@ -347,8 +349,6 @@ public abstract class Packet {
             public String getName() {
                 return name;
             }
-
-
 
 
         };

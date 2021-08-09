@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.commands;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
@@ -19,7 +20,7 @@ public class HelpCommand extends CloudCommand {
         int ingame = 0;
         int ingameConsole = 0;
         int console = 0;
-        for (CloudCommand command : Master.getInstance().getCloudAPI().getCommandPool().getAllCachedCommands()) {
+        for (CloudCommand command : PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands()) {
             Logger.newLine();
             Logger.log(LoggerType.INFO, Logger.PREFIX + "--[" + ConsoleColors.LIGHT_BLUE + command.getName() + "-Command" + ConsoleColors.GRAY + "]--");
             Logger.log(LoggerType.INFO, Logger.PREFIX + "Name » " + ConsoleColors.LIGHT_BLUE + command.getName());

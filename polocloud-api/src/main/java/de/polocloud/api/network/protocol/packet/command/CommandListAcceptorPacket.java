@@ -1,7 +1,7 @@
 package de.polocloud.api.network.protocol.packet.command;
 
 import com.google.common.collect.Lists;
-import de.polocloud.api.CloudAPI;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
@@ -20,7 +20,7 @@ public class CommandListAcceptorPacket extends Packet {
         commandList = Lists.newArrayList();
         aliases = Lists.newArrayList();
         
-        CloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getCommandType().equals(CommandType.INGAME_CONSOLE)
+        PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getCommandType().equals(CommandType.INGAME_CONSOLE)
             || key.getCommandType().equals(CommandType.INGAME)).collect(Collectors.toList()).forEach(key -> {
             commandList.add(key.getName());
             aliases.addAll(Arrays.stream(key.getAliases()).collect(Collectors.toList()));

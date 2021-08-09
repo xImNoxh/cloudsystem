@@ -1,7 +1,7 @@
 package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.common.collect.Lists;
-import de.polocloud.api.CloudAPI;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
@@ -98,7 +98,7 @@ public abstract class PlayerPacketServiceController {
     }
 
     private List<CloudCommand> getCachedCommands() {
-        return CloudAPI.getInstance().getCommandPool().getAllCachedCommands();
+        return PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands();
     }
 
     private boolean isCommandMatch(String key, String[] keys, String input) {

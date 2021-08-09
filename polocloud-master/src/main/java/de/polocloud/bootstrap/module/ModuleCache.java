@@ -1,7 +1,7 @@
 package de.polocloud.bootstrap.module;
 
 import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.module.Module;
+import de.polocloud.api.module.CloudModule;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ModuleCache extends ConcurrentHashMap<Module, ModuleLocalCache> {
+public class ModuleCache extends ConcurrentHashMap<CloudModule, ModuleLocalCache> {
 
     public void unloadModules() {
-        for (Module module : this.keySet()) {
+        for (CloudModule module : this.keySet()) {
             URLClassLoader classLoader = this.get(module).getLoader();
 
-            if (module.onReload()) {
+            if (module.canReload()) {
 
                 module.onShutdown();
                 EventRegistry.unregisterModuleListener(module);
@@ -34,7 +34,7 @@ public class ModuleCache extends ConcurrentHashMap<Module, ModuleLocalCache> {
         }
     }
 
-    public void unloadModule(Module module) {
+    public void unloadModule(CloudModule module) {
         try {
             if (module == null || !containsKey(module)) {
                 return;
@@ -55,7 +55,7 @@ public class ModuleCache extends ConcurrentHashMap<Module, ModuleLocalCache> {
         }
     }
 
-    public Module getModuleByName(String name) {
+    public CloudModule getModuleByName(String name) {
         return this.keySet().stream().filter(module -> get(module).getModuleData().getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 

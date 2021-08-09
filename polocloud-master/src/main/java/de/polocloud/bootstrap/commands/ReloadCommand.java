@@ -3,7 +3,7 @@ package de.polocloud.bootstrap.commands;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.module.Module;
+import de.polocloud.api.module.CloudModule;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -31,7 +31,7 @@ public class ReloadCommand extends CloudCommand {
         } else if (args.length == 3) {
             if (args[1].equalsIgnoreCase("module")) {
                 String moduleName = args[2];
-                Module module = Master.getInstance().getModuleCache().getModuleByName(moduleName);
+                CloudModule module = Master.getInstance().getModuleCache().getModuleByName(moduleName);
                 if (module == null) {
                     Logger.log(LoggerType.WARNING, Logger.PREFIX + "The module » " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + " isn't loaded!");
                     return;

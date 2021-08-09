@@ -1,20 +1,29 @@
 package de.polocloud.wrapper;
 
-import de.polocloud.api.CloudAPI;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
+import de.polocloud.api.event.IEventHandler;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
+import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
+import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
+import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.pubsub.IPubSubManager;
+import de.polocloud.api.template.ITemplateService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -31,14 +40,12 @@ import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class Wrapper implements IStartable, ITerminatable {
+public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     private static Wrapper instance;
 
-    private CloudAPI cloudAPI;
-
     private SimpleNettyClient nettyClient;
-
+    private Injector injector;
     private WrapperConfig config;
 
     private ProcessManager processManager;
@@ -55,9 +62,9 @@ public class Wrapper implements IStartable, ITerminatable {
         checkPoloCloudAPI();
 
         String[] masterAddress = config.getMasterAddress().split(":");
-        this.cloudAPI = new PoloCloudAPI(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
+        injector = Guice.createInjector(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
 
-        CloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
     }
 
     public static Wrapper getInstance() {
@@ -172,7 +179,7 @@ public class Wrapper implements IStartable, ITerminatable {
     public void start() {
         Logger.log(LoggerType.INFO, "Trying to start the wrapper...");
 
-        this.nettyClient = this.cloudAPI.getGuice().getInstance(SimpleNettyClient.class);
+        this.nettyClient = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleNettyClient.class);
         new Thread(() -> {
             this.nettyClient.start();
         }).start();
@@ -195,6 +202,61 @@ public class Wrapper implements IStartable, ITerminatable {
         this.nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
         this.nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
         this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestsServerTerminatePacketHandler(processManager));
+    }
+
+    @Override
+    public ITemplateService getTemplateService() {
+        return null;
+    }
+
+    @Override
+    public ICommandExecutor getCommandExecutor() {
+        return null;
+    }
+
+    @Override
+    public ICommandPool getCommandPool() {
+        return null;
+    }
+
+    @Override
+    public IGameServerManager getGameServerManager() {
+        return null;
+    }
+
+    @Override
+    public ICloudPlayerManager getCloudPlayerManager() {
+        return null;
+    }
+
+    @Override
+    public IConfigLoader getConfigLoader() {
+        return null;
+    }
+
+    @Override
+    public IConfigSaver getConfigSaver() {
+        return null;
+    }
+
+    @Override
+    public IPubSubManager getPubSubManager() {
+        return null;
+    }
+
+    @Override
+    public IProtocol getCloudProtocol() {
+        return null;
+    }
+
+    @Override
+    public IEventHandler getEventHandler() {
+        return null;
+    }
+
+    @Override
+    public Injector getGuice() {
+        return injector;
     }
 
     @Override

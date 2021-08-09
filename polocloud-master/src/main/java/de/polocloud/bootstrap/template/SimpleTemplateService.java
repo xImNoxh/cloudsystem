@@ -1,6 +1,5 @@
 package de.polocloud.bootstrap.template;
 
-import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateLoader;
@@ -9,7 +8,6 @@ import de.polocloud.api.template.ITemplateService;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class SimpleTemplateService implements ITemplateService {
@@ -24,7 +22,7 @@ public class SimpleTemplateService implements ITemplateService {
 
     }
 
-    public void load(CloudAPI cloudAPI, TemplateStorage templateStorage){
+    public void load(PoloCloudAPI cloudAPI, TemplateStorage templateStorage){
         this.templateLoader = cloudAPI.getGuice().getInstance(templateStorage.getTemplateLoader());
         this.templateSaver = cloudAPI.getGuice().getInstance(templateStorage.getTemplateServer());
 

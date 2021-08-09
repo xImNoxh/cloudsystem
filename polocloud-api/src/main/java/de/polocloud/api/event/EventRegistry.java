@@ -2,7 +2,7 @@ package de.polocloud.api.event;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import de.polocloud.api.module.Module;
+import de.polocloud.api.module.CloudModule;
 
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,9 +10,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class EventRegistry {
 
     private static Map<Class<? extends CloudEvent>, CopyOnWriteArrayList<EventHandler<?>>> eventMap = Maps.newConcurrentMap();
-    private static Map<Module, CopyOnWriteArrayList<EventHandler<?>>> moduleEvents = Maps.newConcurrentMap();
+    private static Map<CloudModule, CopyOnWriteArrayList<EventHandler<?>>> moduleEvents = Maps.newConcurrentMap();
 
-    public static void registerModuleListener(Module module, EventHandler<?> eventHandler, Class<? extends CloudEvent> eventClass) {
+    public static void registerModuleListener(CloudModule module, EventHandler<?> eventHandler, Class<? extends CloudEvent> eventClass) {
         CopyOnWriteArrayList<EventHandler<?>> eventList = (moduleEvents.containsKey(module) ? moduleEvents.get(module) : Lists.newCopyOnWriteArrayList());
         eventList.add(eventHandler);
         moduleEvents.put(module, eventList);
@@ -27,7 +27,7 @@ public class EventRegistry {
         eventMap.put(eventClass, eventList);
     }
 
-    public static void unregisterModuleListener(Module module) {
+    public static void unregisterModuleListener(CloudModule module) {
         if (!moduleEvents.containsKey(module)) return;
 
         for (EventHandler<?> moduleEvents : moduleEvents.get(module)) {

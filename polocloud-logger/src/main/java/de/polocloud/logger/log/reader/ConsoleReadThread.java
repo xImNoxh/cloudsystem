@@ -1,6 +1,5 @@
 package de.polocloud.logger.log.reader;
 
-import de.polocloud.api.CloudAPI;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
@@ -47,7 +46,7 @@ public class ConsoleReadThread extends Thread {
                         } else {
                             for (CloudCommand command : commands) {
                                 if (command.getCommandType().equals(CommandType.CONSOLE) || command.getCommandType().equals(CommandType.INGAME_CONSOLE)) {
-                                    command.execute(CloudAPI.getInstance().getConsoleExecutor(), args);
+                                    command.execute(PoloCloudAPI.getInstance().getCommandExecutor(), args);
                                 }
                             }
                         }

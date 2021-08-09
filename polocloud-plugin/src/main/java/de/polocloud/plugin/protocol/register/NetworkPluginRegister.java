@@ -12,6 +12,7 @@ import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplate
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.CloudExecutor;
@@ -37,7 +38,8 @@ public class NetworkPluginRegister extends NetworkRegister {
 
         this.bootstrapFunction = bootstrapFunction;
 
-        new CloudExecutor(getNetworkClient(), getNetworkClient().getClient().getProtocol());
+        CloudPlugin.getInstance().setProtocol(getNetworkClient().getClient().getProtocol());
+        CloudPlugin.getInstance().setPubSubManager( new SimplePubSubManager(getNetworkClient(), CloudPlugin.getInstance().getCloudProtocol()));
 
 
         register((channelHandlerContext, packet) -> {

@@ -1,7 +1,7 @@
 package de.polocloud.bootstrap.creator;
 
 import com.google.inject.Inject;
-import de.polocloud.api.CloudAPI;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
@@ -21,7 +21,7 @@ public class ServerCreatorRunner implements Runnable {
     @Inject
     private ITemplateService templateService;
 
-    private ServerCreator creator = CloudAPI.getInstance().getGuice().getInstance(SimpleServerCreator.class);
+    private ServerCreator creator = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleServerCreator.class);
 
     @Override
     public void run() {

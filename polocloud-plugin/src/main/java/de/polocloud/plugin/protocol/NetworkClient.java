@@ -3,8 +3,6 @@ package de.polocloud.plugin.protocol;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import de.polocloud.api.CloudAPI;
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.network.client.INettyClient;
@@ -23,7 +21,6 @@ import java.net.URISyntaxException;
 public class NetworkClient implements IPacketSender {
 
     private INettyClient client;
-    private CloudAPI cloudAPI;
     private int port;
 
     public NetworkClient() {
@@ -60,7 +57,6 @@ public class NetworkClient implements IPacketSender {
     public void connect(int port) {
 
         this.port = port;
-        this.cloudAPI = new PoloCloudAPI();
 
         new Thread(() -> {
             this.client.start();
