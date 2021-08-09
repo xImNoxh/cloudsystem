@@ -5,8 +5,6 @@ import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
@@ -110,9 +108,13 @@ public class TemplateCommand extends CloudCommand {
 
                                 //TODO messages
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
+                                    /*
                                     gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(template.isMaintenance(),
                                         gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ?
                                             "messages.getProxyMaintenanceMessage() Check TemplateCommand:98" : "messages.getGroupMaintenanceMessage() Check TemplateCommand:98"));
+
+
+                                     */
                                 }
 
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maintenance state of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + state + ConsoleColors.GRAY + ")");
@@ -131,7 +133,8 @@ public class TemplateCommand extends CloudCommand {
                                 templateService.getTemplateSaver().save(template);
 
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
-                                    gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
+                                    //TODO
+                                  //  gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
                                 }
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maximal players of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + ")");
                                 return;

@@ -7,7 +7,6 @@ import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.protocol.NetworkClient;
 import io.netty.channel.ChannelHandlerContext;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -20,8 +19,6 @@ import java.util.concurrent.Executors;
 public class APIGameServerManager implements IGameServerManager {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
-
-    private final NetworkClient networkClient = CloudPlugin.getInstance().getNetworkClient();
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByName(String name) {
@@ -68,7 +65,7 @@ public class APIGameServerManager implements IGameServerManager {
         executor.execute(() -> {
             UUID requestId = UUID.randomUUID();
             ResponseHandler.register(requestId, future);
-            networkClient.sendPacket(new APIRequestGameServerPacket(requestId, action, data));
+            CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(new APIRequestGameServerPacket(requestId, action, data));
         });
         return future;
     }

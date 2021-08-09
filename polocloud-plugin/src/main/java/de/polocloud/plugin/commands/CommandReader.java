@@ -19,4 +19,5 @@ public class CommandReader {
     public List<String> getAllowedCommands() {
         return allowedCommands;
     }
+
 }

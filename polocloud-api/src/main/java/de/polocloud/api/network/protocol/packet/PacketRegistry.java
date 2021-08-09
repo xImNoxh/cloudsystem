@@ -16,7 +16,6 @@ import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
-import de.polocloud.api.network.protocol.packet.statistics.StatisticPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
@@ -35,69 +34,58 @@ public class PacketRegistry {
     }
 
     public static void registerDefaultInternalPackets() {
-        registerPacket(100, APIResponseGameServerPacket.class);
-        registerPacket(101, APIRequestGameServerPacket.class);
+        registerPackets(
+            APIResponseGameServerPacket.class,
+            APIRequestGameServerPacket.class,
+            APIRequestCloudPlayerPacket.class,
+            APIResponseCloudPlayerPacket.class,
+            APIRequestTemplatePacket.class,
+            APIResponseTemplatePacket.class,
+            APIRequestPlayerMoveFallbackPacket.class,
+            APIRequestGameServerCopyPacket.class,
+            APIRequestGameServerCopyResponsePacket.class,
 
-        registerPacket(102, GameServerMotdUpdatePacket.class);
-        registerPacket(103, GameServerControlPlayerPacket.class);
-        registerPacket(104, GameServerExecuteCommandPacket.class);
-        registerPacket(105, GameServerMaintenanceUpdatePacket.class);
-        registerPacket(106, GameServerMaxPlayersUpdatePacket.class);
-        registerPacket(107, GameServerPlayerDisconnectPacket.class);
-        registerPacket(108, GameServerPlayerRequestJoinPacket.class);
-        registerPacket(109, GameServerPlayerUpdatePacket.class);
-        registerPacket(110, GameServerRegisterPacket.class);
-        registerPacket(111, GameServerShutdownPacket.class);
-        registerPacket(112, GameServerUnregisterPacket.class);
+            GameServerMotdUpdatePacket.class,
+            GameServerControlPlayerPacket.class,
+            GameServerExecuteCommandPacket.class,
+            GameServerPlayerDisconnectPacket.class,
+            GameServerPlayerRequestJoinPacket.class,
+            GameServerPlayerUpdatePacket.class,
+            GameServerRegisterPacket.class,
+            GameServerShutdownPacket.class,
+            GameServerUnregisterPacket.class,
+            GameServerCloudCommandExecutePacket.class,
 
-        registerPacket(113, MasterPlayerKickPacket.class);
-        registerPacket(114, MasterLoginResponsePacket.class);
-        registerPacket(115, MasterPlayerRequestJoinResponsePacket.class);
-        registerPacket(116, MasterRequestServerListUpdatePacket.class);
-        registerPacket(117, MasterRequestServerStartPacket.class);
+            MasterPlayerKickPacket.class,
+            MasterLoginResponsePacket.class,
+            MasterPlayerRequestJoinResponsePacket.class,
+            MasterRequestServerListUpdatePacket.class,
+            MasterRequestServerStartPacket.class,
+            MasterPlayerSendMessagePacket.class,
+            MasterPlayerSendToServerPacket.class,
+            MasterRequestsServerTerminatePacket.class,
+            MasterUpdatePlayerInfoPacket.class,
 
-        registerPacket(118, StatisticPacket.class);
+            WrapperLoginPacket.class,
+            WrapperRegisterStaticServerPacket.class,
+            WrapperRequestShutdownPacket.class,
 
-        registerPacket(119, WrapperLoginPacket.class);
+            PublishPacket.class,
+            SubscribePacket.class,
+            PermissionCheckResponsePacket.class,
+            ProxyTablistUpdatePacket.class,
+            RedirectPacket.class,
+            CommandListAcceptorPacket.class);
+    }
 
-        registerPacket(120, PublishPacket.class);
-        registerPacket(121, SubscribePacket.class);
-
-        registerPacket(122, WrapperRegisterStaticServerPacket.class);
-
-        registerPacket(123, MasterPlayerSendMessagePacket.class);
-        registerPacket(124, MasterPlayerSendToServerPacket.class);
-
-        registerPacket(125, APIRequestCloudPlayerPacket.class);
-        registerPacket(126, APIResponseCloudPlayerPacket.class);
-
-        registerPacket(127, GameServerCloudCommandExecutePacket.class);
-        registerPacket(128, CommandListAcceptorPacket.class);
-
-        registerPacket(129, PermissionCheckResponsePacket.class);
-        registerPacket(130, ProxyTablistUpdatePacket.class);
-
-        registerPacket(131, APIRequestTemplatePacket.class);
-        registerPacket(132, APIResponseTemplatePacket.class);
-
-
-        registerPacket(133, RedirectPacket.class);
-        registerPacket(134, APIRequestPlayerMoveFallbackPacket.class);
-        registerPacket(135, APIRequestGameServerCopyPacket.class);
-        registerPacket(136, APIRequestGameServerCopyResponsePacket.class);
-        registerPacket(137, WrapperRequestShutdownPacket.class);
-
-        registerPacket(138, MasterRequestsServerTerminatePacket.class);
-        registerPacket(139, MasterUpdatePlayerInfoPacket.class);
+    private static void registerPackets(Class<? extends Packet>... packets) {
+        for (int i = 0; i < packets.length; i++) {
+            registerPacket(i + 1, packets[i]);
+        }
     }
 
     public static int getPacketId(Class<? extends Packet> clazz) {
-        for (Integer id : packetMap.keySet()) {
-            if (packetMap.get(id).equals(clazz)) {
-                return id;
-            }
-        }
-        return -1;
+        return packetMap.keySet().stream().filter(id -> packetMap.get(id).equals(clazz)).findAny().orElse(-1);
     }
 
     public static Packet createInstance(int id) throws InstantiationException, IllegalAccessException {

@@ -1,15 +1,15 @@
-package de.polocloud.plugin.api.spigot.event;
+package de.polocloud.plugin.api.spigot.events;
 
 import de.polocloud.api.gameserver.IGameServer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class CloudServerUpdatedEvent extends Event {
+public class CloudServerStartedEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private IGameServer gameServer;
 
-    public CloudServerUpdatedEvent(IGameServer gameServer) {
+    public CloudServerStartedEvent(IGameServer gameServer) {
         this.gameServer = gameServer;
     }
 

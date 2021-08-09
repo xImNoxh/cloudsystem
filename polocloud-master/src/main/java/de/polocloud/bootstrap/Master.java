@@ -79,6 +79,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     public Master() {
 
         instance = this;
+        PoloCloudAPI.setInstance(this);
 
         this.commandPool = new CommandPool();
         this.commandExecutor = new ConsoleExecutor();
@@ -89,7 +90,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
         MasterConfig masterConfig = loadConfig();
 
-        inector =  Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
+        inector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
         this.fallbackSearchService = new FallbackSearchService(masterConfig);
         this.moduleCache = new ModuleCache();
@@ -228,7 +229,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public ICommandExecutor getCommandExecutor() {
-        return null;
+        return commandExecutor;
     }
 
     @Override

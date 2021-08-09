@@ -5,64 +5,96 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.api.config.loader.IConfigLoader;
+import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
+import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.IEventHandler;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
+import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.plugin.api.player.APICloudPlayerManager;
 import de.polocloud.plugin.api.server.APIGameServerManager;
 import de.polocloud.plugin.api.template.APITemplateManager;
-import de.polocloud.plugin.function.BootstrapFunction;
-import de.polocloud.plugin.function.NetworkRegisterFunction;
+import de.polocloud.plugin.bootstrap.IBootstrap;
+import de.polocloud.plugin.commands.CommandReader;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
 
 public class CloudPlugin extends PoloCloudAPI {
 
     private static CloudPlugin instance;
+    private IGameServer gameServer;
 
-    private IPubSubManager pubSubManager;
-    private IGameServerManager gameServerManager;
+    private final IBootstrap bootstrap;
+    private final NetworkClient networkClient;
+    private final GameServerProperty gameServerProperty;
+    private final CommandReader commandReader;
+    private final IProtocol iProtocol;
+    private final IPubSubManager pubSubManager;
+
     private ICloudPlayerManager cloudPlayerManager;
+    private IGameServerManager gameServerManager;
     private ITemplateService templateService;
-    private IProtocol protocol;
 
-    private GameServerProperty property;
+    private final IConfigLoader configLoader = new SimpleConfigLoader();
+    private final IConfigSaver configSaver = new SimpleConfigSaver();
 
-    private BootstrapFunction bootstrapFunction;
-    private NetworkClient networkClient;
-
-    public CloudPlugin(BootstrapFunction bootstrapFunction) {
+    public CloudPlugin(IBootstrap bootstrap) {
 
         instance = this;
+        setInstance(this);
 
-        this.bootstrapFunction = bootstrapFunction;
-        this.property = new GameServerProperty();
+        this.bootstrap = bootstrap;
+        this.networkClient = new NetworkClient(bootstrap);
+        this.gameServerProperty = new GameServerProperty();
+        this.commandReader = new CommandReader();
+        this.iProtocol = networkClient.getClient().getProtocol();
+        this.pubSubManager = new SimplePubSubManager(networkClient, iProtocol);
 
-        this.gameServerManager = new APIGameServerManager();
+        this.networkClient.connect(bootstrap.getPort());
+
+    }
+
+    public void onEnable(){
+        bootstrap.registerListeners();
+
         this.cloudPlayerManager = new APICloudPlayerManager();
+        this.gameServerManager = new APIGameServerManager();
         this.templateService = new APITemplateManager();
 
-        this.networkClient = new NetworkClient();
-        this.networkClient.connect(bootstrapFunction.getNetworkPort());
-
     }
 
-    public static CloudPlugin getInstance() {
+    public NetworkClient getNetworkClient() {
+        return networkClient;
+    }
+
+    public IBootstrap getBootstrap() {
+        return bootstrap;
+    }
+
+    public GameServerProperty getGameServerProperty() {
+        return gameServerProperty;
+    }
+
+    public IGameServer thisService(){
+        return gameServer;
+    }
+
+    public void setGameServer(IGameServer gameServer) {
+        this.gameServer = gameServer;
+    }
+
+    public static CloudPlugin getCloudPluginInstance() {
         return instance;
-    }
-
-    public void callListeners(NetworkRegisterFunction networkRegisterFunction) {
-        networkRegisterFunction.callNetwork(networkClient);
-        bootstrapFunction.registerEvents(this);
     }
 
     @Override
     public ITemplateService getTemplateService() {
-        return templateService;
+        return this.templateService;
     }
 
     @Override
@@ -87,22 +119,22 @@ public class CloudPlugin extends PoloCloudAPI {
 
     @Override
     public IConfigLoader getConfigLoader() {
-        return null;
+        return configLoader;
     }
 
     @Override
     public IConfigSaver getConfigSaver() {
-        return null;
+        return configSaver;
     }
 
     @Override
     public IPubSubManager getPubSubManager() {
-        return this.pubSubManager;
+        return pubSubManager;
     }
 
     @Override
     public IProtocol getCloudProtocol() {
-        return this.protocol;
+        return iProtocol;
     }
 
     @Override
@@ -115,23 +147,7 @@ public class CloudPlugin extends PoloCloudAPI {
         return null;
     }
 
-    public GameServerProperty getProperty() {
-        return property;
-    }
-
-    public NetworkClient getNetworkClient() {
-        return networkClient;
-    }
-
-    public BootstrapFunction getBootstrapFunction() {
-        return bootstrapFunction;
-    }
-
-    public void setProtocol(IProtocol protocol) {
-        this.protocol = protocol;
-    }
-
-    public void setPubSubManager(IPubSubManager pubSubManager) {
-        this.pubSubManager = pubSubManager;
+    public CommandReader getCommandReader() {
+        return commandReader;
     }
 }

@@ -6,16 +6,12 @@ import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaintenanceUpdatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMaxPlayersUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
-import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
@@ -81,24 +77,12 @@ public abstract class GameServerPacketController {
         }
     }
 
-    public void alertMaintenanceUpdatePacket(IGameServer gameServer) {
-        gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(gameServer.getTemplate().isMaintenance(),
-            gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ?
-                masterConfig.getMessages().getProxyMaintenanceMessage() : masterConfig.getMessages().getGroupMaintenanceMessage()));
-    }
-
     public void sendCloudCommandAcceptList(IGameServer gameServer) {
         if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT))
             gameServer.sendPacket(new CommandListAcceptorPacket());
 
     }
 
-
-    public void alertMaxPlayerUpdatePacket(IGameServer gameServer) {
-        gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(
-            gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? masterConfig.getMessages().getNetworkIsFull() : masterConfig.getMessages().getServiceIsFull()
-            , gameServer.getTemplate().getMaxPlayers()));
-    }
 
     public void sendMotdUpdatePacket(IGameServer gameServer) {
         gameServer.sendPacket(new GameServerMotdUpdatePacket(gameServer.getMotd()));

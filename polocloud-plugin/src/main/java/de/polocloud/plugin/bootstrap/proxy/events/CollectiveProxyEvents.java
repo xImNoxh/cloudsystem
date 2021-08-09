@@ -1,15 +1,13 @@
-package de.polocloud.plugin.listener;
+package de.polocloud.plugin.bootstrap.proxy.events;
 
-import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.bootstrap.ProxyBootstrap;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
@@ -21,43 +19,38 @@ import java.util.UUID;
 
 public class CollectiveProxyEvents implements Listener {
 
+    private CloudPlugin cloudPlugin;
     private Plugin plugin;
+
     private GameServerProperty property;
     private NetworkClient networkClient;
 
-    public CollectiveProxyEvents(Plugin plugin, CloudPlugin cloudPlugin) {
+    public CollectiveProxyEvents(Plugin plugin) {
         this.plugin = plugin;
-        this.property = cloudPlugin.getProperty();
-        this.networkClient = cloudPlugin.getNetworkClient();
+        this.cloudPlugin = CloudPlugin.getCloudPluginInstance();
 
-        ProxyServer.getInstance().getPluginManager().registerListener(plugin, this);
+        this.property = CloudPlugin.getCloudPluginInstance().getGameServerProperty();
+        this.networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
+
+        plugin.getProxy().getPluginManager().registerListener(plugin, this);
     }
 
     @EventHandler
-    public void handle(ServerKickEvent event) {
-        if (BaseComponent.toPlainText(event.getKickReasonComponent()).equalsIgnoreCase("Server closed")) {
-            event.setCancelled(true);
-            networkClient.sendPacket(new APIRequestPlayerMoveFallbackPacket(event.getPlayer().getName()));
-        }
-    }
-
-    @EventHandler
-    public void handle(ProxyPingEvent event) {
-        event.getResponse().getPlayers().setMax(ProxyBootstrap.maxPlayers);
-        event.getResponse().getPlayers().setOnline(ProxyBootstrap.onlinePlayers);
-        event.getResponse().setDescription(property.getGameServerMotd());
+    public void handle(ServerPing serverPing){
+        serverPing.getPlayers().setMax(CloudPlugin.getCloudPluginInstance().thisService().getMaxPlayers());
+        serverPing.setDescriptionComponent(new TextComponent(CloudPlugin.getCloudPluginInstance().thisService().getMotd()));
     }
 
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if (property.isGameServerInMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
+        if (cloudPlugin.thisService().getTemplate().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
             event.getPlayer().disconnect(TextComponent.fromLegacyText(property.getGameServerMaintenanceMessage()));
             return;
         }
 
-        if (ProxyServer.getInstance().getPlayers().size() - 1 >= property.getGameServerMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+        if (ProxyServer.getInstance().getPlayers().size() - 1 >= cloudPlugin.thisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
             event.getPlayer().disconnect(property.getGameServerMaxPlayersMessage());
             return;
         }
@@ -65,7 +58,6 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(LoginEvent event) {
-
         UUID requestId = UUID.randomUUID();
         property.getGameServerLoginEvents().put(requestId, event);
         event.registerIntent(this.plugin);
@@ -94,5 +86,6 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(PlayerDisconnectEvent event) {
         networkClient.sendPacket(new GameServerPlayerDisconnectPacket(event.getPlayer().getUniqueId(), event.getPlayer().getName()));
     }
+
 
 }

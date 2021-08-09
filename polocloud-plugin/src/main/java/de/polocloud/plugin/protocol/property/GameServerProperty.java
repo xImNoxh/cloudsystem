@@ -25,25 +25,12 @@ public class GameServerProperty {
         return (Map<UUID, LoginEvent>) properties.get(Property.LOGIN_EVENTS);
     }
 
-    public String getGameServerMotd(){
-        return (String) properties.get(Property.MOTD);
-    }
-
     public Map<UUID, String> getGameServerLoginServers(){
         return (Map<UUID, String>) properties.get(Property.LOGIN_SERVERS);
     }
 
-    public int getGameServerMaxPlayers(){
-        return (int) properties.get(Property.MAX_PLAYERS_STATE);
-    }
-
     public String getGameServerMaxPlayersMessage(){
         return (String) properties.get(Property.MAX_PLAYERS_MESSAGE);
-    }
-
-
-    public boolean isGameServerInMaintenance(){
-        return (boolean) properties.get(Property.MAINTENANCE_STATE);
     }
 
     public String getGameServerMaintenanceMessage(){

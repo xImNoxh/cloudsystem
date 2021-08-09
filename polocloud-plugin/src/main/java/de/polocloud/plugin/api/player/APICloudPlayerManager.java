@@ -5,7 +5,6 @@ import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.protocol.NetworkClient;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.concurrent.Executors;
 public class APICloudPlayerManager implements ICloudPlayerManager {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
-    private final NetworkClient networkClient = CloudPlugin.getInstance().getNetworkClient();
 
     @Override
     public void register(ICloudPlayer cloudPlayer) {
@@ -59,7 +57,7 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
             UUID requestId = UUID.randomUUID();
             APIRequestCloudPlayerPacket packet = new APIRequestCloudPlayerPacket(requestId, action, data);
             ResponseHandler.register(requestId, future);
-            networkClient.sendPacket(packet);
+            CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(packet);
         });
         return future;
     }

@@ -9,6 +9,7 @@ import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameSer
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlayerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
@@ -41,12 +42,14 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             getRedirectPacketConnection(packet.getSnowflake(), packet.getPacket()));
 
         new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> {
+            Logger.log(LoggerType.INFO, "register server" + packet.getPort());
             getGameServerBySnowflake(server -> {
                 ((SimpleGameServer) server).setCtx(ctx);
                 ((SimpleGameServer) server).setPort(packet.getPort());
-                alertMaintenanceUpdatePacket(server);
+
+                ctx.writeAndFlush(new GameServerUpdatePacket(server));
                 sendCloudCommandAcceptList(server);
-                alertMaxPlayerUpdatePacket(server);
+
                 sendMotdUpdatePacket(server);
                 server.setStatus(GameServerStatus.RUNNING);
                 server.setVisible(ServiceVisibility.VISIBLE);

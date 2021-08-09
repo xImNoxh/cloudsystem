@@ -1,14 +1,12 @@
 package de.polocloud.plugin.api.template;
 
 import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
-import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateLoader;
 import de.polocloud.api.template.ITemplateSaver;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.protocol.NetworkClient;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -54,7 +52,7 @@ public class APITemplateManager implements ITemplateService {
         executor.execute(() -> {
             UUID uuid = UUID.randomUUID();
             ResponseHandler.register(uuid, future);
-            CloudPlugin.getInstance().getNetworkClient().sendPacket(new APIRequestTemplatePacket(uuid, action, value));
+            CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(new APIRequestTemplatePacket(uuid, action, value));
         });
         return future;
     }

@@ -7,13 +7,9 @@ public enum Property {
     LOGIN_SERVERS(Maps.newConcurrentMap()),
     LOGIN_EVENTS(Maps.newConcurrentMap()),
 
-    MAINTENANCE_STATE(true),
     MAINTENANCE_MESSAGE("this service is in maintenance"),
 
-    MAX_PLAYERS_STATE(0),
-    MAX_PLAYERS_MESSAGE("this service is full"),
-
-    MOTD("The default polocloud motd");
+    MAX_PLAYERS_MESSAGE("this service is full");
 
     private Object object;
 

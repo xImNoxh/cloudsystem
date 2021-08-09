@@ -15,9 +15,9 @@
     <module>polocloud-logger</module>
     <module>polocloud-wrapper</module>
     <module>polocloud-bootstrap</module>
-    <module>polocloud-plugin</module>
     <module>polocloud-setup</module>
     <module>polocloud-launcher</module>
+      <module>polocloud-plugin</module>
   </modules>
 
   <properties>
