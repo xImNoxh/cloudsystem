@@ -25,16 +25,14 @@ public class WrapperPacketHandlerService extends WrapperHandlerServiceController
                 gameServerManager.registerGameServer(createNewService(ctx, template, packet)));
         });
 
-        new SimplePacketHandler<WrapperLoginPacket>(WrapperLoginPacket.class, (ctx, packet) -> {
-            getLoginResponse(packet, (response, client) -> {
-                client.sendPacket(getMasterLoginResponsePacket(response));
-                if (!response) {
-                    ctx.close();
-                    return;
-                }
-                wrapperClientManager.registerWrapperClient(client);
-                sendWrapperSuccessfully(packet);
-            }, ctx);
-        });
+        new SimplePacketHandler<WrapperLoginPacket>(WrapperLoginPacket.class, (ctx, packet) -> getLoginResponse(packet, (response, client) -> {
+            client.sendPacket(getMasterLoginResponsePacket(response));
+            if (!response) {
+                ctx.close();
+                return;
+            }
+            wrapperClientManager.registerWrapperClient(client);
+            sendWrapperSuccessfully(packet);
+        }, ctx));
     }
 }

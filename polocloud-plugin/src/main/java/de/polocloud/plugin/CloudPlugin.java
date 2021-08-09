@@ -61,11 +61,9 @@ public class CloudPlugin extends PoloCloudAPI {
 
     public void onEnable(){
         bootstrap.registerListeners();
-
         this.cloudPlayerManager = new APICloudPlayerManager();
         this.gameServerManager = new APIGameServerManager();
         this.templateService = new APITemplateManager();
-
     }
 
     public NetworkClient getNetworkClient() {

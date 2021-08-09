@@ -16,25 +16,17 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
 
     @Override
     public void onLoad() {
-        System.out.println("Proxy plugin on load");
-
         this.cloudPlugin = new CloudPlugin(this);
-
-        System.out.println("Proxy plugin end load");
     }
 
     @Override
     public void onEnable() {
-        System.out.println("Proxy plugin on enable");
-
         this.cloudPlugin.onEnable();
-
-        System.out.println("Proxy plugin end enable");
     }
 
     @Override
     public void onDisable() {
-        System.out.println("Proxy plugin on disable");
+
     }
 
     @Override

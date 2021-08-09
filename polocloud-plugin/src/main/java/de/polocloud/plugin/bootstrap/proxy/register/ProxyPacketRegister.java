@@ -67,7 +67,7 @@ public class ProxyPacketRegister {
         /**
          *                 MasterUpdatePlayerInfoPacket packet = (MasterUpdatePlayerInfoPacket) obj;
          *
-         *                 System.out.println("updating player count " + packet.getOnlinePlayers() + "/" + packet.getMaxPlayers());
+         *                 FSystem.out.println("updating player count " + packet.getOnlinePlayers() + "/" + packet.getMaxPlayers());
          *                 ProxyBootstrap.maxPlayers = packet.getMaxPlayers();
          *                 ProxyBootstrap.onlinePlayers = packet.getOnlinePlayers();
          */

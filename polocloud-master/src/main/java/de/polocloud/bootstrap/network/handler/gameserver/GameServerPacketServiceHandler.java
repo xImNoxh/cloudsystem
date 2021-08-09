@@ -42,15 +42,13 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             getRedirectPacketConnection(packet.getSnowflake(), packet.getPacket()));
 
         new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> {
-            Logger.log(LoggerType.INFO, "register server" + packet.getPort());
             getGameServerBySnowflake(server -> {
                 ((SimpleGameServer) server).setCtx(ctx);
                 ((SimpleGameServer) server).setPort(packet.getPort());
 
-                ctx.writeAndFlush(new GameServerUpdatePacket(server));
+                server.sendPacket(new GameServerUpdatePacket(server));
                 sendCloudCommandAcceptList(server);
 
-                sendMotdUpdatePacket(server);
                 server.setStatus(GameServerStatus.RUNNING);
                 server.setVisible(ServiceVisibility.VISIBLE);
 

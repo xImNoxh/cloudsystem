@@ -11,6 +11,7 @@ import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.spigot.events.*;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.spigot.events.CollectiveSpigotEvents;
+import de.polocloud.plugin.bootstrap.spigot.register.SpigotPacketRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.PluginManager;
@@ -25,25 +26,18 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
 
     @Override
     public void onLoad() {
-        System.out.println("Proxy plugin on load");
-
         this.cloudPlugin = new CloudPlugin(this);
-
-        System.out.println("Proxy plugin end load");
     }
 
     @Override
     public void onEnable() {
-        System.out.println("Proxy plugin on enable");
-
         this.cloudPlugin.onEnable();
 
-        System.out.println("Proxy plugin end enable");
     }
 
     @Override
     public void onDisable() {
-        System.out.println("Proxy plugin on disable");
+
     }
 
     @Override
@@ -89,6 +83,7 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
             });
         }, ChannelActiveEvent.class);
         new CollectiveSpigotEvents(this);
+        new SpigotPacketRegister(CloudPlugin.getCloudPluginInstance());
     }
 
     public void subscribe(String id, Consumer<PublishPacket> call) {

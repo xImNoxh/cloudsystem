@@ -30,7 +30,6 @@ public class NetworkClient implements IPacketSender {
     public NetworkClient(IBootstrap bootstrap) {
         this.bootstrap = bootstrap;
         EventRegistry.registerListener(event -> {
-            System.out.println("channel activ event call");
             register(port);
         }, ChannelActiveEvent.class);
         String[] split = ConfigReader.getMasterAddress().split(":");
@@ -42,10 +41,8 @@ public class NetworkClient implements IPacketSender {
     }
 
     public void connect(int port) {
-        System.out.println("starting connection");
         this.port = port;
         new Thread(() -> {
-            System.out.println("connection is online 100%");
             this.client.start();
             System.exit(-1);
         }).start();
@@ -56,7 +53,6 @@ public class NetworkClient implements IPacketSender {
     }
 
     private void register(int port) {
-        System.out.println("starting event logging");
         new NetworkPluginRegister(bootstrap);
         try {
             String path = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
@@ -65,7 +61,6 @@ public class NetworkClient implements IPacketSender {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        System.out.println("event logging 100%");
     }
 
     @Override
