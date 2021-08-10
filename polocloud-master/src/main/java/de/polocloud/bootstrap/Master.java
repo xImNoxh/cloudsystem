@@ -97,22 +97,22 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         this.moduleLoader = new MasterModuleLoader(moduleCache);
 
 
-        ((SimpleTemplateService) this.templateService).load(PoloCloudAPI.getInstance(), TemplateStorage.FILE);
+        ((SimpleTemplateService) this.templateService).load(this, TemplateStorage.FILE);
         this.templateService.getTemplateLoader().loadTemplates();
 
         EventRegistry.registerListener(new NettyExceptionListener(), NettyExceptionEvent.class);
 
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new TemplateCommand(templateService, gameServerManager));
+        getCommandPool().registerCommand(new StopCommand());
+        getCommandPool().registerCommand(new TemplateCommand(templateService, gameServerManager));
 
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new ReloadCommand());
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new HelpCommand());
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
+        getCommandPool().registerCommand(new ReloadCommand());
+        getCommandPool().registerCommand(new HelpCommand());
+        getCommandPool().registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
 
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(PoloCloudAPI.getInstance().getGuice().getInstance(GameServerCommand.class));
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(PoloCloudAPI.getInstance().getGuice().getInstance(WrapperCommand.class));
+        getCommandPool().registerCommand(getGuice().getInstance(GameServerCommand.class));
+        getCommandPool().registerCommand(getGuice().getInstance(WrapperCommand.class));
 
-        Thread runnerThread = new Thread(PoloCloudAPI.getInstance().getGuice().getInstance(ServerCreatorRunner.class));
+        Thread runnerThread = new Thread(getGuice().getInstance(ServerCreatorRunner.class));
         this.moduleLoader.loadModules(false);
         runnerThread.start();
     }
@@ -153,15 +153,15 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         running = true;
         Logger.log(LoggerType.INFO, "Trying to start master...");
 
-        this.nettyServer = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleNettyServer.class);
-        PoloCloudAPI.getInstance().getGuice().getInstance(SimplePacketService.class);
+        this.nettyServer = getGuice().getInstance(SimpleNettyServer.class);
+        getGuice().getInstance(SimplePacketService.class);
 
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(PublishPacketHandler.class));
-        this.nettyServer.getProtocol().registerPacketHandler(PoloCloudAPI.getInstance().getGuice().getInstance(SubscribePacketHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(getGuice().getInstance(PublishPacketHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(getGuice().getInstance(SubscribePacketHandler.class));
 
         //events
-        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelInactiveListener.class), ChannelInactiveEvent.class);
-        EventRegistry.registerListener(PoloCloudAPI.getInstance().getGuice().getInstance(ChannelActiveListener.class), ChannelActiveEvent.class);
+        EventRegistry.registerListener(getGuice().getInstance(ChannelInactiveListener.class), ChannelInactiveEvent.class);
+        EventRegistry.registerListener(getGuice().getInstance(ChannelActiveListener.class), ChannelActiveEvent.class);
 
         new Thread(() -> nettyServer.start()).start();
 

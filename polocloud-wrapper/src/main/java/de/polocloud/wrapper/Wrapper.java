@@ -69,7 +69,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         String[] masterAddress = config.getMasterAddress().split(":");
         injector = Guice.createInjector(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
 
-        PoloCloudAPI.getInstance().getCommandPool().registerCommand(new StopCommand());
+        getCommandPool().registerCommand(new StopCommand());
     }
 
     public static Wrapper getInstance() {
@@ -184,7 +184,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     public void start() {
         Logger.log(LoggerType.INFO, "Trying to start the wrapper...");
 
-        this.nettyClient = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleNettyClient.class);
+        this.nettyClient = getGuice().getInstance(SimpleNettyClient.class);
         new Thread(() -> {
             this.nettyClient.start();
         }).start();
