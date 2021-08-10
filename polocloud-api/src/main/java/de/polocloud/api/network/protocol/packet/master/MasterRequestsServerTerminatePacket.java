@@ -1,9 +1,7 @@
 package de.polocloud.api.network.protocol.packet.master;
 
-import de.polocloud.api.common.INamable;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
-import jdk.jfr.internal.Logger;
 
 import java.io.IOException;
 
