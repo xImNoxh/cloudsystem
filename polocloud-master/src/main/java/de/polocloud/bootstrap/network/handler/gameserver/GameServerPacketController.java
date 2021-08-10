@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
@@ -38,11 +39,6 @@ public abstract class GameServerPacketController {
     @Inject
     private MasterConfig masterConfig;
 
-    /*
-    @Inject
-    private IPubSubManager subManager;
-
-     */
 
     public void getGameServerByConnection(ChannelHandlerContext ctx, Consumer<IGameServer> server) {
         try {
@@ -79,7 +75,7 @@ public abstract class GameServerPacketController {
 
     public void sendCloudCommandAcceptList(IGameServer gameServer) {
         if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT))
-            gameServer.sendPacket(new CommandListAcceptorPacket());
+            gameServer.sendPacket(new CommandListAcceptorPacket(Lists.newArrayList(), Lists.newArrayList()));
 
     }
 

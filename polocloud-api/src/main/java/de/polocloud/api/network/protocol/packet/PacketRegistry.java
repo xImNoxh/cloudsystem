@@ -25,10 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PacketRegistry {
 
-    //private static List<Class<? extends Packet>> packetList = new ArrayList<>();
-
     private static Map<Integer, Class<? extends Packet>> packetMap = new ConcurrentHashMap<>();
-
     public static void registerPacket(int id, Class<? extends Packet> packet) {
         packetMap.put(id, packet);
     }

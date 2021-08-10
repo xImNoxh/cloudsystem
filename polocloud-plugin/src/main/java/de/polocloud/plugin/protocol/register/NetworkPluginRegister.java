@@ -18,7 +18,6 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
-import org.apache.commons.lang.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +78,7 @@ public class NetworkPluginRegister {
 
                     @Override
                     public void setStatus(GameServerStatus status) {
-                        throw new NotImplementedException();
+                        //TODO
                     }
 
                     @Override
@@ -154,12 +153,12 @@ public class NetworkPluginRegister {
 
                     @Override
                     public void setMaxPlayers(int players) {
-                        throw new NotImplementedException();
+                        //TODO
                     }
 
                     @Override
                     public void setVisible(ServiceVisibility serviceVisibility) {
-                        throw new NotImplementedException();
+                        //TODO
                     }
 
                     @Override

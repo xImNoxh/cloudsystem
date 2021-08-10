@@ -8,7 +8,6 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang.NotImplementedException;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,17 +47,19 @@ public class APIGameServerManager implements IGameServerManager {
 
     @Override
     public void registerGameServer(IGameServer gameServer) {
-        throw new NotImplementedException();
+        //TODO
     }
 
     @Override
     public void unregisterGameServer(IGameServer gameServer) {
-        throw new NotImplementedException();
+        //TODO
+        return;
     }
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByConnection(ChannelHandlerContext ctx) {
-        throw new NotImplementedException();
+        //TODO
+        return null;
     }
 
     public CompletableFuture<?> sendGameServerData(CompletableFuture<?> future, APIRequestGameServerPacket.Action action, String data){

@@ -17,13 +17,18 @@ public class CommandListAcceptorPacket extends Packet {
     private List<String> aliases;
 
     public CommandListAcceptorPacket() {
-        commandList = Lists.newArrayList();
-        aliases = Lists.newArrayList();
-        
+        this.commandList = Lists.newArrayList();
+        this.aliases = Lists.newArrayList();
+    }
+
+    public CommandListAcceptorPacket(List<String> commandList, List<String> aliases) {
+        this.commandList = commandList;
+        this.aliases = aliases;
+
         PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getCommandType().equals(CommandType.INGAME_CONSOLE)
             || key.getCommandType().equals(CommandType.INGAME)).collect(Collectors.toList()).forEach(key -> {
-            commandList.add(key.getName());
-            aliases.addAll(Arrays.stream(key.getAliases()).collect(Collectors.toList()));
+            this.commandList.add(key.getName());
+            this.aliases.addAll(Arrays.stream(key.getAliases()).collect(Collectors.toList()));
         });
     }
 

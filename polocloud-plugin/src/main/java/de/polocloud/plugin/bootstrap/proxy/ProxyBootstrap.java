@@ -52,6 +52,10 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public void registerListeners() {
         new CollectiveProxyEvents(this);
+    }
+
+    @Override
+    public void registerPacketListening() {
         new ProxyPacketRegister(this);
     }
 }

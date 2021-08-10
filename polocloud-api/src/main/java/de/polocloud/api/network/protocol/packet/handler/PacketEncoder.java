@@ -9,7 +9,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
     @Override
     protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf byteBuf) throws Exception {
-
         int id = PacketRegistry.getPacketId(packet.getClass());
         if (id == -1) {
             throw new NullPointerException("Packet with " + packet.getClass().getSimpleName() + " was not registered");

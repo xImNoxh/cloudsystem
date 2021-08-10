@@ -54,6 +54,7 @@ public class NetworkClient implements IPacketSender {
 
     private void register(int port) {
         new NetworkPluginRegister(bootstrap);
+        bootstrap.registerPacketListening();
         try {
             String path = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
             String[] split = path.split(path.contains("/") ? "/" : "\\\\");

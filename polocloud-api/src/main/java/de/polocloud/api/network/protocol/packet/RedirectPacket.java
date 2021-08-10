@@ -30,13 +30,10 @@ public class RedirectPacket extends Packet {
     @Override
     public void read(ByteBuf byteBuf) throws IOException {
         snowflake = byteBuf.readLong();
-
         int id = byteBuf.readInt();
         try {
             packet = PacketRegistry.createInstance(id);
-
             packet.read(byteBuf);
-
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }

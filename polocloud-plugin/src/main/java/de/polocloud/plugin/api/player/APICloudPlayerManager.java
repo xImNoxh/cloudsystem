@@ -5,7 +5,6 @@ import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.plugin.CloudPlugin;
-import org.apache.commons.lang.NotImplementedException;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,12 +18,12 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public void register(ICloudPlayer cloudPlayer) {
-        throw new NotImplementedException();
+        //TODO
     }
 
     @Override
     public void unregister(ICloudPlayer cloudPlayer) {
-        throw new NotImplementedException();
+        //TODO
     }
 
     @Override

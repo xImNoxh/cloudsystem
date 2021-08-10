@@ -14,4 +14,6 @@ public interface IBootstrap {
 
     void executeCommand(String command);
 
+    void registerPacketListening();
+
 }

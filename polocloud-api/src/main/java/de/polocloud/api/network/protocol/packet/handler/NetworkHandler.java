@@ -37,17 +37,14 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-
         this.channelHandlerContext = ctx;
         EventRegistry.fireEvent(new ChannelActiveEvent(ctx));
-
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         EventRegistry.fireEvent(new ChannelInactiveEvent(ctx));
-
     }
 
     @Override

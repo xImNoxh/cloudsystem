@@ -22,16 +22,8 @@ public class SimpleProtocol implements IProtocol {
     
     @Override
     public void registerPacketHandler(IPacketHandler<Packet> packetHandler) {
-        List<IPacketHandler<Packet>> list;
-
-        if (packetHandlerMap.containsKey(packetHandler.getPacketClass())) {
-            list = packetHandlerMap.get(packetHandler.getPacketClass());
-        } else {
-            list = new ArrayList<>();
-        }
-
+        List<IPacketHandler<Packet>> list = packetHandlerMap.containsKey(packetHandler.getPacketClass()) ? packetHandlerMap.get(packetHandler.getPacketClass()) : new ArrayList<>();
         list.add(packetHandler);
-
         packetHandlerMap.put(packetHandler.getPacketClass(), list);
 
     }
@@ -40,7 +32,6 @@ public class SimpleProtocol implements IProtocol {
     public void firePacketHandlers(ChannelHandlerContext ctx, Packet packet) {
         if (packetHandlerMap.containsKey(packet.getClass())) {
             List<IPacketHandler<Packet>> iPacketHandlers = packetHandlerMap.get(packet.getClass());
-
             for (IPacketHandler<Packet> iPacketHandler : iPacketHandlers) {
                 iPacketHandler.handlePacket(ctx, packet);
             }

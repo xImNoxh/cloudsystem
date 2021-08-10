@@ -83,7 +83,6 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
             });
         }, ChannelActiveEvent.class);
         new CollectiveSpigotEvents(this);
-        new SpigotPacketRegister(CloudPlugin.getCloudPluginInstance());
     }
 
     public void subscribe(String id, Consumer<PublishPacket> call) {
@@ -97,4 +96,8 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
         }
     }
 
+    @Override
+    public void registerPacketListening() {
+        new SpigotPacketRegister(CloudPlugin.getCloudPluginInstance());
+    }
 }

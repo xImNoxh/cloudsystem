@@ -56,7 +56,6 @@ public class CloudPlugin extends PoloCloudAPI {
         this.pubSubManager = new SimplePubSubManager(networkClient, iProtocol);
 
         this.networkClient.connect(bootstrap.getPort());
-
     }
 
     public void onEnable(){
