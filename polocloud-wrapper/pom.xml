@@ -11,6 +11,14 @@
 
   <groupId>de.polocloud.wrapper</groupId>
   <artifactId>polocloud-wrapper</artifactId>
+
+  <repositories>
+    <repository>
+      <id>polocloud</id>
+      <url>https://polocloud.de:8443/repository/maven-snapshots/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>de.polocloud.api</groupId>
@@ -29,9 +37,9 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>de.polocloud</groupId>
+      <groupId>de.polocloud.updater.client</groupId>
       <artifactId>polocloud-updater-client</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-20210810.070111-1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
