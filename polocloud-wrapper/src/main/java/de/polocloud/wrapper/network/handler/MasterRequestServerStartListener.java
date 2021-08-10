@@ -159,7 +159,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
 
             process.waitFor();
 
-            //FileUtils.deleteDirectory(serverDirectory);
+            FileUtils.deleteDirectory(serverDirectory);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

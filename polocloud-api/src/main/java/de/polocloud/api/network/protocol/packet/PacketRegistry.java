@@ -57,8 +57,6 @@ public class PacketRegistry {
             GameServerUnregisterPacket.class,
             GameServerCloudCommandExecutePacket.class,
 
-
-
             MasterPlayerKickPacket.class,
             MasterLoginResponsePacket.class,
             MasterPlayerRequestJoinResponsePacket.class,
