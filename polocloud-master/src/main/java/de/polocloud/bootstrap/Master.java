@@ -138,16 +138,6 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         return masterConfig;
     }
 
-    public void askOnFirstStartToCreateDefaultTemplates() {
-        try {
-            if (templateService.getLoadedTemplates().get().size() == 0) {
-                new AskForDefaultTemplateCreationOnStartup(templateService).sendSetup();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void start() {
         running = true;
@@ -178,7 +168,6 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         }
 
         Logger.log(LoggerType.INFO, "The master is " + ConsoleColors.GREEN + "successfully" + ConsoleColors.GRAY + " started.");
-        askOnFirstStartToCreateDefaultTemplates();
     }
 
     @Override

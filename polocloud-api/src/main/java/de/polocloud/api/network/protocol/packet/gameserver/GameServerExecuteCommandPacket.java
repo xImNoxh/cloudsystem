@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
