@@ -4,8 +4,8 @@ import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
@@ -147,7 +147,6 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setMotd(String motd) {
         this.motd = motd;
-        sendPacket(new GameServerMotdUpdatePacket(this.motd));
     }
 
     @Override
@@ -175,5 +174,10 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public ServiceVisibility getServiceVisibility() {
         return serviceVisibility;
+    }
+
+    @Override
+    public void update() {
+        sendPacket(new GameServerUpdatePacket(this));
     }
 }

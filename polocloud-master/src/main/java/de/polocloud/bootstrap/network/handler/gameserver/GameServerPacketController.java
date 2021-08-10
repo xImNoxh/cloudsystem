@@ -11,7 +11,6 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
@@ -76,12 +75,6 @@ public abstract class GameServerPacketController {
     public void sendCloudCommandAcceptList(IGameServer gameServer) {
         if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT))
             gameServer.sendPacket(new CommandListAcceptorPacket(Lists.newArrayList(), Lists.newArrayList()));
-
-    }
-
-
-    public void sendMotdUpdatePacket(IGameServer gameServer) {
-        gameServer.sendPacket(new GameServerMotdUpdatePacket(gameServer.getMotd()));
 
     }
 

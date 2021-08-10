@@ -3,6 +3,7 @@ package de.polocloud.api.gameserver;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.io.Serializable;
 import java.util.List;
@@ -48,5 +49,7 @@ public interface IGameServer extends Serializable {
     void setVisible(ServiceVisibility serviceVisibility);
 
     ServiceVisibility getServiceVisibility();
+
+    void update();
 
 }

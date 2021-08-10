@@ -108,13 +108,7 @@ public class TemplateCommand extends CloudCommand {
 
                                 //TODO messages
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
-                                    /*
-                                    gameServer.sendPacket(new GameServerMaintenanceUpdatePacket(template.isMaintenance(),
-                                        gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ?
-                                            "messages.getProxyMaintenanceMessage() Check TemplateCommand:98" : "messages.getGroupMaintenanceMessage() Check TemplateCommand:98"));
-
-
-                                     */
+                                    gameServer.update();
                                 }
 
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maintenance state of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + state + ConsoleColors.GRAY + ")");

@@ -9,7 +9,6 @@ import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloud
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
@@ -30,6 +29,7 @@ public class NetworkPluginRegister {
     public NetworkPluginRegister(IBootstrap bootstrap) {
 
         new SimplePacketRegister<GameServerUpdatePacket>(GameServerUpdatePacket.class, packet -> {
+            System.out.println("new update");
             CloudPlugin.getCloudPluginInstance().setGameServer(packet.getGameServer());
         });
 
@@ -143,7 +143,7 @@ public class NetworkPluginRegister {
 
                     @Override
                     public void setMotd(String motd) {
-                        sendPacket(new GameServerMotdUpdatePacket(motd));
+                        //TODO
                     }
 
                     @Override
@@ -165,6 +165,12 @@ public class NetworkPluginRegister {
                     public ServiceVisibility getServiceVisibility() {
                         return gameserver.getServiceVisibility();
                     }
+
+                    @Override
+                    public void update() {
+                        sendPacket(new GameServerUpdatePacket(this));
+                    }
+
                 });
             }
 

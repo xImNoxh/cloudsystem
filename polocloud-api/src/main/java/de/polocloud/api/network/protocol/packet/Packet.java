@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.ServiceVisibility;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerMotdUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
@@ -212,7 +212,7 @@ public abstract class Packet {
 
             @Override
             public void setMotd(String motd) {
-                sendPacket(new GameServerMotdUpdatePacket(motd));
+                //TODO
             }
 
 
@@ -230,6 +230,12 @@ public abstract class Packet {
             public ServiceVisibility getServiceVisibility() {
                 return serviceVisibility;
             }
+
+            @Override
+            public void update() {
+                sendPacket(new GameServerUpdatePacket(this));
+            }
+
         };
 
     }

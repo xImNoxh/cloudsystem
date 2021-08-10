@@ -41,7 +41,6 @@ import de.polocloud.bootstrap.network.SimplePacketService;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
-import de.polocloud.bootstrap.setup.AskForDefaultTemplateCreationOnStartup;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
 import de.polocloud.bootstrap.template.fallback.FallbackProperty;

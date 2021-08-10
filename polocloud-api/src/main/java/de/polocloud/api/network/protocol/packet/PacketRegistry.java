@@ -43,7 +43,6 @@ public class PacketRegistry {
             APIRequestGameServerCopyResponsePacket.class,
 
             GameServerUpdatePacket.class,
-            GameServerMotdUpdatePacket.class,
             GameServerControlPlayerPacket.class,
             GameServerExecuteCommandPacket.class,
             GameServerPlayerDisconnectPacket.class,

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.ServiceVisibility;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
@@ -40,6 +41,10 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
         new SimplePacketHandler<RedirectPacket>(RedirectPacket.class, packet ->
             getRedirectPacketConnection(packet.getSnowflake(), packet.getPacket()));
+
+        new SimplePacketHandler<GameServerUpdatePacket>(GameServerUpdatePacket.class, packet ->{
+            Logger.log("Das Packet wurde geupdatet "+ packet.getGameServer().getMotd());
+        });
 
         new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> {
             getGameServerBySnowflake(server -> {
