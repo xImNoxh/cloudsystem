@@ -8,7 +8,7 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
 import io.netty.channel.ChannelHandlerContext;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 import java.util.List;
 import java.util.UUID;

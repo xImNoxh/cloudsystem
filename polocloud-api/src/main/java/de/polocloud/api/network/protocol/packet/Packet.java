@@ -11,7 +11,6 @@ import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import io.netty.buffer.ByteBuf;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,22 +56,22 @@ public abstract class Packet {
 
             @Override
             public void sendMessage(String message) {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
             public void sendTo(IGameServer gameServer) {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
             public void kick(String message) {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
             public void sendToFallback() {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
@@ -82,12 +81,13 @@ public abstract class Packet {
 
             @Override
             public CompletableFuture<Boolean> hasPermissions(String permission) {
-                throw new NotImplementedException();
+                //TODO
+                return null;
             }
 
             @Override
             public void sendTablist(String header, String footer) {
-                new NotImplementedException();
+                //TODO
             }
         };
     }
@@ -141,7 +141,7 @@ public abstract class Packet {
 
             @Override
             public void setStatus(GameServerStatus status) {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
@@ -156,7 +156,8 @@ public abstract class Packet {
 
             @Override
             public List<ICloudPlayer> getCloudPlayers() {
-                throw new NotImplementedException();
+                //TODO
+                return null;
             }
 
             @Override
@@ -192,13 +193,11 @@ public abstract class Packet {
             @Override
             public void terminate() {
                 //TODO
-                throw new NotImplementedException();
             }
 
             @Override
             public void sendPacket(Packet packet) {
                 //TODO
-                throw new NotImplementedException();
             }
 
             @Override
@@ -219,12 +218,12 @@ public abstract class Packet {
 
             @Override
             public void setMaxPlayers(int players) {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
             public void setVisible(ServiceVisibility serviceVisibility) {
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
@@ -310,13 +309,12 @@ public abstract class Packet {
             @Override
             public void setMaxPlayers(int maxPlayers) {
                 //TODO send packet to server ? or block ?
-                throw new NotImplementedException();
+                //TODO
             }
 
             @Override
             public void setMaintenance(boolean state) {
                 //TODO
-                throw new NotImplementedException();
             }
 
             @Override
@@ -332,7 +330,7 @@ public abstract class Packet {
             @Override
             public int getServerCreateThreshold() {
                 //TODO
-                throw new NotImplementedException();
+                return -1;
             }
 
             @Override

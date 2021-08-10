@@ -9,9 +9,7 @@ public class GameServerExecuteCommandPacket extends Packet {
 
     private String command;
 
-    public GameServerExecuteCommandPacket() {
-        
-    }
+    public GameServerExecuteCommandPacket() {}
 
     public GameServerExecuteCommandPacket(String command) {
         this.command = command;
