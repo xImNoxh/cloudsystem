@@ -12,6 +12,7 @@ public class Properties implements IConfig {
     private boolean logPlayerConnections = true;
     private int maxSimultaneouslyStartingTemplates = 2;
     private int port = 8869;
+    private int defaultProxyStartPort = 25565;
     private LinkedList<FallbackProperty> fallbackProperties = Lists.newLinkedList();
 
     public int getPort() {
@@ -32,5 +33,9 @@ public class Properties implements IConfig {
 
     public LinkedList<FallbackProperty> getFallbackProperties() {
         return fallbackProperties;
+    }
+
+    public int getDefaultProxyStartPort() {
+        return defaultProxyStartPort;
     }
 }

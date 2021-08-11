@@ -106,7 +106,6 @@ public class TemplateCommand extends CloudCommand {
                                 template.setMaintenance(state);
                                 templateService.getTemplateSaver().save(template);
 
-                                //TODO messages
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
                                     gameServer.update();
                                 }

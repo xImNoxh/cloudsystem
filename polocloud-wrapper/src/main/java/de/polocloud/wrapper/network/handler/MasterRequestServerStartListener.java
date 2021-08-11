@@ -63,8 +63,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
         if (packet.isStatic()) {
             executor.execute(() -> handleStaticServerStart(packet.getServerName(), packet.getSnowflake(), serverFile, packet.getMemory(), packet.getMaxPlayers()));
         } else {
-            //handle dynamic servers
-            executor.execute(() -> handleDynamicServerStart(templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName(), packet.getMotd()));
+            executor.execute(() -> handleDynamicServerStart(packet.getPort(), templateName, snowFlake, packet.isProxy(), serverFile, memory, maxPlayers, packet.getServerName(), packet.getMotd()));
         }
 
     }
@@ -79,8 +78,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
 
             //config
             File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
-            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\"}");
-
+            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\" , \"GameServer-Name\": \"" + serverName + "\", \"GameServer-Snowflake\": \"" + snowflake + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,7 +108,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
     }
 
 
-    private void handleDynamicServerStart(String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
+    private void handleDynamicServerStart(int port, String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
         File serverDirectory = new File("tmp/" + serverName + "#" + snowflake);
 
         try {
@@ -127,12 +125,11 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
                 FileUtils.writeStringToFile(serverProp, "online-mode=false\nmotd=PoloCloud\n");
                 FileUtils.writeStringToFile(spigotYML, "settings:\n  bungeecord: true\n");
             } else {
-                new BungeeProperties(serverDirectory, maxPlayers, 25565, motd);
+                new BungeeProperties(serverDirectory, maxPlayers, port, motd);
             }
 
             File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
-            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\"}");
-
+            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\" , \"GameServer-Name\": \"" + serverName + "\", \"GameServer-Snowflake\": \"" + snowflake + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,8 +141,8 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
             Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on default port...");
 
         } else {
-            int port = generatePort();
-            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
+            int spigotPort = generatePort();
+            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + spigotPort).split(" "));
             Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port " + port + "...");
 
         }

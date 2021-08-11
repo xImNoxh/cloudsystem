@@ -38,6 +38,7 @@ import de.polocloud.bootstrap.listener.NettyExceptionListener;
 import de.polocloud.bootstrap.module.MasterModuleLoader;
 import de.polocloud.bootstrap.module.ModuleCache;
 import de.polocloud.bootstrap.network.SimplePacketService;
+import de.polocloud.bootstrap.network.ports.PortService;
 import de.polocloud.bootstrap.player.SimpleCloudPlayerManager;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
@@ -71,9 +72,12 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     private final FallbackSearchService fallbackSearchService;
     private final ModuleCache moduleCache;
     private final MasterModuleLoader moduleLoader;
+    private final PortService portService;
 
     private SimpleNettyServer nettyServer;
     private boolean running = false;
+
+    private MasterConfig masterConfig;
 
     public Master() {
 
@@ -86,8 +90,9 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
+        this.portService = new PortService(gameServerManager);
 
-        MasterConfig masterConfig = loadConfig();
+        masterConfig = loadConfig();
 
         inector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
 
@@ -215,6 +220,10 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         return templateService;
     }
 
+    public MasterConfig getMasterConfig() {
+        return masterConfig;
+    }
+
     @Override
     public ICommandExecutor getCommandExecutor() {
         return commandExecutor;
@@ -252,5 +261,9 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
     public FallbackSearchService getFallbackSearchService() {
         return fallbackSearchService;
+    }
+
+    public PortService getPortService() {
+        return portService;
     }
 }

@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
@@ -9,6 +10,8 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
+import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerRegisterPacket;
+import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
@@ -19,6 +22,7 @@ import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.bootstrap.player.SimpleCloudPlayer;
@@ -118,6 +122,14 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 IGameServer gameServer = getNextFallback(iGameServers);
                 sendMasterPlayerRequestJoinResponsePacket(ctx, uuid, gameServer == null ? "" : gameServer.getName(), gameServer == null ? -1 : gameServer.getSnowflake());
             }));
+
+        new SimplePacketHandler<CloudPlayerRegisterPacket>(CloudPlayerRegisterPacket.class, packet -> {
+            Master.getInstance().getCloudPlayerManager().register(packet.getCloudPlayer());
+        });
+
+        new SimplePacketHandler<CloudPlayerUnregisterPacket>(CloudPlayerUnregisterPacket.class, packet -> {
+            Master.getInstance().getCloudPlayerManager().unregister(packet.getCloudPlayer());
+        });
 
     }
 }

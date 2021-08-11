@@ -38,7 +38,12 @@ public abstract class ServerCreator {
         SimpleGameServer gameServer = new SimpleGameServer(client,name, GameServerStatus.PENDING, null, id, template,
             System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers(), false);
         gameServerManager.registerGameServer(gameServer);
-        client.startServer(gameServer);
+
+        try {
+            client.startServer(gameServer);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private int generateServerId(ITemplate template) {

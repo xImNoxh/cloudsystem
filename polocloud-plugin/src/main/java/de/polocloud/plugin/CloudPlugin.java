@@ -32,7 +32,6 @@ public class CloudPlugin extends PoloCloudAPI {
     private static CloudPlugin instance;
 
     private SimpleGameServer gameServer;
-    private boolean running = false;
 
     private IBootstrap bootstrap;
 
@@ -67,17 +66,12 @@ public class CloudPlugin extends PoloCloudAPI {
         this.pubSubManager = new SimplePubSubManager(networkClient, iProtocol);
 
         this.networkClient.connect(bootstrap.getPort());
-
-
     }
 
     public void onEnable() {
         bootstrap.registerListeners();
-        if (gameServer != null) {
-            gameServer.setStatus(GameServerStatus.RUNNING);
-            networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(gameServer.getName(), gameServer.getSnowflake()));
-        }
-        running = true;
+        gameServer.setStatus(GameServerStatus.RUNNING);
+        networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(gameServer.getName(), gameServer.getSnowflake()));
     }
 
     public NetworkClient getNetworkClient() {
@@ -94,10 +88,6 @@ public class CloudPlugin extends PoloCloudAPI {
 
     public IGameServer thisService() {
         return gameServer;
-    }
-
-    public boolean isRunning() {
-        return running;
     }
 
     public void setGameServer(SimpleGameServer gameServer) {

@@ -31,10 +31,6 @@ public class NetworkPluginRegister {
             CloudPlugin.getCloudPluginInstance().setGameServer(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
                 gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
                 gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate(), gameserver.getCloudPlayers()));
-
-            if (CloudPlugin.getCloudPluginInstance().isRunning()) {
-                CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(new GameServerSuccessfullyStartedPacket(gameserver.getName(), gameserver.getSnowflake()));
-            }
         });
 
         new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> {

@@ -11,6 +11,8 @@ import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameSer
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
+import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerRegisterPacket;
+import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
@@ -53,6 +55,9 @@ public class PacketRegistry {
             GameServerShutdownPacket.class,
             GameServerUnregisterPacket.class,
             GameServerCloudCommandExecutePacket.class,
+
+            CloudPlayerRegisterPacket.class,
+            CloudPlayerUnregisterPacket.class,
 
             MasterPlayerKickPacket.class,
             MasterLoginResponsePacket.class,

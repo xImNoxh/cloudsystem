@@ -1,6 +1,8 @@
 package de.polocloud.plugin.api.player;
 
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerRegisterPacket;
+import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerUnregisterPacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
@@ -18,12 +20,12 @@ public class APICloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public void register(ICloudPlayer cloudPlayer) {
-        //TODO
+        CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(new CloudPlayerRegisterPacket(cloudPlayer));
     }
 
     @Override
     public void unregister(ICloudPlayer cloudPlayer) {
-        //TODO
+        CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(new CloudPlayerUnregisterPacket(cloudPlayer));
     }
 
     @Override
