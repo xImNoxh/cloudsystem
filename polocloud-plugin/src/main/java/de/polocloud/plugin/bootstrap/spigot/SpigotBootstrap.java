@@ -25,18 +25,18 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
     private CloudPlugin cloudPlugin;
 
     @Override
-    public void onLoad() {
+    public synchronized void onLoad() {
         this.cloudPlugin = new CloudPlugin(this);
     }
 
     @Override
-    public void onEnable() {
+    public synchronized void onEnable() {
         this.cloudPlugin.onEnable();
 
     }
 
     @Override
-    public void onDisable() {
+    public synchronized void onDisable() {
 
     }
 
