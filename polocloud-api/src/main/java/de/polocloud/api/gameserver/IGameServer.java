@@ -46,9 +46,9 @@ public interface IGameServer extends Serializable {
 
     void setMaxPlayers(int players);
 
-    void setVisible(ServiceVisibility serviceVisibility);
+    void setVisible(boolean serviceVisibility);
 
-    ServiceVisibility getServiceVisibility();
+    boolean getServiceVisibility();
 
     void update();
 
