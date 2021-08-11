@@ -7,10 +7,7 @@ import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.network.protocol.packet.handler.*;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.MultithreadEventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
@@ -99,6 +96,11 @@ public class SimpleNettyClient implements INettyClient {
     @Override
     public IProtocol getProtocol() {
         return this.protocol;
+    }
+
+    @Override
+    public ChannelHandlerContext getCtx() {
+        return networkHandler.getChannelHandlerContext();
     }
 }
 

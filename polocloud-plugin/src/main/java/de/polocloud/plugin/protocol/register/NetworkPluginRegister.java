@@ -1,21 +1,19 @@
 package de.polocloud.plugin.protocol.register;
 
-import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.gameserver.ServiceVisibility;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
+import de.polocloud.plugin.api.server.SimpleGameServer;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 
 import java.util.ArrayList;
@@ -28,9 +26,15 @@ public class NetworkPluginRegister {
 
     public NetworkPluginRegister(IBootstrap bootstrap) {
 
-        new SimplePacketRegister<GameServerUpdatePacket>(GameServerUpdatePacket.class, packet -> {
-            System.out.println("new update");
-            CloudPlugin.getCloudPluginInstance().setGameServer(packet.getGameServer());
+        new SimplePacketRegister<GameServerUpdatePacket>(GameServerUpdatePacket.class, (ctx, packet) -> {
+            IGameServer gameserver = packet.getGameServer();
+            CloudPlugin.getCloudPluginInstance().setGameServer(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
+                gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
+                gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate(), gameserver.getCloudPlayers()));
+
+            if (CloudPlugin.getCloudPluginInstance().isRunning()) {
+                CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(new GameServerSuccessfullyStartedPacket(gameserver.getName(), gameserver.getSnowflake()));
+            }
         });
 
         new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> {
@@ -65,115 +69,10 @@ public class NetworkPluginRegister {
             CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
 
             for (IGameServer gameserver : tmp) {
-                response.add(new IGameServer() {
-                    @Override
-                    public String getName() {
-                        return gameserver.getName();
-                    }
-
-                    @Override
-                    public GameServerStatus getStatus() {
-                        return gameserver.getStatus();
-                    }
-
-                    @Override
-                    public void setStatus(GameServerStatus status) {
-                        //TODO
-                    }
-
-                    @Override
-                    public long getSnowflake() {
-                        return gameserver.getSnowflake();
-                    }
-
-                    @Override
-                    public ITemplate getTemplate() {
-                        return gameserver.getTemplate();
-                    }
-
-                    @Override
-                    public List<ICloudPlayer> getCloudPlayers() {
-                        return gameserver.getCloudPlayers();
-                    }
-
-                    @Override
-                    public long getTotalMemory() {
-                        return gameserver.getTotalMemory();
-                    }
-
-                    @Override
-                    public int getOnlinePlayers() {
-                        return gameserver.getOnlinePlayers();
-                    }
-
-                    @Override
-                    public int getPort() {
-                        return gameserver.getPort();
-                    }
-
-                    @Override
-                    public long getPing() {
-                        return gameserver.getPing();
-                    }
-
-                    @Override
-                    public long getStartTime() {
-                        return gameserver.getStartTime();
-                    }
-
-                    @Override
-                    public void stop() {
-                        sendPacket(new GameServerShutdownPacket(gameserver.getName()));
-                    }
-
-                    @Override
-                    public void terminate() {
-                        gameserver.terminate();
-                    }
-
-                    @Override
-                    public void sendPacket(Packet packet) {
-                        ctx.writeAndFlush(new RedirectPacket(getSnowflake(), packet));
-                    }
-
-                    @Override
-                    public String getMotd() {
-                        return gameserver.getMotd();
-                    }
-
-                    @Override
-                    public void setMotd(String motd) {
-                        //TODO
-                    }
-
-                    @Override
-                    public int getMaxPlayers() {
-                        return gameserver.getMaxPlayers();
-                    }
-
-                    @Override
-                    public void setMaxPlayers(int players) {
-                        //TODO
-                    }
-
-                    @Override
-                    public void setVisible(ServiceVisibility serviceVisibility) {
-                        //TODO
-                    }
-
-                    @Override
-                    public ServiceVisibility getServiceVisibility() {
-                        return gameserver.getServiceVisibility();
-                    }
-
-                    @Override
-                    public void update() {
-                        sendPacket(new GameServerUpdatePacket(this));
-                    }
-
-                });
+                response.add(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
+                    gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
+                    gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate(), gameserver.getCloudPlayers()));
             }
-
             completableFuture.complete((packet.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
         });
 

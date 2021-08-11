@@ -1,10 +1,9 @@
 package de.polocloud.plugin.protocol;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.IPacketHandler;
@@ -12,15 +11,14 @@ import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
-import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.protocol.config.ConfigReader;
 import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 public class NetworkClient implements IPacketSender {
 

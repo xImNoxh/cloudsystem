@@ -9,15 +9,18 @@ import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.IEventHandler;
+import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.packet.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.plugin.api.player.APICloudPlayerManager;
 import de.polocloud.plugin.api.server.APIGameServerManager;
+import de.polocloud.plugin.api.server.SimpleGameServer;
 import de.polocloud.plugin.api.template.APITemplateManager;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.commands.CommandReader;
@@ -27,9 +30,12 @@ import de.polocloud.plugin.protocol.property.GameServerProperty;
 public class CloudPlugin extends PoloCloudAPI {
 
     private static CloudPlugin instance;
-    private IGameServer gameServer;
 
-    private final IBootstrap bootstrap;
+    private SimpleGameServer gameServer;
+    private boolean running = false;
+
+    private IBootstrap bootstrap;
+
     private final NetworkClient networkClient;
     private final GameServerProperty gameServerProperty;
     private final CommandReader commandReader;
@@ -53,16 +59,25 @@ public class CloudPlugin extends PoloCloudAPI {
         this.gameServerProperty = new GameServerProperty();
         this.commandReader = new CommandReader();
         this.iProtocol = networkClient.getClient().getProtocol();
-        this.pubSubManager = new SimplePubSubManager(networkClient, iProtocol);
 
-        this.networkClient.connect(bootstrap.getPort());
-    }
-
-    public void onEnable(){
-        bootstrap.registerListeners();
         this.cloudPlayerManager = new APICloudPlayerManager();
         this.gameServerManager = new APIGameServerManager();
         this.templateService = new APITemplateManager();
+
+        this.pubSubManager = new SimplePubSubManager(networkClient, iProtocol);
+
+        this.networkClient.connect(bootstrap.getPort());
+
+
+    }
+
+    public void onEnable() {
+        bootstrap.registerListeners();
+        if (gameServer != null) {
+            gameServer.setStatus(GameServerStatus.RUNNING);
+            networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(gameServer.getName(), gameServer.getSnowflake()));
+        }
+        running = true;
     }
 
     public NetworkClient getNetworkClient() {
@@ -77,11 +92,15 @@ public class CloudPlugin extends PoloCloudAPI {
         return gameServerProperty;
     }
 
-    public IGameServer thisService(){
+    public IGameServer thisService() {
         return gameServer;
     }
 
-    public void setGameServer(IGameServer gameServer) {
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setGameServer(SimpleGameServer gameServer) {
         this.gameServer = gameServer;
     }
 
@@ -147,4 +166,6 @@ public class CloudPlugin extends PoloCloudAPI {
     public CommandReader getCommandReader() {
         return commandReader;
     }
+
+
 }

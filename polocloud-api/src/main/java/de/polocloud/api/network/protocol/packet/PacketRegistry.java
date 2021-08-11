@@ -42,6 +42,7 @@ public class PacketRegistry {
             APIRequestGameServerCopyPacket.class,
             APIRequestGameServerCopyResponsePacket.class,
 
+            GameServerSuccessfullyStartedPacket.class,
             GameServerUpdatePacket.class,
             GameServerControlPlayerPacket.class,
             GameServerExecuteCommandPacket.class,
