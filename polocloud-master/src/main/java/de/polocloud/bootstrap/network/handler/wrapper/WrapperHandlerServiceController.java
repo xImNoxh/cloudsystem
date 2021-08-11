@@ -2,7 +2,6 @@ package de.polocloud.bootstrap.network.handler.wrapper;
 
 import com.google.inject.Inject;
 import de.polocloud.api.gameserver.GameServerStatus;
-import de.polocloud.api.gameserver.ServiceVisibility;
 import de.polocloud.api.network.protocol.packet.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
@@ -42,7 +41,7 @@ public abstract class WrapperHandlerServiceController {
 
     public SimpleGameServer createNewService(ChannelHandlerContext ctx, ITemplate template, WrapperRegisterStaticServerPacket packet) {
         return new SimpleGameServer(wrapperClientManager.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING,
-            null, packet.getSnowflake(), template, getCurrentMillis(), template.getMotd(), template.getMaxPlayers(), ServiceVisibility.INVISIBLE);
+            null, packet.getSnowflake(), template, getCurrentMillis(), template.getMotd(), template.getMaxPlayers(), false);
     }
 
     public MasterLoginResponsePacket getMasterLoginResponsePacket(boolean response) {

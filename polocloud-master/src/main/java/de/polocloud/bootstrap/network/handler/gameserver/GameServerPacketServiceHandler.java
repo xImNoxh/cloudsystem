@@ -1,17 +1,16 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.GameServerStatus;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.gameserver.ServiceVisibility;
-import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlayerPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerRegisterPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
+import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
@@ -36,15 +35,26 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
         });
 
+        new SimplePacketHandler<GameServerSuccessfullyStartedPacket>(GameServerSuccessfullyStartedPacket.class, packet -> {
+            PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getServerName()).thenAccept(it -> {
+                it.setStatus(GameServerStatus.RUNNING);
+                sendServerStartLog(it);
+            });
+        });
+
         new SimplePacketHandler<APIRequestGameServerPacket>(APIRequestGameServerPacket.class, (ctx, packet) ->
             getGameServerByConnection(ctx, service -> confirmPacketTypeResponse(packet.getAction(), service, packet.getRequestId(), packet.getValue())));
 
-        new SimplePacketHandler<RedirectPacket>(RedirectPacket.class, packet ->
+        new SimplePacketHandler<RedirectPacket>(RedirectPacket.class, (ctx, packet) ->
             getRedirectPacketConnection(packet.getSnowflake(), packet.getPacket()));
 
-        new SimplePacketHandler<GameServerUpdatePacket>(GameServerUpdatePacket.class, packet ->{
-            Logger.log("Das Packet wurde geupdatet "+ packet.getGameServer().getMotd());
-        });
+        new SimplePacketHandler<GameServerUpdatePacket>(GameServerUpdatePacket.class, (ctx, packet) ->
+            PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getGameServer().getName()).thenAccept(key -> {
+                key.setStatus(packet.getGameServer().getStatus());
+                key.setMotd(packet.getGameServer().getMotd());
+                key.setMaxPlayers(packet.getGameServer().getMaxPlayers());
+                key.setVisible(packet.getGameServer().getServiceVisibility());
+            }));
 
         new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> {
             getGameServerBySnowflake(server -> {
@@ -54,12 +64,10 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
                 server.sendPacket(new GameServerUpdatePacket(server));
                 sendCloudCommandAcceptList(server);
 
-                server.setStatus(GameServerStatus.RUNNING);
-                server.setVisible(ServiceVisibility.VISIBLE);
+                server.setVisible(true);
 
                 updateProxyServerList(server);
                 callServerStartedEvent(server);
-                sendServerStartLog(server);
             }, packet.getSnowflake());
 
         });
