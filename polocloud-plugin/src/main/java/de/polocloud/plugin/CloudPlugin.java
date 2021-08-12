@@ -35,7 +35,7 @@ public class CloudPlugin extends PoloCloudAPI {
 
     private IBootstrap bootstrap;
 
-    private final NetworkClient networkClient;
+    private NetworkClient networkClient;
     private final GameServerProperty gameServerProperty;
     private final CommandReader commandReader;
     private final IProtocol iProtocol;
@@ -66,10 +66,19 @@ public class CloudPlugin extends PoloCloudAPI {
         this.pubSubManager = new SimplePubSubManager(networkClient, iProtocol);
 
         this.networkClient.connect(bootstrap.getPort());
+
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void onEnable() {
         bootstrap.registerListeners();
+
         gameServer.setStatus(GameServerStatus.RUNNING);
         networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(gameServer.getName(), gameServer.getSnowflake()));
     }

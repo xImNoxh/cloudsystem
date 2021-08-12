@@ -42,6 +42,7 @@ public class NetworkClient implements IPacketSender {
     public void connect(int port) {
         this.port = port;
         new Thread(() -> {
+            System.out.println("test 1213");
             this.client.start();
             System.exit(-1);
         }).start();

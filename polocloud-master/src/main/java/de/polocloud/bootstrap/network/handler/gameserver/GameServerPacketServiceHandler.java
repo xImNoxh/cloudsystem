@@ -39,6 +39,7 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getServerName()).thenAccept(it -> {
                 it.setStatus(GameServerStatus.RUNNING);
                 sendServerStartLog(it);
+                updateProxyServerList(it);
             });
         });
 
@@ -66,7 +67,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
                 server.setVisible(true);
 
-                updateProxyServerList(server);
                 callServerStartedEvent(server);
             }, packet.getSnowflake());
 

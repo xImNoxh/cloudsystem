@@ -63,15 +63,6 @@ public class ProxyPacketRegister {
             ProxyServer.getInstance().getServers().remove(packet.getName());
         });
 
-        //TODO
-        /**
-         *                 MasterUpdatePlayerInfoPacket packet = (MasterUpdatePlayerInfoPacket) obj;
-         *
-         *                 FSystem.out.println("updating player count " + packet.getOnlinePlayers() + "/" + packet.getMaxPlayers());
-         *                 ProxyBootstrap.maxPlayers = packet.getMaxPlayers();
-         *                 ProxyBootstrap.onlinePlayers = packet.getOnlinePlayers();
-         */
-
         new SimplePacketRegister<ProxyTablistUpdatePacket>(ProxyTablistUpdatePacket.class, packet -> {
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
             if (player != null)
