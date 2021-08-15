@@ -64,7 +64,6 @@ public class GameServerCommand extends CloudCommand {
                             gameServerManager.unregisterGameServer(gameServer);
                             Logger.log("Server is not Running... Terminating Process");
                         }
-                        
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "You " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "stopped the gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + "!");
                     }
                     return;
