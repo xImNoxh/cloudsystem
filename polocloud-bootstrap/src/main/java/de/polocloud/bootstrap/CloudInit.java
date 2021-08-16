@@ -22,7 +22,7 @@ public class CloudInit {
             //start wrapper
             Wrapper wrapper = new Wrapper();
             wrapper.start();
-        }else if (args[0].equalsIgnoreCase("both")) {
+        } else if (args[0].equalsIgnoreCase("both")) {
             Master master = new Master();
             master.start();
             Wrapper wrapper = new Wrapper();

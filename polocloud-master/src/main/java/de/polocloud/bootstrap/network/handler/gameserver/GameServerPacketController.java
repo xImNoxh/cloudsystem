@@ -95,19 +95,19 @@ public abstract class GameServerPacketController {
         }
     }
 
-    public void confirmPacketTypeResponse(APIRequestGameServerPacket.Action action, IGameServer service, UUID id, String value){
-        setListGameServerData(action,  service, id, value);
+    public void confirmPacketTypeResponse(APIRequestGameServerPacket.Action action, IGameServer service, UUID id, String value) {
+        setListGameServerData(action, service, id, value);
         setSingletonGameServerData(action, service, id, value);
         setTemplateServerData(action, value, id, service);
     }
 
-    public void sendServerStartLog(IGameServer server){
+    public void sendServerStartLog(IGameServer server) {
         Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE + server.getName() + ConsoleColors.GRAY
             + " is now " + ConsoleColors.GREEN + "connected" + ConsoleColors.GRAY + ". (" + (System.currentTimeMillis() - server.getStartTime()) + "ms)");
     }
 
-    public void callServerStartedEvent(IGameServer gameServer){
-      //  subManager.publish("polo:event:serverStarted", gameServer.getName());
+    public void callServerStartedEvent(IGameServer gameServer) {
+        //  subManager.publish("polo:event:serverStarted", gameServer.getName());
         EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
     }
 

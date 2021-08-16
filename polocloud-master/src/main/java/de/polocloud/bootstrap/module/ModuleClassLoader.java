@@ -8,7 +8,7 @@ import java.net.URLClassLoader;
 import java.util.Map;
 
 public class ModuleClassLoader extends URLClassLoader {
-    
+
     private final ModuleCache moduleCache;
     private final Map<String, Class<?>> cachedClasses = Maps.newConcurrentMap();
     private boolean closed = false;

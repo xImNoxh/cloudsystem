@@ -86,21 +86,16 @@ public class SimpleTemplate implements ITemplate {
     }
 
     @Override
+    public boolean isMaintenance() {
+        return maintenance;
+    }
+
+    @Override
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
 
         MasterPubSubManager.getInstance().publish("polo:event:templateMaintenanceUpdate", name);
         EventRegistry.fireEvent(new CloudGameServerMaintenanceUpdateEvent(this));
-    }
-
-    @Override
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
-
-    @Override
-    public boolean isMaintenance() {
-        return maintenance;
     }
 
     @Override
@@ -111,6 +106,11 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public int getMaxPlayers() {
         return maxPlayers;
+    }
+
+    @Override
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 
     @Override

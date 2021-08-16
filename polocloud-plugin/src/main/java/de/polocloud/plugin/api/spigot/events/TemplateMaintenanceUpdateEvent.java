@@ -13,16 +13,16 @@ public class TemplateMaintenanceUpdateEvent extends Event {
         this.template = template;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public ITemplate getTemplate() {
         return template;
     }
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 public abstract class StepAcceptor {
 
-    public Predicate<String> isInteger(){
+    public Predicate<String> isInteger() {
         return s -> {
             try {
                 Integer.parseInt(String.valueOf(s));
@@ -15,9 +15,9 @@ public abstract class StepAcceptor {
         };
     }
 
-    public Predicate<String> isBoolean(){
+    public Predicate<String> isBoolean() {
         return s -> {
-           return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
+            return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
         };
     }
 

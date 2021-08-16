@@ -12,5 +12,5 @@ public interface INettyClient extends IStartable, ITerminatable, IPacketSender {
 
     ChannelHandlerContext getCtx();
 
-    
+
 }

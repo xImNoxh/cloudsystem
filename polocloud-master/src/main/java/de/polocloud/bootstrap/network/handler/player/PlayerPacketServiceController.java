@@ -82,7 +82,7 @@ public abstract class PlayerPacketServiceController {
             proxyServerList.forEach(it -> it.sendPacket(new MasterUpdatePlayerInfoPacket(players.size(), it.getTemplate().getMaxPlayers())))));
     }
 
-    public void callConnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer){
+    public void callConnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer) {
         pubSubManager.publish("polo:event:playerJoin", cloudPlayer.getName());
         EventRegistry.fireEvent(new CloudPlayerJoinNetworkEvent(cloudPlayer));
     }
@@ -125,7 +125,7 @@ public abstract class PlayerPacketServiceController {
         return action.equals(APIRequestCloudPlayerPacket.Action.ONLINE_NAME) || action.equals(APIRequestCloudPlayerPacket.Action.BY_NAME);
     }
 
-    public void callCurrentServices(IGameServerManager serverManager, String snow, BiConsumer<IGameServer, IGameServer> service, ChannelHandlerContext ctx){
+    public void callCurrentServices(IGameServerManager serverManager, String snow, BiConsumer<IGameServer, IGameServer> service, ChannelHandlerContext ctx) {
         try {
             service.accept(serverManager.getGameServerByName(snow).get(), serverManager.getGameServerByConnection(ctx).get());
         } catch (InterruptedException | ExecutionException e) {

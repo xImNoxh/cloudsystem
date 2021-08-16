@@ -22,7 +22,7 @@ public class SimpleWrapperClientManager implements IWrapperClientManager {
     @Override
     public WrapperClient getWrapperClientByConnection(ChannelHandlerContext channelHandlerContext) {
         for (WrapperClient wrapperClient : clientList) {
-            if(wrapperClient.getConnection().channel().id().asLongText().equals(channelHandlerContext.channel().id().asLongText())){
+            if (wrapperClient.getConnection().channel().id().asLongText().equals(channelHandlerContext.channel().id().asLongText())) {
                 return wrapperClient;
             }
         }

@@ -58,7 +58,7 @@ public abstract class WrapperHandlerServiceController {
         response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new WrapperClient(packet.getName(), ctx));
     }
 
-    public void sendWrapperSuccessfully(WrapperLoginPacket packet){
+    public void sendWrapperSuccessfully(WrapperLoginPacket packet) {
         Logger.log(LoggerType.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
     }
 

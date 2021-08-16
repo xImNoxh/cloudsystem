@@ -22,7 +22,7 @@ public class SimpleTemplateService implements ITemplateService {
 
     }
 
-    public void load(PoloCloudAPI cloudAPI, TemplateStorage templateStorage){
+    public void load(PoloCloudAPI cloudAPI, TemplateStorage templateStorage) {
         this.templateLoader = cloudAPI.getGuice().getInstance(templateStorage.getTemplateLoader());
         this.templateSaver = cloudAPI.getGuice().getInstance(templateStorage.getTemplateServer());
 
@@ -40,7 +40,7 @@ public class SimpleTemplateService implements ITemplateService {
     }
 
     @Override
-    public CompletableFuture<ITemplate> getTemplateByName(String name){
+    public CompletableFuture<ITemplate> getTemplateByName(String name) {
         return CompletableFuture.completedFuture(templateList.stream().filter(key -> key.getName().equalsIgnoreCase(name)).findAny().orElse(null));
     }
 

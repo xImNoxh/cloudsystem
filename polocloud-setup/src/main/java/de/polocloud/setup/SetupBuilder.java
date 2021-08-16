@@ -1,7 +1,6 @@
 package de.polocloud.setup;
 
 import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.setup.accepter.StepAnswer;
 import jline.console.ConsoleReader;
@@ -11,14 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class SetupBuilder {
 
     private final Setup setup;
+    private final List<Step> answers = new ArrayList<>();
     private Step firstStep;
     private StepAnswer stepAnswer;
-    private final List<Step> answers = new ArrayList<>();
 
     public SetupBuilder(Setup setup) {
         this.setup = setup;
@@ -69,7 +67,7 @@ public class SetupBuilder {
     public void sendQuestion(Step step) {
         Logger.log(LoggerType.INFO, Logger.PREFIX + step.getQuestion());
 
-        if(step.getFutureAnswer() != null){
+        if (step.getFutureAnswer() != null) {
             Logger.log(LoggerType.INFO, Logger.PREFIX + "Possible Answers : " + String.join(", ", getStringFromObject(step.getFutureAnswer().findPossibleAnswers(this))));
             return;
         }
@@ -101,7 +99,7 @@ public class SetupBuilder {
 
     public boolean isPossibleAnswer(Step step, String value) {
 
-        if(step.getFutureAnswer() != null){
+        if (step.getFutureAnswer() != null) {
             String[] answers = getStringFromObject(step.getFutureAnswer().findPossibleAnswers(this));
             return Arrays.stream(answers).noneMatch(type -> type.equalsIgnoreCase(value));
         }
@@ -109,9 +107,9 @@ public class SetupBuilder {
         return step.getDefaultAnswers().length > 0 && Arrays.stream(step.getDefaultAnswers()).noneMatch(type -> type.equalsIgnoreCase(value));
     }
 
-    public String[] getStringFromObject(Object[] args){
+    public String[] getStringFromObject(Object[] args) {
         String[] content = new String[args.length];
-        for(int i = 0; i < args.length; i++){
+        for (int i = 0; i < args.length; i++) {
             content[i] = args[i].toString();
         }
         return content;

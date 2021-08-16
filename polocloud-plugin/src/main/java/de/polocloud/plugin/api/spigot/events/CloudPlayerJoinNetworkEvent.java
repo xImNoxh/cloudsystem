@@ -16,6 +16,9 @@ public class CloudPlayerJoinNetworkEvent extends Event {
         this.playerName = playerName;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     public CompletableFuture<ICloudPlayer> getPlayer() {
         return PoloCloudAPI.getInstance().getCloudPlayerManager().getOnlinePlayer(playerName);
@@ -23,10 +26,6 @@ public class CloudPlayerJoinNetworkEvent extends Event {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

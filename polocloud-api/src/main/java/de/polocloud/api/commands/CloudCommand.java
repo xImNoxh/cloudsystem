@@ -24,12 +24,12 @@ public abstract class CloudCommand {
         return name;
     }
 
-    public CommandType getCommandType() {
-        return commandType;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CommandType getCommandType() {
+        return commandType;
     }
 
     public String[] getAliases() {
@@ -52,8 +52,11 @@ public abstract class CloudCommand {
     public @interface Info {
 
         String name();
+
         String description();
+
         String[] aliases();
+
         CommandType commandType();
 
     }

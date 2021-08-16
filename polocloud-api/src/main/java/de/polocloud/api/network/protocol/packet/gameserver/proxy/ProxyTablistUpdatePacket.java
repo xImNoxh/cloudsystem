@@ -12,7 +12,7 @@ public class ProxyTablistUpdatePacket extends Packet {
     private String header, footer;
 
     public ProxyTablistUpdatePacket() {
-        
+
     }
 
     public ProxyTablistUpdatePacket(UUID uuid, String header, String footer) {

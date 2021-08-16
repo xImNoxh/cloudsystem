@@ -20,6 +20,10 @@ public class LogFileService {
         createCurrentLatestLog();
     }
 
+    public static LogFileService getLogFileService() {
+        return logFileService;
+    }
+
     public void createLogDirectory() {
         new File("log").mkdirs();
     }
@@ -52,10 +56,6 @@ public class LogFileService {
             }
         }
         return file;
-    }
-
-    public static LogFileService getLogFileService() {
-        return logFileService;
     }
 
     public LogFileWriter getLogFileWriter() {

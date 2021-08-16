@@ -10,12 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MasterPubSubManager {
 
-    private final Map<String, List<ChannelHandlerContext>> subscriberMap = new ConcurrentHashMap<>();
-
     private static MasterPubSubManager instance;
+    private final Map<String, List<ChannelHandlerContext>> subscriberMap = new ConcurrentHashMap<>();
 
     public MasterPubSubManager() {
         instance = this;
+    }
+
+    public static MasterPubSubManager getInstance() {
+        return instance;
     }
 
     public void subscribe(ChannelHandlerContext ctx, String channel) {
@@ -38,9 +41,5 @@ public class MasterPubSubManager {
                 channelHandlerContext.writeAndFlush(packet);
             }
         }
-    }
-
-    public static MasterPubSubManager getInstance() {
-        return instance;
     }
 }

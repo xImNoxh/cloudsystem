@@ -1,10 +1,7 @@
 package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.inject.Inject;
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
-import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.event.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -17,19 +14,14 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisco
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterUpdatePlayerInfoPacket;
 import de.polocloud.api.network.response.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
-import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.bootstrap.player.SimpleCloudPlayer;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -68,7 +60,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 removeOnServerIfExist(playerManager, cloudPlayer);
                 sendDisconnectMessage(masterConfig, packet);
                 callDisconnectEvent(pubSubManager, cloudPlayer);
-                updateProxyInfoService(serverManager,playerManager);
+                updateProxyInfoService(serverManager, playerManager);
             });
         });
 
@@ -97,7 +89,8 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
 
                 IGameServer from = cloudPlayer.getMinecraftServer();
 
-                if (cloudPlayer.getMinecraftServer() != null) cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
+                if (cloudPlayer.getMinecraftServer() != null)
+                    cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
 
                 ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
                 targetServer.getCloudPlayers().add(cloudPlayer);
@@ -106,7 +99,8 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
 
                 if (isOnline) {
                     pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
-                    if (from != null) pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
+                    if (from != null)
+                        pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
                     EventRegistry.fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
                 }
                 sendConnectMessage(masterConfig, cloudPlayer);

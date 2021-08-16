@@ -6,7 +6,6 @@ import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameSe
 import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.response.ResponseHandler;

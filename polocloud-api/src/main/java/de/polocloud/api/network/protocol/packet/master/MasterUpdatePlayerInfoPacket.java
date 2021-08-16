@@ -10,11 +10,11 @@ public class MasterUpdatePlayerInfoPacket extends Packet {
     private int onlinePlayers;
     private int maxPlayers;
 
-    public MasterUpdatePlayerInfoPacket(){
+    public MasterUpdatePlayerInfoPacket() {
 
     }
 
-    public MasterUpdatePlayerInfoPacket(int onlinePlayers, int maxPlayers){
+    public MasterUpdatePlayerInfoPacket(int onlinePlayers, int maxPlayers) {
         this.onlinePlayers = onlinePlayers;
         this.maxPlayers = maxPlayers;
     }

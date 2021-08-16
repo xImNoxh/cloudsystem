@@ -14,7 +14,7 @@ public class MasterLoginResponsePacketHandler extends IPacketHandler<Packet> {
 
         Logger.log(LoggerType.INFO, packet.getMessage());
 
-        if(!packet.isResponse()){
+        if (!packet.isResponse()) {
             System.exit(-1);
         }
 

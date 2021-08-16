@@ -7,5 +7,5 @@ import java.io.File;
 public interface IConfigLoader {
 
     <T> T load(Class<? extends IConfig> config, File file);
-    
+
 }

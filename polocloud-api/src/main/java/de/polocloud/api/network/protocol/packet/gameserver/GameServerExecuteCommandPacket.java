@@ -1,6 +1,5 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -10,7 +9,8 @@ public class GameServerExecuteCommandPacket extends Packet {
 
     private String command;
 
-    public GameServerExecuteCommandPacket() {}
+    public GameServerExecuteCommandPacket() {
+    }
 
     public GameServerExecuteCommandPacket(String command) {
         this.command = command;

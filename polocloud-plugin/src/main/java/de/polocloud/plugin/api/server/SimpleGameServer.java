@@ -57,6 +57,11 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
+    public void setStatus(GameServerStatus status) {
+        gameServerStatus = status;
+    }
+
+    @Override
     public long getSnowflake() {
         return snowflake;
     }
@@ -69,11 +74,6 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public List<ICloudPlayer> getCloudPlayers() {
         return players;
-    }
-
-    @Override
-    public void setStatus(GameServerStatus status) {
-        gameServerStatus = status;
     }
 
     @Override
@@ -117,13 +117,13 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public void setMotd(String motd) {
-        this.motd = motd;
+    public String getMotd() {
+        return motd;
     }
 
     @Override
-    public String getMotd() {
-        return motd;
+    public void setMotd(String motd) {
+        this.motd = motd;
     }
 
     @Override

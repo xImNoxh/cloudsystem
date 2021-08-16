@@ -1,9 +1,7 @@
 package de.polocloud.plugin.protocol;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.IPacketHandler;
@@ -17,8 +15,6 @@ import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 public class NetworkClient implements IPacketSender {
 

@@ -6,6 +6,7 @@ public enum LoggerType {
 
     private final ConsoleColors consoleColors;
     private final String label;
+
     LoggerType(ConsoleColors consoleColors, String label) {
         this.consoleColors = consoleColors;
         this.label = label;

@@ -10,7 +10,8 @@ public class GameServerSuccessfullyStartedPacket extends Packet {
     private String serverName;
     private long snowflake;
 
-    public GameServerSuccessfullyStartedPacket() {}
+    public GameServerSuccessfullyStartedPacket() {
+    }
 
     public GameServerSuccessfullyStartedPacket(String serverName, long snowflake) {
         this.serverName = serverName;
