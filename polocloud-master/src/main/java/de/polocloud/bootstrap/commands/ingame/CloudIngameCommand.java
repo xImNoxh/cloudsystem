@@ -54,17 +54,6 @@ public class CloudIngameCommand extends CloudCommand {
     public void execute(ICommandExecutor sender, String[] args) {
         ICloudPlayer player = (ICloudPlayer) sender;
         try {
-            //DONE /cloud gameserver start <template> 4
-            //DONE /cloud gameserver stop <gameserver> 4
-            //DONE /cloud gameserver info <gameserver> 4
-
-            //DONE /cloud gameserver copy <gameserver> worlds/entire 5
-            //DONE /cloud gameserver start <template> <amount> 5
-
-            //DONE /cloud gameserver execute <gameserver <command> > 5
-            //DONE /cloud player <player> kick <message> > 5
-            //DONE /cloud player <player> message <message> > 5
-            //DONE /cloud player <player> send <server> > 5
             if (player.hasPermissions("cloud.use").get()) {
                 if (args.length == 4) {
                     if (args[1].equalsIgnoreCase("gameserver")) {
