@@ -56,7 +56,7 @@ public class ProxyPacketRegister {
         new SimplePacketRegister<MasterPlayerSendMessagePacket>(MasterPlayerSendMessagePacket.class, packet -> {
             UUID uuid = packet.getUuid();
             if (ProxyServer.getInstance().getPlayer(uuid) != null)
-                ProxyServer.getInstance().getPlayer(uuid).sendMessage(new TextComponent(packet.getMessage()));
+                ProxyServer.getInstance().getPlayer(uuid).sendMessage(TextComponent.fromLegacyText(packet.getMessage()));
         });
 
         new SimplePacketRegister<GameServerUnregisterPacket>(GameServerUnregisterPacket.class, packet -> {

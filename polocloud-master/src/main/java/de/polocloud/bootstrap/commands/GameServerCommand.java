@@ -55,28 +55,25 @@ public class GameServerCommand extends CloudCommand {
 
                     if (gameServer == null) {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
-                        return;
                     } else {
                         if (gameServer.getStatus() == GameServerStatus.RUNNING) {
                             gameServer.stop();
                         } else {
                             gameServer.terminate();
                             gameServerManager.unregisterGameServer(gameServer);
-                            Logger.log("Server is not Running... Terminating Process");
+                            Logger.log(LoggerType.WARNING, "Server is not Running... Terminating Process");
                         }
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "You " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "stopped the gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + "!");
                     }
-                    return;
                 } else if (args[1].equalsIgnoreCase("start")) {
                     String templateName = args[2];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
-                        return;
                     } else {
                         int size = gameServerManager.getGameServersByTemplate(template).get().size();
                         if (size >= template.getMaxServerCount()) {
-                            Logger.log(LoggerType.ERROR, Logger.PREFIX + "Cannot start the server, the maximal server online count of » " + ConsoleColors.LIGHT_BLUE + template.getMaxServerCount()
+                            Logger.log(LoggerType.ERROR, Logger.PREFIX + "Cannot start the servers, the maximal server online count of » " + ConsoleColors.LIGHT_BLUE + template.getMaxServerCount()
                                 + ConsoleColors.GRAY + " was reached! (Online » " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + ")");
                             return;
                         }
@@ -226,9 +223,9 @@ public class GameServerCommand extends CloudCommand {
                         command += args[i] + " ";
                     }
                     command = command.substring(0, command.length() - 1);
-                    Logger.log(LoggerType.INFO, Logger.PREFIX + "processing...");
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "Processing...");
                     gameServer.sendPacket(new GameServerExecuteCommandPacket(command));
-                    Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully executed command » " + ConsoleColors.LIGHT_BLUE + command + ConsoleColors.GRAY + " on server » " + ConsoleColors.LIGHT_BLUE + command + ConsoleColors.GRAY + "!");
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully executed command » " + ConsoleColors.LIGHT_BLUE + command + ConsoleColors.GRAY + " on server » " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "!");
                 } else {
                     sendHelp();
                 }
