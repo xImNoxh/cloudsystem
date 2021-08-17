@@ -46,5 +46,5 @@ public class RedirectPacket extends Packet {
     public long getSnowflake() {
         return snowflake;
     }
-    
+
 }

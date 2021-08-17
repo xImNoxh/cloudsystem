@@ -20,13 +20,13 @@ public interface ITemplate extends INamable, Serializable {
 
     boolean isMaintenance();
 
+    void setMaintenance(boolean state);
+
     TemplateType getTemplateType();
 
     GameServerVersion getVersion();
 
     int getServerCreateThreshold();
-
-    void setMaintenance(boolean state);
 
     String[] getWrapperNames();
 

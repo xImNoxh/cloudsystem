@@ -8,7 +8,6 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.setup.CreateTemplateSetup;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -127,7 +126,7 @@ public class TemplateCommand extends CloudCommand {
 
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
                                     //TODO
-                                  //  gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
+                                    //  gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
                                 }
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maximal players of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + ")");
                                 return;

@@ -22,7 +22,7 @@ public class ChannelInactiveListener implements EventHandler<ChannelInactiveEven
     @Override
     public void handleEvent(ChannelInactiveEvent event) {
         ChannelHandlerContext ctx = event.getChx();
-        
+
         wrapperClientManager.getWrapperClients().stream().filter(key -> sameChannel(key.getConnection(), ctx)).forEach(it -> {
             Logger.log(LoggerType.INFO, "Wrapper " + it.getName() + " disconnected!");
             wrapperClientManager.removeWrapper(it);

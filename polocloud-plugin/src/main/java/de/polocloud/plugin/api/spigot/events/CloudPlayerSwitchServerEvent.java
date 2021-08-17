@@ -21,6 +21,10 @@ public class CloudPlayerSwitchServerEvent extends Event {
         this.fromName = fromName;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public String getPlayerName() {
         return playerName;
     }
@@ -39,10 +43,6 @@ public class CloudPlayerSwitchServerEvent extends Event {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

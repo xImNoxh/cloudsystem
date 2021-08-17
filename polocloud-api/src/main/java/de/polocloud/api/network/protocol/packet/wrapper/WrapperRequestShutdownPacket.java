@@ -9,7 +9,7 @@ public class WrapperRequestShutdownPacket extends Packet {
 
     @Override
     public void write(ByteBuf byteBuf) throws IOException {
-        
+
     }
 
     @Override

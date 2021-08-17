@@ -21,7 +21,7 @@ public class APIGameServerManager implements IGameServerManager {
 
     @Override
     public CompletableFuture<IGameServer> getGameServerByName(String name) {
-        return (CompletableFuture<IGameServer>) sendGameServerData(new CompletableFuture<IGameServer>(),APIRequestGameServerPacket.Action.NAME, name);
+        return (CompletableFuture<IGameServer>) sendGameServerData(new CompletableFuture<IGameServer>(), APIRequestGameServerPacket.Action.NAME, name);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class APIGameServerManager implements IGameServerManager {
         return null;
     }
 
-    public CompletableFuture<?> sendGameServerData(CompletableFuture<?> future, APIRequestGameServerPacket.Action action, String data){
+    public CompletableFuture<?> sendGameServerData(CompletableFuture<?> future, APIRequestGameServerPacket.Action action, String data) {
         executor.execute(() -> {
             UUID requestId = UUID.randomUUID();
             ResponseHandler.register(requestId, future);

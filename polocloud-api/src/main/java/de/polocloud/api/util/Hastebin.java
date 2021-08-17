@@ -45,7 +45,7 @@ public class Hastebin {
             String postURL = raw ? "https://hastebin.com/raw/" : "https://hastebin.com/";
             response = postURL + response;
         }
-        
+
         return response;
     }
 

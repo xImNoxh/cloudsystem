@@ -39,5 +39,5 @@ public class GameServerRegisterPacket extends Packet {
     public long getSnowflake() {
         return snowflake;
     }
-    
+
 }

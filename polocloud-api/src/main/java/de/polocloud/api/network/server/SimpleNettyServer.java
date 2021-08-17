@@ -55,7 +55,7 @@ public class SimpleNettyServer implements INettyServer {
     public boolean terminate() {
         return true;
     }
-    
+
     @Override
     public IProtocol getProtocol() {
         return protocol;

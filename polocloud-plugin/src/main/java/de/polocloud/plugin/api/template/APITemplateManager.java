@@ -34,7 +34,7 @@ public class APITemplateManager implements ITemplateService {
 
     @Override
     public CompletableFuture<ITemplate> getTemplateByName(String name) {
-        return (CompletableFuture<ITemplate>) sendRequest( new CompletableFuture<ITemplate>(), APIRequestTemplatePacket.Action.NAME, name);
+        return (CompletableFuture<ITemplate>) sendRequest(new CompletableFuture<ITemplate>(), APIRequestTemplatePacket.Action.NAME, name);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class APITemplateManager implements ITemplateService {
         return;
     }
 
-    public CompletableFuture<?> sendRequest(CompletableFuture<?> future, APIRequestTemplatePacket.Action action, String value){
+    public CompletableFuture<?> sendRequest(CompletableFuture<?> future, APIRequestTemplatePacket.Action action, String value) {
         executor.execute(() -> {
             UUID uuid = UUID.randomUUID();
             ResponseHandler.register(uuid, future);

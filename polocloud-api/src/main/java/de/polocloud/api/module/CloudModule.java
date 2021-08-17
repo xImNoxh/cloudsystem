@@ -3,7 +3,6 @@ package de.polocloud.api.module;
 import com.google.inject.Inject;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplate;

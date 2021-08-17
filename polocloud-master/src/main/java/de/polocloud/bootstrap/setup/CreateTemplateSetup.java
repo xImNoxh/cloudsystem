@@ -17,7 +17,6 @@ import de.polocloud.setup.accepter.StepAnswer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class CreateTemplateSetup extends StepAcceptor implements Setup {
 

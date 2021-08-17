@@ -10,7 +10,7 @@ public class SubscribePacket extends Packet {
     private String channel;
 
     public SubscribePacket() {
-        
+
     }
 
     public SubscribePacket(String channel) {

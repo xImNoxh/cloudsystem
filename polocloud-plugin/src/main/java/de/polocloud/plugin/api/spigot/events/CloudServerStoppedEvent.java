@@ -13,16 +13,16 @@ public class CloudServerStoppedEvent extends Event {
         this.gameServer = gameServer;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public IGameServer getGameServer() {
         return gameServer;
     }
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

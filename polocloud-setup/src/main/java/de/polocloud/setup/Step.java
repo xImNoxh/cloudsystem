@@ -1,6 +1,5 @@
 package de.polocloud.setup;
 
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Step {
@@ -32,13 +31,13 @@ public class Step {
     }
 
 
-    public Step addStep(String question, Predicate<String> acceptor, String... possibleAnswers){
+    public Step addStep(String question, Predicate<String> acceptor, String... possibleAnswers) {
         Step step = new Step(question, acceptor, possibleAnswers);
         nextStep = step;
         return step;
     }
 
-    public Step addStep(String question, Object... possibleAnswers){
+    public Step addStep(String question, Object... possibleAnswers) {
         String[] s = new String[possibleAnswers.length];
         for (int i = 0; i < s.length; i++) {
             s[i] = possibleAnswers[i].toString();
@@ -46,13 +45,13 @@ public class Step {
         return addStep(question, s);
     }
 
-    public Step addStep(String question, String... possibleAnswers){
+    public Step addStep(String question, String... possibleAnswers) {
         Step step = new Step(question, o -> true, possibleAnswers);
         nextStep = step;
         return step;
     }
 
-    public Step addStep(String question, FutureAnswer futureAnswer){
+    public Step addStep(String question, FutureAnswer futureAnswer) {
         Step step = new Step(question, o -> true, futureAnswer);
         nextStep = step;
         return step;
@@ -78,12 +77,12 @@ public class Step {
         return futureAnswer;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
     public String getAnswer() {
         return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
 }

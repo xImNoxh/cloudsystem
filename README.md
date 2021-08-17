@@ -1,2 +1,1 @@
-o# cloudsystem
-The master and wrapper
+o# cloudsystem The master and wrapper

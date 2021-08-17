@@ -209,30 +209,29 @@ public abstract class Packet {
             }
 
             @Override
-            public void setMotd(String motd) {
-                //TODO
-            }
-
-
-            @Override
-            public void setMaxPlayers(int players) {
-                //TODO
-            }
-
-            @Override
             public void setVisible(boolean serviceVisibility) {
+                //TODO
+            }            @Override
+            public void setMotd(String motd) {
                 //TODO
             }
 
             @Override
             public boolean getServiceVisibility() {
                 return serviceVisibility;
+            }            @Override
+            public void setMaxPlayers(int players) {
+                //TODO
             }
 
             @Override
             public void update() {
                 //TODO
             }
+
+
+
+
 
         };
 
@@ -311,13 +310,11 @@ public abstract class Packet {
             }
 
             @Override
+            public void setMaintenance(boolean state) {
+                //TODO
+            }            @Override
             public void setMaxPlayers(int maxPlayers) {
                 //TODO send packet to server ? or block ?
-                //TODO
-            }
-
-            @Override
-            public void setMaintenance(boolean state) {
                 //TODO
             }
 
@@ -351,6 +348,8 @@ public abstract class Packet {
             public String getName() {
                 return name;
             }
+
+
 
 
         };

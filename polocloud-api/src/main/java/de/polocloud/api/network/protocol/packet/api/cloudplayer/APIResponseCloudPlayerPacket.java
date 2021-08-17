@@ -16,7 +16,7 @@ public class APIResponseCloudPlayerPacket extends Packet {
     private Type type;
 
     public APIResponseCloudPlayerPacket() {
-        
+
     }
 
     public APIResponseCloudPlayerPacket(UUID requestId, List<ICloudPlayer> response, Type type) {

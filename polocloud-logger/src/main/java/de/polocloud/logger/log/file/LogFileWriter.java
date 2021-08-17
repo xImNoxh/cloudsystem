@@ -23,7 +23,7 @@ public class LogFileWriter {
         }
     }
 
-    public LogFileService getLogService(){
+    public LogFileService getLogService() {
         return LogFileService.getLogFileService();
     }
 

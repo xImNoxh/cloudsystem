@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateSaver;
-import de.polocloud.api.template.ITemplateService;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +17,7 @@ public class FileTemplateSaver implements ITemplateSaver {
     public void save(ITemplate template) {
         File templateFile = new File("templates/" + template.getName() + ".json");
 
-        if(!templateFile.exists()){
+        if (!templateFile.exists()) {
             try {
                 templateFile.createNewFile();
             } catch (IOException e) {

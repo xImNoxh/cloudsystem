@@ -17,16 +17,16 @@ public class ModuleData {
     public ModuleData() {
     }
 
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     public String getName() {
         return name;
     }
 
     public File getFile() {
         return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public String getAuthor() {

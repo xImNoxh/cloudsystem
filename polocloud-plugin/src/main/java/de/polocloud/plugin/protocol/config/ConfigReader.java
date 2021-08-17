@@ -30,7 +30,7 @@ public class ConfigReader {
             String serverName = jsonObject.get("GameServer-Name").getAsString();
             long serverSnowflake = jsonObject.get("GameServer-Snowflake").getAsLong();
 
-            CloudPlugin.getCloudPluginInstance().setGameServer(new SimpleGameServer(serverName, "", false, GameServerStatus.STARTING, serverSnowflake,-1, System.currentTimeMillis(), -1, -1, -1, null, Lists.newArrayList()));
+            CloudPlugin.getCloudPluginInstance().setGameServer(new SimpleGameServer(serverName, "", false, GameServerStatus.STARTING, serverSnowflake, -1, System.currentTimeMillis(), -1, -1, -1, null, Lists.newArrayList()));
 
             reader.close();
         } catch (IOException | URISyntaxException e) {
