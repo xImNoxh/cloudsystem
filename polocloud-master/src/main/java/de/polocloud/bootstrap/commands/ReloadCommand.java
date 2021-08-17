@@ -1,9 +1,12 @@
 package de.polocloud.bootstrap.commands;
 
-import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.commands.CommandType;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.CloudCommandInfo;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.annotation.CommandExecutors;
+import de.polocloud.api.command.annotation.CommandPermission;
+import de.polocloud.api.command.annotation.MaxArgs;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.logger.log.Logger;
@@ -12,11 +15,17 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
 
-@CloudCommandInfo(name = "reload", description = "Reloads a module or the entire cloud", aliases = "rl", commandType = CommandType.CONSOLE)
-public class ReloadCommand extends CloudCommand {
+public class ReloadCommand implements CommandListener {
 
-    @Override
-    public void execute(ICommandExecutor sender, String[] args) {
+    @Command(name = "reload", description = "Reloads a module or the entire cloud", aliases = "rl")
+    @CommandPermission("command.reload")
+    @CommandExecutors(ExecutorType.CONSOLE)
+    public void execute(CommandExecutor sender, @MaxArgs(value = 2, message = {
+        "----[Reload]----",
+        "Use §3reload all §7to reload the clouds",
+        "Use §3reload module <module> §7to reload a module",
+        "----[Reload]----",
+    }) String... args) {
         if (args.length == 2) {
             if (args[1].equalsIgnoreCase("all")) {
                 long start = System.currentTimeMillis();
@@ -52,9 +61,9 @@ public class ReloadCommand extends CloudCommand {
     }
 
     private void sendHelp() {
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Reload]----");
+       /* Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Reload]----");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "reload all " + ConsoleColors.GRAY + "to reload the clouds");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "reload module <module> " + ConsoleColors.GRAY + "to reload a module");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Reload]----");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Reload]----");*/
     }
 }

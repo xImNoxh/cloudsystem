@@ -3,10 +3,11 @@ package de.polocloud.bootstrap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.SimpleCommandPool;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.ICommandPool;
-import de.polocloud.api.commands.types.ConsoleExecutor;
+import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.command.ICommandManager;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.ConsoleExecutor;
+import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
@@ -64,12 +65,12 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     public static Master instance;
     private final Injector inector;
 
-    private final ICommandPool commandPool;
     private final ITemplateService templateService;
     private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
-    private final ICommandExecutor commandExecutor;
+    private final CommandExecutor commandExecutor;
+    private final ICommandManager commandManager;
 
     private final SimpleConfigLoader simpleConfigLoader = new SimpleConfigLoader();
     private final SimpleConfigSaver simpleConfigSaver = new SimpleConfigSaver();
@@ -83,24 +84,40 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     private SimpleNettyServer nettyServer;
     private boolean running = false;
 
-    private MasterConfig masterConfig;
+    private final MasterConfig masterConfig;
 
     public Master() {
 
         instance = this;
         PoloCloudAPI.setInstance(this);
 
-        this.commandPool = new SimpleCommandPool();
         this.commandExecutor = new ConsoleExecutor() {
             @Override
-            public void sendMessage(String message) {
-                Logger.log(LoggerType.INFO, message);
+            public void runCommand(String command) {
+                commandManager.runCommand(command, this);
             }
+
+            @Override
+            public void sendMessage(String text) {
+                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.translateColorCodes('§', text));
+            }
+
+            @Override
+            public ExecutorType getType() {
+                return ExecutorType.CONSOLE;
+            }
+
+            @Override
+            public boolean hasPermission(String permission) {
+                return true;
+            }
+
         };
         this.wrapperClientManager = new SimpleWrapperClientManager();
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
+        this.commandManager = new SimpleCommandManager();
         this.portService = new PortService(gameServerManager);
 
         masterConfig = loadConfig();
@@ -117,15 +134,15 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
         EventRegistry.registerListener(new NettyExceptionListener(), NettyExceptionEvent.class);
 
-        getCommandPool().registerCommand(new StopCommand());
-        getCommandPool().registerCommand(new TemplateCommand(templateService, gameServerManager));
+        getCommandManager().registerCommand(new StopCommand());
+        getCommandManager().registerCommand(new TemplateCommand(templateService, gameServerManager));
 
-        getCommandPool().registerCommand(new ReloadCommand());
-        getCommandPool().registerCommand(new HelpCommand());
-        getCommandPool().registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
+        getCommandManager().registerCommand(new ReloadCommand());
+        getCommandManager().registerCommand(new HelpCommand());
+        getCommandManager().registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
 
-        getCommandPool().registerCommand(getGuice().getInstance(GameServerCommand.class));
-        getCommandPool().registerCommand(getGuice().getInstance(WrapperCommand.class));
+        getCommandManager().registerCommand(getGuice().getInstance(GameServerCommand.class));
+        getCommandManager().registerCommand(getGuice().getInstance(WrapperCommand.class));
 
         Thread runnerThread = new Thread(getGuice().getInstance(ServerCreatorRunner.class));
         this.moduleLoader.loadModules(false);
@@ -224,8 +241,8 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
-    public ICommandPool getCommandPool() {
-        return commandPool;
+    public ICommandManager getCommandManager() {
+        return commandManager;
     }
 
     @Override
@@ -268,7 +285,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
-    public ICommandExecutor getCommandExecutor() {
+    public CommandExecutor getCommandExecutor() {
         return commandExecutor;
     }
 

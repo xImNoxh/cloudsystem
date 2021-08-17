@@ -1,5 +1,7 @@
 package de.polocloud.bootstrap.player;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
@@ -12,6 +14,7 @@ import de.polocloud.bootstrap.Master;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,8 +62,28 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
+    public void runCommand(String command) {
+        PoloCloudAPI.getInstance().getCommandManager().runCommand(command, this);
+    }
+
+    @Override
     public void sendMessage(String message) {
         getProxyServer().sendPacket(new MasterPlayerSendMessagePacket(getUUID(), message));
+    }
+
+    @Override
+    public ExecutorType getType() {
+        return ExecutorType.PLAYER;
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        try {
+            return hasPermissions(permission).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

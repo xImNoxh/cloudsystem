@@ -108,7 +108,6 @@ public class SimpleFuture<T> implements PoloFuture<T> {
             }
         }
 
-        System.out.println("DONE READY");
         return response;
     }
 

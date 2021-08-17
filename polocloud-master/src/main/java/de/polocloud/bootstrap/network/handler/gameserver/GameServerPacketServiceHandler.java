@@ -27,14 +27,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
     public GameServerPacketServiceHandler() {
 
-        PoloCloudAPI.getInstance().getConnection().getRequestManager().registerRequestHandler(new IRequestHandler<IGameServer>() {
-            @Override
-            public void handle(PoloComponent<IGameServer> request) {
-
-                request.createResponse(String.class).value("Hallo Welt!").respond();
-            }
-        });
-
         new SimplePacketHandler<>(APIRequestGameServerCopyResponsePacket.class, packet ->
             Logger.log(packet.isFailed() ? LoggerType.ERROR : LoggerType.INFO, packet.isFailed() ?
                 "Failed to copy the gameserver " + packet.getGameservername() + " to the template! Error: " + packet.getErrorMessage()

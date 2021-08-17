@@ -1,6 +1,6 @@
 package de.polocloud.api.player;
 
-import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.INamable;
 import de.polocloud.api.gameserver.IGameServer;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface ICloudPlayer extends INamable, Serializable, ICommandExecutor {
+public interface ICloudPlayer extends INamable, Serializable, CommandExecutor {
 
     /**
      * Gets the {@link UUID} of this player

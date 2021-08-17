@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class Logger {
 
-    public static String PREFIX = ConsoleColors.LIGHT_BLUE + "PoloCloud " + ConsoleColors.GRAY + "» ";
+    public static final String PREFIX = ConsoleColors.LIGHT_BLUE + "PoloCloud " + ConsoleColors.GRAY + "» ";
     private static ConsoleReader consoleReader;
 
     public static void boot() {
@@ -22,6 +22,8 @@ public class Logger {
             e.printStackTrace();
         }
     }
+
+
 
     public static void logErr(String message) {
         LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + LoggerType.ERROR + "] » " + message));

@@ -2,8 +2,9 @@ package de.polocloud.plugin;
 
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.ICommandPool;
+import de.polocloud.api.command.ICommandManager;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
@@ -50,6 +51,7 @@ public class CloudPlugin extends PoloCloudAPI {
     private ICloudPlayerManager cloudPlayerManager;
     private IGameServerManager gameServerManager;
     private ITemplateService templateService;
+    private ICommandManager commandManager;
 
     private PoloType poloType;
 
@@ -70,6 +72,7 @@ public class CloudPlugin extends PoloCloudAPI {
         this.cloudPlayerManager = new APICloudPlayerManager();
         this.gameServerManager = new APIGameServerManager();
         this.templateService = new APITemplateManager();
+        this.commandManager = new SimpleCommandManager();
         this.poloType = bootstrap.getType();
 
         this.pubSubManager = new SimplePubSubManager(networkClient);
@@ -136,13 +139,13 @@ public class CloudPlugin extends PoloCloudAPI {
     }
 
     @Override
-    public ICommandExecutor getCommandExecutor() {
+    public CommandExecutor getCommandExecutor() {
         return null;
     }
 
     @Override
-    public ICommandPool getCommandPool() {
-        return null;
+    public ICommandManager getCommandManager() {
+        return commandManager;
     }
 
     @Override

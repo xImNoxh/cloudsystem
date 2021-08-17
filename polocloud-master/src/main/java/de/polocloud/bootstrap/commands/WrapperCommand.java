@@ -1,10 +1,9 @@
 package de.polocloud.bootstrap.commands;
 
 import com.google.inject.Inject;
-import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.commands.CommandType;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.CloudCommandInfo;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
@@ -12,8 +11,7 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
-@CloudCommandInfo(name = "wrapper", description = "Manage a wrapper", aliases = "", commandType = CommandType.CONSOLE)
-public class WrapperCommand extends CloudCommand {
+public class WrapperCommand implements CommandListener {
 
     @Inject
     private IWrapperClientManager wrapperClientManager;
@@ -21,8 +19,8 @@ public class WrapperCommand extends CloudCommand {
     public WrapperCommand() {
     }
 
-    @Override
-    public void execute(ICommandExecutor sender, String[] args) {
+    @Command(name = "wrapper", description = "Manage a wrapper", aliases = "")
+    public void execute(CommandExecutor sender, String[] args) {
         if (args.length == 3) {
             if (args[1].equalsIgnoreCase("stop") || args[1].equalsIgnoreCase("shutdown")) {
                 String wrapperName = args[2];

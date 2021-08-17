@@ -3,9 +3,9 @@ package de.polocloud.wrapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.SimpleCommandPool;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.ICommandPool;
+import de.polocloud.api.command.ICommandManager;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
@@ -48,11 +48,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     private static Wrapper instance;
 
-    private ICommandPool commandPool;
 
     private SimpleNettyClient nettyClient;
     private Injector injector;
     private WrapperConfig config;
+    private final ICommandManager commandManager;
 
     private ProcessManager processManager;
 
@@ -60,7 +60,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         instance = this;
         PoloCloudAPI.setInstance(this);
 
-        commandPool = new SimpleCommandPool();
+        this.commandManager = new SimpleCommandManager();
         config = loadWrapperConfig();
 
         requestStaticServersStart();
@@ -72,7 +72,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         String[] masterAddress = config.getMasterAddress().split(":");
         injector = Guice.createInjector(new PoloAPIGuiceModule(), new WrapperGuiceModule(masterAddress[0], Integer.parseInt(masterAddress[1])));
 
-        getCommandPool().registerCommand(new StopCommand());
+        getCommandManager().registerCommand(new StopCommand());
     }
 
     public static Wrapper getInstance() {
@@ -194,6 +194,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
+    public ICommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    @Override
     public void start() {
         Logger.log(LoggerType.INFO, "Trying to start the wrapper...");
 
@@ -228,13 +233,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
-    public ICommandExecutor getCommandExecutor() {
+    public CommandExecutor getCommandExecutor() {
         return null;
-    }
-
-    @Override
-    public ICommandPool getCommandPool() {
-        return commandPool;
     }
 
     @Override

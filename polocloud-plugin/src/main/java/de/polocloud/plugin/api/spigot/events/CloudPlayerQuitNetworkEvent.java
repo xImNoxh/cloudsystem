@@ -8,6 +8,7 @@ import org.bukkit.event.HandlerList;
 import java.util.concurrent.CompletableFuture;
 
 public class CloudPlayerQuitNetworkEvent extends Event {
+
     private static final HandlerList handlers = new HandlerList();
 
     private String playerName;

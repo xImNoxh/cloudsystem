@@ -1,8 +1,8 @@
 package de.polocloud.api;
 
 import com.google.inject.Injector;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.ICommandPool;
+import de.polocloud.api.command.ICommandManager;
+import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
@@ -53,21 +53,20 @@ public abstract class PoloCloudAPI {
     public abstract INetworkConnection getConnection();
 
     /**
+     * The current {@link ICommandManager} to manage all commands
+     */
+    public abstract ICommandManager getCommandManager();
+
+    /**
      * The current {@link ITemplateService} to manage
      * all the cached {@link de.polocloud.api.template.ITemplate}s
      */
     public abstract ITemplateService getTemplateService();
 
     /**
-     * The current {@link ICommandExecutor} (e.g. console)
+     * The current {@link CommandExecutor} (e.g. console)
      */
-    public abstract ICommandExecutor getCommandExecutor();
-
-    /**
-     * The current {@link ICommandPool} instance
-     * to register, unregister and handle {@link de.polocloud.api.commands.CloudCommand}s
-     */
-    public abstract ICommandPool getCommandPool();
+    public abstract CommandExecutor getCommandExecutor();
 
     /**
      * The current {@link IGameServerManager} instance

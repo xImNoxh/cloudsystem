@@ -2,7 +2,7 @@ package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.common.collect.Lists;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.CloudCommand;
+import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
@@ -37,9 +37,13 @@ import java.util.stream.Collectors;
 
 public abstract class PlayerPacketServiceController {
 
-    public void executeCommand(ICloudPlayerManager cloudPlayerManager, CloudCommand command, UUID uuid, String[] args) {
+    public void executeCommand(ICloudPlayerManager cloudPlayerManager, ICommandRunner command, UUID uuid, String[] args) {
         try {
-            command.execute(cloudPlayerManager.getOnlinePlayer(uuid).get(), args);
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String arg : args) {
+                stringBuilder.append(arg).append(" ");
+            }
+            PoloCloudAPI.getInstance().getCommandManager().runCommand(stringBuilder.toString(), cloudPlayerManager.getOnlinePlayer(uuid).get());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -93,19 +97,19 @@ public abstract class PlayerPacketServiceController {
 
     }
 
-    public List<CloudCommand> getPossibleCommand(String[] args) {
-        return getCachedCommands().stream().filter(key -> isCommandMatch(key.getName(), key.getAliases(), args[0])).collect(Collectors.toList());
+    public List<ICommandRunner> getPossibleCommand(String[] args) {
+        return getCachedCommands().stream().filter(key -> isCommandMatch(key.getCommand().name(), key.getCommand().aliases(), args[0])).collect(Collectors.toList());
     }
 
-    private List<CloudCommand> getCachedCommands() {
-        return PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands();
+    private List<ICommandRunner> getCachedCommands() {
+        return PoloCloudAPI.getInstance().getCommandManager().getCommands();
     }
 
     private boolean isCommandMatch(String key, String[] keys, String input) {
         return key.equalsIgnoreCase(input) || Arrays.stream(keys).anyMatch(it -> it.equalsIgnoreCase(input));
     }
 
-    public void executeICloudPlayerCommand(GameServerCloudCommandExecutePacket packet, BiConsumer<List<CloudCommand>, String[]> handling) {
+    public void executeICloudPlayerCommand(GameServerCloudCommandExecutePacket packet, BiConsumer<List<ICommandRunner>, String[]> handling) {
         handling.accept(getPossibleCommand(packet.getCommand().split(" ")), packet.getCommand().split(" "));
     }
 

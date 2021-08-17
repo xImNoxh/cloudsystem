@@ -1,9 +1,10 @@
 package de.polocloud.bootstrap.commands;
 
-import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.commands.CommandType;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.CloudCommandInfo;
+import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.annotation.CommandExecutors;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.GameServerVersion;
@@ -17,8 +18,7 @@ import de.polocloud.logger.log.types.LoggerType;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-@CloudCommandInfo(name = "template", description = "Manage a template", aliases = "", commandType = CommandType.CONSOLE)
-public class TemplateCommand extends CloudCommand {
+public class TemplateCommand implements CommandListener {
 
     private ITemplateService templateService;
     private IGameServerManager gameServerManager;
@@ -28,8 +28,13 @@ public class TemplateCommand extends CloudCommand {
         this.gameServerManager = gameServerManager;
     }
 
-    @Override
-    public void execute(ICommandExecutor sender, String[] args) {
+    @Command(
+        name = "template",
+        description = "Manage a template",
+        aliases = "group"
+    )
+    @CommandExecutors(ExecutorType.CONSOLE)
+    public void execute(CommandExecutor sender, String[] args) {
         try {
             if (args.length == 2) {
                 if (args[1].equalsIgnoreCase("create")) {

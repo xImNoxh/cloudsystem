@@ -1,23 +1,28 @@
 package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.commands.CommandType;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.CloudCommandInfo;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
-@CloudCommandInfo(name = "Help", description = "Shows all available commands", aliases = "?", commandType = CommandType.CONSOLE)
-public class HelpCommand extends CloudCommand {
+public class HelpCommand implements CommandListener {
 
-    @Override
-    public void execute(ICommandExecutor sender, String[] args) {
+    @Command(
+        name = "help",
+        description = "Shows all available commands",
+        usage = "help <no-args>",
+        aliases = "?"
+    )
+    public void execute(CommandExecutor sender, String[] args) {
         Logger.newLine();
-        for (CloudCommand command : PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands()) {
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "Command: " + ConsoleColors.LIGHT_BLUE + command.getName() + ConsoleColors.GRAY
-                + "(" + ConsoleColors.LIGHT_BLUE + String.join(ConsoleColors.GRAY + ", " + ConsoleColors.LIGHT_BLUE, command.getAliases()) + ConsoleColors.GRAY + ") × " + command.getDescription());
+
+        for (ICommandRunner command : PoloCloudAPI.getInstance().getCommandManager().getCommands()) {
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Command: " + ConsoleColors.LIGHT_BLUE + command.getCommand().name() + ConsoleColors.GRAY
+                + "(" + ConsoleColors.LIGHT_BLUE + String.join(ConsoleColors.GRAY + ", " + ConsoleColors.LIGHT_BLUE, command.getCommand().aliases()) + ConsoleColors.GRAY + ") × " + command.getCommand().description());
         }
         Logger.newLine();
     }

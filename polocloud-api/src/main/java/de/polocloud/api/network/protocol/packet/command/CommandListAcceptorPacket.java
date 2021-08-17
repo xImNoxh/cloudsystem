@@ -2,12 +2,11 @@ package de.polocloud.api.network.protocol.packet.command;
 
 import com.google.common.collect.Lists;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
-import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +25,9 @@ public class CommandListAcceptorPacket extends Packet {
         this.commandList = commandList;
         this.aliases = aliases;
 
-        PoloCloudAPI.getInstance().getCommandPool().getAllCachedCommands().stream().filter(key -> key.getCommandType().equals(CommandType.INGAME_CONSOLE)
-            || key.getCommandType().equals(CommandType.INGAME)).collect(Collectors.toList()).forEach(key -> {
-            this.commandList.add(key.getName());
-            this.aliases.addAll(Arrays.stream(key.getAliases()).collect(Collectors.toList()));
+        new ArrayList<>(PoloCloudAPI.getInstance().getCommandManager().getCommands()).forEach(key -> {
+            this.commandList.add(key.getCommand().name());
+            this.aliases.addAll(Arrays.stream(key.getCommand().aliases()).collect(Collectors.toList()));
         });
     }
 

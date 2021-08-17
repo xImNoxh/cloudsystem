@@ -1,9 +1,8 @@
 package de.polocloud.bootstrap.commands;
 
-import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.commands.CommandType;
-import de.polocloud.api.commands.ICommandExecutor;
-import de.polocloud.api.commands.CloudCommandInfo;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayer;
@@ -15,8 +14,7 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.concurrent.ExecutionException;
 
-@CloudCommandInfo(name = "player", description = "Manage a CloudPlayer", aliases = "players", commandType = CommandType.CONSOLE)
-public class PlayerCommand extends CloudCommand {
+public class PlayerCommand implements CommandListener {
 
     private ICloudPlayerManager cloudPlayerManager;
     private IGameServerManager gameServerManager;
@@ -26,8 +24,8 @@ public class PlayerCommand extends CloudCommand {
         this.gameServerManager = gameServerManager;
     }
 
-    @Override
-    public void execute(ICommandExecutor sender, String[] args) {
+    @Command(name = "player", description = "Manage a CloudPlayer", aliases = "players")
+    public void execute(CommandExecutor sender, String[] args) {
         //player <player> kick/message/send <Lobby-1 | Du hast dumm>
         try {
             if (args.length == 4 && args[2].equalsIgnoreCase("send")) {

@@ -58,7 +58,9 @@ public interface ITemplate extends INamable, Serializable {
      */
     GameServerVersion getVersion();
 
-    //TODO: DOCUMENTATION
+    /**
+     * The percent for a new service of this template to start
+     */
     int getServerCreateThreshold();
 
     /**

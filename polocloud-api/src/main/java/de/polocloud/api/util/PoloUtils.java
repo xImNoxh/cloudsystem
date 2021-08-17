@@ -37,13 +37,33 @@ public class PoloUtils {
      * @return the object or null if exception occured
      */
     public static <T> T sneakyThrows(ExceptionSupplier<T> tSupplier) {
-
         try {
             return tSupplier.supply();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+    //Helper method for getMethodSignature
+    private static String getClassName(Class<?> cls) {
+        return (cls.isArray()) ? getClassName(cls.getComponentType()) + "[]" : cls.getSimpleName();
+    }
+
+    /**
+     * Gets the signature of a {@link Method}
+     * @param method the method
+     */
+    public static String getMethodSignature(Method method) {
+        StringBuilder methodSignature = new StringBuilder(method.getDeclaringClass().getName() + "#" + method.getName() + "(");
+        boolean first = true;
+        for (Class<?> param : method.getParameterTypes()) {
+            if (!first)
+                methodSignature.append(", ");
+            methodSignature.append(getClassName(param));
+            first = false;
+        }
+        methodSignature.append(")");
+        return methodSignature.toString();
     }
 
     /**

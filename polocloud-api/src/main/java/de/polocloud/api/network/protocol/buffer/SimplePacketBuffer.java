@@ -1,6 +1,8 @@
 package de.polocloud.api.network.protocol.buffer;
 
 import com.google.common.base.Charsets;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
@@ -125,8 +127,23 @@ public class SimplePacketBuffer implements IPacketBuffer {
             }
 
             @Override
+            public void runCommand(String command) {
+                PoloCloudAPI.getInstance().getCommandManager().runCommand(command, this);
+            }
+
+            @Override
             public void sendMessage(String message) {
                 //TODO
+            }
+
+            @Override
+            public ExecutorType getType() {
+                return ExecutorType.PLAYER;
+            }
+
+            @Override
+            public boolean hasPermission(String permission) {
+                return false;
             }
 
             @Override
