@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -18,13 +19,13 @@ public class GameServerShutdownPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, serverName);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(serverName);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        this.serverName = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        this.serverName = buf.readString();
     }
 
     public String getServerName() {

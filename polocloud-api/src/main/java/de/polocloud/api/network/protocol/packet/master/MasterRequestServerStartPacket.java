@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.master;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.template.GameServerVersion;
 import io.netty.buffer.ByteBuf;
@@ -36,31 +37,31 @@ public class MasterRequestServerStartPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, template);
-        writeString(byteBuf, version.getTitle());
-        byteBuf.writeLong(snowflake);
-        byteBuf.writeBoolean(isProxy);
-        byteBuf.writeInt(memory);
-        byteBuf.writeInt(maxPlayers);
-        writeString(byteBuf, serverName);
-        writeString(byteBuf, motd);
-        byteBuf.writeBoolean(this.isStatic);
-        byteBuf.writeInt(port);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(template);
+        buf.writeString(version.getTitle());
+        buf.writeLong(snowflake);
+        buf.writeBoolean(isProxy);
+        buf.writeInt(memory);
+        buf.writeInt(maxPlayers);
+        buf.writeString(serverName);
+        buf.writeString(motd);
+        buf.writeBoolean(this.isStatic);
+        buf.writeInt(port);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        template = readString(byteBuf);
-        version = GameServerVersion.getVersion(readString(byteBuf));
-        snowflake = byteBuf.readLong();
-        isProxy = byteBuf.readBoolean();
-        memory = byteBuf.readInt();
-        maxPlayers = byteBuf.readInt();
-        serverName = readString(byteBuf);
-        motd = readString(byteBuf);
-        isStatic = byteBuf.readBoolean();
-        port = byteBuf.readInt();
+    public void read(IPacketBuffer buf) throws IOException {
+        template = buf.readString();
+        version = GameServerVersion.getVersion(buf.readString());
+        snowflake = buf.readLong();
+        isProxy = buf.readBoolean();
+        memory = buf.readInt();
+        maxPlayers = buf.readInt();
+        serverName = buf.readString();
+        motd = buf.readString();
+        isStatic = buf.readBoolean();
+        port = buf.readInt();
     }
 
     public int getPort() {

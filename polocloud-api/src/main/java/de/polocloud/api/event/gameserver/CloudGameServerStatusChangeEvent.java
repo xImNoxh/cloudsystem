@@ -4,7 +4,7 @@ import de.polocloud.api.gameserver.IGameServer;
 
 public class CloudGameServerStatusChangeEvent extends GameServerEvent {
 
-    private Status status;
+    private final Status status;
 
     public CloudGameServerStatusChangeEvent(IGameServer gameServer, Status status) {
         super(gameServer);

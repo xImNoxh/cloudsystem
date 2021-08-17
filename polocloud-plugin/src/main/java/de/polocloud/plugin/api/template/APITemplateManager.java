@@ -1,7 +1,7 @@
 package de.polocloud.plugin.api.template;
 
 import de.polocloud.api.network.protocol.packet.api.template.APIRequestTemplatePacket;
-import de.polocloud.api.network.response.ResponseHandler;
+import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateLoader;
 import de.polocloud.api.template.ITemplateSaver;

@@ -5,7 +5,7 @@ import de.polocloud.api.template.ITemplate;
 
 public class CloudGameServerMaintenanceUpdateEvent implements CloudEvent {
 
-    private ITemplate Template;
+    private final ITemplate Template;
 
     public CloudGameServerMaintenanceUpdateEvent(ITemplate Template) {
         this.Template = Template;

@@ -1,4 +1,8 @@
 package de.polocloud.api.commands;
 
-public interface ICommandExecutor {
+
+import de.polocloud.api.common.IMessageable;
+
+public interface ICommandExecutor extends IMessageable {
+
 }

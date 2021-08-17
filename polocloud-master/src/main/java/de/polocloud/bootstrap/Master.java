@@ -3,10 +3,11 @@ package de.polocloud.bootstrap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.CommandPool;
+import de.polocloud.api.commands.SimpleCommandPool;
 import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.commands.ICommandPool;
 import de.polocloud.api.commands.types.ConsoleExecutor;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
@@ -16,14 +17,18 @@ import de.polocloud.api.event.IEventHandler;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.channel.ChannelInactiveEvent;
 import de.polocloud.api.event.netty.NettyExceptionEvent;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
+import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
+import de.polocloud.api.pubsub.SimplePubSubManager;
+import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
@@ -73,6 +78,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     private final ModuleCache moduleCache;
     private final MasterModuleLoader moduleLoader;
     private final PortService portService;
+    private IPubSubManager pubSubManager;
 
     private SimpleNettyServer nettyServer;
     private boolean running = false;
@@ -84,8 +90,13 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         instance = this;
         PoloCloudAPI.setInstance(this);
 
-        this.commandPool = new CommandPool();
-        this.commandExecutor = new ConsoleExecutor();
+        this.commandPool = new SimpleCommandPool();
+        this.commandExecutor = new ConsoleExecutor() {
+            @Override
+            public void sendMessage(String message) {
+                Logger.log(LoggerType.INFO, message);
+            }
+        };
         this.wrapperClientManager = new SimpleWrapperClientManager();
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
@@ -119,6 +130,16 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         Thread runnerThread = new Thread(getGuice().getInstance(ServerCreatorRunner.class));
         this.moduleLoader.loadModules(false);
         runnerThread.start();
+    }
+
+    @Override
+    public INetworkConnection getConnection() {
+        return this.nettyServer;
+    }
+
+    @Override
+    public PoloType getType() {
+        return PoloType.MASTER;
     }
 
     public static Master getInstance() {
@@ -157,6 +178,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         EventRegistry.registerListener(getGuice().getInstance(ChannelInactiveListener.class), ChannelInactiveEvent.class);
         EventRegistry.registerListener(getGuice().getInstance(ChannelActiveListener.class), ChannelActiveEvent.class);
 
+        this.pubSubManager = new SimplePubSubManager(nettyServer);
         new Thread(() -> nettyServer.start()).start();
 
         try {
@@ -177,7 +199,28 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     @Override
     public boolean terminate() {
         this.running = false;
-        return this.nettyServer.terminate();
+        boolean terminate = this.nettyServer.terminate();
+
+        try {
+            for (IGameServer gameServer : getGameServerManager().getGameServers().get()) {
+                gameServer.terminate();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        Scheduler.runtimeScheduler().schedule(() -> {
+            Logger.log(LoggerType.INFO, "All " + ConsoleColors.CYAN + "GameServers " + ConsoleColors.RESET + "are now " + ConsoleColors.RED + "stopped" + ConsoleColors.RESET + "!");
+            Logger.log(LoggerType.INFO, "Shutting down Master...");
+            System.exit(0);
+        }, () -> {
+            try {
+                return PoloCloudAPI.getInstance().getGameServerManager().getGameServers().get().isEmpty();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+        return terminate;
     }
 
     @Override
@@ -202,7 +245,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public IPubSubManager getPubSubManager() {
-        return null;
+        return pubSubManager;
     }
 
     @Override

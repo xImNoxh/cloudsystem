@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.handler;
 
+import de.polocloud.api.network.protocol.buffer.SimplePacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +15,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
             throw new NullPointerException("Packet with " + packet.getClass().getSimpleName() + " was not registered");
         }
         byteBuf.writeInt(id);
-        packet.write(byteBuf);
+        packet.write(new SimplePacketBuffer(byteBuf));
 
     }
 }

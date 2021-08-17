@@ -10,22 +10,56 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ICloudPlayer extends INamable, Serializable, ICommandExecutor {
 
+    /**
+     * Gets the {@link UUID} of this player
+     */
     UUID getUUID();
 
+    /**
+     * Gets the current proxy-Server as {@link IGameServer}
+     * of this player
+     */
     IGameServer getProxyServer();
 
+    /**
+     * Gets the current spigot-Server as {@link IGameServer}
+     * of this player
+     */
     IGameServer getMinecraftServer();
 
-    void sendMessage(String message);
-
+    /**
+     * Connects this player to a {@link IGameServer}
+     *
+     * @param gameServer the server to connect to
+     */
     void sendTo(IGameServer gameServer);
 
-    void sendTablist(String header, String footer);
+    /**
+     * Sends the tabList header and footer to this player
+     *
+     * @param header the header
+     * @param footer the footer
+     */
+    void sendTabList(String header, String footer);
 
+    /**
+     * Checks if this player has a given permission
+     *
+     * @param permission the permission
+     */
     CompletableFuture<Boolean> hasPermissions(String permission);
 
-    void kick(String message);
+    /**
+     * Kicks this player from the network
+     * with a given reason to display
+     *
+     * @param reason the reason
+     */
+    void kick(String reason);
 
+    /**
+     * Sends this player to a fallback
+     */
     void sendToFallback();
 
 }

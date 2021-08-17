@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.wrapper;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -20,15 +21,15 @@ public class WrapperLoginPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, name);
-        writeString(byteBuf, key);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(name);
+        buf.writeString(key);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        name = readString(byteBuf);
-        key = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        name = buf.readString();
+        key = buf.readString();
     }
 
     public String getName() {

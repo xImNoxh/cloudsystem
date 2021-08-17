@@ -1,6 +1,7 @@
 package de.polocloud.api.network.protocol.packet.api.gameserver;
 
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -26,31 +27,31 @@ public class APIResponseGameServerPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, requestId.toString());
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(requestId.toString());
 
         int size = response.size();
-        byteBuf.writeInt(size);
+        buf.writeInt(size);
 
         for (IGameServer gameServer : response) {
-            writeGameServer(byteBuf, gameServer);
+            buf.writeGameServer(gameServer);
         }
-        writeString(byteBuf, type.toString());
+        buf.writeString(type.toString());
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
+    public void read(IPacketBuffer buf) throws IOException {
 
-        requestId = UUID.fromString(readString(byteBuf));
+        requestId = UUID.fromString(buf.readString());
         response = new ArrayList<>();
-        int size = byteBuf.readInt();
+        int size = buf.readInt();
 
         for (int i = 0; i < size; i++) {
-            IGameServer tmpGameServer = readGameServer(byteBuf);
+            IGameServer tmpGameServer = buf.readGameServer();
             response.add(tmpGameServer);
         }
 
-        type = Type.valueOf(readString(byteBuf));
+        type = Type.valueOf(buf.readString());
 
     }
 

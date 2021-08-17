@@ -46,8 +46,8 @@ public class WrapperClient implements IPacketSender {
     }
 
     @Override
-    public void sendPacket(Packet object) {
-        this.chx.writeAndFlush(object);
+    public void sendPacket(Packet packet) {
+        this.chx.writeAndFlush(packet);
     }
 
     public ChannelHandlerContext getConnection() {

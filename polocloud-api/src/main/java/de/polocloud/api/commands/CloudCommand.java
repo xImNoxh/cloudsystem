@@ -1,24 +1,46 @@
 package de.polocloud.api.commands;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 public abstract class CloudCommand {
 
-    private String name;
-    private String[] aliases;
-    private String description;
-    private CommandType commandType;
+    /**
+     * The name of the command
+     */
+    private final String name;
+
+    /**
+     * The allowed aliases of this command
+     */
+    private final String[] aliases;
+
+    /**
+     * The description of this command
+     */
+    private final String description;
+
+    /**
+     * The command type of this command
+     */
+    private final CommandType commandType;
 
     public CloudCommand() {
-        name = getClass().getAnnotation(Info.class).name();
-        aliases = getClass().getAnnotation(Info.class).aliases();
-        description = getClass().getAnnotation(Info.class).description();
-        commandType = getClass().getAnnotation(Info.class).commandType();
+        CloudCommandInfo annotation = getClass().getAnnotation(CloudCommandInfo.class);
+        if (annotation == null) {
+            throw new UnsupportedOperationException("Can not register Command (" + getClass().getName() + ") because it does not have a @" + CloudCommandInfo.class.getSimpleName() + "-Annotation!");
+        }
+        this.name = annotation.name();
+        this.aliases = annotation.aliases();
+        this.description = annotation.description();
+        this.commandType = annotation.commandType();
     }
 
+    /**
+     * Handles this command when a given {@link ICommandExecutor} executed
+     * this command with given arguments as {@link String[]}
+     *
+     * @param sender the sender
+     * @param args the arguments provided
+     */
     public abstract void execute(ICommandExecutor sender, String[] args);
-
 
     public String getName() {
         return name;
@@ -28,34 +50,12 @@ public abstract class CloudCommand {
         return commandType;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String[] getAliases() {
         return aliases;
     }
 
-    public void setAliases(String[] aliases) {
-        this.aliases = aliases;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Info {
-
-        String name();
-        String description();
-        String[] aliases();
-        CommandType commandType();
-
     }
 
 }

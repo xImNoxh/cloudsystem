@@ -5,6 +5,7 @@ import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -21,7 +22,7 @@ import java.net.URL;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
+public class MasterRequestServerStartListener implements IPacketHandler<Packet> {
 
     private Executor executor = Executors.newCachedThreadPool();
     private WrapperConfig config;
@@ -76,9 +77,6 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
             FileUtils.copyFile(serverFile, new File(serverDirectory + "/spigot.jar"));
             FileUtils.copyFile(new File("templates/PoloCloud-API.jar"), new File(serverDirectory + "/plugins/PoloCloud-API.jar"));
 
-            //config
-            File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
-            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\" , \"GameServer-Name\": \"" + serverName + "\", \"GameServer-Snowflake\": \"" + snowflake + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,6 +86,18 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
 
         config.getStaticServers().add(serverName + "#" + snowflake + "," + port + "," + maxMemory);
         configSaver.save(config, new File("config.json"));
+
+        //config
+        File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
+
+        JsonData jsonData = new JsonData(poloCloudConfigFile);
+
+        jsonData.append("Master-Address", config.getMasterAddress());
+        jsonData.append("GameServer-Name", serverName);
+        jsonData.append("GameServer-Snowflake", snowflake);
+        jsonData.append("port", port);
+
+        jsonData.save();
 
         ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
         try {
@@ -110,6 +120,7 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
 
     private void handleDynamicServerStart(int port, String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
         File serverDirectory = new File("tmp/" + serverName + "#" + snowflake);
+        File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
 
         try {
             //copy server.jar and api to server directory
@@ -122,14 +133,21 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
                 File serverProp = new File(serverDirectory + "/server.properties");
                 File spigotYML = new File(serverDirectory + "/spigot.yml");
 
-                FileUtils.writeStringToFile(serverProp, "online-mode=false\nmotd=PoloCloud\n");
+                FileUtils.writeStringToFile(serverProp, "online-mode=false\nmotd=" + motd + "\n");
                 FileUtils.writeStringToFile(spigotYML, "settings:\n  bungeecord: true\n");
             } else {
                 new BungeeProperties(serverDirectory, maxPlayers, port, motd);
             }
 
-            File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
-            FileUtils.writeStringToFile(poloCloudConfigFile, "{\"Master-Address\": \"" + config.getMasterAddress() + "\" , \"GameServer-Name\": \"" + serverName + "\", \"GameServer-Snowflake\": \"" + snowflake + "\"}");
+            JsonData jsonData = new JsonData(poloCloudConfigFile);
+
+            jsonData.append("Master-Address", config.getMasterAddress());
+            jsonData.append("GameServer-Name", serverName);
+            jsonData.append("GameServer-Snowflake", snowflake);
+            jsonData.append("port", port);
+
+            jsonData.save();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -138,22 +156,23 @@ public class MasterRequestServerStartListener extends IPacketHandler<Packet> {
         ProcessBuilder processBuilder;
         if (isProxy) {
             processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M proxy.jar").split(" "));
-            Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on default port...");
-
         } else {
-            int spigotPort = generatePort();
-            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + spigotPort).split(" "));
-            Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port " + port + "...");
-
+            port = generatePort();
+            JsonData jsonData = new JsonData(poloCloudConfigFile);
+            jsonData.append("port", port);
+            jsonData.save();
+            processBuilder = new ProcessBuilder(("java -jar -Xms" + maxMemory + "M -Xmx" + maxMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + maxPlayers + " --noconsole --port " + port).split(" "));
         }
+        Logger.log(LoggerType.INFO, "Starting " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port " + port + "...");
 
         processBuilder.directory(serverDirectory);
 
-        Process process = null;
+        Process process;
         try {
             process = processBuilder.start();
             processManager.addProcess(snowflake, process);
 
+            //Waiting until stopped
             process.waitFor();
 
             FileUtils.deleteDirectory(serverDirectory);

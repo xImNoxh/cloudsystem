@@ -1,4 +1,4 @@
-package de.polocloud.api.network.response;
+package de.polocloud.api.network.request;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.api.gameserver;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -22,17 +23,17 @@ public class APIRequestGameServerCopyResponsePacket extends Packet {
 
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, gameservername);
-        writeString(byteBuf, String.valueOf(failed));
-        writeString(byteBuf, errorMessage);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(gameservername);
+        buf.writeString(String.valueOf(failed));
+        buf.writeString(errorMessage);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        this.gameservername = readString(byteBuf);
-        this.failed = Boolean.parseBoolean(readString(byteBuf));
-        this.errorMessage = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        this.gameservername = buf.readString();
+        this.failed = Boolean.parseBoolean(buf.readString());
+        this.errorMessage = buf.readString();
     }
 
     public String getGameservername() {

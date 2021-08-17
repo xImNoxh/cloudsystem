@@ -81,4 +81,9 @@ public class SimpleGameServerManager implements IGameServerManager {
         }
         return CompletableFuture.completedFuture(null);
     }
+
+    @Override
+    public IGameServer getThisService() {
+        return null;
+    }
 }

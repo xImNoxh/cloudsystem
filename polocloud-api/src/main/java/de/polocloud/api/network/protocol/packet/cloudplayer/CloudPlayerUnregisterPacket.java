@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.cloudplayer;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import io.netty.buffer.ByteBuf;
@@ -18,13 +19,13 @@ public class CloudPlayerUnregisterPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeCloudPlayer(byteBuf, cloudPlayer);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeCloudPlayer(cloudPlayer);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        cloudPlayer = readCloudPlayer(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        cloudPlayer = buf.readCloudPlayer();
     }
 
     public ICloudPlayer getCloudPlayer() {

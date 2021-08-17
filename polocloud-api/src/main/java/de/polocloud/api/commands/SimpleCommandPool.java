@@ -3,7 +3,7 @@ package de.polocloud.api.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandPool extends ArrayList<CloudCommand> implements ICommandPool {
+public class SimpleCommandPool extends ArrayList<CloudCommand> implements ICommandPool {
 
     @Override
     public void registerCommand(CloudCommand cloudCommand) {

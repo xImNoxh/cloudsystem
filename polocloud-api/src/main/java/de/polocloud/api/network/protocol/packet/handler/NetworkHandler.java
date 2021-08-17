@@ -4,23 +4,21 @@ import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.event.channel.ChannelInactiveEvent;
 import de.polocloud.api.event.netty.NettyExceptionEvent;
+import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.network.server.SimpleNettyServer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
-    private IProtocol protocol;
+    private final INetworkConnection networkConnection;
 
     private ChannelHandlerContext channelHandlerContext;
 
-    public NetworkHandler(IProtocol protocol) {
-        this.protocol = protocol;
-    }
-
-    public void setProtocol(IProtocol protocol) {
-        this.protocol = protocol;
+    public NetworkHandler(INetworkConnection networkConnection) {
+        this.networkConnection = networkConnection;
     }
 
     @Override
@@ -39,17 +37,27 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         super.channelActive(ctx);
         this.channelHandlerContext = ctx;
         EventRegistry.fireEvent(new ChannelActiveEvent(ctx));
+
+        if (this.networkConnection instanceof SimpleNettyServer) {
+            SimpleNettyServer simpleNettyServer = (SimpleNettyServer)networkConnection;
+            simpleNettyServer.getConnectedClients().add(ctx.channel());
+        }
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         EventRegistry.fireEvent(new ChannelInactiveEvent(ctx));
+
+        if (this.networkConnection instanceof SimpleNettyServer) {
+            SimpleNettyServer simpleNettyServer = (SimpleNettyServer)networkConnection;
+            simpleNettyServer.getConnectedClients().removeIf(channel -> channel.equals(ctx.channel()));
+        }
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet o) throws Exception {
-        protocol.firePacketHandlers(channelHandlerContext, o);
+        networkConnection.getProtocol().firePacketHandlers(channelHandlerContext, o);
     }
 
     public ChannelHandlerContext getChannelHandlerContext() {

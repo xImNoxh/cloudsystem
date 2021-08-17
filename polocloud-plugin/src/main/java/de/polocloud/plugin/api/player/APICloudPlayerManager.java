@@ -3,7 +3,7 @@ package de.polocloud.plugin.api.player;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerUnregisterPacket;
-import de.polocloud.api.network.response.ResponseHandler;
+import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.plugin.CloudPlugin;

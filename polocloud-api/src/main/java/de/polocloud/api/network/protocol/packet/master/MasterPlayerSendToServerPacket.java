@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.master;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -22,15 +23,15 @@ public class MasterPlayerSendToServerPacket extends Packet {
 
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, uuid.toString());
-        writeString(byteBuf, this.targetServer);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(uuid.toString());
+        buf.writeString(this.targetServer);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        this.uuid = UUID.fromString(readString(byteBuf));
-        this.targetServer = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        this.uuid = UUID.fromString(buf.readString());
+        this.targetServer = buf.readString();
     }
 
     public String getTargetServer() {

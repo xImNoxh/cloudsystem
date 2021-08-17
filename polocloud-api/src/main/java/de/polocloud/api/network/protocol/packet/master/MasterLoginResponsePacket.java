@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.master;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -19,18 +20,18 @@ public class MasterLoginResponsePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        byteBuf.writeBoolean(this.response);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeBoolean(this.response);
 
-        writeString(byteBuf, this.message);
+        buf.writeString(this.message);
 
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        this.response = byteBuf.readBoolean();
+    public void read(IPacketBuffer buf) throws IOException {
+        this.response = buf.readBoolean();
 
-        this.message = readString(byteBuf);
+        this.message = buf.readString();
 
     }
 

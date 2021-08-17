@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class APIRequestGameServerCopyHandler extends IPacketHandler<Packet> {
+public class APIRequestGameServerCopyHandler implements IPacketHandler<Packet> {
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {

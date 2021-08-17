@@ -5,7 +5,7 @@ import de.polocloud.api.player.ICloudPlayer;
 
 public class CloudPlayerEvent implements CloudEvent {
 
-    private ICloudPlayer player;
+    private final ICloudPlayer player;
 
     public CloudPlayerEvent(ICloudPlayer player) {
         this.player = player;

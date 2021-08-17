@@ -7,7 +7,7 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-public class WrapperRequestShutdownHandler extends IPacketHandler<Packet> {
+public class WrapperRequestShutdownHandler implements IPacketHandler<Packet> {
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Got shutdown request from master! stopping...");

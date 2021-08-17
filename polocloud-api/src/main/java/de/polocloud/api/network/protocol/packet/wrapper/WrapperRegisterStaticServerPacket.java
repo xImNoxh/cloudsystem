@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.wrapper;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -20,15 +21,15 @@ public class WrapperRegisterStaticServerPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, serverName);
-        byteBuf.writeLong(snowflake);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(serverName);
+        buf.writeLong(snowflake);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        serverName = readString(byteBuf);
-        snowflake = byteBuf.readLong();
+    public void read(IPacketBuffer buf) throws IOException {
+        serverName = buf.readString();
+        snowflake = buf.readLong();
     }
 
     public String getServerName() {

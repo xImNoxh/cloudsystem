@@ -3,6 +3,7 @@ package de.polocloud.bootstrap.commands;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.commands.CloudCommandInfo;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayer;
@@ -14,7 +15,7 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.util.concurrent.ExecutionException;
 
-@CloudCommand.Info(name = "player", description = "Manage a CloudPlayer", aliases = "players", commandType = CommandType.CONSOLE)
+@CloudCommandInfo(name = "player", description = "Manage a CloudPlayer", aliases = "players", commandType = CommandType.CONSOLE)
 public class PlayerCommand extends CloudCommand {
 
     private ICloudPlayerManager cloudPlayerManager;

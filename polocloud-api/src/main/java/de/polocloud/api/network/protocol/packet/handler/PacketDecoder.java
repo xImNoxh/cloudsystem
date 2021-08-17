@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.handler;
 
+import de.polocloud.api.network.protocol.buffer.SimplePacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +14,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext chx, ByteBuf byteBuf, List<Object> output) throws Exception {
         int id = byteBuf.readInt();
         Packet packet = PacketRegistry.createInstance(id);
-        packet.read(byteBuf);
+        packet.read(new SimplePacketBuffer(byteBuf));
         output.add(packet);
     }
 }

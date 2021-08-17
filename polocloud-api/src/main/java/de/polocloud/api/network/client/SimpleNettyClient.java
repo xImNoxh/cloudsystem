@@ -6,6 +6,9 @@ import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.network.protocol.packet.handler.*;
+import de.polocloud.api.network.request.SimpleRequestManager;
+import de.polocloud.api.network.request.IRequestManager;
+import de.polocloud.api.scheduler.Scheduler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
@@ -14,6 +17,9 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+
+import java.net.InetSocketAddress;
+import java.util.function.Consumer;
 
 public class SimpleNettyClient implements INettyClient {
 
@@ -31,6 +37,7 @@ public class SimpleNettyClient implements INettyClient {
     private ChannelFuture channelFuture;
     private Channel channel;
     private NetworkHandler networkHandler;
+    private final IRequestManager requestManager = new SimpleRequestManager(this);
 
     public SimpleNettyClient() {
 
@@ -42,11 +49,10 @@ public class SimpleNettyClient implements INettyClient {
         this.protocol = protocol;
     }
 
-    @Override
-    public void start() {
+    public void start(Consumer<SimpleNettyClient> consumer) {
         PacketRegistry.registerDefaultInternalPackets();
 
-        networkHandler = new NetworkHandler(protocol);
+        networkHandler = new NetworkHandler(this);
 
         MultithreadEventLoopGroup workerGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
 
@@ -54,7 +60,9 @@ public class SimpleNettyClient implements INettyClient {
             try {
                 MultithreadEventLoopGroup eventLoopGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
                 Bootstrap bootstrap = new Bootstrap();
-                ((bootstrap.group(workerGroup)).channel(Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class)).handler(new ChannelInitializer<SocketChannel>() {
+                bootstrap.group(workerGroup);
+                bootstrap.channel(Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class);
+                bootstrap.handler(new ChannelInitializer<SocketChannel>() {
 
                     @Override
                     protected void initChannel(SocketChannel channel) throws Exception {
@@ -67,16 +75,33 @@ public class SimpleNettyClient implements INettyClient {
 
                     }
                 });
-                this.channelFuture = bootstrap.connect(host, port);
-                this.channel = this.channelFuture.channel();
-                ChannelFuture closeFuture = this.channel.closeFuture();
+                this.channelFuture = bootstrap.connect(host, port).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        if (!channelFuture.isSuccess()) {
+                            channelFuture.cause().printStackTrace();
+                        }
+                    }
+                });
+                this.channel = channelFuture.channel();
+                channelFuture.addListener((ChannelFutureListener) channelFuture -> {
+                    if (consumer != null) {
+                        consumer.accept(SimpleNettyClient.this);
+                    }
+                });
+                ChannelFuture closeFuture = channel.closeFuture();
                 closeFuture.sync();
+
             } catch (Exception exc) {
                 exc.printStackTrace();
             }
         } finally {
             System.out.println("Netty thread stopped.");
         }
+    }
+    @Override
+    public void start() {
+        this.start(null);
     }
 
     @Override
@@ -86,11 +111,29 @@ public class SimpleNettyClient implements INettyClient {
     }
 
     @Override
+    public InetSocketAddress getConnectedAddress() {
+        return new InetSocketAddress(this.host, this.port);
+    }
+
+    @Override
     public void sendPacket(Packet packet) {
-        if (networkHandler.getChannelHandlerContext() == null) {
+        if (networkHandler == null || networkHandler.getChannelHandlerContext() == null) {
+            Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () -> networkHandler != null && networkHandler.getChannelHandlerContext() != null);
             return;
         }
-        networkHandler.getChannelHandlerContext().writeAndFlush(packet);
+        networkHandler.getChannelHandlerContext().writeAndFlush(packet).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if (!channelFuture.isSuccess()) {
+                    channelFuture.cause().printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public IRequestManager getRequestManager() {
+        return this.requestManager;
     }
 
     @Override
@@ -99,7 +142,7 @@ public class SimpleNettyClient implements INettyClient {
     }
 
     @Override
-    public ChannelHandlerContext getCtx() {
+    public ChannelHandlerContext ctx() {
         return networkHandler.getChannelHandlerContext();
     }
 }

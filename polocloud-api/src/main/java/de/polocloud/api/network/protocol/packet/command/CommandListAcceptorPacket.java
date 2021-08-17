@@ -3,6 +3,7 @@ package de.polocloud.api.network.protocol.packet.command;
 import com.google.common.collect.Lists;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.commands.CommandType;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -33,15 +34,15 @@ public class CommandListAcceptorPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, String.join(";", commandList));
-        writeString(byteBuf, String.join(";", aliases));
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(String.join(";", commandList));
+        buf.writeString(String.join(";", aliases));
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        commandList = Arrays.stream(readString(byteBuf).split(";")).collect(Collectors.toList());
-        aliases = Arrays.stream(readString(byteBuf).split(";")).collect(Collectors.toList());
+    public void read(IPacketBuffer buf) throws IOException {
+        commandList = Arrays.stream(buf.readString().split(";")).collect(Collectors.toList());
+        aliases = Arrays.stream(buf.readString().split(";")).collect(Collectors.toList());
     }
 
     public List<String> getCommandList() {

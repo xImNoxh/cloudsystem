@@ -1,9 +1,12 @@
 package de.polocloud.plugin.bootstrap.proxy;
 
+import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.proxy.events.CollectiveProxyEvents;
 import de.polocloud.plugin.bootstrap.proxy.register.ProxyPacketRegister;
+import de.polocloud.plugin.protocol.config.ConfigReader;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -12,6 +15,7 @@ import java.util.UUID;
 
 public class ProxyBootstrap extends Plugin implements IBootstrap {
 
+    private int port = -2;
     private CloudPlugin cloudPlugin;
 
     @Override
@@ -36,7 +40,16 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
 
     @Override
     public int getPort() {
-        return -1;
+        JsonData jsonData = ConfigReader.getJson();
+        if (jsonData == null) {
+            System.out.println("[ProxyBootstrap] Couldn't read JsonFile!");
+            return port;
+        } else {
+            if (this.port == -2) {
+                this.port = jsonData.getInteger("port");
+            }
+        }
+        return this.port;
     }
 
     @Override
@@ -52,6 +65,11 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public void registerListeners() {
         new CollectiveProxyEvents(this);
+    }
+
+    @Override
+    public PoloType getType() {
+        return PoloType.PLUGIN_PROXY;
     }
 
     @Override

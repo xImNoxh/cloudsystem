@@ -4,7 +4,7 @@ import de.polocloud.api.event.CloudEvent;
 
 public class NettyExceptionEvent implements CloudEvent {
 
-    private Throwable throwable;
+    private final Throwable throwable;
 
     private boolean shouldThrow;
 

@@ -1,6 +1,7 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -18,13 +19,13 @@ public class GameServerExecuteCommandPacket extends Packet {
 
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, command);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(command);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        command = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        command = buf.readString();
     }
 
     public String getCommand() {

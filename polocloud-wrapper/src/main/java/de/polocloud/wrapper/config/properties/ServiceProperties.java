@@ -24,7 +24,7 @@ public abstract class ServiceProperties {
     }
 
     public void writeFile() {
-        if(!can) {
+        if (!can) {
             try {
                 FileWriter fileWriter = new FileWriter(file);
 

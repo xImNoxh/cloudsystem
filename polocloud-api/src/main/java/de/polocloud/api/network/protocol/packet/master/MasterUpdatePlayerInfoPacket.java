@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.master;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -20,15 +21,15 @@ public class MasterUpdatePlayerInfoPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        byteBuf.writeInt(onlinePlayers);
-        byteBuf.writeInt(maxPlayers);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeInt(onlinePlayers);
+        buf.writeInt(maxPlayers);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        onlinePlayers = byteBuf.readInt();
-        maxPlayers = byteBuf.readInt();
+    public void read(IPacketBuffer buf) throws IOException {
+        onlinePlayers = buf.readInt();
+        maxPlayers = buf.readInt();
     }
 
     public int getMaxPlayers() {

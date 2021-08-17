@@ -126,7 +126,6 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void terminate() {
-        Logger.log("Sending Terminate Packet to Wrapper " + wrapper.getName());
         wrapper.sendPacket(new MasterRequestsServerTerminatePacket(getSnowflake()));
     }
 

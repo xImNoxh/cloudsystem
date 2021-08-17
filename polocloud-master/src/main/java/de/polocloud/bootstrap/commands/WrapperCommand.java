@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.commands.CloudCommandInfo;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
 import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.client.WrapperClient;
@@ -11,7 +12,7 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
-@CloudCommand.Info(name = "wrapper", description = "Manage a wrapper", aliases = "", commandType = CommandType.CONSOLE)
+@CloudCommandInfo(name = "wrapper", description = "Manage a wrapper", aliases = "", commandType = CommandType.CONSOLE)
 public class WrapperCommand extends CloudCommand {
 
     @Inject

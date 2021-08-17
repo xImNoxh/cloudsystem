@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.api.gameserver;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -23,19 +24,19 @@ public class APIRequestGameServerCopyPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, copyType.toString());
-        writeString(byteBuf, gameservername);
-        writeString(byteBuf, snowflakeID);
-        writeString(byteBuf, template);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(copyType.toString());
+        buf.writeString(gameservername);
+        buf.writeString(snowflakeID);
+        buf.writeString(template);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        this.copyType = APIRequestGameServerCopyPacket.Type.valueOf(readString(byteBuf));
-        this.gameservername = readString(byteBuf);
-        this.snowflakeID = readString(byteBuf);
-        this.template = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        this.copyType = APIRequestGameServerCopyPacket.Type.valueOf(buf.readString());
+        this.gameservername = buf.readString();
+        this.snowflakeID = buf.readString();
+        this.template = buf.readString();
     }
 
     public APIRequestGameServerCopyPacket.Type getCopyType() {

@@ -1,6 +1,8 @@
 package de.polocloud.api.network.protocol.packet.api;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.util.PoloUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
@@ -20,19 +22,19 @@ public class PublishPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, channel);
-        writeString(byteBuf, data);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(channel);
+        buf.writeString(data);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        channel = readString(byteBuf);
-        data = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        channel = buf.readString();
+        data = buf.readString();
     }
 
     public <T> T convertTo(Class<? extends T> clazz) {
-        return gson.fromJson(this.data, clazz);
+        return PoloUtils.GSON_INSTANCE.fromJson(this.data, clazz);
     }
 
     public String getData() {

@@ -6,7 +6,7 @@ import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpd
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.network.response.ResponseHandler;
+import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.bootstrap.Master;
 
@@ -64,7 +64,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
-    public void sendTablist(String header, String footer) {
+    public void sendTabList(String header, String footer) {
         getProxyServer().sendPacket(new ProxyTablistUpdatePacket(uuid, header, footer));
     }
 

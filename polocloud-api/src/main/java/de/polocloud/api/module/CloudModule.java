@@ -26,13 +26,22 @@ public abstract class CloudModule {
     @Inject
     private IConfigSaver configSaver;
 
+    /**
+     * Called when the Module is being loaded
+     */
     public abstract void onLoad();
 
+    /**
+     * Called when the module is being stopped
+     */
+    public abstract void onShutdown();
+
+    /**
+     * Checks if the module can be reloaded
+     */
     public abstract boolean canReload();
 
     public abstract boolean copyOnService(ITemplate... templates);
-
-    public abstract void onShutdown();
 
     public ITemplateService getTemplateService() {
         return templateService;

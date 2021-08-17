@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
@@ -19,21 +20,21 @@ public class RedirectPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        byteBuf.writeLong(snowflake);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeLong(snowflake);
 
         int packetId = PacketRegistry.getPacketId(packet.getClass());
-        byteBuf.writeInt(packetId);
-        packet.write(byteBuf);
+        buf.writeInt(packetId);
+        packet.write(buf);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        snowflake = byteBuf.readLong();
-        int id = byteBuf.readInt();
+    public void read(IPacketBuffer buf) throws IOException {
+        snowflake = buf.readLong();
+        int id = buf.readInt();
         try {
             packet = PacketRegistry.createInstance(id);
-            packet.read(byteBuf);
+            packet.read(buf);
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }

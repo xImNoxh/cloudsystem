@@ -18,7 +18,7 @@ public class SimpleProtocol implements IProtocol {
     private int threadSize = 8;
 
 
-    private Map<Class<? extends Packet>, List<IPacketHandler<Packet>>> packetHandlerMap = new HashMap<>();
+    private final Map<Class<? extends Packet>, List<IPacketHandler<Packet>>> packetHandlerMap = new HashMap<>();
     
     @Override
     public void registerPacketHandler(IPacketHandler<Packet> packetHandler) {

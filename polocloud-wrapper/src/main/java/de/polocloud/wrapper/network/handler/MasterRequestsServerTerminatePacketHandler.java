@@ -8,7 +8,7 @@ import de.polocloud.logger.log.types.LoggerType;
 import de.polocloud.wrapper.process.ProcessManager;
 import io.netty.channel.ChannelHandlerContext;
 
-public class MasterRequestsServerTerminatePacketHandler extends IPacketHandler<Packet> {
+public class MasterRequestsServerTerminatePacketHandler implements IPacketHandler<Packet> {
 
     private ProcessManager processManager;
 
@@ -23,8 +23,6 @@ public class MasterRequestsServerTerminatePacketHandler extends IPacketHandler<P
         long snowflake = packet.getSnowflake();
         processManager.terminateProcess(snowflake);
         Logger.log(LoggerType.INFO, "Process " + snowflake + " Terminated!");
-
-
     }
 
     @Override

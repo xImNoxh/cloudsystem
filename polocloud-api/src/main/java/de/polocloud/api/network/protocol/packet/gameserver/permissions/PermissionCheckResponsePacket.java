@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver.permissions;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -24,19 +25,19 @@ public class PermissionCheckResponsePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, request.toString());
-        writeString(byteBuf, player.toString());
-        writeString(byteBuf, permission);
-        byteBuf.writeBoolean(response);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(request.toString());
+        buf.writeString(player.toString());
+        buf.writeString(permission);
+        buf.writeBoolean(response);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        request = UUID.fromString(readString(byteBuf));
-        player = UUID.fromString(readString(byteBuf));
-        permission = readString(byteBuf);
-        response = byteBuf.readBoolean();
+    public void read(IPacketBuffer buf) throws IOException {
+        request = UUID.fromString(buf.readString());
+        player = UUID.fromString(buf.readString());
+        permission = buf.readString();
+        response = buf.readBoolean();
     }
 
     public UUID getRequest() {

@@ -3,6 +3,7 @@ package de.polocloud.bootstrap.commands;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.commands.CloudCommandInfo;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.logger.log.Logger;
@@ -11,7 +12,7 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
 
-@CloudCommand.Info(name = "reload", description = "Reloads a module or the entire cloud", aliases = "rl", commandType = CommandType.CONSOLE)
+@CloudCommandInfo(name = "reload", description = "Reloads a module or the entire cloud", aliases = "rl", commandType = CommandType.CONSOLE)
 public class ReloadCommand extends CloudCommand {
 
     @Override

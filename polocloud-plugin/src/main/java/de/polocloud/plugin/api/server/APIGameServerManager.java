@@ -3,7 +3,7 @@ package de.polocloud.plugin.api.server;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
-import de.polocloud.api.network.response.ResponseHandler;
+import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
@@ -60,6 +60,11 @@ public class APIGameServerManager implements IGameServerManager {
     public CompletableFuture<IGameServer> getGameServerByConnection(ChannelHandlerContext ctx) {
         //TODO
         return null;
+    }
+
+    @Override
+    public IGameServer getThisService() {
+        return CloudPlugin.getCloudPluginInstance().thisService();
     }
 
     public CompletableFuture<?> sendGameServerData(CompletableFuture<?> future, APIRequestGameServerPacket.Action action, String data){

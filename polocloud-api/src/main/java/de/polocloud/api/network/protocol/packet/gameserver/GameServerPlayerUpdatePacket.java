@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -24,17 +25,17 @@ public class GameServerPlayerUpdatePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, uuid.toString());
-        writeString(byteBuf, name);
-        writeString(byteBuf, targetServer);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(uuid.toString());
+        buf.writeString(name);
+        buf.writeString(targetServer);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        uuid = UUID.fromString(readString(byteBuf));
-        name = readString(byteBuf);
-        targetServer = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        uuid = UUID.fromString(buf.readString());
+        name = buf.readString();
+        targetServer = buf.readString();
     }
 
     public String getName() {

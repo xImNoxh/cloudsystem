@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.api;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -18,13 +19,13 @@ public class SubscribePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, channel);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(channel);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        channel = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        channel = buf.readString();
     }
 
     public String getChannel() {

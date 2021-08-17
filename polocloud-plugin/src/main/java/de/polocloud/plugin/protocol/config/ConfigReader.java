@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import de.polocloud.api.gameserver.GameServerStatus;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.api.server.SimpleGameServer;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -15,6 +16,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class ConfigReader {
+
+    public static JsonData getJson() {
+        try {
+            File parentFile = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getParentFile();
+            return new JsonData(new File(parentFile + "/PoloCloud.json"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public static String getMasterAddress() {
         String masterAddress = "127.0.0.1";

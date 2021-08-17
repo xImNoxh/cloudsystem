@@ -1,389 +1,47 @@
 package de.polocloud.api.network.protocol.packet;
 
-import com.google.gson.Gson;
-import de.polocloud.api.gameserver.GameServerStatus;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
-import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.GameServerVersion;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.TemplateType;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
+/**
+ * The packet class is used to send data
+ * all over the network within milliseconds
+ */
 public abstract class Packet {
 
-    protected static Gson gson = new Gson();
-
-    public abstract void write(ByteBuf byteBuf) throws IOException;
-
-    public abstract void read(ByteBuf byteBuf) throws IOException;
-
-    protected void writeCloudPlayer(ByteBuf byteBuf, ICloudPlayer cloudPlayer) {
-        writeString(byteBuf, cloudPlayer.getName());
-        writeString(byteBuf, cloudPlayer.getUUID().toString());
-        writeGameServer(byteBuf, cloudPlayer.getProxyServer());
-        writeGameServer(byteBuf, cloudPlayer.getMinecraftServer());
-    }
-
-    protected ICloudPlayer readCloudPlayer(ByteBuf byteBuf) {
-        String name = readString(byteBuf);
-        UUID uuid = UUID.fromString(readString(byteBuf));
-        IGameServer proxyServer = readGameServer(byteBuf);
-        IGameServer minecraftServer = readGameServer(byteBuf);
-
-        return new ICloudPlayer() {
-            @Override
-            public UUID getUUID() {
-                return uuid;
-            }
-
-            @Override
-            public IGameServer getProxyServer() {
-                return proxyServer;
-            }
-
-            @Override
-            public IGameServer getMinecraftServer() {
-                return minecraftServer;
-            }
-
-            @Override
-            public void sendMessage(String message) {
-                //TODO
-            }
-
-            @Override
-            public void sendTo(IGameServer gameServer) {
-                //TODO
-            }
-
-            @Override
-            public void kick(String message) {
-                //TODO
-            }
-
-            @Override
-            public void sendToFallback() {
-                //TODO
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public CompletableFuture<Boolean> hasPermissions(String permission) {
-                //TODO
-                return null;
-            }
-
-            @Override
-            public void sendTablist(String header, String footer) {
-                //TODO
-            }
-        };
-    }
-
-    protected void writeGameServer(ByteBuf byteBuf, IGameServer gameServer) {
-
-        writeString(byteBuf, gameServer.getName());
-        writeString(byteBuf, gameServer.getMotd());
-        writeString(byteBuf, gameServer.getStatus().toString());
-        byteBuf.writeLong(gameServer.getSnowflake());
-
-        writeTemplate(byteBuf, gameServer.getTemplate());
-
-        byteBuf.writeLong(gameServer.getTotalMemory());
-        byteBuf.writeInt(gameServer.getOnlinePlayers());
-        byteBuf.writeInt(gameServer.getPort());
-        byteBuf.writeLong(gameServer.getPing());
-        byteBuf.writeLong(gameServer.getStartTime());
-        byteBuf.writeInt(gameServer.getMaxPlayers());
-        byteBuf.writeBoolean(gameServer.getServiceVisibility());
-    }
-
-    protected IGameServer readGameServer(ByteBuf byteBuf) {
-
-        String name = readString(byteBuf);
-        String motd = readString(byteBuf);
-        GameServerStatus status = GameServerStatus.valueOf(readString(byteBuf));
-        long snowflake = byteBuf.readLong();
-
-        ITemplate template = readTemplate(byteBuf);
-
-        long totalMemory = byteBuf.readLong();
-        int onlinePlayers = byteBuf.readInt();
-        int port = byteBuf.readInt();
-        long ping = byteBuf.readLong();
-
-        long startTime = byteBuf.readLong();
-        int maxPlayers = byteBuf.readInt();
-        boolean serviceVisibility = byteBuf.readBoolean();
-
-        return new IGameServer() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public GameServerStatus getStatus() {
-                return status;
-            }
-
-            @Override
-            public void setStatus(GameServerStatus status) {
-                //TODO
-            }
-
-            @Override
-            public long getSnowflake() {
-                return snowflake;
-            }
-
-            @Override
-            public ITemplate getTemplate() {
-                return template;
-            }
-
-            @Override
-            public List<ICloudPlayer> getCloudPlayers() {
-                //TODO
-                return null;
-            }
-
-            @Override
-            public long getTotalMemory() {
-                return totalMemory;
-            }
-
-            @Override
-            public int getOnlinePlayers() {
-                return onlinePlayers;
-            }
-
-            @Override
-            public int getPort() {
-                return port;
-            }
-
-            @Override
-            public long getPing() {
-                return ping;
-            }
-
-            @Override
-            public long getStartTime() {
-                return startTime;
-            }
-
-            @Override
-            public void stop() {
-                sendPacket(new GameServerShutdownPacket(name));
-            }
-
-            @Override
-            public void terminate() {
-                //TODO
-            }
-
-            @Override
-            public void sendPacket(Packet packet) {
-                //TODO
-            }
-
-            @Override
-            public String getMotd() {
-                return motd;
-            }
-
-            @Override
-            public int getMaxPlayers() {
-                return maxPlayers;
-            }
-
-            @Override
-            public void setMotd(String motd) {
-                //TODO
-            }
-
-
-            @Override
-            public void setMaxPlayers(int players) {
-                //TODO
-            }
-
-            @Override
-            public void setVisible(boolean serviceVisibility) {
-                //TODO
-            }
-
-            @Override
-            public boolean getServiceVisibility() {
-                return serviceVisibility;
-            }
-
-            @Override
-            public void update() {
-                //TODO
-            }
-
-        };
-
-    }
-
-
-    protected void writeTemplate(ByteBuf byteBuf, ITemplate template) {
-
-        writeString(byteBuf, template.getName());
-
-        byteBuf.writeInt(template.getMinServerCount());
-        byteBuf.writeInt(template.getMaxServerCount());
-        byteBuf.writeInt(template.getMaxPlayers());
-
-        byteBuf.writeInt(template.getMaxMemory());
-
-        writeString(byteBuf, template.getMotd());
-
-        byteBuf.writeBoolean(template.isMaintenance());
-
-        writeString(byteBuf, template.getTemplateType().toString());
-        writeString(byteBuf, template.getVersion().toString());
-
-        writeStringArray(byteBuf, template.getWrapperNames());
-
-    }
-
-    protected ITemplate readTemplate(ByteBuf byteBuf) {
-
-        String name = readString(byteBuf);
-
-        int minServers = byteBuf.readInt();
-        int maxServers = byteBuf.readInt();
-
-        int maxPlayers = byteBuf.readInt();
-        int maxMemory = byteBuf.readInt();
-
-        String motd = readString(byteBuf);
-
-        boolean maintenance = byteBuf.readBoolean();
-
-        TemplateType templateType = TemplateType.valueOf(readString(byteBuf));
-        GameServerVersion version = GameServerVersion.valueOf(readString(byteBuf));
-
-        String[] wrapperNames = readStringArray(byteBuf);
-
-        return new ITemplate() {
-            @Override
-            public int getMinServerCount() {
-                return minServers;
-            }
-
-            @Override
-            public int getMaxServerCount() {
-                return maxServers;
-            }
-
-            @Override
-            public int getMaxPlayers() {
-                return maxPlayers;
-            }
-
-            @Override
-            public int getMaxMemory() {
-                return maxMemory;
-            }
-
-            @Override
-            public String getMotd() {
-                return motd;
-            }
-
-            @Override
-            public boolean isMaintenance() {
-                return maintenance;
-            }
-
-            @Override
-            public void setMaxPlayers(int maxPlayers) {
-                //TODO send packet to server ? or block ?
-                //TODO
-            }
-
-            @Override
-            public void setMaintenance(boolean state) {
-                //TODO
-            }
-
-            @Override
-            public TemplateType getTemplateType() {
-                return templateType;
-            }
-
-            @Override
-            public GameServerVersion getVersion() {
-                return version;
-            }
-
-            @Override
-            public int getServerCreateThreshold() {
-                //TODO
-                return -1;
-            }
-
-            @Override
-            public String[] getWrapperNames() {
-                return wrapperNames;
-            }
-
-            @Override
-            public boolean isStatic() {
-                return false;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-
-        };
-
-    }
-
-    protected void writeStringArray(ByteBuf byteBuf, String[] arr) {
-        byteBuf.writeInt(arr.length);
-        for (String s : arr) {
-            writeString(byteBuf, s);
-        }
-    }
-
-    protected String[] readStringArray(ByteBuf byteBuf) {
-        int length = byteBuf.readInt();
-        String[] array = new String[length];
-        for (int i = 0; i < length; i++) {
-            array[i] = readString(byteBuf);
-        }
-        return array;
-    }
-
-    protected void writeString(ByteBuf byteBuf, String s) {
-        byte[] bArr = s.getBytes();
-        byteBuf.writeInt(bArr.length);
-        byteBuf.writeBytes(bArr);
-    }
-
-    protected String readString(ByteBuf byteBuf) {
-        byte[] bArr = new byte[byteBuf.readInt()];
-        byteBuf.readBytes(bArr);
-        return new String(bArr);
-    }
-
+    /**
+     * This method is called when parsing the packet to the channel-flow of netty
+     * and writing all its data into a {@link ByteBuf} which is the object netty contains
+     * its data in when sending it to other clients/servers
+     * A {@link ByteBuf} does not store values under a key or something it just "stacks" them on
+     * top of the last value.
+     * So if you put a name, an Integer and a boolean for example it would look like that if you would imagine:
+     *
+     * -> "Hans"
+     * -> 56
+     * -> true
+     *
+     * And later on when using {@link Packet#read(IPacketBuffer)} you have to first read the name
+     * then read the integer and then the boolean
+     * If you first try to read the integer it will not work because the first value is a String and not an integer
+     *
+     * @param buf the buffer
+     * @throws IOException if something while writing goes wrong
+     */
+    public abstract void write(IPacketBuffer buf) throws IOException;
+
+    /**
+     * This method is called when reading the packet from the channel-flow of netty
+     * and re-writing all its data from a {@link ByteBuf} into this {@link Packet}
+     * As already in {@link Packet#write(IPacketBuffer)} described you should pay attention
+     * to the order you wrote your data in and not confuse the order and try to read a String
+     * where actually an Integer is stored
+     *
+     * @param buf the buffer
+     * @throws IOException if something while readibg goes wrong
+     */
+    public abstract void read(IPacketBuffer buf) throws IOException;
 
 }

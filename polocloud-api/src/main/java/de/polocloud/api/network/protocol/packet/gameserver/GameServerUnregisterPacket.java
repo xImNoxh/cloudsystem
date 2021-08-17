@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -20,16 +21,16 @@ public class GameServerUnregisterPacket extends Packet {
     }
     
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, name);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(name);
 
-        byteBuf.writeLong(snowflake);
+        buf.writeLong(snowflake);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        name = readString(byteBuf);
-        snowflake = byteBuf.readLong();
+    public void read(IPacketBuffer buf) throws IOException {
+        name = buf.readString();
+        snowflake = buf.readLong();
     }
 
     public String getName() {

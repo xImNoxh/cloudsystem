@@ -1,6 +1,7 @@
 package de.polocloud.plugin.bootstrap.spigot;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
@@ -39,6 +40,8 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
     public synchronized void onDisable() {
 
     }
+
+
 
     @Override
     public void shutdown() {
@@ -83,6 +86,11 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
             });
         }, ChannelActiveEvent.class);
         new CollectiveSpigotEvents(this);
+    }
+
+    @Override
+    public PoloType getType() {
+        return PoloType.PLUGIN_SPIGOT;
     }
 
     public void subscribe(String id, Consumer<PublishPacket> call) {

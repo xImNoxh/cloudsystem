@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.master;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -24,21 +25,21 @@ public class MasterPlayerRequestJoinResponsePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, uuid.toString());
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(uuid.toString());
 
-        writeString(byteBuf, serviceName);
+        buf.writeString(serviceName);
 
-        byteBuf.writeLong(this.snowflake);
+        buf.writeLong(this.snowflake);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        uuid = UUID.fromString(readString(byteBuf));
+    public void read(IPacketBuffer buf) throws IOException {
+        uuid = UUID.fromString(buf.readString());
 
-        serviceName = readString(byteBuf);
+        serviceName = buf.readString();
 
-        this.snowflake = byteBuf.readLong();
+        this.snowflake = buf.readLong();
     }
 
     public String getServiceName() {

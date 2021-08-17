@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver.proxy;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -22,17 +23,17 @@ public class ProxyTablistUpdatePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, uuid.toString());
-        writeString(byteBuf, header);
-        writeString(byteBuf, footer);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(uuid.toString());
+        buf.writeString(header);
+        buf.writeString(footer);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        uuid = UUID.fromString(readString(byteBuf));
-        header = readString(byteBuf);
-        footer = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        uuid = UUID.fromString(buf.readString());
+        header = buf.readString();
+        footer = buf.readString();
     }
 
 

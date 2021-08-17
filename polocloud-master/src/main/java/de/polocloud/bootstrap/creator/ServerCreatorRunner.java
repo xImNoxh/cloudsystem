@@ -21,7 +21,7 @@ public class ServerCreatorRunner implements Runnable {
     @Inject
     private ITemplateService templateService;
 
-    private ServerCreator creator = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleServerCreator.class);
+    private final ServerCreator creator = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleServerCreator.class);
 
     @Override
     public void run() {
@@ -29,7 +29,7 @@ public class ServerCreatorRunner implements Runnable {
         while (master.isRunning()) {
             try {
                 Collection<ITemplate> loadedTemplates = templateService.getLoadedTemplates().get();
-                loadedTemplates.stream().filter(key -> creator.check(key)).forEach(it -> creator.startServer(it));
+                loadedTemplates.stream().filter(creator::check).forEach(creator::startServer);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }

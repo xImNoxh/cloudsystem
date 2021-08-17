@@ -30,9 +30,9 @@ public class Logger {
     public static void log(LoggerType loggerType, String message) {
         try {
             if (!loggerType.equals(LoggerType.INFO)) {
-                consoleReader.println(ConsoleColors.GRAY + "[" + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY + "] " + message);
+                consoleReader.println(ConsoleColors.GRAY + "[" + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY + "] " + message + ConsoleColors.RESET);
             } else {
-                consoleReader.println(ConsoleColors.GRAY + message);
+                consoleReader.println(ConsoleColors.GRAY + message + ConsoleColors.RESET);
             }
             consoleReader.drawLine();
             consoleReader.flush();

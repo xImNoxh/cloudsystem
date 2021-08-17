@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.gameserver;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -21,15 +22,15 @@ public class GameServerRegisterPacket extends Packet {
 
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        byteBuf.writeLong(snowflake);
-        byteBuf.writeInt(port);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeLong(snowflake);
+        buf.writeInt(port);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        this.snowflake = byteBuf.readLong();
-        this.port = byteBuf.readInt();
+    public void read(IPacketBuffer buf) throws IOException {
+        this.snowflake = buf.readLong();
+        this.port = buf.readInt();
     }
 
     public int getPort() {

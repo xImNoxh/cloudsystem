@@ -5,7 +5,7 @@ import de.polocloud.api.gameserver.IGameServer;
 
 public class GameServerEvent implements CloudEvent {
 
-    private IGameServer gameServer;
+    private final IGameServer gameServer;
 
     public GameServerEvent(IGameServer gameServer) {
         this.gameServer = gameServer;

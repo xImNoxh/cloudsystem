@@ -9,8 +9,9 @@ import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
+import de.polocloud.api.network.request.base.component.PoloComponent;
+import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.api.template.TemplateType;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
@@ -26,16 +27,24 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
     public GameServerPacketServiceHandler() {
 
-        new SimplePacketHandler<APIRequestGameServerCopyResponsePacket>(APIRequestGameServerCopyResponsePacket.class, packet ->
+        PoloCloudAPI.getInstance().getConnection().getRequestManager().registerRequestHandler(new IRequestHandler<IGameServer>() {
+            @Override
+            public void handle(PoloComponent<IGameServer> request) {
+
+                request.createResponse(String.class).value("Hallo Welt!").respond();
+            }
+        });
+
+        new SimplePacketHandler<>(APIRequestGameServerCopyResponsePacket.class, packet ->
             Logger.log(packet.isFailed() ? LoggerType.ERROR : LoggerType.INFO, packet.isFailed() ?
                 "Failed to copy the gameserver " + packet.getGameservername() + " to the template! Error: " + packet.getErrorMessage()
                 : "Successfully copied the gameserver " + packet.getGameservername() + " to its template!"));
 
-        new SimplePacketHandler<GameServerControlPlayerPacket>(GameServerControlPlayerPacket.class, (packet) -> {
+        new SimplePacketHandler<>(GameServerControlPlayerPacket.class, (packet) -> {
             //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
         });
 
-        new SimplePacketHandler<GameServerSuccessfullyStartedPacket>(GameServerSuccessfullyStartedPacket.class, packet -> {
+        new SimplePacketHandler<>(GameServerSuccessfullyStartedPacket.class, packet -> {
             PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getServerName()).thenAccept(it -> {
                 it.setStatus(GameServerStatus.RUNNING);
                 sendServerStartLog(it);

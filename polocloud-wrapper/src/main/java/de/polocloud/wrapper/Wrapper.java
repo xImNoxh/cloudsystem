@@ -3,9 +3,10 @@ package de.polocloud.wrapper;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.commands.CommandPool;
+import de.polocloud.api.commands.SimpleCommandPool;
 import de.polocloud.api.commands.ICommandExecutor;
 import de.polocloud.api.commands.ICommandPool;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
@@ -16,6 +17,7 @@ import de.polocloud.api.event.IEventHandler;
 import de.polocloud.api.event.channel.ChannelActiveEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
+import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
@@ -24,6 +26,7 @@ import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
+import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -57,7 +60,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         instance = this;
         PoloCloudAPI.setInstance(this);
 
-        commandPool = new CommandPool();
+        commandPool = new SimpleCommandPool();
         config = loadWrapperConfig();
 
         requestStaticServersStart();
@@ -74,6 +77,16 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     public static Wrapper getInstance() {
         return instance;
+    }
+
+    @Override
+    public PoloType getType() {
+        return PoloType.WRAPPER;
+    }
+
+    @Override
+    public INetworkConnection getConnection() {
+        return this.nettyClient;
     }
 
     private void requestStaticServersStart() {
@@ -266,7 +279,9 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public boolean terminate() {
-        return this.nettyClient.terminate();
+        boolean terminate = this.nettyClient.terminate();
+        Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
+        return terminate;
     }
 
     public SimpleNettyClient getNettyClient() {

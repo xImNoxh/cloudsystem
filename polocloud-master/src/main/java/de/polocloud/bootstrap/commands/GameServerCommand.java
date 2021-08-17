@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.polocloud.api.commands.CloudCommand;
 import de.polocloud.api.commands.CommandType;
 import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.commands.CloudCommandInfo;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -27,7 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-@CloudCommand.Info(name = "gameserver", description = "Manage a Gameserver", aliases = "gs", commandType = CommandType.CONSOLE)
+@CloudCommandInfo(name = "gameserver", description = "Manage a Gameserver", aliases = "gs", commandType = CommandType.CONSOLE)
 public class GameServerCommand extends CloudCommand {
 
     @Inject

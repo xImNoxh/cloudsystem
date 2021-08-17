@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class SimplePacketHandler<T extends Packet> extends IPacketHandler<Packet> {
+public class SimplePacketHandler<T extends Packet> implements IPacketHandler<Packet> {
 
     private Class<? extends Packet> packet;
 
@@ -26,7 +26,7 @@ public class SimplePacketHandler<T extends Packet> extends IPacketHandler<Packet
         LISTENING.add(this);
     }
 
-    public SimplePacketHandler(Class<? extends Packet> packet, Consumer<T> action) {
+    public SimplePacketHandler(Class<T> packet, Consumer<T> action) {
         this.packet = packet;
         this.action = action;
         LISTENING.add(this);

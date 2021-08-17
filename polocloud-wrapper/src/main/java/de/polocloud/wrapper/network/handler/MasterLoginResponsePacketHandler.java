@@ -7,14 +7,15 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-public class MasterLoginResponsePacketHandler extends IPacketHandler<Packet> {
+public class MasterLoginResponsePacketHandler implements IPacketHandler<Packet> {
+
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         MasterLoginResponsePacket packet = (MasterLoginResponsePacket) obj;
 
         Logger.log(LoggerType.INFO, packet.getMessage());
 
-        if(!packet.isResponse()){
+        if (!packet.isResponse()){
             System.exit(-1);
         }
 

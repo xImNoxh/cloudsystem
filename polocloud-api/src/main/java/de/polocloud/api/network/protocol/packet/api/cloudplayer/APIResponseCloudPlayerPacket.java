@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.api.cloudplayer;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import io.netty.buffer.ByteBuf;
@@ -26,34 +27,33 @@ public class APIResponseCloudPlayerPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
+    public void write(IPacketBuffer buf) throws IOException {
 
-        writeString(byteBuf, requestId.toString());
+        buf.writeUUID(requestId);
 
         int size = response.size();
-        byteBuf.writeInt(size);
+        buf.writeInt(size);
 
         for (ICloudPlayer cloudPlayer : response) {
-            writeCloudPlayer(byteBuf, cloudPlayer);
+            buf.writeCloudPlayer(cloudPlayer);
         }
 
-        writeString(byteBuf, type.toString());
-
+        buf.writeString(type.toString());
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
+    public void read(IPacketBuffer buf) throws IOException {
 
-        requestId = UUID.fromString(readString(byteBuf));
+        requestId = buf.readUUID();
         response = new ArrayList<>();
-        int size = byteBuf.readInt();
+        int size = buf.readInt();
 
         for (int i = 0; i < size; i++) {
-            ICloudPlayer cloudPlayer = readCloudPlayer(byteBuf);
+            ICloudPlayer cloudPlayer = buf.readCloudPlayer();
             response.add(cloudPlayer);
         }
 
-        type = Type.valueOf(readString(byteBuf));
+        type = Type.valueOf(buf.readString());
 
     }
 

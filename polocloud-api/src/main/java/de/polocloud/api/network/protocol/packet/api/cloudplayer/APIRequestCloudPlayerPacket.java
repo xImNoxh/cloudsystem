@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.api.cloudplayer;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
@@ -23,17 +24,17 @@ public class APIRequestCloudPlayerPacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, requestId.toString());
-        writeString(byteBuf, action.toString());
-        writeString(byteBuf, this.value);
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeUUID(requestId);
+        buf.writeString(action.toString());
+        buf.writeString(this.value);
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
-        requestId = UUID.fromString(readString(byteBuf));
-        action = Action.valueOf(readString(byteBuf));
-        value = readString(byteBuf);
+    public void read(IPacketBuffer buf) throws IOException {
+        requestId = buf.readUUID();
+        action = Action.valueOf(buf.readString());
+        value = buf.readString();
     }
 
 

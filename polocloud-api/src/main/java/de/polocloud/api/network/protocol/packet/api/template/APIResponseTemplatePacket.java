@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet.api.template;
 
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.template.ITemplate;
 import io.netty.buffer.ByteBuf;
@@ -26,31 +27,31 @@ public class APIResponseTemplatePacket extends Packet {
     }
 
     @Override
-    public void write(ByteBuf byteBuf) throws IOException {
-        writeString(byteBuf, requestId.toString());
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(requestId.toString());
 
         int size = response.size();
-        byteBuf.writeInt(size);
+        buf.writeInt(size);
 
         for (ITemplate template : response) {
-            writeTemplate(byteBuf, template);
+            buf.writeTemplate(template);
         }
-        writeString(byteBuf, type.toString());
+        buf.writeString(type.toString());
     }
 
     @Override
-    public void read(ByteBuf byteBuf) throws IOException {
+    public void read(IPacketBuffer buf) throws IOException {
 
-        requestId = UUID.fromString(readString(byteBuf));
+        requestId = UUID.fromString(buf.readString());
         response = new ArrayList<>();
-        int size = byteBuf.readInt();
+        int size = buf.readInt();
 
         for (int i = 0; i < size; i++) {
-            ITemplate tmpGameServer = readTemplate(byteBuf);
+            ITemplate tmpGameServer = buf.readTemplate();
             response.add(tmpGameServer);
         }
 
-        type = Type.valueOf(readString(byteBuf));
+        type = Type.valueOf(buf.readString());
     }
 
     public UUID getRequestId() {

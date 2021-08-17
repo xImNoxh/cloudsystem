@@ -1,16 +1,17 @@
 package de.polocloud.api.network.client;
 
+import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import io.netty.channel.ChannelHandlerContext;
 
-public interface INettyClient extends IStartable, ITerminatable, IPacketSender {
+public interface INettyClient extends INetworkConnection {
 
-    IProtocol getProtocol();
+    /**
+     * Gets the {@link ChannelHandlerContext} of this netty instance
+     */
+    ChannelHandlerContext ctx();
 
-    ChannelHandlerContext getCtx();
-
-    
 }
