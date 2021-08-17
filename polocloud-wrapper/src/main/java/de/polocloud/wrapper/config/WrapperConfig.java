@@ -23,6 +23,10 @@ public class WrapperConfig implements IConfig {
         return apiVersion;
     }
 
+    public void setApiVersion(String fetchedVersion) {
+        this.apiVersion = fetchedVersion;
+    }
+
     public String getWrapperName() {
         return wrapperName;
     }
@@ -33,9 +37,5 @@ public class WrapperConfig implements IConfig {
 
     public String getLoginKey() {
         return loginKey;
-    }
-
-    public void setApiVersion(String fetchedVersion) {
-        this.apiVersion = fetchedVersion;
     }
 }

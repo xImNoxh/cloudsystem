@@ -15,7 +15,7 @@ public class PortService {
 
     public int getNextStartedPort() throws ExecutionException, InterruptedException {
         int defaultPort = Master.getInstance().getMasterConfig().getProperties().getDefaultProxyStartPort();
-        while (isDetectedPort(defaultPort)){
+        while (isDetectedPort(defaultPort)) {
             defaultPort++;
         }
         return defaultPort;

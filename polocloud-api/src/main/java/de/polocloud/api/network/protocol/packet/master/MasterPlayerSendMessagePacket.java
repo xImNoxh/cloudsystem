@@ -41,5 +41,5 @@ public class MasterPlayerSendMessagePacket extends Packet {
     public UUID getUuid() {
         return uuid;
     }
-    
+
 }

@@ -15,5 +15,5 @@ public interface IConfigLoader {
      * @return loaded config object
      */
     <T> T load(Class<? extends IConfig> config, File file);
-    
+
 }

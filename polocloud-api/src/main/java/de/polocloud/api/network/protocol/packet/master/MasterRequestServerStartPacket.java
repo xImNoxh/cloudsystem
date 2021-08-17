@@ -20,7 +20,7 @@ public class MasterRequestServerStartPacket extends Packet {
     private int port;
 
     public MasterRequestServerStartPacket() {
-        
+
     }
 
     public MasterRequestServerStartPacket(int port, String template, GameServerVersion version, long snowflake, boolean isProxy, int memory, int maxPlayers, String serverName, String motd, boolean isStatic) {

@@ -37,26 +37,21 @@ import de.polocloud.plugin.protocol.property.GameServerProperty;
 public class CloudPlugin extends PoloCloudAPI {
 
     private static CloudPlugin instance;
-
-    private SimpleGameServer gameServer;
-
-    private IBootstrap bootstrap;
-
-    private NetworkClient networkClient;
     private final GameServerProperty gameServerProperty;
     private final CommandReader commandReader;
     private final IProtocol iProtocol;
     private final IPubSubManager pubSubManager;
-
+    private final IConfigLoader configLoader = new SimpleConfigLoader();
+    private final IConfigSaver configSaver = new SimpleConfigSaver();
+    private SimpleGameServer gameServer;
+    private IBootstrap bootstrap;
+    private NetworkClient networkClient;
     private ICloudPlayerManager cloudPlayerManager;
     private IGameServerManager gameServerManager;
     private ITemplateService templateService;
     private ICommandManager commandManager;
 
     private PoloType poloType;
-
-    private final IConfigLoader configLoader = new SimpleConfigLoader();
-    private final IConfigSaver configSaver = new SimpleConfigSaver();
 
     public CloudPlugin(IBootstrap bootstrap) {
 
@@ -87,6 +82,10 @@ public class CloudPlugin extends PoloCloudAPI {
     @Override
     public PoloType getType() {
         return this.poloType;
+    }
+
+    public static CloudPlugin getCloudPluginInstance() {
+        return instance;
     }
 
     public void onEnable() {
@@ -127,10 +126,6 @@ public class CloudPlugin extends PoloCloudAPI {
 
     public void setGameServer(SimpleGameServer gameServer) {
         this.gameServer = gameServer;
-    }
-
-    public static CloudPlugin getCloudPluginInstance() {
-        return instance;
     }
 
     @Override

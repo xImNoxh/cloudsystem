@@ -11,7 +11,8 @@ public class GameServerUpdatePacket extends Packet {
 
     private IGameServer gameServer;
 
-    public GameServerUpdatePacket() {}
+    public GameServerUpdatePacket() {
+    }
 
     public GameServerUpdatePacket(IGameServer gameServer) {
         this.gameServer = gameServer;

@@ -61,14 +61,18 @@ public class SimpleGameServerManager implements IGameServerManager {
 
     @Override
     public void unregisterGameServer(IGameServer gameServer) {
-        gameServerList.remove(gameServer);
-        try {
-            getGameServersByType(TemplateType.PROXY).get().forEach(it -> it.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName())));
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        if (gameServer.getStatus().equals(GameServerStatus.RUNNING)) {
+            gameServerList.remove(gameServer);
+            try {
+                getGameServersByType(TemplateType.PROXY).get().forEach(it -> it.sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName())));
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            pubSubManager.publish("polo:event:serverStopped", gameServer.getName());
+            EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STOPPING));
+        } else {
+            gameServerList.remove(gameServer);
         }
-        pubSubManager.publish("polo:event:serverStopped", gameServer.getName());
-        EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STOPPING));
     }
 
     @Override

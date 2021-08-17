@@ -13,7 +13,7 @@ public class GameServerPlayerDisconnectPacket extends Packet {
     private String name;
 
     public GameServerPlayerDisconnectPacket() {
-        
+
     }
 
     public GameServerPlayerDisconnectPacket(UUID uuid, String name) {

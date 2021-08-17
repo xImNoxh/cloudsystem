@@ -19,7 +19,7 @@ public class GameServerUnregisterPacket extends Packet {
         this.snowflake = snowflake;
         this.name = name;
     }
-    
+
     @Override
     public void write(IPacketBuffer buf) throws IOException {
         buf.writeString(name);

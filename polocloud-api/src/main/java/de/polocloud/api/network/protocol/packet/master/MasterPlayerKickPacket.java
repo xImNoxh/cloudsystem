@@ -44,5 +44,5 @@ public class MasterPlayerKickPacket extends Packet {
     public String getMessage() {
         return message;
     }
-    
+
 }

@@ -2,7 +2,6 @@ package de.polocloud.bootstrap.listener;
 
 import de.polocloud.api.event.EventHandler;
 import de.polocloud.api.event.netty.NettyExceptionEvent;
-import de.polocloud.logger.log.Logger;
 
 import java.io.IOException;
 

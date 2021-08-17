@@ -12,7 +12,7 @@ public class GameServerControlPlayerPacket extends Packet {
     private UUID uuid;
 
     public GameServerControlPlayerPacket() {
-        
+
     }
 
     public GameServerControlPlayerPacket(UUID uuid) {

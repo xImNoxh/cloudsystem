@@ -17,23 +17,23 @@ public class GameServerProperty {
         initialGameServerProperty();
     }
 
-    public void initialGameServerProperty(){
+    public void initialGameServerProperty() {
         Arrays.stream(Property.values()).forEach(property -> properties.put(property, property.getObject()));
     }
 
-    public Map<UUID, LoginEvent> getGameServerLoginEvents(){
+    public Map<UUID, LoginEvent> getGameServerLoginEvents() {
         return (Map<UUID, LoginEvent>) properties.get(Property.LOGIN_EVENTS);
     }
 
-    public Map<UUID, String> getGameServerLoginServers(){
+    public Map<UUID, String> getGameServerLoginServers() {
         return (Map<UUID, String>) properties.get(Property.LOGIN_SERVERS);
     }
 
-    public String getGameServerMaxPlayersMessage(){
+    public String getGameServerMaxPlayersMessage() {
         return (String) properties.get(Property.MAX_PLAYERS_MESSAGE);
     }
 
-    public String getGameServerMaintenanceMessage(){
+    public String getGameServerMaintenanceMessage() {
         return (String) properties.get(Property.MAINTENANCE_MESSAGE);
     }
 

@@ -30,7 +30,7 @@ public class FallbackSearchService {
                 if ((cloudPlayer == null && !fallbackProperty.getFallbackPermission().equals(""))) {
                     continue;
                 }
-                
+
                 if (hubCommand && !fallbackProperty.isForcedJoin() || (cloudPlayer != null && !fallbackProperty.getFallbackPermission().equals("") && !cloudPlayer.hasPermissions(fallbackProperty.getFallbackPermission()).get())) {
                     continue;
                 }

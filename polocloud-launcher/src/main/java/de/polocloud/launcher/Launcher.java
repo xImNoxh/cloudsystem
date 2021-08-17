@@ -64,7 +64,7 @@ public class Launcher {
 
         File bootstrapFile = new File("bootstrap.jar");
 
-        if(!bootstrapFile.exists()){
+        if (!bootstrapFile.exists()) {
             forceUpdate = true;
         }
 

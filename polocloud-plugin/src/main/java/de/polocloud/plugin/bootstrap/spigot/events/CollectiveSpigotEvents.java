@@ -33,7 +33,7 @@ public class CollectiveSpigotEvents implements Listener {
         this.property = CloudPlugin.getCloudPluginInstance().getGameServerProperty();
         this.networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
 
-        Bukkit.getPluginManager().registerEvents(this,plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
@@ -54,7 +54,7 @@ public class CollectiveSpigotEvents implements Listener {
         }
 
         if (Bukkit.getOnlinePlayers().size() >= cloudPlugin.thisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL,property.getGameServerMaxPlayersMessage());
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, property.getGameServerMaxPlayersMessage());
             return;
         }
 

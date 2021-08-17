@@ -15,7 +15,8 @@ public class PermissionCheckResponsePacket extends Packet {
     private boolean response;
     private UUID request;
 
-    public PermissionCheckResponsePacket() {}
+    public PermissionCheckResponsePacket() {
+    }
 
     public PermissionCheckResponsePacket(UUID request, String permission, UUID player, boolean response) {
         this.permission = permission;

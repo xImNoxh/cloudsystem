@@ -12,12 +12,12 @@ public class CommandReader {
         this.allowedCommands = Lists.newArrayList();
     }
 
-    public void setAllowedCommands(List<String> allowedCommands) {
-        this.allowedCommands = allowedCommands;
-    }
-
     public List<String> getAllowedCommands() {
         return allowedCommands;
+    }
+
+    public void setAllowedCommands(List<String> allowedCommands) {
+        this.allowedCommands = allowedCommands;
     }
 
 }

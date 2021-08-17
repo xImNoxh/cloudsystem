@@ -54,7 +54,7 @@ public class WrapperClient implements IPacketSender {
         return this.chx;
     }
 
-    public boolean isProxy(ITemplate template){
+    public boolean isProxy(ITemplate template) {
         return template.getTemplateType() == TemplateType.PROXY;
     }
 

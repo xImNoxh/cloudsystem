@@ -1,11 +1,9 @@
 package de.polocloud.bootstrap.creator;
 
 import com.google.inject.Inject;
-import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
-import de.polocloud.bootstrap.client.WrapperClient;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
 

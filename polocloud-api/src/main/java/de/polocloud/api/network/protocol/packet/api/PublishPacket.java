@@ -13,7 +13,7 @@ public class PublishPacket extends Packet {
     private String data;
 
     public PublishPacket() {
-        
+
     }
 
     public PublishPacket(String channel, String data) {

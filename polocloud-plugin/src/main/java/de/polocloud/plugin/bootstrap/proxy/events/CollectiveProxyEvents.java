@@ -36,7 +36,7 @@ public class CollectiveProxyEvents implements Listener {
     }
 
     @EventHandler
-    public void handle(ServerPing serverPing){
+    public void handle(ServerPing serverPing) {
         serverPing.getPlayers().setMax(CloudPlugin.getCloudPluginInstance().thisService().getMaxPlayers());
         serverPing.setDescriptionComponent(new TextComponent(CloudPlugin.getCloudPluginInstance().thisService().getMotd()));
     }
