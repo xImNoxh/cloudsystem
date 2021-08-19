@@ -1,5 +1,7 @@
 package de.polocloud.api.network.protocol.packet;
 
+import de.polocloud.api.common.PoloType;
+
 public interface IPacketSender {
 
     /**
@@ -13,5 +15,13 @@ public interface IPacketSender {
      * @param packet the packet to send
      */
     void sendPacket(Packet packet);
+
+    /**
+     * Sends a {@link Packet} to only a specified receiver type
+     *
+     * @param packet the packet
+     * @param receiver the receiver type
+     */
+    default void sendPacket(Packet packet, PoloType receiver) {}
 
 }

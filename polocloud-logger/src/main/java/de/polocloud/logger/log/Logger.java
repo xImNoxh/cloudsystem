@@ -30,6 +30,7 @@ public class Logger {
     }
 
     public static void log(LoggerType loggerType, String message) {
+        message = ConsoleColors.translateColorCodes('§', message);
         try {
             if (!loggerType.equals(LoggerType.INFO)) {
                 consoleReader.println(ConsoleColors.GRAY + "[" + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY + "] " + message + ConsoleColors.RESET);

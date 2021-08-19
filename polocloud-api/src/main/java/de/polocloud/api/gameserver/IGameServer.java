@@ -3,10 +3,12 @@ package de.polocloud.api.gameserver;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.wrapper.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface IGameServer extends Serializable {
 
@@ -51,6 +53,11 @@ public interface IGameServer extends Serializable {
      * about the parent-group of this server
      */
     ITemplate getTemplate();
+
+    /**
+     * The {@link IWrapper} this server is running on
+     */
+    IWrapper getWrapper();
 
     /**
      * All {@link ICloudPlayer}s that are on this game server
@@ -145,4 +152,51 @@ public interface IGameServer extends Serializable {
      */
     void update();
 
+    /**
+     * Sets the port of this server
+     *
+     * @param port the port
+     */
+    void setPort(int port);
+
+    /**
+     * Sets the memory of this server
+     *
+     * @param memory the port
+     */
+    void setMemory(long memory);
+
+    /**
+     * Sets the snowflake of this server
+     *
+     * @param snowflake the snowflake
+     */
+    void setSnowflake(long snowflake);
+
+    /**
+     * Sets a new random snowflake
+     */
+    void newSnowflake();
+
+    /**
+     * Sets the {@link ITemplate} of this server
+     *
+     * @param template the template
+     */
+    void setTemplate(String template);
+
+    /**
+     * Sets the name of this server
+     *
+     * @param name the port
+     */
+    void setName(String name);
+
+    /**
+     * Copies this gameserver 1:1 and accepts the consumer after
+     * to modify the copied version and handle it
+     *
+     * @param consumer the handler
+     */
+    void clone(Consumer<IGameServer> consumer);
 }

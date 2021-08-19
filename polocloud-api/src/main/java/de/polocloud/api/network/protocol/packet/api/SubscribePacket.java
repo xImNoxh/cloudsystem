@@ -20,7 +20,7 @@ public class SubscribePacket extends Packet {
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
-        buf.writeString(channel);
+        buf.writeString(channel == null ? "polo::api::main" : channel);
     }
 
     @Override

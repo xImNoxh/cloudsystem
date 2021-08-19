@@ -2,6 +2,7 @@ package de.polocloud.api.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.polocloud.api.common.ExceptionRunnable;
 import de.polocloud.api.common.ExceptionSupplier;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -42,7 +43,20 @@ public class PoloUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        throw new IllegalStateException("Something went wrong while trying to sneaky Throw !");
+    }
+
+    /**
+     * Sneaky throws exception for a given runnable
+     *
+     * @param runnable the runnable
+     */
+    public static void sneakyThrows(ExceptionRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     //Helper method for getMethodSignature
     private static String getClassName(Class<?> cls) {

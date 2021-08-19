@@ -36,8 +36,8 @@ public class SimpleNettyClient implements INettyClient {
 
     private ChannelFuture channelFuture;
     private Channel channel;
-    private NetworkHandler networkHandler;
     private final IRequestManager requestManager = new SimpleRequestManager(this);
+    private ChannelHandlerContext ctx;
 
     public SimpleNettyClient() {
 
@@ -51,8 +51,6 @@ public class SimpleNettyClient implements INettyClient {
 
     public void start(Consumer<SimpleNettyClient> consumer) {
         PacketRegistry.registerDefaultInternalPackets();
-
-        networkHandler = new NetworkHandler(this);
 
         MultithreadEventLoopGroup workerGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
 
@@ -71,24 +69,19 @@ public class SimpleNettyClient implements INettyClient {
                             .addLast(new PacketDecoder())
                             .addLast(new NettyPacketLengthSerializer())
                             .addLast(new PacketEncoder())
-                            .addLast(networkHandler);
+                            .addLast(new NetworkHandler(SimpleNettyClient.this));
 
                     }
                 });
-                this.channelFuture = bootstrap.connect(host, port).addListener(new ChannelFutureListener() {
-                    @Override
-                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                        if (!channelFuture.isSuccess()) {
-                            channelFuture.cause().printStackTrace();
-                        }
+                this.channelFuture = bootstrap.connect(host, port).addListener((ChannelFutureListener) channelFuture -> {
+                    if (consumer != null) {
+                        Scheduler.runtimeScheduler().schedule(() -> consumer.accept(SimpleNettyClient.this));
+                    }
+                    if (!channelFuture.isSuccess()) {
+                        channelFuture.cause().printStackTrace();
                     }
                 });
                 this.channel = channelFuture.channel();
-                channelFuture.addListener((ChannelFutureListener) channelFuture -> {
-                    if (consumer != null) {
-                        consumer.accept(SimpleNettyClient.this);
-                    }
-                });
                 ChannelFuture closeFuture = channel.closeFuture();
                 closeFuture.sync();
 
@@ -111,17 +104,23 @@ public class SimpleNettyClient implements INettyClient {
     }
 
     @Override
+    public Channel getChannel() {
+        return channel;
+    }
+
+
+    @Override
     public InetSocketAddress getConnectedAddress() {
         return new InetSocketAddress(this.host, this.port);
     }
 
     @Override
     public void sendPacket(Packet packet) {
-        if (networkHandler == null || networkHandler.getChannelHandlerContext() == null) {
-            Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () -> networkHandler != null && networkHandler.getChannelHandlerContext() != null);
+        if (ctx() == null) {
+            Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () -> ctx() != null);
             return;
         }
-        networkHandler.getChannelHandlerContext().writeAndFlush(packet).addListener(new ChannelFutureListener() {
+        ctx().writeAndFlush(packet).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 if (!channelFuture.isSuccess()) {
@@ -129,6 +128,11 @@ public class SimpleNettyClient implements INettyClient {
                 }
             }
         });
+    }
+
+    @Override
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
     }
 
     @Override
@@ -143,7 +147,7 @@ public class SimpleNettyClient implements INettyClient {
 
     @Override
     public ChannelHandlerContext ctx() {
-        return networkHandler.getChannelHandlerContext();
+        return ctx;
     }
 }
 

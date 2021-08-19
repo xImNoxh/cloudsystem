@@ -28,6 +28,7 @@ import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -43,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
@@ -204,27 +206,24 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
         this.nettyClient = getGuice().getInstance(SimpleNettyClient.class);
         new Thread(() -> {
-            this.nettyClient.start();
+            this.nettyClient.start(new Consumer<SimpleNettyClient>() {
+                @Override
+                public void accept(SimpleNettyClient nettyClient) {
+                    processManager = new ProcessManager();
+
+                    Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
+                    Logger.log(LoggerType.INFO, "§7Trying to log in as §7'§3" + config.getWrapperName() + "§7'!");
+                    nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
+                    //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
+                    nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
+                    nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config, processManager));
+                    nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
+                    nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
+                    nettyClient.getProtocol().registerPacketHandler(new MasterRequestsServerTerminatePacketHandler(processManager));
+                }
+            });
         }).start();
 
-        this.processManager = new ProcessManager();
-
-        Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException exception) {
-            exception.printStackTrace();
-            Logger.log(LoggerType.ERROR, "Unexpected error while waiting for the NettyClient!\n" +
-                "Please report this error.");
-        }
-        this.nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
-        //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
-
-        this.nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
-        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config, processManager));
-        this.nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
-        this.nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
-        this.nettyClient.getProtocol().registerPacketHandler(new MasterRequestsServerTerminatePacketHandler(processManager));
     }
 
     @Override
@@ -282,6 +281,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         boolean terminate = this.nettyClient.terminate();
         Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
         return terminate;
+    }
+
+    @Override
+    public IWrapperManager getWrapperManager() {
+        return null;
     }
 
     public SimpleNettyClient getNettyClient() {

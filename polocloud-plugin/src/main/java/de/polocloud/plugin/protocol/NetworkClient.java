@@ -14,6 +14,8 @@ import de.polocloud.api.network.request.IRequestManager;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.protocol.config.ConfigReader;
 import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -65,6 +67,21 @@ public class NetworkClient implements INetworkConnection {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Channel getChannel() {
+        return this.client.getChannel();
+    }
+
+    @Override
+    public ChannelHandlerContext ctx() {
+        return this.client.ctx();
+    }
+
+    @Override
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.client.setCtx(ctx);
     }
 
     @Override

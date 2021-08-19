@@ -9,9 +9,12 @@ import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
+import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
+import de.polocloud.api.network.protocol.packet.master.MasterStartServerPacket;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.wrapper.IWrapper;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
@@ -26,6 +29,14 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
     public ITemplateService templateService;
 
     public GameServerPacketServiceHandler() {
+
+        new SimplePacketHandler<>(MasterStartServerPacket.class, packet -> {
+
+            IGameServer gameServer = packet.getGameServer();
+            IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());
+
+            wrapper.startServer(gameServer);
+        });
 
         new SimplePacketHandler<>(APIRequestGameServerCopyResponsePacket.class, packet ->
             Logger.log(packet.isFailed() ? LoggerType.ERROR : LoggerType.INFO, packet.isFailed() ?

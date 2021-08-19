@@ -1,12 +1,12 @@
 package de.polocloud.bootstrap.creator;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.util.Snowflake;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.api.wrapper.IWrapper;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 
 import java.util.ArrayList;
@@ -18,16 +18,13 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class ServerCreator {
 
     @Inject
-    private IWrapperClientManager wrapperClientManager;
-
-    @Inject
     private IGameServerManager gameServerManager;
 
     @Inject
     private Snowflake snowflake;
 
     public void startServer(ITemplate template) {
-        WrapperClient client = getSuitableWrapper(template);
+        IWrapper client = getSuitableWrapper(template);
         if (client == null) {
             return;
         }
@@ -39,11 +36,7 @@ public abstract class ServerCreator {
             System.currentTimeMillis(), template.getMotd(), template.getMaxPlayers(), false);
         gameServerManager.registerGameServer(gameServer);
 
-        try {
-            client.startServer(gameServer);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        client.startServer(gameServer);
     }
 
     private int generateServerId(ITemplate template) {
@@ -65,12 +58,12 @@ public abstract class ServerCreator {
 
     public abstract boolean check(ITemplate template);
 
-    protected WrapperClient getSuitableWrapper(ITemplate template) {
-        List<WrapperClient> wrapperClients = wrapperClientManager.getWrapperClients();
+    protected IWrapper getSuitableWrapper(ITemplate template) {
+        List<IWrapper> wrapperClients = PoloCloudAPI.getInstance().getWrapperManager().getWrappers();
 
         if (wrapperClients.isEmpty()) return null;
 
-        List<WrapperClient> suitableWrappers = new ArrayList<>();
+        List<IWrapper> suitableWrappers = new ArrayList<>();
 
         wrapperClients.stream().filter(key -> Arrays.asList(template.getWrapperNames()).contains(key.getName())).forEach(it -> suitableWrappers.add(it));
 

@@ -23,6 +23,6 @@ public interface IPacketHandler<R extends Packet> {
      * to not handle every incoming packet but just packets
      * of the provided class
      */
-    public abstract Class<? extends Packet> getPacketClass();
+    Class<? extends Packet> getPacketClass();
 
 }

@@ -20,7 +20,12 @@ public enum PoloType {
     /**
      * Proxy-Bridge
      */
-    PLUGIN_PROXY;
+    PLUGIN_PROXY,
+
+    /**
+     * GameServer instance
+     */
+    GENERAL_GAMESERVER;
 
     /**
      * Checks if this enum-type

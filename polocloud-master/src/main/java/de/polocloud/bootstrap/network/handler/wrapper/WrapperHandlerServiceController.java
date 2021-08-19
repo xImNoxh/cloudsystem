@@ -1,14 +1,16 @@
 package de.polocloud.bootstrap.network.handler.wrapper;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.bootstrap.wrapper.SimpleMasterWrapper;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
@@ -28,8 +30,12 @@ public abstract class WrapperHandlerServiceController {
     @Inject
     private MasterConfig masterConfig;
 
-    @Inject
-    private IWrapperClientManager wrapperClientManager;
+
+    protected final IWrapperManager wrapperManager;
+
+    protected WrapperHandlerServiceController() {
+        this.wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
+    }
 
     public void getTemplateByName(WrapperRegisterStaticServerPacket packet, Consumer<ITemplate> tmp) {
         try {
@@ -40,7 +46,7 @@ public abstract class WrapperHandlerServiceController {
     }
 
     public SimpleGameServer createNewService(ChannelHandlerContext ctx, ITemplate template, WrapperRegisterStaticServerPacket packet) {
-        return new SimpleGameServer(wrapperClientManager.getWrapperClientByConnection(ctx), packet.getServerName(), GameServerStatus.PENDING,
+        return new SimpleGameServer(wrapperManager.getWrapper(ctx), packet.getServerName(), GameServerStatus.PENDING,
             null, packet.getSnowflake(), template, getCurrentMillis(), template.getMotd(), template.getMaxPlayers(), false);
     }
 
@@ -54,8 +60,8 @@ public abstract class WrapperHandlerServiceController {
         return System.currentTimeMillis();
     }
 
-    public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, WrapperClient> response, ChannelHandlerContext ctx) {
-        response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new WrapperClient(packet.getName(), ctx));
+    public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, IWrapper> response, ChannelHandlerContext ctx) {
+        response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new SimpleMasterWrapper(packet.getName(), ctx));
     }
 
     public void sendWrapperSuccessfully(WrapperLoginPacket packet) {

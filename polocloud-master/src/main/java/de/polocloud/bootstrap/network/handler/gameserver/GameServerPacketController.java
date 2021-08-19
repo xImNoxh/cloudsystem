@@ -2,6 +2,7 @@ package de.polocloud.bootstrap.network.handler.gameserver;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
@@ -104,6 +105,8 @@ public abstract class GameServerPacketController {
     public void sendServerStartLog(IGameServer server) {
         Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE + server.getName() + ConsoleColors.GRAY
             + " is now " + ConsoleColors.GREEN + "connected" + ConsoleColors.GRAY + ". (" + (System.currentTimeMillis() - server.getStartTime()) + "ms)");
+
+        PoloCloudAPI.getInstance().getWrapperManager().syncCache(server);
     }
 
     public void callServerStartedEvent(IGameServer gameServer) {

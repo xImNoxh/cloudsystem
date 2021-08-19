@@ -16,7 +16,10 @@ public class ProcessManager {
     }
 
     public void terminateProcess(long snowFlake) {
-        processMap.remove(snowFlake).destroy();
+        Process remove = processMap.remove(snowFlake);
+        if (remove != null) {
+            remove.destroy();
+        }
     }
 
     public void removeProcess(long snowFlake) {

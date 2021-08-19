@@ -25,6 +25,9 @@ import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import de.polocloud.plugin.api.player.APICloudPlayerManager;
 import de.polocloud.plugin.api.server.APIGameServerManager;
 import de.polocloud.plugin.api.server.SimpleGameServer;
@@ -50,6 +53,7 @@ public class CloudPlugin extends PoloCloudAPI {
     private IGameServerManager gameServerManager;
     private ITemplateService templateService;
     private ICommandManager commandManager;
+    private final IWrapperManager wrapperManager;
 
     private PoloType poloType;
 
@@ -68,6 +72,7 @@ public class CloudPlugin extends PoloCloudAPI {
         this.gameServerManager = new APIGameServerManager();
         this.templateService = new APITemplateManager();
         this.commandManager = new SimpleCommandManager();
+        this.wrapperManager = new SimpleCachedWrapperManager();
         this.poloType = bootstrap.getType();
 
         this.pubSubManager = new SimplePubSubManager(networkClient);
@@ -97,19 +102,16 @@ public class CloudPlugin extends PoloCloudAPI {
             gameServer.setStatus(GameServerStatus.RUNNING);
             networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(gameServer.getName(), gameServer.getSnowflake()));
 
-            Scheduler.runtimeScheduler().schedule(() -> {
-                PoloComponent<String> component = PoloComponent.request(String.class);
-                component.key("test_key");
-                component.document(new JsonData("name", "Lystx"));
-                PoloFuture<String> query = component.query().timeOut(40L, "Timed out after 2s");
-
-                System.out.println(query.pullValue());
-            });
         });
     }
 
     public NetworkClient getNetworkClient() {
         return networkClient;
+    }
+
+    @Override
+    public IWrapperManager getWrapperManager() {
+        return wrapperManager;
     }
 
     public IBootstrap getBootstrap() {

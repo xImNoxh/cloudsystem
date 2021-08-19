@@ -21,8 +21,9 @@ public class MasterRequestsServerTerminatePacketHandler implements IPacketHandle
         MasterRequestsServerTerminatePacket packet = (MasterRequestsServerTerminatePacket) obj;
 
         long snowflake = packet.getSnowflake();
+        String name = packet.getName();
         processManager.terminateProcess(snowflake);
-        Logger.log(LoggerType.INFO, "Process " + snowflake + " Terminated!");
+        Logger.log(LoggerType.INFO, "§7Server §3" + name + " §7[§b#" + snowflake + "§7] terminated!");
     }
 
     @Override

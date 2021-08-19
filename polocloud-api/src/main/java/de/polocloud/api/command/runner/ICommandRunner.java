@@ -29,6 +29,11 @@ public interface ICommandRunner {
     Command getCommand();
 
     /**
+     * The {@link CommandListener} instance
+     */
+    CommandListener getListener();
+
+    /**
      * The usages as String of this {@link ICommandRunner}
      */
     String getUsage();

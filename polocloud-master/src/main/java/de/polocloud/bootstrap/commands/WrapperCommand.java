@@ -1,52 +1,78 @@
 package de.polocloud.bootstrap.commands;
 
-import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.command.annotation.Arguments;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.command.identifier.TabCompletable;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
-public class WrapperCommand implements CommandListener {
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-    @Inject
-    private IWrapperClientManager wrapperClientManager;
+public class WrapperCommand implements CommandListener, TabCompletable {
 
     public WrapperCommand() {
     }
 
-    @Command(name = "wrapper", description = "Manage a wrapper", aliases = "")
-    public void execute(CommandExecutor sender, String[] args) {
-        if (args.length == 3) {
-            if (args[1].equalsIgnoreCase("stop") || args[1].equalsIgnoreCase("shutdown")) {
-                String wrapperName = args[2];
-                WrapperClient wrapperClient = wrapperClientManager.getWrapperClientByName(wrapperName);
-                if (wrapperClient == null) {
-                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "The wrapper » " + ConsoleColors.LIGHT_BLUE + wrapperName + ConsoleColors.GRAY + " isn't connected!");
+
+    @Command(name = "wrapper", description = "Manage a wrapper", aliases = "wrap")
+    public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(onlyFirstArgs = {"stop", "shutdown", "info", "list"}, min = 1, max = 2, message = {"----[Wrapper]----", "Use §3wrapper stop/shutdown <wrapper> §7to shutdown a wrapper", "Use §3gameserver list §7to get all connected wrappers", "Use §3gameserver info <server> §7to get information of a gameserver", "----[Wrapper]----"}) String... params) {
+        IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
+        if (params.length == 1 && params[0].equalsIgnoreCase("list")) {
+            if (wrapperManager.getWrappers().isEmpty()) {
+                sender.sendMessage("§cUnfortunately there are no connected Wrappers at the moment!");
+                return;
+            }
+            sender.sendMessage("----[Wrappers]----");
+            for (IWrapper wrapper : wrapperManager.getWrappers()) {
+                sender.sendMessage("Wrapper: §3" + wrapper.getName() + "§7#§b" + wrapper.getSnowflake() + " §7(§e" + wrapper.getServers().size() + " servers§7)");
+            }
+            sender.sendMessage("----[Wrappers]----");
+        } else if (params.length == 2 && params[0].equalsIgnoreCase("stop") || params[0].equalsIgnoreCase("shutdown")) {
+            try {
+                String wrapperName = params[1];
+                IWrapper wrapper = wrapperManager.getWrapper(wrapperName);
+                if (wrapper == null) {
+                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "§cThere is no Wrapper with the name §e" + wrapperName + " §cconnected!");
                     return;
                 }
-                wrapperName = wrapperClient.getName();
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Requesting shutdown...");
-                wrapperClient.sendPacket(new WrapperRequestShutdownPacket());
-                Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "request shutdown of wrapper » " + ConsoleColors.LIGHT_BLUE + wrapperName + ConsoleColors.GRAY + "!");
-            } else if (args[1].equalsIgnoreCase("info")) {
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "Stay tuned?!");
-            } else {
-                sendHelp();
+                wrapperName = wrapper.getName();
+                if (!wrapper.terminate()) {
+                    sender.sendMessage("§cCouldn't shut down §e" + wrapperName + "§c!");
+                }
+
+            } catch (Exception e) {
+                //Ignoring index
             }
-        } else {
-            sendHelp();
+
+        } else if (params.length == 2 && params[0].equalsIgnoreCase("info")) {
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "Stay tuned?!");
         }
     }
 
-    private void sendHelp() {
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Wrapper]----");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "wrapper stop/shutdown <wrapper> " + ConsoleColors.GRAY + "to shutdown a wrapper");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver info <server> " + ConsoleColors.GRAY + "to get information of a gameserver");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Wrapper]----");
+
+    @Override
+    public List<String> onTabComplete(CommandExecutor executor, String[] args) {
+        if (args.length == 0) {
+            return Arrays.asList("stop", "info", "list");
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("info")) {
+            List<String> strings = new LinkedList<>();
+            for (IWrapper wrapper : PoloCloudAPI.getInstance().getWrapperManager().getWrappers()) {
+                strings.add(wrapper.getName());
+            }
+
+            return strings;
+        }
+        return new LinkedList<>();
     }
 }

@@ -13,6 +13,7 @@ import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.wrapper.IWrapperManager;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PoloCloudAPI {
@@ -56,6 +57,11 @@ public abstract class PoloCloudAPI {
      * The current {@link ICommandManager} to manage all commands
      */
     public abstract ICommandManager getCommandManager();
+
+    /**
+     * The current {@link IWrapperManager} instance to manage all wrappers
+     */
+    public abstract IWrapperManager getWrapperManager();
 
     /**
      * The current {@link ITemplateService} to manage

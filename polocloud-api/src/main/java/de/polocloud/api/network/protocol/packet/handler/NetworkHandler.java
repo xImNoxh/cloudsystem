@@ -8,8 +8,13 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.server.SimpleNettyServer;
+import de.polocloud.api.scheduler.Scheduler;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
@@ -36,10 +41,12 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         this.channelHandlerContext = ctx;
+
         EventRegistry.fireEvent(new ChannelActiveEvent(ctx));
 
+        networkConnection.setCtx(ctx);
         if (this.networkConnection instanceof SimpleNettyServer) {
-            SimpleNettyServer simpleNettyServer = (SimpleNettyServer)networkConnection;
+            SimpleNettyServer simpleNettyServer = (SimpleNettyServer) networkConnection;
             simpleNettyServer.getConnectedClients().add(ctx.channel());
         }
     }
@@ -49,15 +56,19 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         super.channelInactive(ctx);
         EventRegistry.fireEvent(new ChannelInactiveEvent(ctx));
 
+        networkConnection.setCtx(ctx);
         if (this.networkConnection instanceof SimpleNettyServer) {
-            SimpleNettyServer simpleNettyServer = (SimpleNettyServer)networkConnection;
-            simpleNettyServer.getConnectedClients().removeIf(channel -> channel.equals(ctx.channel()));
+            SimpleNettyServer simpleNettyServer = (SimpleNettyServer) networkConnection;
+            List<Channel> connectedClients = new LinkedList<>(simpleNettyServer.getConnectedClients());
+            connectedClients.removeIf(connectedClient -> (connectedClient != null && ctx.channel() != null) && (connectedClient.remoteAddress().equals(ctx.channel().remoteAddress())) && connectedClient.localAddress().equals(ctx.channel().localAddress()));
+            simpleNettyServer.setConnectedClients(connectedClients);
         }
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet o) throws Exception {
-        networkConnection.getProtocol().firePacketHandlers(channelHandlerContext, o);
+        //TODO: CHECK ASYNC PACKET HANDLING IF ERRORS
+        Scheduler.runtimeScheduler().schedule(() -> networkConnection.getProtocol().firePacketHandlers(channelHandlerContext, o));
     }
 
     public ChannelHandlerContext getChannelHandlerContext() {

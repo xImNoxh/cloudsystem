@@ -50,6 +50,6 @@ public enum ConsoleColors {
         for (ConsoleColors value : values()) {
             input = input.replace(String.valueOf(c) + value.getChar(), value.toString());
         }
-        return input;
+        return input + ConsoleColors.RESET;
     }
 }

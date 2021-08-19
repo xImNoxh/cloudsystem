@@ -18,9 +18,11 @@ import de.polocloud.api.network.protocol.packet.gameserver.*;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.protocol.packet.master.*;
+import de.polocloud.api.network.protocol.packet.wrapper.WrapperCachePacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
+import de.polocloud.api.util.PoloUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -69,19 +71,23 @@ public class PacketRegistry {
             MasterPlayerSendToServerPacket.class,
             MasterRequestsServerTerminatePacket.class,
             MasterUpdatePlayerInfoPacket.class,
+            MasterStartServerPacket.class,
 
             WrapperLoginPacket.class,
             WrapperRegisterStaticServerPacket.class,
             WrapperRequestShutdownPacket.class,
+            WrapperCachePacket.class,
 
             PublishPacket.class,
             SubscribePacket.class,
             PermissionCheckResponsePacket.class,
             ProxyTablistUpdatePacket.class,
             RedirectPacket.class,
+            ForwardingPacket.class,
             CommandListAcceptorPacket.class);
     }
 
+    @SafeVarargs
     private static void registerPackets(Class<? extends Packet>... packets) {
         for (int i = 0; i < packets.length; i++) {
             registerPacket(i + 1, packets[i]);
@@ -92,8 +98,12 @@ public class PacketRegistry {
         return packetMap.keySet().stream().filter(id -> packetMap.get(id).equals(clazz)).findAny().orElse(-1);
     }
 
-    public static Packet createInstance(int id) throws InstantiationException, IllegalAccessException {
-        return packetMap.get(id).newInstance();
+    public static Packet createPacket(int id)  {
+        try {
+            return packetMap.get(id).newInstance();
+        } catch (Exception e) {
+            return PoloUtils.getInstance(packetMap.get(id));
+        }
     }
 
 }

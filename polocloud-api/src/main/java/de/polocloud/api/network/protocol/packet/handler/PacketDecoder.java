@@ -13,7 +13,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext chx, ByteBuf byteBuf, List<Object> output) throws Exception {
         int id = byteBuf.readInt();
-        Packet packet = PacketRegistry.createInstance(id);
+        Packet packet = PacketRegistry.createPacket(id);
         packet.read(new SimplePacketBuffer(byteBuf));
         output.add(packet);
     }
