@@ -1,12 +1,17 @@
 package de.polocloud.api.network.server;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.packet.ForwardingPacket;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.network.protocol.packet.handler.*;
 import de.polocloud.api.network.request.SimpleRequestManager;
 import de.polocloud.api.network.request.IRequestManager;
+import de.polocloud.api.wrapper.IWrapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -34,12 +39,19 @@ public class SimpleNettyServer implements INettyServer {
     /**
      * All connected clients
      */
-    private final List<Channel> connectedClients;
+    private List<Channel> connectedClients;
+
+    /**
+     * The channel
+     */
+    private Channel channel;
 
     /**
      * The request manager
      */
     private final IRequestManager requestManager;
+
+    private ChannelHandlerContext ctx;
 
     public SimpleNettyServer() {
         this.connectedClients = new LinkedList<>();
@@ -67,7 +79,7 @@ public class SimpleNettyServer implements INettyServer {
                 }
 
             }).option(ChannelOption.SO_BACKLOG, 128);
-            ChannelFuture channelFuture = serverBootstrap.bind(this.port).sync();
+            ChannelFuture channelFuture = serverBootstrap.bind(this.port).addListener((ChannelFutureListener) future -> channel = future.channel()).sync();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -85,6 +97,10 @@ public class SimpleNettyServer implements INettyServer {
         return connectedClients;
     }
 
+    public void setConnectedClients(List<Channel> connectedClients) {
+        this.connectedClients = connectedClients;
+    }
+
     @Override
     public IRequestManager getRequestManager() {
         return this.requestManager;
@@ -98,6 +114,37 @@ public class SimpleNettyServer implements INettyServer {
     @Override
     public InetSocketAddress getConnectedAddress() {
         return new InetSocketAddress(this.port);
+    }
+
+
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
+
+    @Override
+    public void sendPacket(Packet packet, PoloType receiver) {
+        if (receiver == PoloType.GENERAL_GAMESERVER || receiver == PoloType.PLUGIN_PROXY || receiver == PoloType.PLUGIN_SPIGOT) {
+            PoloCloudAPI.getInstance().getGameServerManager().getGameServers().thenAccept(iGameServers -> {
+                for (IGameServer iGameServer : iGameServers) {
+                    iGameServer.sendPacket(packet);
+                }
+            });
+        }
+        if (receiver == PoloType.WRAPPER) {
+            for (IWrapper wrapper : PoloCloudAPI.getInstance().getWrapperManager().getWrappers()) {
+                wrapper.sendPacket(packet);
+            }
+        }
+    }
+
+    @Override
+    public ChannelHandlerContext ctx() {
+        return ctx;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return this.channel;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package de.polocloud.bootstrap.commands.ingame;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
-import de.polocloud.api.command.annotation.CommandPermission;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
@@ -18,9 +18,8 @@ import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.template.TemplateType;
 import de.polocloud.api.util.Snowflake;
-import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.WrapperClient;
+import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.types.ConsoleColors;
 
@@ -38,9 +37,6 @@ public class CloudIngameCommand implements CommandListener {
     private IGameServerManager gameServerManager;
 
     @Inject
-    private IWrapperClientManager wrapperClientManager;
-
-    @Inject
     private ITemplateService templateService;
 
     @Inject
@@ -52,17 +48,17 @@ public class CloudIngameCommand implements CommandListener {
     public CloudIngameCommand() {
     }
 
-    @Command(name = "cloud", description = "Manage the cloud from ingame", aliases = "c")
-    @CommandPermission("cloud.use")
+    @Command(name = "cloud", description = "Manage the cloud system ingame", aliases = "c")
     @CommandExecutors(ExecutorType.PLAYER)
-    public void execute(CommandExecutor sender, String[] args) {
+    public void execute(CommandExecutor sender, String... params) {
         ICloudPlayer player = (ICloudPlayer) sender;
+        IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
         try {
             if (player.hasPermissions("cloud.use").get()) {
-                if (args.length == 4) {
-                    if (args[1].equalsIgnoreCase("gameserver")) {
-                        if (args[2].equalsIgnoreCase("start")) {
-                            String templateName = args[3];
+                if (params.length == 4) {
+                    if (params[1].equalsIgnoreCase("gameserver")) {
+                        if (params[2].equalsIgnoreCase("start")) {
+                            String templateName = params[3];
 
                             ITemplate template = templateService.getTemplateByName(templateName).get();
 
@@ -77,14 +73,14 @@ public class CloudIngameCommand implements CommandListener {
                                 return;
                             }
 
-                            Optional<WrapperClient> optionalWrapperClient = this.wrapperClientManager.getWrapperClients().stream().findAny();
+                            Optional<IWrapper> optionalWrapperClient = wrapperManager.getWrappers().stream().findAny();
 
                             if (!optionalWrapperClient.isPresent()) {
                                 player.sendMessage(prefix + "No available Wrapper connected!");
                                 return;
                             }
 
-                            WrapperClient wrapperClient = optionalWrapperClient.get();
+                            IWrapper wrapperClient = optionalWrapperClient.get();
 
                             player.sendMessage(prefix + "Requesting start...");
                             SimpleGameServer newGameServer = new SimpleGameServer(wrapperClient, template.getName() + "-" + searchForAvailableID(template),
@@ -93,8 +89,8 @@ public class CloudIngameCommand implements CommandListener {
                             wrapperClient.startServer(newGameServer);
 
                             player.sendMessage(prefix + "§aSuccessfully requested start.");
-                        } else if (args[2].equalsIgnoreCase("stop") || args[2].equalsIgnoreCase("shutdown")) {
-                            String gameserverName = args[3];
+                        } else if (params[2].equalsIgnoreCase("stop") || params[2].equalsIgnoreCase("shutdown")) {
+                            String gameserverName = params[3];
                             IGameServer gameServer = gameServerManager.getGameServerByName(gameserverName).get();
 
                             if (gameServer == null) {
@@ -109,8 +105,8 @@ public class CloudIngameCommand implements CommandListener {
                                 player.sendMessage(prefix + "Server is not Running... §cTerminating Process");
                             }
                             player.sendMessage(prefix + "You " + "§asuccessfully §7" + "stopped the gameserver » §b" + gameserverName + "§7!");
-                        } else if (args[2].equalsIgnoreCase("info")) {
-                            String name = args[3];
+                        } else if (params[2].equalsIgnoreCase("info")) {
+                            String name = params[3];
                             IGameServer gameServer = gameServerManager.getGameServerByName(name).get();
                             if (gameServer == null) {
                                 player.sendMessage(prefix + "The gameserver » §b" + name + " §7isn't online!");
@@ -145,12 +141,12 @@ public class CloudIngameCommand implements CommandListener {
                     } else {
                         sendHelp(player);
                     }
-                } else if (args.length >= 5) {
-                    if (args.length == 5) {
-                        if (args[1].equalsIgnoreCase("gameserver")) {
-                            if (args[2].equalsIgnoreCase("copy")) {
-                                String gameServerName = args[3];
-                                String type = args[4];
+                } else if (params.length >= 5) {
+                    if (params.length == 5) {
+                        if (params[1].equalsIgnoreCase("gameserver")) {
+                            if (params[2].equalsIgnoreCase("copy")) {
+                                String gameServerName = params[3];
+                                String type = params[4];
                                 if (!(type.equalsIgnoreCase("worlds") || type.equalsIgnoreCase("entire"))) {
                                     player.sendMessage(prefix + "Use following command for copying a gameserver: §b" +
                                         "/cloud gameserver copy <gameserver> entire/worlds");
@@ -170,20 +166,20 @@ public class CloudIngameCommand implements CommandListener {
                                         return;
                                     }
                                     player.sendMessage(prefix + "Copying §b" + gameServer.getName() + "§7...");
-                                    List<WrapperClient> wrappers = Master.getInstance().getWrapperClientManager().getWrapperClients().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
-                                    for (WrapperClient wrapper : wrappers) {
+                                    List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
+                                    for (IWrapper wrapper : wrappers) {
                                         wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.WORLD, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
                                     }
                                 } else if (type.equalsIgnoreCase("entire")) {
                                     player.sendMessage(prefix + "Copying §b" + gameServer.getName() + "§7...");
-                                    List<WrapperClient> wrappers = Master.getInstance().getWrapperClientManager().getWrapperClients().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
-                                    for (WrapperClient wrapper : wrappers) {
+                                    List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
+                                    for (IWrapper wrapper : wrappers) {
                                         wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.ENTIRE, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
                                     }
                                 }
-                            } else if (args[2].equalsIgnoreCase("start")) {
-                                String templateName = args[3];
-                                String amountString = args[4];
+                            } else if (params[2].equalsIgnoreCase("start")) {
+                                String templateName = params[3];
+                                String amountString = params[4];
 
                                 ITemplate template = templateService.getTemplateByName(templateName).get();
 
@@ -210,14 +206,14 @@ public class CloudIngameCommand implements CommandListener {
                                     return;
                                 }
 
-                                Optional<WrapperClient> optionalWrapperClient = this.wrapperClientManager.getWrapperClients().stream().findAny();
+                                Optional<IWrapper> optionalWrapperClient = wrapperManager.getWrappers().stream().findAny();
 
                                 if (!optionalWrapperClient.isPresent()) {
                                     player.sendMessage(prefix + "No available Wrapper connected!");
                                     return;
                                 }
 
-                                WrapperClient wrapperClient = optionalWrapperClient.get();
+                                IWrapper wrapperClient = optionalWrapperClient.get();
 
                                 for (int i = 0; i < amount; i++) {
                                     player.sendMessage(prefix + "Requesting start...");
@@ -241,8 +237,8 @@ public class CloudIngameCommand implements CommandListener {
                             sendHelp(player);
                         }
                     }
-                    if (args[1].equalsIgnoreCase("gameserver")) {
-                        String gameserverName = args[3];
+                    if (params[1].equalsIgnoreCase("gameserver")) {
+                        String gameserverName = params[3];
                         IGameServer gameServer = gameServerManager.getGameServerByName(gameserverName).get();
 
                         if (gameServer == null) {
@@ -251,21 +247,21 @@ public class CloudIngameCommand implements CommandListener {
                         }
 
                         String content = "";
-                        for (int i = 4; i < args.length; i++) {
-                            content += args[i] + " ";
+                        for (int i = 4; i < params.length; i++) {
+                            content += params[i] + " ";
                         }
                         content = content.substring(0, content.length() - 1);
                         player.sendMessage(prefix + "Processing...");
                         gameServer.sendPacket(new GameServerExecuteCommandPacket(content));
                         player.sendMessage(prefix + "§aSuccessfully executed command » §b" + content + " §7on server » §b" + gameServer.getName() + "§7!");
-                    } else if (args[1].equalsIgnoreCase("player")) {
-                        String targetPlayerName = args[2];
+                    } else if (params[1].equalsIgnoreCase("player")) {
+                        String targetPlayerName = params[2];
                         ICloudPlayer targetPlayer = cloudPlayerManager.getOnlinePlayer(targetPlayerName).get();
                         if (targetPlayer == null) {
                             player.sendMessage(prefix + "The player » §b" + targetPlayerName + " §7isn't online!");
                             return;
                         }
-                        if (!(args[3].equalsIgnoreCase("kick") || args[3].equalsIgnoreCase("send") || args[3].equalsIgnoreCase("message"))) {
+                        if (!(params[3].equalsIgnoreCase("kick") || params[3].equalsIgnoreCase("send") || params[3].equalsIgnoreCase("message"))) {
                             player.sendMessage(prefix + "----[Cloud-Player]----");
                             player.sendMessage(prefix + "Use " + ConsoleColors.LIGHT_BLUE + "/cloud player <player> message <message...> " + ConsoleColors.GRAY + "to send a message to a player");
                             player.sendMessage(prefix + "Use " + ConsoleColors.LIGHT_BLUE + "/cloud player <player> kick <message...> " + ConsoleColors.GRAY + "to kick a player with a message");
@@ -274,20 +270,20 @@ public class CloudIngameCommand implements CommandListener {
                             return;
                         }
                         String content = "";
-                        for (int i = 4; i < args.length; i++) {
-                            content += args[i] + " ";
+                        for (int i = 4; i < params.length; i++) {
+                            content += params[i] + " ";
                         }
                         content = content.substring(0, content.length() - 1);
 
-                        if (args[3].equalsIgnoreCase("kick")) {
+                        if (params[3].equalsIgnoreCase("kick")) {
                             player.sendMessage(prefix + "Kicking...");
                             targetPlayer.kick(content);
                             player.sendMessage(prefix + "§aSuccessfully §7kicked player » §b" + targetPlayer.getName() + " §7for » §b" + content + "§7!");
-                        } else if (args[3].equalsIgnoreCase("message")) {
+                        } else if (params[3].equalsIgnoreCase("message")) {
                             player.sendMessage(prefix + "Messaging...");
                             targetPlayer.sendMessage("§7" + player.getName() + " -> you » " + content);
                             player.sendMessage(prefix + "§aSuccessfully §7messaged player » §b" + targetPlayer.getName() + "! (message » §b" + content + "§7)");
-                        } else if (args[3].equalsIgnoreCase("send")) {
+                        } else if (params[3].equalsIgnoreCase("send")) {
                             IGameServer gameServer = gameServerManager.getGameServerByName(content).get();
                             if (gameServer == null) {
                                 player.sendMessage(prefix + "The gameserver » §b" + content + " §7isn't online!");
@@ -310,7 +306,7 @@ public class CloudIngameCommand implements CommandListener {
             }
         } catch (InterruptedException | ExecutionException exception) {
             exception.printStackTrace();
-            player.sendMessage(prefix + "§cAn unexpected error occurred while executing the command: §7" + String.join(",", args));
+            player.sendMessage(prefix + "§cAn unexpected error occurred while executing the command: §7" + String.join(",", params));
         }
     }
 

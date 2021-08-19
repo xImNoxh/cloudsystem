@@ -15,6 +15,8 @@ public class ConsoleReadThread extends Thread {
     public ConsoleReadThread(ConsoleReader consoleReader) {
         this.consoleReader = consoleReader;
 
+        this.consoleReader.addCompleter(new CommandCompleter());
+
         this.setDaemon(true);
         this.setPriority(Thread.MIN_PRIORITY);
         this.start();

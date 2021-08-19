@@ -17,7 +17,7 @@ public class HelpCommand implements CommandListener {
         usage = "help <no-args>",
         aliases = "?"
     )
-    public void execute(CommandExecutor sender, String[] args) {
+    public void execute(CommandExecutor sender, String[] rawArgs) {
         Logger.newLine();
 
         for (ICommandRunner command : PoloCloudAPI.getInstance().getCommandManager().getCommands()) {

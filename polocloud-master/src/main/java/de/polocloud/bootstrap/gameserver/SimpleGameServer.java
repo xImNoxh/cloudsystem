@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.gameserver;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
@@ -8,16 +9,18 @@ import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacke
 import de.polocloud.api.network.protocol.packet.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
-import de.polocloud.bootstrap.client.WrapperClient;
-import de.polocloud.logger.log.Logger;
+import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.wrapper.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SimpleGameServer implements IGameServer {
 
-    private WrapperClient wrapper;
+    private IWrapper wrapper;
     private String name;
     private GameServerStatus status;
     private ChannelHandlerContext ctx;
@@ -39,7 +42,7 @@ public class SimpleGameServer implements IGameServer {
 
     private List<ICloudPlayer> cloudPlayers = new ArrayList<>();
 
-    public SimpleGameServer(WrapperClient wrapper, String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers, boolean serviceVisibility) {
+    public SimpleGameServer(IWrapper wrapper, String name, GameServerStatus status, ChannelHandlerContext ctx, long snowflake, ITemplate template, long startTime, String motd, int maxPlayers, boolean serviceVisibility) {
         this.wrapper = wrapper;
         this.name = name;
         this.status = status;
@@ -101,6 +104,54 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
+    public IWrapper getWrapper() {
+        for (String wrapperName : getTemplate().getWrapperNames()) {
+            IWrapper get = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(wrapperName);
+            if (get != null) {
+                return get;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public void setMemory(long memory) {
+        this.totalMemory = memory;
+    }
+
+    public void setTemplate(ITemplate template) {
+        this.template = template;
+    }
+
+    @Override
+    public void setTemplate(String template) {
+        this.setTemplate(PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getTemplateService().getTemplateByName(template).get()));
+    }
+
+    @Override
+    public void setSnowflake(long snowflake) {
+        this.snowflake = snowflake;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void clone(Consumer<IGameServer> consumer) {
+        IGameServer copy = this;
+        consumer.accept(copy);
+    }
+
+
+    @Override
+    public void newSnowflake() {
+        this.setSnowflake(Snowflake.getInstance().nextId());
+    }
+
+    @Override
     public long getStartTime() {
         return this.startTime;
     }
@@ -126,7 +177,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void terminate() {
-        wrapper.sendPacket(new MasterRequestsServerTerminatePacket(getSnowflake()));
+        wrapper.stopServer(this);
     }
 
     public ChannelHandlerContext getCtx() {

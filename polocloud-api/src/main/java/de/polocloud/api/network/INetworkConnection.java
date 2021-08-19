@@ -3,6 +3,8 @@ package de.polocloud.api.network;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import de.polocloud.api.network.request.IRequestManager;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.net.InetSocketAddress;
 
@@ -24,6 +26,26 @@ public interface INetworkConnection extends IStartable, ITerminatable, IPacketSe
      */
     IProtocol getProtocol();
 
+    /**
+     * The netty {@link Channel} of this connection
+     *
+     * @return netty channel instance
+     */
+    Channel getChannel();
+
+    /**
+     * The netty {@link ChannelHandlerContext} of this connection
+     *
+     * @return netty channel-context instance
+     */
+    ChannelHandlerContext ctx();
+
+    /**
+     * The netty {@link ChannelHandlerContext} of this connection
+     *
+     * @return netty channel-context instance
+     */
+    void setCtx(ChannelHandlerContext ctx);
     /**
      * Gets the address the connection is bound or connected to
      * If...

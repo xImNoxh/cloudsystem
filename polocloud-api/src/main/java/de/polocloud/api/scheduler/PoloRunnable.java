@@ -42,7 +42,6 @@ public class PoloRunnable {
         this.stopAfterExecute = stopAfterExecute;
     }
 
-
     /**
      * Runs the runnable and marks it as executed
      */

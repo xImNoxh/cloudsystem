@@ -1,42 +1,77 @@
-package de.polocloud.plugin.api.server;
+package de.polocloud.api.gameserver;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.GameServerStatus;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
+import de.polocloud.api.network.protocol.packet.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.util.PoloUtils;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.IWrapper;
-import de.polocloud.plugin.CloudPlugin;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-public class SimpleGameServer implements IGameServer {
+public class DefaultGameServer implements IGameServer {
 
+    /**
+     * The name of the server
+     */
     private String name;
+
+    /**
+     * The motd of the server
+     */
     private String motd;
 
+    /**
+     * The visibility state
+     */
     private boolean serviceVisibility;
+
+    /**
+     * The status
+     */
     private GameServerStatus gameServerStatus;
 
+    /**
+     * The snowflake id
+     */
     private long snowflake;
+
+    /**
+     * The ping in ms
+     */
     private long ping;
+
+    /**
+     * The startedTime in ms
+     */
     private long startedTime;
+
+    /**
+     * The startedTime as long
+     */
     private long memory;
 
+    /**
+     * The port
+     */
     private int port;
+
+    /**
+     * The maximum players
+     */
     private int maxPlayers;
 
+    /**
+     * The template (group)
+     */
     private ITemplate template;
 
-    private List<ICloudPlayer> players;
-
-    public SimpleGameServer(String name, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long ping, long startedTime, long memory, int port, int maxplayers, ITemplate template, List<ICloudPlayer> players) {
+    public DefaultGameServer(String name, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long ping, long startedTime, long memory, int port, int maxplayers, ITemplate template) {
         this.name = name;
         this.motd = motd;
         this.serviceVisibility = serviceVisibility;
@@ -48,7 +83,6 @@ public class SimpleGameServer implements IGameServer {
         this.port = port;
         this.maxPlayers = maxplayers;
         this.template = template;
-        this.players = new ArrayList<>();
     }
 
     @Override
@@ -125,7 +159,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public List<ICloudPlayer> getCloudPlayers() {
-        return players;
+        return PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getCloudPlayerManager().getAllOnlinePlayers().get()).stream().filter(cloudPlayer -> cloudPlayer.getMinecraftServer().getName().equalsIgnoreCase(this.name) || cloudPlayer.getProxyServer().getName().equalsIgnoreCase(this.name)).collect(Collectors.toList());
     }
 
     @Override
@@ -139,7 +173,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public int getOnlinePlayers() {
-        return players.size();
+        return this.getCloudPlayers().size();
     }
 
     @Override
@@ -159,17 +193,17 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void stop() {
-        CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown();
+        getWrapper().sendPacket(new MasterRequestsServerTerminatePacket(this));
     }
 
     @Override
     public void terminate() {
-        CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown();
+        stop();
     }
 
     @Override
     public void sendPacket(Packet packet) {
-        CloudPlugin.getCloudPluginInstance().getNetworkClient().sendPacket(packet);
+        PoloCloudAPI.getInstance().getConnection().sendPacket(packet);
     }
 
     @Override

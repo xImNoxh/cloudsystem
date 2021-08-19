@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.commands;
 
+import de.polocloud.api.command.annotation.Arguments;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
@@ -34,13 +35,13 @@ public class TemplateCommand implements CommandListener {
         aliases = "group"
     )
     @CommandExecutors(ExecutorType.CONSOLE)
-    public void execute(CommandExecutor sender, String[] args) {
+    public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(min = 1, max = 7) String... params) {
         try {
-            if (args.length == 2) {
-                if (args[1].equalsIgnoreCase("create")) {
+            if (params.length == 1) {
+                if (params[1].equalsIgnoreCase("create")) {
                     new CreateTemplateSetup(templateService).sendSetup();
                     return;
-                } else if (args[1].equalsIgnoreCase("versions")) {
+                } else if (params[0].equalsIgnoreCase("versions")) {
                     Logger.log(LoggerType.INFO, Logger.PREFIX + "Available Versions » ");
                     Logger.newLine();
                     for (GameServerVersion value : GameServerVersion.values()) {
@@ -50,9 +51,9 @@ public class TemplateCommand implements CommandListener {
                 } else {
                     sendHelp();
                 }
-            } else if (args.length == 3) {
-                if (args[1].equalsIgnoreCase("shutdown") || args[1].equalsIgnoreCase("stop")) {
-                    String templateName = args[2];
+            } else if (params.length == 2) {
+                if (params[0].equalsIgnoreCase("shutdown") || params[0].equalsIgnoreCase("stop")) {
+                    String templateName = params[1];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
@@ -66,8 +67,8 @@ public class TemplateCommand implements CommandListener {
                         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "stopped " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + " servers of template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "!");
                     }
                     return;
-                } else if (args[1].equalsIgnoreCase("info")) {
-                    String templateName = args[2];
+                } else if (params[0].equalsIgnoreCase("info")) {
+                    String templateName = params[1];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
@@ -90,23 +91,23 @@ public class TemplateCommand implements CommandListener {
                 } else {
                     sendHelp();
                 }
-            } else if (args.length == 6) {
-                if (args[1].equalsIgnoreCase("edit")) {
-                    String templateName = args[2];
+            } else if (params.length == 5) {
+                if (params[0].equalsIgnoreCase("edit")) {
+                    String templateName = params[1];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
                     if (template == null) {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                     } else {
 
-                        if (args[3].equalsIgnoreCase("set")) {
-                            if (args[4].equalsIgnoreCase("maintenance")) {
-                                if (!(args[5].equalsIgnoreCase("true") || args[5].equalsIgnoreCase("false"))) {
+                        if (params[2].equalsIgnoreCase("set")) {
+                            if (params[3].equalsIgnoreCase("maintenance")) {
+                                if (!(params[4].equalsIgnoreCase("true") || params[4].equalsIgnoreCase("false"))) {
                                     Logger.log(LoggerType.ERROR, Logger.PREFIX + "Please provide a state (boolean (true, false))");
                                     return;
                                 }
 
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + "updating...");
-                                boolean state = Boolean.parseBoolean(args[5]);
+                                boolean state = Boolean.parseBoolean(params[4]);
 
                                 template.setMaintenance(state);
                                 templateService.getTemplateSaver().save(template);
@@ -116,8 +117,8 @@ public class TemplateCommand implements CommandListener {
                                 }
 
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maintenance state of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + state + ConsoleColors.GRAY + ")");
-                            } else if (args[4].equalsIgnoreCase("maxplayers")) {
-                                String amountString = args[5];
+                            } else if (params[3].equalsIgnoreCase("maxplayers")) {
+                                String amountString = params[4];
                                 int amount;
                                 try {
                                     amount = Integer.parseInt(amountString);
@@ -127,7 +128,7 @@ public class TemplateCommand implements CommandListener {
                                 }
 
 
-                                template.setMaxPlayers(Integer.parseInt(args[5]));
+                                template.setMaxPlayers(Integer.parseInt(params[4]));
                                 templateService.getTemplateSaver().save(template);
 
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {

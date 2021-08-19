@@ -9,9 +9,4 @@ import io.netty.channel.ChannelHandlerContext;
 
 public interface INettyClient extends INetworkConnection {
 
-    /**
-     * Gets the {@link ChannelHandlerContext} of this netty instance
-     */
-    ChannelHandlerContext ctx();
-
 }

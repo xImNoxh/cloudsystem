@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.LoggerType;
@@ -13,9 +12,6 @@ public class WrapperPacketHandlerService extends WrapperHandlerServiceController
 
     @Inject
     private IGameServerManager gameServerManager;
-
-    @Inject
-    private IWrapperClientManager wrapperClientManager;
 
     public WrapperPacketHandlerService() {
 
@@ -31,8 +27,9 @@ public class WrapperPacketHandlerService extends WrapperHandlerServiceController
                 ctx.close();
                 return;
             }
-            wrapperClientManager.registerWrapperClient(client);
+            wrapperManager.registerWrapper(client);
             sendWrapperSuccessfully(packet);
+            wrapperManager.syncCache();
         }, ctx));
     }
 }

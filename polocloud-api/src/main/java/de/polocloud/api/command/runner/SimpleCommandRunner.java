@@ -49,8 +49,8 @@ public class SimpleCommandRunner implements ICommandRunner {
     private final int maximumParameters;
 
     private final boolean showUsage;
-    private final String[] minimumParametersMessage;
-    private final String[] maximumParametersMessage;
+    private final String[] message;
+    private final String[] onlyArgs;
 
     private final int minimumVariableArgs;
     private final int maximumVariableArgs;
@@ -58,16 +58,21 @@ public class SimpleCommandRunner implements ICommandRunner {
     private final String[] permissionRequired;
     private final ExecutorType[] allowedSourceTypes;
 
+    @Override
+    public CommandListener getListener() {
+        return listener;
+    }
+
     public SimpleCommandRunner(MethodAccess access, CommandListener listener, Method method, Command command) {
         this.access = access;
         this.listener = listener;
         this.methodIndex = access.getIndex(method.getName(), method.getParameterTypes());
         this.command = command;
-        this.parameters = Arrays.copyOfRange(method.getParameters(), 1, method.getParameterCount());
+        this.parameters = Arrays.copyOfRange(method.getParameters(), 2, method.getParameterCount());
         int vIndex = -1, min = parameters.length, max = parameters.length;
         int minVar = 0, maxVar = Integer.MAX_VALUE;
-        String[] maxMessage = {"Enter at maximum %args% arguments!"};
-        String[] minMessage = {"Enter at least %args% arguments!"};
+        String[] message = {"Enter arguments in range between %min% - %max%!"};
+        String[] onlyArgs = new String[0];
         boolean showUsage = false;
 
         for (int i = 0; i < this.parameters.length; i++) {
@@ -77,42 +82,35 @@ public class SimpleCommandRunner implements ICommandRunner {
                     throw new RuntimeException("CommandDispatcher can't have more than one variable length parameter");
                 }
                 vIndex = i;
-                MinArgs minArgs = param.getAnnotation(MinArgs.class);
-                if (minArgs != null) {
-                    if ((minVar = minArgs.value()) < 0) {
-                        throw new IllegalArgumentException("CommandDispatcher minimum cannot be less than 0");
-                    }
-                    min += minVar - 1;
-                    showUsage = minArgs.showUsage();
-                    minMessage = minArgs.message();
-                } else {
-                    min -= 1;
-                }
-                ArgRange argRange = param.getAnnotation(ArgRange.class);
-                if (argRange != null) {
-                    if ((minVar = argRange.min()) < 0) {
-                        throw new IllegalArgumentException("CommandDispatcher minimum cannot be less than 0");
-                    }
-                    min += minVar - 1;
-                    showUsage = argRange.showUsage();
-                    minMessage = argRange.message();
-                    if (argRange.max() == -1) {
 
+                Arguments arguments = param.getAnnotation(Arguments.class);
+                if (arguments != null) {
+                    if ((minVar = arguments.min()) < 0 && arguments.min() != -1) {
+                        throw new IllegalArgumentException("CommandDispatcher minimum cannot be less than 0");
                     }
+                    showUsage = arguments.showUsage();
+                    message = arguments.message();
+                    if (arguments.onlyFirstArgs().length != 0) {
+                        onlyArgs = arguments.onlyFirstArgs();
+                    }
+
+                    if (arguments.max() == -1) {
+                        max = Integer.MAX_VALUE;
+                    } else {
+                        max += maxVar - 1;
+                    }
+
+                    if (arguments.min() == -1) {
+                        min = -1;
+                    } else {
+                        min += minVar - 1;
+                    }
+
                 } else {
                     min -= 1;
                     max = Integer.MAX_VALUE;
                 }
-                MaxArgs maxArgs = param.getAnnotation(MaxArgs.class);
-                if (maxArgs != null) {
-                    if ((maxVar = maxArgs.value()) < 0) {
-                        throw new IllegalArgumentException("CommandDispatcher maximum cannot be less than 0");
-                    }
-                    max += maxVar - 1;
-                    maxMessage = maxArgs.message();
-                    showUsage = maxArgs.showUsage();
-                } else {
-                }
+
                 if (min > max) {
                     throw new RuntimeException("CommandDispatcher minimum cannot be more than the maximum");
                 }
@@ -123,9 +121,9 @@ public class SimpleCommandRunner implements ICommandRunner {
         this.maximumParameters = max;
         this.minimumVariableArgs = minVar;
         this.maximumVariableArgs = maxVar;
-        this.minimumParametersMessage = minMessage;
-        this.maximumParametersMessage = maxMessage;
+        this.message = message;
         this.showUsage = showUsage;
+        this.onlyArgs = onlyArgs;
 
         CommandPermission permissionRequired = method.getAnnotation(CommandPermission.class);
         if (permissionRequired != null && permissionRequired.value().length > 0) {
@@ -187,11 +185,11 @@ public class SimpleCommandRunner implements ICommandRunner {
             return;
         }
 
-        boolean tooFewArguments = args.length < this.minimumParameters;
-        boolean tooManyArguments = args.length > this.maximumParameters;
+        boolean tooFewArguments = minimumParameters == -1 ? false : args.length < this.minimumParameters;
+        boolean tooManyArguments = maximumParameters == -1 ? false : args.length > this.maximumParameters;
         if (tooFewArguments || tooManyArguments) {
-            for (String s : (tooFewArguments ? minimumParametersMessage : maximumParametersMessage)) {
-                source.sendMessage(s);
+            for (String s : message) {
+                source.sendMessage(s.replace("%min%", this.minimumParameters + "").replace("%max%", this.maximumParameters + ""));
             }
             if (!showUsage) {
                 return;
@@ -241,11 +239,11 @@ public class SimpleCommandRunner implements ICommandRunner {
         }
 
         if (varargsIndex >= 0) {
-            tooFewArguments = variableArgs.size() < this.minimumVariableArgs;
-            tooManyArguments = variableArgs.size() > this.maximumVariableArgs;
+            tooFewArguments = minimumVariableArgs == -1 ? false : variableArgs.size() < this.minimumVariableArgs;
+            tooManyArguments = maximumVariableArgs == -1 ? false : variableArgs.size() > this.maximumVariableArgs;
             if (tooFewArguments || tooManyArguments) {
-                for (String s : (tooFewArguments ? minimumParametersMessage : maximumParametersMessage)) {
-                    source.sendMessage(s);
+                for (String s : message) {
+                    source.sendMessage(s.replace("%min%", this.minimumParameters + "").replace("%max%", this.maximumParameters + ""));
                 }
                 if (!showUsage) {
                     return;
@@ -259,13 +257,18 @@ public class SimpleCommandRunner implements ICommandRunner {
             }
             invokeArguments[2 + varargsIndex] = arr;
         }
-
-        List<Object> objects = new LinkedList<>(Arrays.asList(invokeArguments));
-        if (parameters.length >= 2 && !parameters[1].getType().equals(String[].class)) {
-            objects.remove(fullArgs);
+        if (fullArgs.length >= 2 && (onlyArgs.length > 0 && !Arrays.asList(onlyArgs).contains(fullArgs[1]))) {
+            for (String s : message) {
+                source.sendMessage(s.replace("%min%", this.minimumParameters + "").replace("%max%", this.maximumParameters + ""));
+            }
+            if (!showUsage) {
+                return;
+            }
+            source.sendMessage("Usage: " + this.getUsage());
+            return;
         }
 
-        this.access.invoke(this.listener, this.methodIndex, objects.toArray());
+        this.access.invoke(this.listener, this.methodIndex, invokeArguments);
     }
 
     @Override

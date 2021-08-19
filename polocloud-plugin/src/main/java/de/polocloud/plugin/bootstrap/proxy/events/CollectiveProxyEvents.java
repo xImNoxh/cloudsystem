@@ -1,8 +1,11 @@
 package de.polocloud.plugin.bootstrap.proxy.events;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
+import de.polocloud.api.util.Snowflake;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -36,9 +39,12 @@ public class CollectiveProxyEvents implements Listener {
     }
 
     @EventHandler
-    public void handle(ServerPing serverPing) {
+    public void handle(ProxyPingEvent event) {
+        ServerPing serverPing = event.getResponse();
         serverPing.getPlayers().setMax(CloudPlugin.getCloudPluginInstance().thisService().getMaxPlayers());
-        serverPing.setDescriptionComponent(new TextComponent(CloudPlugin.getCloudPluginInstance().thisService().getMotd()));
+        serverPing.setDescription(CloudPlugin.getCloudPluginInstance().thisService().getMotd());
+
+        event.setResponse(serverPing);
     }
 
     @EventHandler

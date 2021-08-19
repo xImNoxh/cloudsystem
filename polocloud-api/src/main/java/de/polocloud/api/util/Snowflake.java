@@ -30,6 +30,16 @@ public class Snowflake {
     private volatile long lastTimestamp = -1L;
     private volatile long sequence = 0L;
 
+
+    private static Snowflake instance;
+
+    public static Snowflake getInstance() {
+        if (instance == null) {
+            instance = new Snowflake();
+        }
+        return instance;
+    }
+
     // Create Snowflake with a nodeId and custom epoch
     public Snowflake(long nodeId, long customEpoch) {
         if (nodeId < 0 || nodeId > maxNodeId) {

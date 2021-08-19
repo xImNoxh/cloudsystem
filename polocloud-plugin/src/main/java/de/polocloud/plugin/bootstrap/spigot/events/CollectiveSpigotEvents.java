@@ -1,5 +1,7 @@
 package de.polocloud.plugin.bootstrap.spigot.events;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlayerPacket;
 import de.polocloud.plugin.CloudPlugin;
@@ -57,6 +59,25 @@ public class CollectiveSpigotEvents implements Listener {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, property.getGameServerMaxPlayersMessage());
             return;
         }
+
+
+        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
+
+        thisService.clone(gameServer -> {
+            gameServer.setPort(4573);
+            gameServer.setName("Lobby-3");
+            gameServer.setMaxPlayers(303);
+            gameServer.setTemplate("Lobby");
+            gameServer.setMemory(512);
+            gameServer.newSnowflake();
+
+            gameServer.getWrapper().startServer(gameServer);
+
+        });
+
+
+
+        player.sendMessage("§7Thank you for joining on §3" + thisService.getName() + " §7on §b" + thisService.getWrapper().getName() + "§8!");
 
         networkClient.sendPacket(new GameServerControlPlayerPacket(player.getUniqueId()));
     }

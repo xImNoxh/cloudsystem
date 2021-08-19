@@ -113,8 +113,7 @@ public class SimpleCommandManager implements ICommandManager {
             String name = cmd.name().toLowerCase();
 
             ICommandRunner dispatcher;
-            //if (parameterTypes.length >= 2 && parameterTypes[0] == CommandExecutor.class && parameterTypes[1] == String[].class) {
-            if (parameterTypes.length >= 1 && parameterTypes[0] == CommandExecutor.class) {
+            if (parameterTypes.length >= 2 && parameterTypes[0] == CommandExecutor.class && parameterTypes[1] == String[].class) {
                 try {
                     dispatcher = new SimpleCommandRunner(access, listener, method, cmd);
                 } catch (Throwable ex) {

@@ -11,12 +11,25 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MinArgs {
+public @interface Arguments {
 
     /**
-     * The amount of args at minimum
+     * The minimum required argument amount
      */
-    int value();
+    int min() default -1;
+
+    /**
+     * The maximum allowed argument amount
+     */
+    int max() default -1;
+
+    /**
+     * The only args[0] that are allowed
+     * so if the first argument is "test" and it is in this
+     * list it will execute the command, otherwise it will
+     * send the provided message below
+     */
+    String[] onlyFirstArgs() default {};
 
     /**
      * If usage should be sent after lacking
@@ -26,7 +39,6 @@ public @interface MinArgs {
     /**
      * The message that will be sent if lacked
      */
-    String[] message() default "Enter at least %args% arguments!";
-
+    String[] message() default "Enter arguments in range between %min% - %max%!";
 
 }

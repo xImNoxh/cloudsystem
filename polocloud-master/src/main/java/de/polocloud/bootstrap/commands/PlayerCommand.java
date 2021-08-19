@@ -1,20 +1,27 @@
 package de.polocloud.bootstrap.commands;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.command.annotation.Arguments;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.api.util.PoloUtils;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class PlayerCommand implements CommandListener {
+public class PlayerCommand implements CommandListener, TabCompletable {
 
     private ICloudPlayerManager cloudPlayerManager;
     private IGameServerManager gameServerManager;
@@ -24,13 +31,14 @@ public class PlayerCommand implements CommandListener {
         this.gameServerManager = gameServerManager;
     }
 
+
     @Command(name = "player", description = "Manage a CloudPlayer", aliases = "players")
-    public void execute(CommandExecutor sender, String[] args) {
+    public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(min = 3, message = {"----[Player]----", "Use §3player <player> message <message...> §7to send a message to a player", "Use §3player <player> kick <message...> §7to kick a player with a message", "Use §3player <player> send <server> §7to send a player to a gameserver", "----[Player]----"}) String... params) {
         //player <player> kick/message/send <Lobby-1 | Du hast dumm>
         try {
-            if (args.length == 4 && args[2].equalsIgnoreCase("send")) {
-                String player = args[1];
-                String server = args[3];
+            if (params.length == 3 && params[1].equalsIgnoreCase("send")) {
+                String player = params[0];
+                String server = params[2];
                 ICloudPlayer cloudPlayer = cloudPlayerManager.getOnlinePlayer(player).get();
                 if (cloudPlayer == null) {
                     Logger.log(LoggerType.WARNING, Logger.PREFIX + "The player » " + ConsoleColors.LIGHT_BLUE + player + ConsoleColors.GRAY + " isn't online!");
@@ -49,10 +57,10 @@ public class PlayerCommand implements CommandListener {
                 cloudPlayer.sendTo(gameServer);
                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "sent player » " + ConsoleColors.LIGHT_BLUE + cloudPlayer.getName() + ConsoleColors.GRAY +
                     " to server » " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "!");
-            } else if (args.length >= 4) {
-                if (args[2].equalsIgnoreCase("kick") || args[2].equalsIgnoreCase("message")) {
-                    String type = args[2];
-                    String player = args[1];
+            } else if (params.length >= 3) {
+                if (params[1].equalsIgnoreCase("kick") || params[1].equalsIgnoreCase("message")) {
+                    String type = params[1];
+                    String player = params[0];
                     ICloudPlayer cloudPlayer = cloudPlayerManager.getOnlinePlayer(player).get();
                     if (cloudPlayer == null) {
                         Logger.log(LoggerType.WARNING, Logger.PREFIX + "The player » " + ConsoleColors.LIGHT_BLUE + player + ConsoleColors.GRAY + " isn't online!");
@@ -60,20 +68,19 @@ public class PlayerCommand implements CommandListener {
                     }
 
 
-                    String message = "";
-                    for (int i = 3; i < args.length; i++) {
-                        message += args[i] + " ";
+                    StringBuilder message = new StringBuilder();
+                    for (int i = 2; i < params.length; i++) {
+                        message.append(params[i]).append(" ");
                     }
-                    message = message.substring(0, message.length() - 1);
-
+                    message = new StringBuilder(message.substring(0, message.length() - 1));
 
                     if (type.equalsIgnoreCase("kick")) {
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "kicking...");
-                        cloudPlayer.kick(message);
+                        cloudPlayer.kick(message.toString());
                         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "kicked player » " + ConsoleColors.LIGHT_BLUE + cloudPlayer.getName() + ConsoleColors.GRAY + "! (Message » " + ConsoleColors.LIGHT_BLUE + message + ConsoleColors.GRAY + ")");
                     } else if (type.equalsIgnoreCase("message")) {
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "messaging...");
-                        cloudPlayer.sendMessage(message);
+                        cloudPlayer.sendMessage(message.toString());
                         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "messaged player » " + ConsoleColors.LIGHT_BLUE + cloudPlayer.getName() + ConsoleColors.GRAY + "! (Message » " + ConsoleColors.LIGHT_BLUE + message + ConsoleColors.GRAY + ")");
                     }
                 } else {
@@ -94,5 +101,38 @@ public class PlayerCommand implements CommandListener {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "player <player> kick <message...> " + ConsoleColors.GRAY + "to kick a player with a message");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "player <player> send <server> " + ConsoleColors.GRAY + "to send a player to a gameserver");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Player]----");
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandExecutor executor, String[] args) {
+
+        if (args.length >= 2 && args[1].equalsIgnoreCase("message")) {
+            return new LinkedList<>();
+        }
+
+        if (args.length >= 2 && args[1].equalsIgnoreCase("kick")) {
+            return new LinkedList<>();
+        }
+
+        if (args.length == 2 && args[1].equalsIgnoreCase("send")) {
+            List<String> serverNames = new LinkedList<>();
+            for (IGameServer gameServer : PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getGameServerManager().getGameServers().get())) {
+                serverNames.add(gameServer.getName());
+            }
+            return serverNames;
+        }
+
+        if (args.length == 1) {
+            return Arrays.asList("message", "kick", "send");
+        }
+
+        if (args.length == 0) {
+            List<String> names = new LinkedList<>();
+            for (ICloudPlayer iCloudPlayer : PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getCloudPlayerManager().getAllOnlinePlayers().get())) {
+                names.add(iCloudPlayer.getName());
+            }
+            return names;
+        }
+        return new LinkedList<>();
     }
 }

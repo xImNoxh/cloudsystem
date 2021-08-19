@@ -54,7 +54,7 @@ public class SimpleScheduler implements Scheduler {
 			future.run();
 			cancelTask(future);
 			Thread.interrupted();
-		}, "scheduledTask_" + future.getId()).start();
+		}, "Scheduler#" + future.getId()).start();
 
 		return future;
 	}
@@ -143,7 +143,7 @@ public class SimpleScheduler implements Scheduler {
 
     @Override
     public SchedulerFuture getTask(int id) {
-        return new LinkedList<>(this.tasks).stream().filter(task -> task.getId() == id).findFirst().orElse(null);
+        return new LinkedList<>(this.tasks).stream().filter(task -> task != null && task.getId() == id).findFirst().orElse(null);
     }
 
     @Override @Deprecated

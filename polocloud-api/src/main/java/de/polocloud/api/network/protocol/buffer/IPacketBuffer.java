@@ -1,8 +1,10 @@
 package de.polocloud.api.network.protocol.buffer;
 
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.wrapper.IWrapper;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
@@ -56,9 +58,19 @@ public interface IPacketBuffer {
     byte readByte() throws IOException;
 
     /**
+     * Reads a {@link Packet} from this buffer
+     */
+    <T extends Packet> T readPacket() throws IOException;
+
+    /**
      * Reads an {@link ICloudPlayer} from this buffer
      */
     ICloudPlayer readCloudPlayer() throws IOException;
+
+    /**
+     * Reads an {@link IWrapper} from this buffer
+     */
+    IWrapper readWrapper() throws IOException;
 
     /**
      * Reads an {@link IGameServer} from this buffer
@@ -99,6 +111,14 @@ public interface IPacketBuffer {
      * @throws IOException if something goes wrong
      */
     void writeCustom(Object custom) throws IOException;
+
+    /**
+     * Writes a custom packet to this buffer
+     *
+     * @param packet the packet
+     * @throws IOException if something goes wrong
+     */
+    void writePacket(Packet packet) throws IOException;
 
     /**
      * Writes a {@link UUID} object to this buffer
@@ -211,6 +231,14 @@ public interface IPacketBuffer {
      * @throws IOException if something goes wrong
      */
     void writeCloudPlayer(ICloudPlayer cloudPlayer) throws IOException;
+
+    /**
+     * Writes an {@link IWrapper} object to this buffer
+     *
+     * @param wrapper the wrapper
+     * @throws IOException if something goes wrong
+     */
+    void writeWrapper(IWrapper wrapper) throws IOException;
 
     /**
      * Writes an {@link ITemplate} object to this buffer

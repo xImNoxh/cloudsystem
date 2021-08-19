@@ -31,8 +31,9 @@ import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
-import de.polocloud.bootstrap.client.IWrapperClientManager;
-import de.polocloud.bootstrap.client.SimpleWrapperClientManager;
+import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
@@ -58,6 +59,7 @@ import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
@@ -66,11 +68,11 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     private final Injector inector;
 
     private final ITemplateService templateService;
-    private final IWrapperClientManager wrapperClientManager;
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
     private final CommandExecutor commandExecutor;
     private final ICommandManager commandManager;
+    private final IWrapperManager wrapperManager;
 
     private final SimpleConfigLoader simpleConfigLoader = new SimpleConfigLoader();
     private final SimpleConfigSaver simpleConfigSaver = new SimpleConfigSaver();
@@ -113,16 +115,16 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
             }
 
         };
-        this.wrapperClientManager = new SimpleWrapperClientManager();
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
         this.commandManager = new SimpleCommandManager();
+        this.wrapperManager = new SimpleCachedWrapperManager();
         this.portService = new PortService(gameServerManager);
 
         masterConfig = loadConfig();
 
-        inector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, wrapperClientManager, this.gameServerManager, templateService, this.cloudPlayerManager));
+        inector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateService, this.cloudPlayerManager));
 
         this.fallbackSearchService = new FallbackSearchService(masterConfig);
         this.moduleCache = new ModuleCache();
@@ -201,7 +203,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         try {
             if (this.templateService.getLoadedTemplates().get().size() > 0) {
                 StringBuilder builder = new StringBuilder();
-                this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%),"));
+                this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%), "));
                 Logger.log(LoggerType.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 1));
             } else {
                 Logger.log(LoggerType.INFO, "No templates founded.");
@@ -218,25 +220,15 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         this.running = false;
         boolean terminate = this.nettyServer.terminate();
 
-        try {
-            for (IGameServer gameServer : getGameServerManager().getGameServers().get()) {
-                gameServer.terminate();
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        for (IGameServer gameServer : PoloUtils.sneakyThrows(() -> gameServerManager.getGameServers().get())) {
+            gameServer.terminate();
         }
+        commandExecutor.sendMessage("§cShutting down in §e2 Seconds§c...");
         Scheduler.runtimeScheduler().schedule(() -> {
-            Logger.log(LoggerType.INFO, "All " + ConsoleColors.CYAN + "GameServers " + ConsoleColors.RESET + "are now " + ConsoleColors.RED + "stopped" + ConsoleColors.RESET + "!");
-            Logger.log(LoggerType.INFO, "Shutting down Master...");
+            commandExecutor.sendMessage("§7All §bGameServers §7were §cstopped§7!");
+            commandExecutor.sendMessage("Shutting down Master...");
             System.exit(0);
-        }, () -> {
-            try {
-                return PoloCloudAPI.getInstance().getGameServerManager().getGameServers().get().isEmpty();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            return false;
-        });
+        }, 40L);
         return terminate;
     }
 
@@ -271,6 +263,11 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
+    public IWrapperManager getWrapperManager() {
+        return wrapperManager;
+    }
+
+    @Override
     public IEventHandler getEventHandler() {
         return null;
     }
@@ -301,10 +298,6 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
     public SimpleNettyServer getNettyServer() {
         return nettyServer;
-    }
-
-    public IWrapperClientManager getWrapperClientManager() {
-        return wrapperClientManager;
     }
 
     public MasterModuleLoader getModuleLoader() {

@@ -3,8 +3,6 @@ package de.polocloud.bootstrap.network.handler.gameserver;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.command.executor.ExecutorType;
-import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
@@ -24,10 +22,11 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public abstract class GameServerPacketController {
 
@@ -75,16 +74,9 @@ public abstract class GameServerPacketController {
     }
 
     public void sendCloudCommandAcceptList(IGameServer gameServer) {
-        if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)){
-            ArrayList<String> commandList = Lists.newArrayList();
-            ArrayList<String> aliases = Lists.newArrayList();
+        if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT))
+            gameServer.sendPacket(new CommandListAcceptorPacket(Lists.newArrayList(), Lists.newArrayList()));
 
-            PoloCloudAPI.getInstance().getCommandManager().getCommands().stream().filter(command -> Arrays.asList(command.getAllowedSourceTypes()).contains(ExecutorType.PLAYER)).collect(Collectors.toList()).forEach(key ->{
-                commandList.add(key.getCommand().name());
-                aliases.addAll(Arrays.stream(key.getCommand().aliases()).collect(Collectors.toList()));
-            });
-            gameServer.sendPacket(new CommandListAcceptorPacket(commandList, aliases));
-        }
     }
 
     public void updateProxyServerList(IGameServer gameServer) {
@@ -113,6 +105,8 @@ public abstract class GameServerPacketController {
     public void sendServerStartLog(IGameServer server) {
         Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE + server.getName() + ConsoleColors.GRAY
             + " is now " + ConsoleColors.GREEN + "connected" + ConsoleColors.GRAY + ". (" + (System.currentTimeMillis() - server.getStartTime()) + "ms)");
+
+        PoloCloudAPI.getInstance().getWrapperManager().syncCache(server);
     }
 
     public void callServerStartedEvent(IGameServer gameServer) {

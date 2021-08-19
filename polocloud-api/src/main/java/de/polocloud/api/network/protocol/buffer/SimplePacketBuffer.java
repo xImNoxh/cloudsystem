@@ -6,18 +6,20 @@ import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.DefaultGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.protocol.packet.PacketRegistry;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
+import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -189,6 +191,31 @@ public class SimplePacketBuffer implements IPacketBuffer {
     }
 
     @Override
+    public void writePacket(Packet packet) throws IOException {
+        this.writeInt(PacketRegistry.getPacketId(packet.getClass()));
+        packet.write(this);
+    }
+
+    @Override
+    public <T extends Packet> T readPacket() throws IOException {
+        int id = this.readInt();
+        return (T) PacketRegistry.createPacket(id);
+    }
+
+    @Override
+    public IWrapper readWrapper() throws IOException {
+        long snowflake = readLong();
+        String name = readString();
+        return new SimpleWrapper(name, snowflake, PoloCloudAPI.getInstance().getConnection().ctx());
+    }
+
+    @Override
+    public void writeWrapper(IWrapper wrapper) throws IOException {
+        this.writeLong(wrapper.getSnowflake());
+        this.writeString(wrapper.getName());
+    }
+
+    @Override
     public IGameServer readGameServer() throws IOException {
         String name = readString();
         String motd = readString();
@@ -206,115 +233,8 @@ public class SimplePacketBuffer implements IPacketBuffer {
         int maxPlayers = this.readInt();
         boolean serviceVisibility = this.readBoolean();
 
-        return new IGameServer() {
-            @Override
-            public String getName() {
-                return name;
-            }
+        return new DefaultGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, totalMemory, port, maxPlayers, template);
 
-            @Override
-            public GameServerStatus getStatus() {
-                return status;
-            }
-
-            @Override
-            public void setStatus(GameServerStatus status) {
-                //TODO
-            }
-
-            @Override
-            public long getSnowflake() {
-                return snowflake;
-            }
-
-            @Override
-            public ITemplate getTemplate() {
-                return template;
-            }
-
-            @Override
-            public List<ICloudPlayer> getCloudPlayers() {
-                //TODO
-                return null;
-            }
-
-            @Override
-            public long getTotalMemory() {
-                return totalMemory;
-            }
-
-            @Override
-            public int getOnlinePlayers() {
-                return onlinePlayers;
-            }
-
-            @Override
-            public int getPort() {
-                return port;
-            }
-
-            @Override
-            public long getPing() {
-                return ping;
-            }
-
-            @Override
-            public long getStartTime() {
-                return startTime;
-            }
-
-            @Override
-            public void stop() {
-                sendPacket(new GameServerShutdownPacket(name));
-            }
-
-            @Override
-            public void terminate() {
-                //TODO
-            }
-
-            @Override
-            public void sendPacket(Packet packet) {
-                //TODO
-            }
-
-            @Override
-            public String getMotd() {
-                return motd;
-            }
-
-            @Override
-            public int getMaxPlayers() {
-                return maxPlayers;
-            }
-
-            @Override
-            public void setMotd(String motd) {
-                //TODO
-            }
-
-
-            @Override
-            public void setMaxPlayers(int players) {
-                //TODO
-            }
-
-            @Override
-            public void setVisible(boolean serviceVisibility) {
-                //TODO
-            }
-
-            @Override
-            public boolean getServiceVisibility() {
-                return serviceVisibility;
-            }
-
-            @Override
-            public void update() {
-                //TODO
-            }
-
-        };
     }
 
     @Override
