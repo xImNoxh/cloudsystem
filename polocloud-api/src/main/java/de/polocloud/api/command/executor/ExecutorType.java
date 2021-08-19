@@ -1,14 +1,10 @@
-
 package de.polocloud.api.command.executor;
 
-import de.polocloud.api.command.executor.CommandExecutor;
-import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.player.ICloudPlayer;
 
 public enum ExecutorType {
 
     PLAYER {
-
         @Override
         public boolean isTypeOf(CommandExecutor o) {
             return o instanceof ICloudPlayer;

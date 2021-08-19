@@ -177,7 +177,11 @@ public class SimpleCommandManager implements ICommandManager {
 
     @Override
     public List<ICommandRunner> getCommands() {
-        return new LinkedList<>(this.dispatchers.values());
+        LinkedList<ICommandRunner> commands = new LinkedList<>(this.dispatchers.values());
+        Set<ICommandRunner> set = new HashSet<>(commands);
+        commands.clear();
+        commands.addAll(set);
+        return commands;
     }
 
     @Override

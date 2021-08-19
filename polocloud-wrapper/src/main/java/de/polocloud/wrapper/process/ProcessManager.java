@@ -23,5 +23,7 @@ public class ProcessManager {
         processMap.remove(snowFlake);
     }
 
-
+    public Map<Long, Process> getProcessMap() {
+        return processMap;
+    }
 }

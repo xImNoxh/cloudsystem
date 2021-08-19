@@ -20,12 +20,7 @@ public class ReloadCommand implements CommandListener {
     @Command(name = "reload", description = "Reloads a module or the entire cloud", aliases = "rl")
     @CommandPermission("command.reload")
     @CommandExecutors(ExecutorType.CONSOLE)
-    public void execute(CommandExecutor sender, @MaxArgs(value = 2, message = {
-        "----[Reload]----",
-        "Use §3reload all §7to reload the clouds",
-        "Use §3reload module <module> §7to reload a module",
-        "----[Reload]----",
-    }) String... args) {
+    public void execute(CommandExecutor sender, String[] args) {
         if (args.length == 2) {
             if (args[1].equalsIgnoreCase("all")) {
                 long start = System.currentTimeMillis();
@@ -61,9 +56,9 @@ public class ReloadCommand implements CommandListener {
     }
 
     private void sendHelp() {
-       /* Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Reload]----");
+       Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Reload]----");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "reload all " + ConsoleColors.GRAY + "to reload the clouds");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "reload module <module> " + ConsoleColors.GRAY + "to reload a module");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Reload]----");*/
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Reload]----");
     }
 }

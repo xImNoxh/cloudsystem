@@ -138,7 +138,7 @@ public class SimpleCommandRunner implements ICommandRunner {
         if (sources != null && sources.value().length > 0) {
             this.allowedSourceTypes = sources.value();
         } else {
-            this.allowedSourceTypes = new ExecutorType[]{ ExecutorType.ALL };
+            this.allowedSourceTypes = new ExecutorType[]{ ExecutorType.CONSOLE };
         }
     }
 
@@ -278,4 +278,8 @@ public class SimpleCommandRunner implements ICommandRunner {
         return this.listener.getClass().equals(aClass);
     }
 
+    @Override
+    public ExecutorType[] getAllowedSourceTypes() {
+        return allowedSourceTypes;
+    }
 }

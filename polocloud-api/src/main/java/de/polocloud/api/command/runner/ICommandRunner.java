@@ -3,6 +3,7 @@ package de.polocloud.api.command.runner;
 
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
 
 import java.util.Arrays;
@@ -52,5 +53,10 @@ public interface ICommandRunner {
      * contains the command
      */
     boolean isContainedBy(Class<? extends CommandListener> cls);
+
+    /**
+     * Returns the type of executors {@link ExecutorType}
+     */
+    ExecutorType[] getAllowedSourceTypes();
 
 }

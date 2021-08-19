@@ -1,9 +1,12 @@
 package de.polocloud.bootstrap.commands.ingame;
 
 import com.google.inject.Inject;
-import de.polocloud.api.commands.CloudCommand;
-import de.polocloud.api.commands.CommandType;
-import de.polocloud.api.commands.ICommandExecutor;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.annotation.CommandExecutors;
+import de.polocloud.api.command.annotation.CommandPermission;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -27,8 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-@CloudCommand.Info(name = "cloud", description = "Manage the cloud system ingame", aliases = "c", commandType = CommandType.INGAME)
-public class CloudIngameCommand extends CloudCommand {
+public class CloudIngameCommand implements CommandListener {
 
     private final String prefix = "§bPoloCloud §7" + "» ";
 
@@ -50,8 +52,10 @@ public class CloudIngameCommand extends CloudCommand {
     public CloudIngameCommand() {
     }
 
-    @Override
-    public void execute(ICommandExecutor sender, String[] args) {
+    @Command(name = "cloud", description = "Manage the cloud from ingame", aliases = "c")
+    @CommandPermission("cloud.use")
+    @CommandExecutors(ExecutorType.PLAYER)
+    public void execute(CommandExecutor sender, String[] args) {
         ICloudPlayer player = (ICloudPlayer) sender;
         try {
             if (player.hasPermissions("cloud.use").get()) {

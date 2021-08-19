@@ -280,6 +280,9 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     @Override
     public boolean terminate() {
         boolean terminate = this.nettyClient.terminate();
+        for (Long snowflake : processManager.getProcessMap().keySet()) {
+            processManager.terminateProcess(snowflake);
+        }
         Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
         return terminate;
     }

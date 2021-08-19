@@ -1,7 +1,4 @@
-
 package de.polocloud.api.command.identifier;
-
-
 
 /**
  * This is simply a marker interface for classes that
