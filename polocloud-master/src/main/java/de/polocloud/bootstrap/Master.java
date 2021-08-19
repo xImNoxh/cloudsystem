@@ -3,11 +3,11 @@ package de.polocloud.bootstrap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.SimpleCommandManager;
+import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
@@ -35,6 +35,7 @@ import de.polocloud.api.util.PoloUtils;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import de.polocloud.bootstrap.commands.*;
+import de.polocloud.bootstrap.commands.ingame.CloudIngameCommand;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.gameserver.SimpleGameServerManager;
@@ -58,9 +59,12 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
@@ -145,6 +149,8 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
         getCommandManager().registerCommand(getGuice().getInstance(GameServerCommand.class));
         getCommandManager().registerCommand(getGuice().getInstance(WrapperCommand.class));
+        getCommandManager().registerCommand(getGuice().getInstance(CloudIngameCommand.class));
+
 
         Thread runnerThread = new Thread(getGuice().getInstance(ServerCreatorRunner.class));
         this.moduleLoader.loadModules(false);
