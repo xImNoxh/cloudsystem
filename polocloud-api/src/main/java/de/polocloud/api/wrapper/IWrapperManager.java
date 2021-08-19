@@ -29,7 +29,6 @@ public interface IWrapperManager {
      */
     IWrapper getWrapper(ChannelHandlerContext channelHandlerContext);
 
-
     /**
      * Registers an {@link IWrapper} in cache
      *
