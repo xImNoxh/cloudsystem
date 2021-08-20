@@ -10,9 +10,14 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.event.IEventManager;
 import de.polocloud.api.event.SimpleCachedEventManager;
 import de.polocloud.api.event.base.IEvent;
+import de.polocloud.api.fallback.IFallbackManager;
+import de.polocloud.api.fallback.SimpleCachedFallbackManager;
+import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.placeholder.IPlaceHolder;
 import de.polocloud.api.placeholder.IPlaceHolderManager;
 import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
 import de.polocloud.api.player.ICloudPlayerManager;
@@ -33,6 +38,7 @@ public abstract class PoloCloudAPI {
     protected final IPlaceHolderManager placeHolderManager;
     protected final IWrapperManager wrapperManager;
     protected final IEventManager eventManager;
+    protected final IFallbackManager fallbackManager;
 
     protected PoloCloudAPI(PoloType type) {
         instance = this;
@@ -43,7 +49,19 @@ public abstract class PoloCloudAPI {
         this.commandManager = new SimpleCommandManager();
         this.placeHolderManager = new SimpleCachedPlaceHolderManager();
         this.wrapperManager = new SimpleCachedWrapperManager();
+        this.fallbackManager = new SimpleCachedFallbackManager();
+
     }
+
+    /**
+     * Updates the cache of the current instance
+     *
+     * If....
+     *
+     * 'MASTER' -> Sends cache to all servers
+     * 'PLUGIN' -> Requests cache from master
+     */
+    public abstract void updateCache();
 
     /**
      * The current {@link INetworkConnection} to manage
@@ -77,25 +95,10 @@ public abstract class PoloCloudAPI {
     public abstract ICloudPlayerManager getCloudPlayerManager();
 
     /**
-     * The current {@link IConfigLoader} instance to load {@link de.polocloud.api.config.IConfig}s
-     */
-    public abstract IConfigLoader getConfigLoader();
-
-    /**
-     * The current {@link IConfigSaver} instance to save {@link de.polocloud.api.config.IConfig}s
-     */
-    public abstract IConfigSaver getConfigSaver();
-
-    /**
      * The current {@link IPubSubManager} to manage all
      * data-flows and register channel-handlers or send data yourself
      */
     public abstract IPubSubManager getPubSubManager();
-
-    /**
-     * The current {@link IProtocol} of the cloud
-     */
-    public abstract IProtocol getCloudProtocol();
 
     /**
      * The current {@link Injector} instance
@@ -108,7 +111,6 @@ public abstract class PoloCloudAPI {
     // Class provided field getters and setters
 
     //========================================
-
 
     /**
      * The instance of the cloud api
@@ -130,6 +132,20 @@ public abstract class PoloCloudAPI {
         return Optional.ofNullable(instance);
     }
 
+    /**
+     * Sends a {@link Packet} to the other connection side
+     *
+     * If this instance is...
+     *
+     * 'CLOUD/SERVER' -> Will send to all connected clients
+     * 'BRIDGE/SPIGOT/PROXY' -> WIll send to the Master
+     *
+     * @param packet the packet to send
+     */
+    public void sendPacket(Packet packet) {
+        this.getConnection().sendPacket(packet);
+    }
+
     public PoloType getType() {
         return type;
     }
@@ -144,6 +160,10 @@ public abstract class PoloCloudAPI {
 
     public IPlaceHolderManager getPlaceHolderManager() {
         return placeHolderManager;
+    }
+
+    public IFallbackManager getFallbackManager() {
+        return fallbackManager;
     }
 
     public IWrapperManager getWrapperManager() {

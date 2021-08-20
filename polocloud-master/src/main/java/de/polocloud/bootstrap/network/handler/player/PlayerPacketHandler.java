@@ -106,12 +106,12 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
         });
 
         new SimplePacketHandler<GameServerPlayerRequestJoinPacket>(GameServerPlayerRequestJoinPacket.class,
-            (ctx, packet) -> getSearchedFallback(packet, (iGameServers, uuid) -> {
-                if (isGameServerListEmpty(iGameServers)) {
+            (ctx, packet) -> getSearchedFallback(packet, (iFallback, uuid) -> {
+                if (iFallback == null) {
                     sendMasterPlayerRequestJoinResponsePacket(ctx, uuid, "", -1);
                     return;
                 }
-                IGameServer gameServer = getNextFallback(iGameServers);
+                IGameServer gameServer = PoloCloudAPI.getInstance().getFallbackManager().getFallback(iFallback);
                 sendMasterPlayerRequestJoinResponsePacket(ctx, uuid, gameServer == null ? "" : gameServer.getName(), gameServer == null ? -1 : gameServer.getSnowflake());
             }));
 

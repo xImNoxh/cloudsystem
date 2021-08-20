@@ -1,0 +1,48 @@
+package de.polocloud.api.fallback;
+
+import de.polocloud.api.fallback.base.IFallback;
+import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.player.ICloudPlayer;
+
+import java.util.List;
+
+public interface IFallbackManager {
+
+    /**
+     * Checks if a given {@link ICloudPlayer} is already on a fallback server
+     *
+     * @param cloudPlayer the player
+     * @return boolean
+     */
+    boolean isFallback(ICloudPlayer cloudPlayer);
+
+    /**
+     * Gets a list of all available {@link IFallback}s
+     */
+    List<IFallback> getAvailableFallbacks();
+
+    /**
+     * Gets the highest accessible {@link IFallback} for a given {@link ICloudPlayer}
+     *
+     * @param cloudPlayer the player
+     * @return the fallback or null if not found
+     */
+    IFallback getHighestFallback(ICloudPlayer cloudPlayer);
+
+    /**
+     * Gets a {@link IGameServer} for a {@link IFallback}
+     *
+     * @param fallback the fallback
+     * @return gameserver
+     */
+    IGameServer getFallback(IFallback fallback);
+
+    /**
+     * Automatically gets a Fallback parsed as {@link IGameServer}
+     * for a given {@link ICloudPlayer}
+     *
+     * @param cloudPlayer the player
+     * @return server
+     */
+    IGameServer getFallback(ICloudPlayer cloudPlayer);
+}

@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.template.fallback;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
@@ -27,7 +28,7 @@ public class FallbackSearchService {
 
     public List<IGameServer> searchForTemplate(ICloudPlayer cloudPlayer, boolean hubCommand) {
         try {
-            for (FallbackProperty fallbackProperty : masterConfig.getProperties().getFallbackProperties()) {
+            for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbackProperties()) {
                 if ((cloudPlayer == null && !fallbackProperty.getFallbackPermission().equals(""))) {
                     continue;
                 }

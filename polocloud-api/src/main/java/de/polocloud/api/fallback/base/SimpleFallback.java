@@ -1,13 +1,16 @@
-package de.polocloud.bootstrap.template.fallback;
+package de.polocloud.api.fallback.base;
 
-//TODO: IMPLEMENT IN API
-public class FallbackProperty {
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.util.PoloUtils;
+
+public class SimpleFallback implements IFallback{
 
     private final String templateName, fallbackPermission;
     private final boolean forcedJoin;
     private final int priority;
 
-    public FallbackProperty(String templateName, String fallbackPermission, boolean forcedJoin, int priority) {
+    public SimpleFallback(String templateName, String fallbackPermission, boolean forcedJoin, int priority) {
         this.templateName = templateName;
         this.fallbackPermission = fallbackPermission;
         this.forcedJoin = forcedJoin;
@@ -16,6 +19,11 @@ public class FallbackProperty {
 
     public String getTemplateName() {
         return templateName;
+    }
+
+    @Override
+    public ITemplate getTemplate() {
+        return PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getTemplateService().getTemplateByName(this.templateName).get());
     }
 
     public String getFallbackPermission() {

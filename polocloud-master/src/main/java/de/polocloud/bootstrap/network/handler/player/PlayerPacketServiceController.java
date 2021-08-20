@@ -5,6 +5,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
+import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
@@ -136,9 +137,6 @@ public abstract class PlayerPacketServiceController {
         }
     }
 
-    public IGameServer getNextFallback(List<IGameServer> fallbacks) {
-        return fallbacks.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
-    }
 
     public boolean isGameServerListEmpty(List<IGameServer> list) {
         return list == null || list.isEmpty();
@@ -163,8 +161,8 @@ public abstract class PlayerPacketServiceController {
         ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, serviceName, snowflake));
     }
 
-    public void getSearchedFallback(GameServerPlayerRequestJoinPacket packet, BiConsumer<List<IGameServer>, UUID> handle) {
-        handle.accept(Master.getInstance().getFallbackSearchService().searchForTemplate(null, false), packet.getUuid());
+    public void getSearchedFallback(GameServerPlayerRequestJoinPacket packet, BiConsumer<IFallback, UUID> handle) {
+        handle.accept(PoloCloudAPI.getInstance().getFallbackManager().getHighestFallback(null), packet.getUuid());
     }
 
     public void convertService(ICloudPlayer player, BiConsumer<Boolean, Boolean> online) {

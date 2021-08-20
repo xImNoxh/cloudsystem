@@ -7,9 +7,7 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
-import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
@@ -20,7 +18,7 @@ import de.polocloud.api.guice.PoloAPIGuiceModule;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
-import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.packet.api.other.GlobalCachePacket;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
@@ -46,7 +44,7 @@ import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
-import de.polocloud.bootstrap.template.fallback.FallbackProperty;
+import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.bootstrap.template.fallback.FallbackSearchService;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -155,11 +153,11 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
         //Sorting the Fallbacks after the FallbackPriority, to make it faster
         if (!masterConfig.getProperties().getFallbackProperties().isEmpty()) {
-            masterConfig.getProperties().getFallbackProperties().sort(Comparator.comparingInt(FallbackProperty::getPriority));
+            masterConfig.getProperties().getFallbackProperties().sort(Comparator.comparingInt(SimpleFallback::getPriority));
         } else {
             Logger.log(LoggerType.WARNING, "No fallbacks are registered in config.json! The Cloud don't find any fallbacks, so you can't join!");
             Logger.log(LoggerType.INFO, "Adding a default Lobby fallback!");
-            masterConfig.getProperties().getFallbackProperties().add(new FallbackProperty("Lobby", "", true, 1));
+            masterConfig.getProperties().getFallbackProperties().add(new SimpleFallback("Lobby", "", true, 1));
         }
         simpleConfigSaver.save(masterConfig, configFile);
         return masterConfig;
@@ -199,6 +197,11 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
+    public void updateCache() {
+        this.getConnection().sendPacket(new GlobalCachePacket());
+    }
+
+    @Override
     public boolean terminate() {
         this.running = false;
         boolean terminate = this.nettyServer.terminate();
@@ -220,25 +223,9 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
-    public IConfigLoader getConfigLoader() {
-        return simpleConfigLoader;
-    }
-
-    @Override
-    public IConfigSaver getConfigSaver() {
-        return simpleConfigSaver;
-    }
-
-    @Override
     public IPubSubManager getPubSubManager() {
         return pubSubManager;
     }
-
-    @Override
-    public IProtocol getCloudProtocol() {
-        return null;
-    }
-
 
     @Override
     public ITemplateService getTemplateService() {

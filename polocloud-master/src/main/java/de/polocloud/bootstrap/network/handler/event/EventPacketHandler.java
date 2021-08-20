@@ -2,6 +2,7 @@ package de.polocloud.bootstrap.network.handler.event;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.network.protocol.packet.api.EventPacket;
+import de.polocloud.api.network.protocol.packet.api.other.CacheRequestPacket;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 
 public class EventPacketHandler {
@@ -15,5 +16,7 @@ public class EventPacketHandler {
 
             PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
         });
+
+        new SimplePacketHandler<>(CacheRequestPacket.class, cacheRequestPacket -> PoloCloudAPI.getInstance().updateCache());
     }
 }

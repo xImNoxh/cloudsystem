@@ -20,7 +20,7 @@ public interface IEventManager {
      *
      * @param listener the listener
      */
-    void unregisterListener(IListener listener);
+    void unregisterListener(Class<? extends IListener> listenerClass);
 
     /**
      * Registers an {@link IEventHandler}
@@ -33,10 +33,9 @@ public interface IEventManager {
     /**
      * Unregisters an {@link IEventHandler}
      *
-     * @param handler the handler
-     * @param eventClass the event class
+     * @param handlerClass the handler class
      */
-    <E extends IEvent> void unregisterHandler(Class<E> eventClass, IEventHandler<E> handler);
+    <E extends IEvent> void unregisterHandler(Class<E> eventClass, Class<? extends IEventHandler<E>> handlerClass);
 
     /**
      * Calls an Event with the driver

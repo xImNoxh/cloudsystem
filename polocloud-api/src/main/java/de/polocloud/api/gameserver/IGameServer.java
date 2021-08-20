@@ -2,6 +2,7 @@ package de.polocloud.api.gameserver;
 
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.wrapper.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,12 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface IGameServer extends Serializable {
-
-    /**
-     * The name of this game server
-     */
-    String getName();
+public interface IGameServer extends PoloObject, Serializable  {
 
     /**
      * The {@link GameServerStatus} of this game server to identify
@@ -38,15 +34,6 @@ public interface IGameServer extends Serializable {
      * The visibility state of this server
      */
     boolean getServiceVisibility();
-
-    /**
-     * The snowflake of this game server to identify
-     * this server out of other servers
-     * Its like a {@link java.util.UUID}
-     *
-     * @return snowflake as long
-     */
-    long getSnowflake();
 
     /**
      * The {@link ITemplate} of this server to get all infos

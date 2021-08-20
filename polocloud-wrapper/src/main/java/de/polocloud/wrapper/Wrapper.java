@@ -128,6 +128,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         });
     }
 
+    @Override
+    public void updateCache() {
+
+    }
+
     private void checkAndDeleteTmpFolder() {
         File tmpFile = new File("tmp");
         if (tmpFile.exists()) {
@@ -267,22 +272,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
-    public IConfigLoader getConfigLoader() {
-        return null;
-    }
-
-    @Override
-    public IConfigSaver getConfigSaver() {
-        return null;
-    }
-
-    @Override
     public IPubSubManager getPubSubManager() {
-        return null;
-    }
-
-    @Override
-    public IProtocol getCloudProtocol() {
         return null;
     }
 

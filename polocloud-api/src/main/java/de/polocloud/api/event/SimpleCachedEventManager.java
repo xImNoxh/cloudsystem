@@ -21,7 +21,7 @@ public class SimpleCachedEventManager implements IEventManager {
     /**
      * All cached registered classes
      */
-    private final Map<Object, List<EventMethod<EventHandler>>> registeredClasses;
+    private final Map<IListener, List<EventMethod<EventHandler>>> registeredClasses;
     private final Map<Class<? extends IEvent>, List<IEventHandler<?>>> eventHandlers;
 
     public SimpleCachedEventManager() {
@@ -48,9 +48,14 @@ public class SimpleCachedEventManager implements IEventManager {
         registeredClasses.put(listener, eventMethods);
     }
 
+
     @Override
-    public void unregisterListener(IListener listener) {
-        registeredClasses.remove(listener);
+    public void unregisterListener(Class<? extends IListener> listenerClass) {
+        for (IListener iListener : registeredClasses.keySet()) {
+            if (iListener.getClass().equals(listenerClass)) {
+                registeredClasses.remove(iListener);
+            }
+        }
     }
 
     @Override
@@ -64,13 +69,22 @@ public class SimpleCachedEventManager implements IEventManager {
     }
 
     @Override
-    public <E extends IEvent> void unregisterHandler(Class<E> eventClass, IEventHandler<E> handler) {
-        List<IEventHandler<?>> iEventHandlers = eventHandlers.get(eventClass);
-        if (iEventHandlers == null) {
-            iEventHandlers = new LinkedList<>();
+    public <E extends IEvent> void unregisterHandler(Class<E> eventClass, Class<? extends IEventHandler<E>> handlerClass) {
+
+
+        for (List<IEventHandler<?>> value : this.eventHandlers.values()) {
+            for (IEventHandler<?> iEventHandler : value) {
+                if (iEventHandler.getClass().equals(handlerClass)) {
+                    List<IEventHandler<?>> iEventHandlers = eventHandlers.get(eventClass);
+                    if (iEventHandlers == null) {
+                        iEventHandlers = new LinkedList<>();
+                    }
+                    iEventHandlers.remove(iEventHandler);
+                    this.eventHandlers.put(eventClass, iEventHandlers);
+                }
+            }
         }
-        iEventHandlers.remove(handler);
-        this.eventHandlers.put(eventClass, iEventHandlers);
+
     }
 
     @Override

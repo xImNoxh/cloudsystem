@@ -12,6 +12,7 @@ import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.packet.api.other.CacheRequestPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
@@ -28,10 +29,7 @@ import de.polocloud.plugin.protocol.property.GameServerProperty;
 public class CloudPlugin extends PoloCloudAPI {
 
     private final GameServerProperty gameServerProperty;
-    private final IProtocol iProtocol;
     private final IPubSubManager pubSubManager;
-    private final IConfigLoader configLoader = new SimpleConfigLoader();
-    private final IConfigSaver configSaver = new SimpleConfigSaver();
     private SimpleGameServer gameServer;
     private IBootstrap bootstrap;
     private NetworkClient networkClient;
@@ -46,7 +44,6 @@ public class CloudPlugin extends PoloCloudAPI {
         this.bootstrap = bootstrap;
         this.networkClient = new NetworkClient(bootstrap);
         this.gameServerProperty = new GameServerProperty();
-        this.iProtocol = networkClient.getProtocol();
 
         this.cloudPlayerManager = new APICloudPlayerManager();
         this.gameServerManager = new APIGameServerManager();
@@ -75,6 +72,11 @@ public class CloudPlugin extends PoloCloudAPI {
             networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(gameServer.getName(), gameServer.getSnowflake()));
 
         });
+    }
+
+    @Override
+    public void updateCache() {
+        sendPacket(new CacheRequestPacket());
     }
 
     public NetworkClient getNetworkClient() {
@@ -118,24 +120,10 @@ public class CloudPlugin extends PoloCloudAPI {
     }
 
     @Override
-    public IConfigLoader getConfigLoader() {
-        return configLoader;
-    }
-
-    @Override
-    public IConfigSaver getConfigSaver() {
-        return configSaver;
-    }
-
-    @Override
     public IPubSubManager getPubSubManager() {
         return pubSubManager;
     }
 
-    @Override
-    public IProtocol getCloudProtocol() {
-        return iProtocol;
-    }
 
     @Override
     public Injector getGuice() {
