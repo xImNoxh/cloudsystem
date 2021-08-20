@@ -153,9 +153,13 @@ public class SimpleScheduler implements Scheduler {
 
     @Override
     public void cancelTask(SchedulerFuture task) {
-        if (task != null) {
-            task.setCancelled(true);
-            this.tasks.removeIf(task1 -> task.getId() == task1.getId());
+	    try {
+            if (task != null) {
+                task.setCancelled(true);
+                this.tasks.removeIf(task1 -> task.getId() == task1.getId());
+            }
+        } catch (NullPointerException e) {
+            //ignoring
         }
     }
 

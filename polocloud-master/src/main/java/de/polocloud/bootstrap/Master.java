@@ -3,21 +3,17 @@ package de.polocloud.bootstrap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
-import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.IEventHandler;
-import de.polocloud.api.event.channel.ChannelActiveEvent;
-import de.polocloud.api.event.channel.ChannelInactiveEvent;
-import de.polocloud.api.event.netty.NettyExceptionEvent;
+import de.polocloud.api.event.impl.net.ChannelActiveEvent;
+import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
+import de.polocloud.api.event.impl.net.NettyExceptionEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
@@ -32,8 +28,6 @@ import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.util.PoloUtils;
-import de.polocloud.api.wrapper.IWrapperManager;
-import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.bootstrap.commands.ingame.CloudIngameCommand;
 import de.polocloud.bootstrap.config.MasterConfig;
@@ -59,24 +53,17 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
-    public static Master instance;
     private final Injector inector;
 
     private final ITemplateService templateService;
     private final IGameServerManager gameServerManager;
     private final ICloudPlayerManager cloudPlayerManager;
     private final CommandExecutor commandExecutor;
-    private final ICommandManager commandManager;
-    private final IWrapperManager wrapperManager;
 
     private final SimpleConfigLoader simpleConfigLoader = new SimpleConfigLoader();
     private final SimpleConfigSaver simpleConfigSaver = new SimpleConfigSaver();
@@ -93,14 +80,12 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     private final MasterConfig masterConfig;
 
     public Master() {
-
-        instance = this;
-        PoloCloudAPI.setInstance(this);
+        super(PoloType.MASTER);
 
         this.commandExecutor = new ConsoleExecutor() {
             @Override
             public void runCommand(String command) {
-                commandManager.runCommand(command, this);
+                getCommandManager().runCommand(command, this);
             }
 
             @Override
@@ -122,8 +107,6 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
-        this.commandManager = new SimpleCommandManager();
-        this.wrapperManager = new SimpleCachedWrapperManager();
         this.portService = new PortService(gameServerManager);
 
         masterConfig = loadConfig();
@@ -134,11 +117,10 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         this.moduleCache = new ModuleCache();
         this.moduleLoader = new MasterModuleLoader(moduleCache);
 
-
         ((SimpleTemplateService) this.templateService).load(this, TemplateStorage.FILE);
         this.templateService.getTemplateLoader().loadTemplates();
 
-        EventRegistry.registerListener(new NettyExceptionListener(), NettyExceptionEvent.class);
+        getEventManager().registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
 
         getCommandManager().registerCommand(new StopCommand());
         getCommandManager().registerCommand(new TemplateCommand(templateService, gameServerManager));
@@ -162,13 +144,8 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         return this.nettyServer;
     }
 
-    @Override
-    public PoloType getType() {
-        return PoloType.MASTER;
-    }
-
     public static Master getInstance() {
-        return instance;
+        return (Master) PoloCloudAPI.getInstance();
     }
 
     private MasterConfig loadConfig() {
@@ -200,8 +177,8 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         this.nettyServer.getProtocol().registerPacketHandler(getGuice().getInstance(SubscribePacketHandler.class));
 
         //events
-        EventRegistry.registerListener(getGuice().getInstance(ChannelInactiveListener.class), ChannelInactiveEvent.class);
-        EventRegistry.registerListener(getGuice().getInstance(ChannelActiveListener.class), ChannelActiveEvent.class);
+        getEventManager().registerHandler(ChannelInactiveEvent.class, getGuice().getInstance(ChannelInactiveListener.class));
+        getEventManager().registerHandler(ChannelActiveEvent.class, getGuice().getInstance(ChannelActiveListener.class));
 
         this.pubSubManager = new SimplePubSubManager(nettyServer);
         new Thread(() -> nettyServer.start()).start();
@@ -237,12 +214,6 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         }, 40L);
         return terminate;
     }
-
-    @Override
-    public ICommandManager getCommandManager() {
-        return commandManager;
-    }
-
     @Override
     public Injector getGuice() {
         return inector;
@@ -268,15 +239,6 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         return null;
     }
 
-    @Override
-    public IWrapperManager getWrapperManager() {
-        return wrapperManager;
-    }
-
-    @Override
-    public IEventHandler getEventHandler() {
-        return null;
-    }
 
     @Override
     public ITemplateService getTemplateService() {

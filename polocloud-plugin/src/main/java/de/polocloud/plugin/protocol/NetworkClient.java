@@ -1,7 +1,7 @@
 package de.polocloud.plugin.protocol;
 
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.channel.ChannelActiveEvent;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
@@ -31,9 +31,7 @@ public class NetworkClient implements INetworkConnection {
 
     public NetworkClient(IBootstrap bootstrap) {
         this.bootstrap = bootstrap;
-        EventRegistry.registerListener(event -> {
-            register(port);
-        }, ChannelActiveEvent.class);
+        PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, event -> register(port));
         this.split = ConfigReader.getMasterAddress().split(":");
         this.client = new SimpleNettyClient(split[0], Integer.parseInt(split[1]), new SimpleProtocol());
     }

@@ -168,6 +168,9 @@ public class SimpleCommandManager implements ICommandManager {
         try {
             dispatcher.runCommand(split[0], source, args);
         } catch (Exception ex) {
+            if (source == null) {
+                return false;
+            }
             source.sendMessage("An error occurred while executing the command.");
             ex.printStackTrace();
         }

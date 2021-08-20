@@ -1,4 +1,4 @@
-package de.polocloud.api.event.player;
+package de.polocloud.api.event.impl.player;
 
 import de.polocloud.api.player.ICloudPlayer;
 

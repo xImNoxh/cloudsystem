@@ -2,9 +2,8 @@ package de.polocloud.plugin.bootstrap.spigot;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.event.EventHandler;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.channel.ChannelActiveEvent;
+import de.polocloud.api.event.handling.IEventHandler;
+import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.template.ITemplateService;
@@ -69,7 +68,7 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
         ITemplateService templateService = PoloCloudAPI.getInstance().getTemplateService();
         PluginManager manager = Bukkit.getPluginManager();
 
-        EventRegistry.registerListener((EventHandler<ChannelActiveEvent>) event -> {
+        PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, (IEventHandler<ChannelActiveEvent>) event -> {
             subscribe("polo:event:serverStarted", packet -> gameServerManager.getGameServerByName(packet.getData()).thenAccept(server ->
                 manager.callEvent(new CloudServerStartedEvent(server))));
             subscribe("polo:event:templateMaintenanceUpdate", packet -> templateService.getTemplateByName(packet.getData()).thenAccept(template ->
@@ -84,7 +83,7 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
                 String[] data = packet.getData().split(",");
                 Bukkit.getPluginManager().callEvent(new CloudPlayerSwitchServerEvent(data[0], data[2], data[1]));
             });
-        }, ChannelActiveEvent.class);
+        });
         new CollectiveSpigotEvents(this);
     }
 

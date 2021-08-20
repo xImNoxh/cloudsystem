@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.template.fallback;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
@@ -35,7 +36,7 @@ public class FallbackSearchService {
                     continue;
                 }
 
-                ITemplate template = Master.getInstance().getTemplateService().getTemplateByName(fallbackProperty.getTemplateName()).get();
+                ITemplate template = PoloCloudAPI.getInstance().getTemplateService().getTemplateByName(fallbackProperty.getTemplateName()).get();
 
                 if (template == null) {
                     Logger.log(LoggerType.WARNING, "The template for the fallback server with the template name " + fallbackProperty.getTemplateName() + ":" + fallbackProperty.getPriority() + " wasn't found! Please check your config.json! Skipping...");

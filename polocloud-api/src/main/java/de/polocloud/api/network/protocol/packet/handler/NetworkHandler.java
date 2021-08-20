@@ -1,11 +1,10 @@
 package de.polocloud.api.network.protocol.packet.handler;
 
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.channel.ChannelActiveEvent;
-import de.polocloud.api.event.channel.ChannelInactiveEvent;
-import de.polocloud.api.event.netty.NettyExceptionEvent;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.impl.net.ChannelActiveEvent;
+import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
+import de.polocloud.api.event.impl.net.NettyExceptionEvent;
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.scheduler.Scheduler;
@@ -29,7 +28,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         NettyExceptionEvent event = new NettyExceptionEvent(cause);
-        EventRegistry.fireEvent(event);
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(event);
 
         if (event.isShouldThrow()) {
             cause.printStackTrace();
@@ -42,7 +41,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         super.channelActive(ctx);
         this.channelHandlerContext = ctx;
 
-        EventRegistry.fireEvent(new ChannelActiveEvent(ctx));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new ChannelActiveEvent(ctx));
 
         networkConnection.setCtx(ctx);
         if (this.networkConnection instanceof SimpleNettyServer) {
@@ -54,7 +53,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        EventRegistry.fireEvent(new ChannelInactiveEvent(ctx));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new ChannelInactiveEvent(ctx));
 
         networkConnection.setCtx(ctx);
         if (this.networkConnection instanceof SimpleNettyServer) {

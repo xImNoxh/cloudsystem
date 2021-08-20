@@ -2,48 +2,48 @@ package de.polocloud.api;
 
 import com.google.inject.Injector;
 import de.polocloud.api.command.ICommandManager;
+import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
-import de.polocloud.api.event.IEventHandler;
+import de.polocloud.api.event.IEventManager;
+import de.polocloud.api.event.SimpleCachedEventManager;
+import de.polocloud.api.event.base.IEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.placeholder.IPlaceHolderManager;
+import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.wrapper.IWrapperManager;
-import org.jetbrains.annotations.NotNull;
+import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
+
+import java.util.Optional;
 
 public abstract class PoloCloudAPI {
 
-    /**
-     * The instance of the cloud api
-     */
-    private static PoloCloudAPI instance;
+    //Other fields
+    private final PoloType type;
 
-    /**
-     * Gets the current {@link PoloCloudAPI}
-     */
-    public static PoloCloudAPI getInstance() {
-        return instance;
+    //All manager instances
+    protected final ICommandManager commandManager;
+    protected final IPlaceHolderManager placeHolderManager;
+    protected final IWrapperManager wrapperManager;
+    protected final IEventManager eventManager;
+
+    protected PoloCloudAPI(PoloType type) {
+        instance = this;
+
+        this.type = type;
+
+        this.eventManager = new SimpleCachedEventManager();
+        this.commandManager = new SimpleCommandManager();
+        this.placeHolderManager = new SimpleCachedPlaceHolderManager();
+        this.wrapperManager = new SimpleCachedWrapperManager();
     }
-
-    /**
-     * Sets the {@link PoloCloudAPI} instance
-     *
-     * @param instance the instance
-     */
-    protected static void setInstance(@NotNull PoloCloudAPI instance) {
-        PoloCloudAPI.instance = instance;
-    }
-
-    /**
-     * The {@link PoloType} of this cloud instance
-     * To identify this process as Master/Wrapper or Spigot/Proxy
-     */
-    public abstract PoloType getType();
 
     /**
      * The current {@link INetworkConnection} to manage
@@ -52,16 +52,6 @@ public abstract class PoloCloudAPI {
      * creating and sending requests and responses
      */
     public abstract INetworkConnection getConnection();
-
-    /**
-     * The current {@link ICommandManager} to manage all commands
-     */
-    public abstract ICommandManager getCommandManager();
-
-    /**
-     * The current {@link IWrapperManager} instance to manage all wrappers
-     */
-    public abstract IWrapperManager getWrapperManager();
 
     /**
      * The current {@link ITemplateService} to manage
@@ -108,14 +98,55 @@ public abstract class PoloCloudAPI {
     public abstract IProtocol getCloudProtocol();
 
     /**
-     * The current {@link IEventHandler} instance
-     */
-    public abstract IEventHandler getEventHandler();
-
-    /**
      * The current {@link Injector} instance
      * (Google {@link com.google.inject.Guice})
      */
     public abstract Injector getGuice();
 
+    //========================================
+
+    // Class provided field getters and setters
+
+    //========================================
+
+
+    /**
+     * The instance of the cloud api
+     */
+    private static PoloCloudAPI instance;
+
+    /**
+     * Gets the current {@link PoloCloudAPI}
+     */
+    public static PoloCloudAPI getInstance() {
+        return instance;
+    }
+
+    /**
+     * Returns an optional instance to maybe check
+     * if the instance is present or something similar
+     */
+    public static Optional<PoloCloudAPI> optionalInstance() {
+        return Optional.ofNullable(instance);
+    }
+
+    public PoloType getType() {
+        return type;
+    }
+
+    public IEventManager getEventManager() {
+        return eventManager;
+    }
+
+    public ICommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public IPlaceHolderManager getPlaceHolderManager() {
+        return placeHolderManager;
+    }
+
+    public IWrapperManager getWrapperManager() {
+        return wrapperManager;
+    }
 }

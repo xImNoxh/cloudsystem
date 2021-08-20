@@ -1,8 +1,8 @@
 package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.inject.Inject;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.player.CloudPlayerSwitchServerEvent;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
@@ -99,7 +99,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 if (isOnline) {
                     pubSubManager.publish("polo:event:serverUpdated", targetServer.getName());
                     if (from != null) pubSubManager.publish("polo:event:playerSwitch", name + "," + from.getName() + "," + to.getName());
-                    EventRegistry.fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
+                    PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
                 }
                 sendConnectMessage(masterConfig, cloudPlayer);
             }, ctx);

@@ -60,41 +60,23 @@ public class CollectiveSpigotEvents implements Listener {
             return;
         }
 
-
-        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
-
-        thisService.clone(gameServer -> {
-            gameServer.setPort(4573);
-            gameServer.setName("Lobby-3");
-            gameServer.setMaxPlayers(303);
-            gameServer.setTemplate("Lobby");
-            gameServer.setMemory(512);
-            gameServer.newSnowflake();
-
-            gameServer.getWrapper().startServer(gameServer);
-
-        });
-
-
-
-        player.sendMessage("§7Thank you for joining on §3" + thisService.getName() + " §7on §b" + thisService.getWrapper().getName() + "§8!");
-
         networkClient.sendPacket(new GameServerControlPlayerPacket(player.getUniqueId()));
     }
 
     @EventHandler
     public void onCmd(PlayerCommandPreprocessEvent event) {
-        List<String> firstArgs = new ArrayList<>();
-        for (HelpTopic t : plugin.getServer().getHelpMap().getHelpTopics()) {
-            firstArgs.add(t.getName().split(" ")[0].toLowerCase());
+
+        try {
+            if (PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getMessage(), PoloCloudAPI.getInstance().getCloudPlayerManager().getOnlinePlayer(event.getPlayer().getName()).get())) {
+                event.setCancelled(true);
+                networkClient.sendPacket(new GameServerCloudCommandExecutePacket(event.getPlayer().getUniqueId(), event.getMessage().substring(1)));
+            } else {
+                event.setCancelled(false);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (firstArgs.contains(event.getMessage().split(" ")[0].toLowerCase())) return;
-        if (CloudPlugin.getCloudPluginInstance().getCommandReader().getAllowedCommands().stream().noneMatch(key ->
-            key.equalsIgnoreCase(event.getMessage().substring(1).split(" ")[0]))) {
-            return;
-        }
-        event.setCancelled(true);
-        networkClient.sendPacket(new GameServerCloudCommandExecutePacket(event.getPlayer().getUniqueId(), event.getMessage().substring(1)));
     }
 
 }

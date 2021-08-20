@@ -1,5 +1,7 @@
 package de.polocloud.plugin.bootstrap.proxy.register;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.network.protocol.packet.api.EventPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
@@ -51,6 +53,15 @@ public class ProxyPacketRegister {
                 ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(packet.getTargetServer());
                 if (serverInfo != null) ProxyServer.getInstance().getPlayer(uuid).connect(serverInfo);
             }
+        });
+
+        new SimplePacketRegister<EventPacket>(EventPacket.class, eventPacket -> {
+
+            if (!eventPacket.getExcept().equalsIgnoreCase("null") && eventPacket.getExcept().equalsIgnoreCase("cloud")) {
+                return;
+            }
+
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
         });
 
         new SimplePacketRegister<MasterPlayerSendMessagePacket>(MasterPlayerSendMessagePacket.class, packet -> {

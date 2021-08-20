@@ -1,7 +1,7 @@
 package de.polocloud.bootstrap.template;
 
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.gameserver.CloudGameServerMaintenanceUpdateEvent;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.template.GameServerVersion;
 import de.polocloud.api.template.ITemplate;
 import de.polocloud.api.template.TemplateType;
@@ -95,7 +95,7 @@ public class SimpleTemplate implements ITemplate {
         this.maintenance = maintenance;
 
         MasterPubSubManager.getInstance().publish("polo:event:templateMaintenanceUpdate", name);
-        EventRegistry.fireEvent(new CloudGameServerMaintenanceUpdateEvent(this));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerMaintenanceUpdateEvent(this));
     }
 
     @Override

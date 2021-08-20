@@ -1,24 +1,19 @@
 package de.polocloud.bootstrap.listener;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.EventHandler;
-import de.polocloud.api.event.channel.ChannelInactiveEvent;
+import de.polocloud.api.event.handling.IEventHandler;
+import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.wrapper.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class ChannelInactiveListener implements EventHandler<ChannelInactiveEvent> {
+public class ChannelInactiveListener implements IEventHandler<ChannelInactiveEvent> {
 
     @Override
     public void handleEvent(ChannelInactiveEvent event) {

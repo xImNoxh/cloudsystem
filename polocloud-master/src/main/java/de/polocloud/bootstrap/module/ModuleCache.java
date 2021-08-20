@@ -1,6 +1,5 @@
 package de.polocloud.bootstrap.module;
 
-import de.polocloud.api.event.EventRegistry;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
@@ -19,7 +18,6 @@ public class ModuleCache extends ConcurrentHashMap<CloudModule, ModuleLocalCache
             if (module.canReload()) {
 
                 module.onShutdown();
-                EventRegistry.unregisterModuleListener(module);
 
                 String moduleName = get(module).getModuleData().getName();
 
@@ -41,7 +39,6 @@ public class ModuleCache extends ConcurrentHashMap<CloudModule, ModuleLocalCache
             }
 
             URLClassLoader urlClassLoader = get(module).getLoader();
-            EventRegistry.unregisterModuleListener(module);
             String moduleName = get(module).getModuleData().getName();
 
             remove(module);

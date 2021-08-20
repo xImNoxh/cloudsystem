@@ -3,9 +3,8 @@ package de.polocloud.bootstrap.network.handler.player;
 import com.google.common.collect.Lists;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.runner.ICommandRunner;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.player.CloudPlayerDisconnectEvent;
-import de.polocloud.api.event.player.CloudPlayerJoinNetworkEvent;
+import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
+import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
@@ -88,12 +87,12 @@ public abstract class PlayerPacketServiceController {
 
     public void callConnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer) {
         pubSubManager.publish("polo:event:playerJoin", cloudPlayer.getName());
-        EventRegistry.fireEvent(new CloudPlayerJoinNetworkEvent(cloudPlayer));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerJoinNetworkEvent(cloudPlayer));
     }
 
     public void callDisconnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer) {
         pubSubManager.publish("polo:event:playerQuit", cloudPlayer.getUUID().toString());
-        EventRegistry.fireEvent(new CloudPlayerDisconnectEvent(cloudPlayer));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerDisconnectEvent(cloudPlayer));
 
     }
 

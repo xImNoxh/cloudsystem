@@ -1,8 +1,7 @@
 package de.polocloud.bootstrap.wrapper;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
@@ -14,16 +13,13 @@ import de.polocloud.api.util.PoloUtils;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.IWrapper;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.gameserver.SimpleGameServer;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
 
@@ -51,7 +47,7 @@ public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
             sendPacket(new MasterRequestServerStartPacket(port, template.getName(), template.getVersion(), gameServer.getSnowflake(),
                 isProxy(template), template.getMaxMemory(), template.getMaxPlayers(), gameServer.getName(), gameServer.getMotd(), template.isStatic()));
 
-            EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public class SimplePacketHandler<T extends Packet> implements IPacketHandler<Packet> {
 
-    public static List<SimplePacketHandler<?>> LISTENING = Lists.newArrayList();
+    public static final List<SimplePacketHandler<?>> LISTENING = Lists.newArrayList();
     private Class<? extends Packet> packet;
     private BiConsumer<ChannelHandlerContext, T> actions;
     private Consumer<T> action;

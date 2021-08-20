@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.template.fallback;
 
+//TODO: IMPLEMENT IN API
 public class FallbackProperty {
 
     private final String templateName, fallbackPermission;

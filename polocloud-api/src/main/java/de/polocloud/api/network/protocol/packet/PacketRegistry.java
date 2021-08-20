@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.packet;
 
+import de.polocloud.api.network.protocol.packet.api.EventPacket;
 import de.polocloud.api.network.protocol.packet.api.PublishPacket;
 import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
 import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
@@ -80,6 +81,8 @@ public class PacketRegistry {
 
             PublishPacket.class,
             SubscribePacket.class,
+            EventPacket.class,
+
             PermissionCheckResponsePacket.class,
             ProxyTablistUpdatePacket.class,
             RedirectPacket.class,

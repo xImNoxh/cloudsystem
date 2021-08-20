@@ -3,8 +3,7 @@ package de.polocloud.bootstrap.network.handler.gameserver;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.EventRegistry;
-import de.polocloud.api.event.gameserver.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.GameServerStatus;
 import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -111,7 +110,7 @@ public abstract class GameServerPacketController {
 
     public void callServerStartedEvent(IGameServer gameServer) {
         //  subManager.publish("polo:event:serverStarted", gameServer.getName());
-        EventRegistry.fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
     }
 
     public void getGameServerByTemplate(String name, Consumer<List<IGameServer>> services) {
