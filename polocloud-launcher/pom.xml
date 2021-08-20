@@ -90,5 +90,11 @@
       <version>2.8.7</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>de.polocloud</groupId>
+      <artifactId>polocloud-client</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
   </dependencies>
 </project>

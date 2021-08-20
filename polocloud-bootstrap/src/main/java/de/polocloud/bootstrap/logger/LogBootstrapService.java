@@ -15,6 +15,11 @@ public class LogBootstrapService {
         this.logService = new LogService();
     }
 
+    /**
+     *
+     * Prints out the PoloCloud Header on Wrapper or Master startup
+     *
+     */
     public void printSymbol() {
 
         new ConsoleReadThread(Logger.getConsoleReader());

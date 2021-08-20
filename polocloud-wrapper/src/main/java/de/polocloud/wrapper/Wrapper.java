@@ -11,7 +11,6 @@ import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
-import de.polocloud.api.event.handling.IEventHandler;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.guice.PoloAPIGuiceModule;
@@ -19,7 +18,6 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.IStartable;
 import de.polocloud.api.network.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
-import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.wrapper.WrapperRegisterStaticServerPacket;
 import de.polocloud.api.player.ICloudPlayerManager;
@@ -27,6 +25,8 @@ import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.client.PoloCloudClient;
+import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -43,7 +43,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
@@ -54,7 +53,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     private SimpleNettyClient nettyClient;
 
     /**
-     * The google guice injector
+     * The Google guice injector
      */
     private final Injector injector;
 
@@ -65,8 +64,24 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     private ProcessManager processManager;
 
-    public Wrapper() {
+    /**
+     * Declares if the wrapper is in the devMode
+     */
+    private boolean devMode;
+
+    /**
+     * The PoloCloudClient for the PoloCloudUpdater and
+     * the ExceptionReporterService
+     */
+    private PoloCloudClient poloCloudClient;
+
+    public Wrapper(boolean devMode) {
         super(PoloType.WRAPPER);
+
+        this.devMode = devMode;
+
+        //TODO change IP to PoloCloud Servers on release
+        this.poloCloudClient = new PoloCloudClient("127.0.0.1", 4542);
 
         this.config = loadWrapperConfig();
 
@@ -93,39 +108,34 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     private void requestStaticServersStart() {
         Executor executor = Executors.newCachedThreadPool();
 
-        PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, new IEventHandler<ChannelActiveEvent>() {
-            @Override
-            public void handleEvent(ChannelActiveEvent event) {
+        PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, event -> executor.execute(() -> {
+            for (String staticServer : config.getStaticServers()) {
                 executor.execute(() -> {
-                    for (String staticServer : config.getStaticServers()) {
-                        executor.execute(() -> {
-                            String[] properties = staticServer.split(",");
-                            String serverName = properties[0];
-                            int port = Integer.parseInt(properties[1]);
-                            int processMemory = Integer.parseInt(properties[2]);
-                            Logger.log(LoggerType.INFO, "Starting static server » " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port » " + ConsoleColors.LIGHT_BLUE + port + ConsoleColors.GRAY + "...");
-                            ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + processMemory + "M -Xmx" + processMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
-                            try {
-                                processBuilder.directory(new File("static/" + serverName));
+                    String[] properties = staticServer.split(",");
+                    String serverName = properties[0];
+                    int port = Integer.parseInt(properties[1]);
+                    int processMemory = Integer.parseInt(properties[2]);
+                    Logger.log(LoggerType.INFO, "Starting static server » " + ConsoleColors.LIGHT_BLUE + serverName + ConsoleColors.GRAY + " on port » " + ConsoleColors.LIGHT_BLUE + port + ConsoleColors.GRAY + "...");
+                    ProcessBuilder processBuilder = new ProcessBuilder(("java -jar -Xms" + processMemory + "M -Xmx" + processMemory + "M -Dcom.mojang.eula.agree=true spigot.jar nogui --online-mode false --max-players " + 100 + " --noconsole --port " + port).split(" "));
+                    try {
+                        processBuilder.directory(new File("static/" + serverName));
 
-                                String name = serverName.split("#")[0];
-                                long snowflakeID = Long.parseLong(serverName.split("#")[1]);
+                        String name = serverName.split("#")[0];
+                        long snowflakeID = Long.parseLong(serverName.split("#")[1]);
 
-                                Logger.log(LoggerType.INFO, "Starting static server with " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + "/" + ConsoleColors.LIGHT_BLUE + ConsoleColors.GRAY + snowflakeID + "(" + serverName + ")...");
-                                event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflakeID));
+                        Logger.log(LoggerType.INFO, "Starting static server with " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + "/" + ConsoleColors.LIGHT_BLUE + ConsoleColors.GRAY + snowflakeID + "(" + serverName + ")...");
+                        event.getChx().writeAndFlush(new WrapperRegisterStaticServerPacket(name, snowflakeID));
 
-                                Process process = processBuilder.start();
-                                process.waitFor();
-                            } catch (IOException | InterruptedException exception) {
-                                exception.printStackTrace();
-                                Logger.log(LoggerType.ERROR, "Unexpected error while starting Server » " + serverName + " occurred! Skipping...\n" +
-                                    "Please report this error.");
-                            }
-                        });
+                        Process process = processBuilder.start();
+                        process.waitFor();
+                    } catch (IOException | InterruptedException exception) {
+                        exception.printStackTrace();
+                        Logger.log(LoggerType.ERROR, "Unexpected error while starting Server » " + serverName + " occurred! Skipping...\n" +
+                            "Please report this error.");
                     }
                 });
             }
-        });
+        }));
     }
 
     @Override
@@ -146,7 +156,73 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         }
     }
 
-    private void checkPoloCloudAPI() {
+
+    private void checkPoloCloudAPI(){
+        File apiJarFile = new File("templates/PoloCloud-API.jar");
+
+        if (!apiJarFile.getParentFile().exists()) {
+            apiJarFile.getParentFile().mkdirs();
+        }
+
+
+        String currentVersion;
+        boolean forceUpdate;
+        if (apiJarFile.exists()) {
+            forceUpdate = false;
+            currentVersion = config.getApiVersion();
+        } else {
+            forceUpdate = true;
+            currentVersion = "First download";
+        }
+        PoloCloudUpdater updater = new PoloCloudUpdater(devMode, currentVersion, "api", apiJarFile);
+
+        if(forceUpdate){
+            if(devMode){
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Downloading latest development build...");
+                if (updater.download()) {
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Successfully downloaded latest development build!");
+                } else {
+                    Logger.log(LoggerType.ERROR, Logger.PREFIX + "[Updater] Couldn't download latest development build!");
+                }
+            }else{
+                Logger.log(LoggerType.INFO, "[Updater] Force update was due to no version of the PoloCloud-API found activated. Downloading latest build...");
+                if (updater.download()) {
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Successfully downloaded latest build!");
+                } else {
+                    Logger.log(LoggerType.ERROR, Logger.PREFIX + "[Updater] Couldn't download latest build!");
+                }
+            }
+        }else if(devMode){
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Downloading latest development build...");
+            if (updater.download()) {
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Successfully downloaded latest development build!");
+            } else {
+                Logger.log(LoggerType.ERROR, Logger.PREFIX + "[Updater] Couldn't download latest development build!");
+            }
+        }else{
+            Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Searching for regular PoloCloud-API updates...");
+            if (updater.check()) {
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] downloading...");
+                if (updater.download()) {
+                    config.setApiVersion(updater.getFetchedVersion());
+                    new SimpleConfigSaver().save(config, new File("config.json"));
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Successfully downloaded latest version! (" + updater.getFetchedVersion() + ")");
+                } else {
+                    Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] Couldn't download latest version!");
+                }
+            } else {
+                Logger.log(LoggerType.INFO, Logger.PREFIX + "[Updater] You are running the latest version of the PoloCloud-API! (" + currentVersion + ")");
+            }
+        }
+
+    }
+
+    /**
+     * Currently unused old method
+     * Is used as backup if the new Updater is not started or not functional
+     */
+    private void checkPoloCloudAPINative() {
         Logger.log(LoggerType.INFO, "Checking PoloCloud-API Version...");
         File apiJarFile = new File("templates/PoloCloud-API.jar");
 
@@ -209,24 +285,19 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         Logger.log(LoggerType.INFO, "Trying to start the wrapper...");
 
         this.nettyClient = getGuice().getInstance(SimpleNettyClient.class);
-        new Thread(() -> {
-            this.nettyClient.start(new Consumer<SimpleNettyClient>() {
-                @Override
-                public void accept(SimpleNettyClient nettyClient) {
-                    processManager = new ProcessManager();
+        new Thread(() -> this.nettyClient.start(nettyClient -> {
+            processManager = new ProcessManager();
 
-                    Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
-                    Logger.log(LoggerType.INFO, "§7Trying to log in as §7'§3" + config.getWrapperName() + "§7'!");
-                    nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
-                    //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
-                    nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
-                    nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config, processManager));
-                    nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
-                    nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
-                    nettyClient.getProtocol().registerPacketHandler(new MasterRequestsServerTerminatePacketHandler(processManager));
-                }
-            });
-        }).start();
+            Logger.log(LoggerType.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
+            Logger.log(LoggerType.INFO, "§7Trying to log in as §7'§3" + config.getWrapperName() + "§7'!");
+            nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
+            //this.nettyClient.registerListener(new SimpleWrapperNetworkListener(this.nettyClient.getProtocol()));
+            nettyClient.getProtocol().registerPacketHandler(new MasterLoginResponsePacketHandler());
+            nettyClient.getProtocol().registerPacketHandler(new MasterRequestServerStartListener(config, processManager));
+            nettyClient.getProtocol().registerPacketHandler(new APIRequestGameServerCopyHandler());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperRequestShutdownHandler());
+            nettyClient.getProtocol().registerPacketHandler(new MasterRequestsServerTerminatePacketHandler(processManager));
+        })).start();
 
     }
 
@@ -299,5 +370,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     public SimpleNettyClient getNettyClient() {
         return nettyClient;
     }
-}
 
+    public boolean isDevMode() {
+        return devMode;
+    }
+}

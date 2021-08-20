@@ -89,7 +89,8 @@ public class SimpleNettyClient implements INettyClient {
                 exc.printStackTrace();
             }
         } finally {
-            System.out.println("Netty thread stopped.");
+            System.out.println("Netty thread stopped. Shutting down in 5 Seconds...");
+            Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 100L);
         }
     }
     @Override
@@ -107,7 +108,6 @@ public class SimpleNettyClient implements INettyClient {
     public Channel getChannel() {
         return channel;
     }
-
 
     @Override
     public InetSocketAddress getConnectedAddress() {
