@@ -1,7 +1,7 @@
 package de.polocloud.logger.log.types;
 
 public enum LoggerType {
-    INFO(ConsoleColors.CYAN, "Info"), WARNING(ConsoleColors.RED, "Warning"),
+    INFO(ConsoleColors.CYAN, "Info"), WARNING(ConsoleColors.ORANGE, "Warning"),
     ERROR(ConsoleColors.RED, "Error"), MEMORY(ConsoleColors.YELLOW, "Memory");
 
     private final ConsoleColors consoleColors;
