@@ -33,7 +33,7 @@ public interface IPlayerConnection {
     int getPort();
 
     /**
-     * The procotol version of this connection
+     * The protocol version of this connection
      *
      * @return version enum
      */
@@ -55,7 +55,7 @@ public interface IPlayerConnection {
     boolean isOnlineMode();
 
     /**
-     * Im not sure what this is
+     * I'm not sure what this is
      *
      * @return boolean
      */

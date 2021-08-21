@@ -17,6 +17,7 @@ import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -68,7 +69,7 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
         ITemplateService templateService = PoloCloudAPI.getInstance().getTemplateService();
         PluginManager manager = Bukkit.getPluginManager();
 
-        PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, (IEventHandler<ChannelActiveEvent>) event -> {
+        PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, event -> {
             subscribe("polo:event:serverStarted", packet -> gameServerManager.getGameServerByName(packet.getData()).thenAccept(server ->
                 manager.callEvent(new CloudServerStartedEvent(server))));
             subscribe("polo:event:templateMaintenanceUpdate", packet -> templateService.getTemplateByName(packet.getData()).thenAccept(template ->
@@ -98,7 +99,7 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
                 PoloCloudAPI.getInstance().getPubSubManager().subscribe(id, publishPacket -> Bukkit.getScheduler().runTask(this, () -> call.accept(publishPacket)));
             }
         } catch (IllegalPluginAccessException exception) {
-            System.out.println("Event subscribe illegal plugin access exception " + exception.getStackTrace().toString());
+            System.out.println("Event subscribe illegal plugin access exception " + Arrays.toString(exception.getStackTrace()));
             //TODO Bugfix with shutdown
         }
     }

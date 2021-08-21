@@ -251,9 +251,9 @@ public interface IPacketBuffer {
     /**
      * Writes a {@link String[]} object to this buffer
      *
-     * @param arrary the arrary
+     * @param array the array
      * @throws IOException if something goes wrong
      */
-    void writeStringArray(String[] arrary) throws IOException;
+    void writeStringArray(String[] array) throws IOException;
 
 }

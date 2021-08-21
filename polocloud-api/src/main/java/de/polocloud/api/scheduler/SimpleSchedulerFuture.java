@@ -13,7 +13,7 @@ public class SimpleSchedulerFuture implements SchedulerFuture {
 	private final int id;
 	private final boolean repeating;
 
-	//Non final fields
+	//Non-final fields
 	private int runTimes;
 	private boolean cancelled;
 	private boolean error;

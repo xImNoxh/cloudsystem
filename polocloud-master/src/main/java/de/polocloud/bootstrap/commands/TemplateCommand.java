@@ -38,16 +38,14 @@ public class TemplateCommand implements CommandListener {
     public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(min = 1, max = 7) String... params) {
         try {
             if (params.length == 1) {
-                if (params[1].equalsIgnoreCase("create")) {
+                if (params[0].equalsIgnoreCase("create")) {
                     new CreateTemplateSetup(templateService).sendSetup();
-                    return;
                 } else if (params[0].equalsIgnoreCase("versions")) {
                     Logger.log(LoggerType.INFO, Logger.PREFIX + "Available Versions » ");
                     Logger.newLine();
                     for (GameServerVersion value : GameServerVersion.values()) {
                         Logger.log(LoggerType.INFO, value.getTitle());
                     }
-                    return;
                 } else {
                     sendHelp();
                 }
@@ -66,7 +64,6 @@ public class TemplateCommand implements CommandListener {
                         }
                         Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "stopped " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + " servers of template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "!");
                     }
-                    return;
                 } else if (params[0].equalsIgnoreCase("info")) {
                     String templateName = params[1];
                     ITemplate template = templateService.getTemplateByName(templateName).get();
@@ -87,7 +84,6 @@ public class TemplateCommand implements CommandListener {
                         Logger.newLine();
                         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Information]----");
                     }
-                    return;
                 } else {
                     sendHelp();
                 }
@@ -133,10 +129,9 @@ public class TemplateCommand implements CommandListener {
 
                                 for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template).get()) {
                                     //TODO
-                                    //  gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
+                                    //TODO gameServer.sendPacket(new GameServerMaxPlayersUpdatePacket(gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY) ? "messages.getNetworkIsFull() Check TemplateCommand:117" : "messages.getServiceIsFull() Check TemplateCommand:117", gameServer.getMaxPlayers()));
                                 }
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maximal players of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + ")");
-                                return;
                             } else {
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + "----[Template-Edit]----");
                                 Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY + "to set the maintenance mode of a template");

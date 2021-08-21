@@ -48,7 +48,6 @@ public class ModuleCache extends ConcurrentHashMap<CloudModule, ModuleLocalCache
         } catch (IOException exception) {
             exception.printStackTrace();
             Logger.log(LoggerType.ERROR, Logger.PREFIX + ConsoleColors.RED + "Failed to unload module » " + ConsoleColors.LIGHT_BLUE + get(module).getModuleData().getName() + ConsoleColors.RED + "!" + ConsoleColors.GRAY);
-            return;
         }
     }
 

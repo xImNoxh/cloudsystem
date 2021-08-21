@@ -47,13 +47,11 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
         });
 
-        new SimplePacketHandler<>(GameServerSuccessfullyStartedPacket.class, packet -> {
-            PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getServerName()).thenAccept(it -> {
-                it.setStatus(GameServerStatus.RUNNING);
-                sendServerStartLog(it);
-                updateProxyServerList(it);
-            });
-        });
+        new SimplePacketHandler<>(GameServerSuccessfullyStartedPacket.class, packet -> PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getServerName()).thenAccept(it -> {
+            it.setStatus(GameServerStatus.RUNNING);
+            sendServerStartLog(it);
+            updateProxyServerList(it);
+        }));
 
         new SimplePacketHandler<APIRequestGameServerPacket>(APIRequestGameServerPacket.class, (ctx, packet) ->
             getGameServerByConnection(ctx, service -> confirmPacketTypeResponse(packet.getAction(), service, packet.getRequestId(), packet.getValue())));
@@ -69,20 +67,17 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
                 key.setVisible(packet.getGameServer().getServiceVisibility());
             }));
 
-        new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> {
-            getGameServerBySnowflake(server -> {
-                ((SimpleGameServer) server).setCtx(ctx);
-                ((SimpleGameServer) server).setPort(packet.getPort());
+        new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> getGameServerBySnowflake(server -> {
+            ((SimpleGameServer) server).setCtx(ctx);
+            server.setPort(packet.getPort());
 
-                server.sendPacket(new GameServerUpdatePacket(server));
-                sendCloudCommandAcceptList(server);
+            server.sendPacket(new GameServerUpdatePacket(server));
+            sendCloudCommandAcceptList(server);
 
-                server.setVisible(true);
+            server.setVisible(true);
 
-                callServerStartedEvent(server);
-            }, packet.getSnowflake());
-
-        });
+            callServerStartedEvent(server);
+        }, packet.getSnowflake()));
 
     }
 }

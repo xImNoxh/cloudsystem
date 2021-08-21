@@ -45,7 +45,7 @@ public class APITemplateManager implements ITemplateService {
 
     @Override
     public void reloadTemplates() {
-        return;
+        //TODO unload every template, then load the templates
     }
 
     public CompletableFuture<?> sendRequest(CompletableFuture<?> future, APIRequestTemplatePacket.Action action, String value) {

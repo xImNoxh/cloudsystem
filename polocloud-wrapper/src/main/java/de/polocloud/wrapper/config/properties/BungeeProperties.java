@@ -4,8 +4,8 @@ import java.io.File;
 
 public class BungeeProperties extends ServiceProperties {
 
-    public BungeeProperties(File directionary, int maxplayers, int port, String motd) {
-        super(directionary, "config.yml", port);
+    public BungeeProperties(File directory, int maxplayers, int port, String motd) {
+        super(directory, "config.yml", port);
 
         setProperties(new String[]{
             "connection_throttle: 4000",

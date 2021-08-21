@@ -5,11 +5,9 @@ import de.polocloud.wrapper.Wrapper;
 
 public class CloudInit {
 
-    private LogBootstrapService logBootstrapService;
-
     public CloudInit(String[] args) {
 
-        logBootstrapService = new LogBootstrapService();
+        LogBootstrapService logBootstrapService = new LogBootstrapService();
         logBootstrapService.printSymbol();
 
         //new ServiceTypeSetup().sendSetup();

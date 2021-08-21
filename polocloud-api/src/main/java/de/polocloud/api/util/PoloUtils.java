@@ -35,7 +35,7 @@ public class PoloUtils {
      *
      * @param tSupplier the supplier returning the object
      * @param <T> the generic-type
-     * @return the object or null if exception occured
+     * @return the object or null if exception occurred
      */
     public static <T> T sneakyThrows(ExceptionSupplier<T> tSupplier) {
         try {
@@ -89,7 +89,7 @@ public class PoloUtils {
      */
     public static Enum<?> getEnumByName(Class<?> enumType, String name) {
         try {
-            Method enumConstantDirectory = enumType.getClass().getDeclaredMethod("enumConstantDirectory");
+            Method enumConstantDirectory = enumType.getDeclaredMethod("enumConstantDirectory");
             enumConstantDirectory.setAccessible(true);
 
             Map<String, Enum<?>> invoke = (Map<String, Enum<?>>) enumConstantDirectory.invoke(enumType);

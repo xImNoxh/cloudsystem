@@ -37,7 +37,7 @@ public interface IProtocolObject {
      * where actually an Integer is stored
      *
      * @param buf the buffer
-     * @throws IOException if something while readibg goes wrong
+     * @throws IOException if something while reading goes wrong
      */
     void read(IPacketBuffer buf) throws IOException;
 

@@ -34,18 +34,16 @@ public class ProxyPacketRegister {
             LoginEvent loginEvent = property.getGameServerLoginEvents().remove(packet.getUuid());
             if (packet.getSnowflake() == -1) {
                 loginEvent.setCancelled(true);
-                loginEvent.setCancelReason(new TextComponent("§cEs wurde kein fallback Server gefunden!"));
+                loginEvent.setCancelReason(new TextComponent("§cNo fallback server found!"));
             } else
                 property.getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
             loginEvent.completeIntent(plugin);
         });
 
-        new SimplePacketRegister<MasterRequestServerListUpdatePacket>(MasterRequestServerListUpdatePacket.class, packet -> {
-            ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
-                packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
-                "PoloCloud", false
-            ));
-        });
+        new SimplePacketRegister<MasterRequestServerListUpdatePacket>(MasterRequestServerListUpdatePacket.class, packet -> ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
+            packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
+            "PoloCloud", false
+        )));
 
         new SimplePacketRegister<MasterPlayerSendToServerPacket>(MasterPlayerSendToServerPacket.class, packet -> {
             UUID uuid = packet.getUuid();
@@ -70,9 +68,7 @@ public class ProxyPacketRegister {
                 ProxyServer.getInstance().getPlayer(uuid).sendMessage(TextComponent.fromLegacyText(packet.getMessage()));
         });
 
-        new SimplePacketRegister<GameServerUnregisterPacket>(GameServerUnregisterPacket.class, packet -> {
-            ProxyServer.getInstance().getServers().remove(packet.getName());
-        });
+        new SimplePacketRegister<GameServerUnregisterPacket>(GameServerUnregisterPacket.class, packet -> ProxyServer.getInstance().getServers().remove(packet.getName()));
 
         new SimplePacketRegister<ProxyTablistUpdatePacket>(ProxyTablistUpdatePacket.class, packet -> {
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());

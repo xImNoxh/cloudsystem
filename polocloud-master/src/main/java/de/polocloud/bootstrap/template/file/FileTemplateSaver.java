@@ -33,6 +33,14 @@ public class FileTemplateSaver implements ITemplateSaver {
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            if(writer != null){
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }

@@ -98,7 +98,7 @@ public class SimpleFuture<T> implements PoloFuture<T> {
             return response;
         }
        // CountDownLatch latch = new CountDownLatch(1);
-      //  this.countDownLatches.add(latch);
+        // this.countDownLatches.add(latch);
 
         while (!completed) {
             try {

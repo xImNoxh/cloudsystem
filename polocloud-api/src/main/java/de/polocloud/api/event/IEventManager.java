@@ -18,7 +18,7 @@ public interface IEventManager {
     /**
      * Unregisters a class
      *
-     * @param listener the listener
+     * @param listenerClass the listener
      */
     void unregisterListener(Class<? extends IListener> listenerClass);
 

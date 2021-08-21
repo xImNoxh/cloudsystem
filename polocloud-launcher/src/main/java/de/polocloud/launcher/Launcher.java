@@ -125,6 +125,7 @@ public class Launcher {
 
         } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
+            client.getExceptionReportService().reportException(e, "launcher - booting bootstrap (" + args[0] + ")", currentVersion);
         }
     }
 
@@ -173,6 +174,7 @@ public class Launcher {
                         PoloCloudClient.getInstance().getExceptionReportService().reportException(e, "launcher", currentVersion);
                     }
                     System.out.println(PREFIX + "[Updater] Successfully downloaded latest version! (" + updater.getFetchedVersion() + ")");
+                    System.out.println(PREFIX + "[Updater] Want to see the latest changes? Use the 'changelog' command!");
                 } else {
                     System.out.println(PREFIX + "[Updater] Couldn't download latest version!");
                 }

@@ -9,7 +9,7 @@ import de.polocloud.wrapper.Wrapper;
 
 public class StopCommand implements CommandListener {
 
-    @Command(name = "stop", aliases = "asdwad", description = "wadawdaw")
+    @Command(name = "stop", aliases = "exit", description = "Stops the wrapper")
     public void execute(CommandExecutor executor, String[] args) {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "stopping...");
         Wrapper.getInstance().terminate();

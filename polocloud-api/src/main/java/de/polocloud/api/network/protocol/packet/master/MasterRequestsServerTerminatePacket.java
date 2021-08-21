@@ -23,7 +23,7 @@ public class MasterRequestsServerTerminatePacket extends Packet {
 
     public MasterRequestsServerTerminatePacket(long snowflake) {
         this.snowflake = snowflake;
-        this.name = "Noname";
+        this.name = "no name";
     }
 
     @Override

@@ -1,4 +1,3 @@
-
 package de.polocloud.api.command.annotation;
 
 import java.lang.annotation.ElementType;
@@ -13,7 +12,7 @@ public @interface CommandPermission {
 
     /**
      * The permissions you can have to execute this
-     * You don't have to have ALL of the permissions
+     * You don't have to have All the permissions
      * but only one permission is enough to allow execution
      *
      * @return permissions as array

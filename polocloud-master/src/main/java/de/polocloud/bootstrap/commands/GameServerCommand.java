@@ -51,9 +51,9 @@ public class GameServerCommand implements CommandListener {
                                 "Use §3gameserver stop/shutdown <server> §7to shutdown a gameserver",
                                 "Use §3gameserver start <template> §7to start a new gameserver",
                                 "Use §3gameserver start <server> <amount> §7to start multiple new gameservers at once",
-                                "Use §3gameserver copy <server> worlds/entire §7to copy the temproy file of a server into its template",
+                                "Use §3gameserver copy <server> worlds/entire §7to copy the temp files of a server into its template",
                                 "Use §3gameserver info <server> §7to get information of a gameserver",
-                                "Use §3gameserver execute <server> <command> §7to execuet a command on a gameserver",
+                                "Use §3gameserver execute <server> <command> §7to execute a command on a gameserver",
                                 "----[Gameserver]----"}
                         ) String... args) {
         try {
@@ -238,9 +238,9 @@ public class GameServerCommand implements CommandListener {
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver stop/shutdown <server> " + ConsoleColors.GRAY + "to shutdown a gameserver");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver start <template> " + ConsoleColors.GRAY + "to start a new gameserver");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver start <server> <amount> " + ConsoleColors.GRAY + "to start multiple new gameservers at once");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver copy <server> worlds/entire " + ConsoleColors.GRAY + "to copy the temproy file of a server into its template");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver copy <server> worlds/entire " + ConsoleColors.GRAY + "to copy the temp files of a server into its template");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver info <server> " + ConsoleColors.GRAY + "to get information of a gameserver");
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver execute <server> <command> " + ConsoleColors.GRAY + "to execuet a command on a gameserver");
+        Logger.log(LoggerType.INFO, Logger.PREFIX + "Use " + ConsoleColors.LIGHT_BLUE + "gameserver execute <server> <command> " + ConsoleColors.GRAY + "to execute a command on a gameserver");
         Logger.log(LoggerType.INFO, Logger.PREFIX + "----[/Gameserver]----");
     }
 

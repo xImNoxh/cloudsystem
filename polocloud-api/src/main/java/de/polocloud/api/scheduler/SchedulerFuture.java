@@ -33,7 +33,7 @@ public interface SchedulerFuture extends Runnable {
     void setCancelled(boolean cancelled);
 
     /**
-     * Checks if an error occured
+     * Checks if an error occurred
      *
      * @return boolean
      */

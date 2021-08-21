@@ -1,11 +1,8 @@
 package de.polocloud.plugin.bootstrap.proxy.events;
 
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.IGameServer;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
-import de.polocloud.api.util.Snowflake;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -58,7 +55,6 @@ public class CollectiveProxyEvents implements Listener {
 
         if (ProxyServer.getInstance().getPlayers().size() - 1 >= cloudPlugin.thisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
             event.getPlayer().disconnect(property.getGameServerMaxPlayersMessage());
-            return;
         }
     }
 

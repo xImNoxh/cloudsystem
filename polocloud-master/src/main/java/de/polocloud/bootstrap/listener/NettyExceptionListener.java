@@ -11,7 +11,6 @@ public class NettyExceptionListener implements IEventHandler<NettyExceptionEvent
         Throwable throwable = event.getThrowable();
         if (throwable.getMessage().equalsIgnoreCase("Connection reset by peer") && throwable instanceof IOException) {
             event.setShouldThrow(false);
-            return;
         }
     }
 }

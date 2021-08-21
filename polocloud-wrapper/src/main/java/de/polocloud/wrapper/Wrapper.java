@@ -1,5 +1,7 @@
 package de.polocloud.wrapper;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
@@ -40,7 +42,10 @@ import de.polocloud.wrapper.process.ProcessManager;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -82,6 +87,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
         //TODO change IP to PoloCloud Servers on release
         this.poloCloudClient = new PoloCloudClient("127.0.0.1", 4542);
+
+        registerUncaughtExceptionListener();
 
         this.config = loadWrapperConfig();
 
@@ -141,6 +148,19 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     @Override
     public void updateCache() {
 
+    }
+
+    private void registerUncaughtExceptionListener(){
+        String currentVersion = "-1";
+        try {
+            FileReader reader = new FileReader("launcher.json");
+            currentVersion = new GsonBuilder().setPrettyPrinting().create().fromJson(reader, JsonObject.class).get("version").getAsString();
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String finalCurrentVersion = currentVersion;
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> poloCloudClient.getExceptionReportService().reportException(throwable, "wrapper", finalCurrentVersion));
     }
 
     private void checkAndDeleteTmpFolder() {

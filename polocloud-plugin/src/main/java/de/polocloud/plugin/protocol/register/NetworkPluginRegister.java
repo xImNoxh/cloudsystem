@@ -45,17 +45,11 @@ public class NetworkPluginRegister {
                 gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate(), gameserver.getCloudPlayers()));
         });
 
-        new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> {
-            CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown();
-        });
+        new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown());
 
-        new SimplePacketRegister<MasterPlayerKickPacket>(MasterPlayerKickPacket.class, packet -> {
-            bootstrap.kick(packet.getUuid(), packet.getMessage());
-        });
+        new SimplePacketRegister<MasterPlayerKickPacket>(MasterPlayerKickPacket.class, packet -> bootstrap.kick(packet.getUuid(), packet.getMessage()));
 
-        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> {
-            bootstrap.executeCommand(packet.getCommand());
-        });
+        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> bootstrap.executeCommand(packet.getCommand()));
 
         new SimplePacketRegister<APIResponseCloudPlayerPacket>(APIResponseCloudPlayerPacket.class, packet -> {
             UUID requestId = packet.getRequestId();
@@ -85,7 +79,7 @@ public class NetworkPluginRegister {
         });
 
         new SimplePacketRegister<APIResponseTemplatePacket>(APIResponseTemplatePacket.class, packet -> {
-            List<ITemplate> response = packet.getResponse().stream().collect(Collectors.toList());
+            List<ITemplate> response = new ArrayList<>(packet.getResponse());
             ResponseHandler.getCompletableFuture(packet.getRequestId(), true).complete(
                 packet.getType() == APIResponseTemplatePacket.Type.SINGLE ? response.get(0) : response);
         });

@@ -13,8 +13,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class APIRequestGameServerCopyHandler implements IPacketHandler<Packet> {
 
@@ -29,7 +29,7 @@ public class APIRequestGameServerCopyHandler implements IPacketHandler<Packet> {
 
         File targetTemplateFolder = new File("templates/" + packet.getTemplate() + "/");
         if (!targetTemplateFolder.exists()) {
-            Wrapper.getInstance().getNettyClient().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "The folder of the tempalte doesn't exists!"));
+            Wrapper.getInstance().getNettyClient().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "The folder of the template doesn't exists!"));
             return;
         }
 
@@ -48,11 +48,9 @@ public class APIRequestGameServerCopyHandler implements IPacketHandler<Packet> {
                 }
             } else {
                 try {
-                    List<File> d = FileUtils.listFilesAndDirs(tmpServerFolder, TrueFileFilter.TRUE, TrueFileFilter.TRUE).stream().collect(Collectors.toList());
+                    List<File> d = new ArrayList<>(FileUtils.listFilesAndDirs(tmpServerFolder, TrueFileFilter.TRUE, TrueFileFilter.TRUE));
                     for (File file : d) {
-                        if (file.isDirectory()) {
-                            continue;
-                        } else {
+                        if(!file.isDirectory()){
                             String rawPath = file.getPath().replace(tmpServerFolder.getPath(), "");
                             if (rawPath.contains("PoloCloud.json") || (!rawPath.contains("/plugins/") && rawPath.contains(".jar")) || rawPath.contains("PoloCloud-API.jar") || rawPath.contains("proxy.log.0")) {
                                 continue;

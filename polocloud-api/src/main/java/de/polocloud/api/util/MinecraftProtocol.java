@@ -46,24 +46,20 @@ public enum MinecraftProtocol {
     /**
      * The protocols cached with a given ID
      */
-    public static final Map<Integer, MinecraftProtocol> ID_TO_PROTOCOL_CONSTANT = Maps.toMap(new Iterable<Integer>() {
-        @NotNull
-        @Override
-        public Iterator<Integer> iterator() {
-            List<Integer> integers = new LinkedList<>();
-            for (MinecraftProtocol value : values()) {
-                integers.add(value.getProtocolId());
-            }
-            return integers.iterator();
+    public static final Map<Integer, MinecraftProtocol> ID_TO_PROTOCOL_CONSTANT = Maps.toMap(() -> {
+        List<Integer> integers = new LinkedList<>();
+        for (MinecraftProtocol value : values()) {
+            integers.add(value.getProtocolId());
         }
+        return integers.iterator();
     }, new AbstractLoadingCache<Integer, MinecraftProtocol>() {
         @Override
-        public MinecraftProtocol get(@NotNull Integer integer) throws ExecutionException {
+        public MinecraftProtocol get(@NotNull Integer integer) {
             return Arrays.stream(values()).filter(minecraftProtocol -> minecraftProtocol.getProtocolId() == integer).findFirst().orElse(null);
         }
 
         @Override
-        public @Nullable MinecraftProtocol getIfPresent(Object o) {
+        public @Nullable MinecraftProtocol getIfPresent(@NotNull Object o) {
             return Arrays.stream(values()).filter(minecraftProtocol -> minecraftProtocol.equals(o)).findFirst().orElse(null);
         }
     });
@@ -73,8 +69,6 @@ public enum MinecraftProtocol {
      */
     public static final MinecraftProtocol HIGHEST_VERSION = values()[values().length - 1];
 
-
-    
     /**
      * The protocol id
      */

@@ -1,5 +1,7 @@
 package de.polocloud.bootstrap;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
@@ -46,17 +48,20 @@ import de.polocloud.bootstrap.template.SimpleTemplateService;
 import de.polocloud.bootstrap.template.TemplateStorage;
 import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.bootstrap.template.fallback.FallbackSearchService;
+import de.polocloud.client.PoloCloudClient;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 
 public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
-    private final Injector inector;
+    private final Injector injector;
 
     private final ITemplateService templateService;
     private final IGameServerManager gameServerManager;
@@ -76,6 +81,10 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
     private boolean running = false;
 
     private final MasterConfig masterConfig;
+
+    private PoloCloudClient client;
+
+    private String currentVersion = "N/A";
 
     public Master() {
         super(PoloType.MASTER);
@@ -102,6 +111,11 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
             }
 
         };
+
+        //TODO change IP on release
+        this.client = new PoloCloudClient("127.0.0.1", 4542);
+        registerUncaughtExceptionListener();
+
         this.gameServerManager = new SimpleGameServerManager();
         this.templateService = new SimpleTemplateService();
         this.cloudPlayerManager = new SimpleCloudPlayerManager();
@@ -109,7 +123,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
         masterConfig = loadConfig();
 
-        inector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateService, this.cloudPlayerManager));
+        injector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateService, this.cloudPlayerManager));
 
         this.fallbackSearchService = new FallbackSearchService(masterConfig);
         this.moduleCache = new ModuleCache();
@@ -130,6 +144,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         getCommandManager().registerCommand(getGuice().getInstance(GameServerCommand.class));
         getCommandManager().registerCommand(getGuice().getInstance(WrapperCommand.class));
         getCommandManager().registerCommand(getGuice().getInstance(CloudIngameCommand.class));
+        getCommandManager().registerCommand(new ChangelogCommand());
 
 
         Thread runnerThread = new Thread(getGuice().getInstance(ServerCreatorRunner.class));
@@ -184,10 +199,10 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         try {
             if (this.templateService.getLoadedTemplates().get().size() > 0) {
                 StringBuilder builder = new StringBuilder();
-                this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(" + key.getServerCreateThreshold() + "%), "));
-                Logger.log(LoggerType.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 1));
+                this.templateService.getLoadedTemplates().get().forEach(key -> builder.append(key.getName()).append("(").append(key.getServerCreateThreshold()).append("%), "));
+                Logger.log(LoggerType.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 2));
             } else {
-                Logger.log(LoggerType.INFO, "No templates founded.");
+                Logger.log(LoggerType.INFO, "No templates found.");
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -217,9 +232,23 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
         }, 40L);
         return terminate;
     }
+
+    private void registerUncaughtExceptionListener(){
+        String currentVersion = "-1";
+        try {
+            FileReader reader = new FileReader("launcher.json");
+            this.currentVersion = new GsonBuilder().setPrettyPrinting().create().fromJson(reader, JsonObject.class).get("version").getAsString();
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String finalCurrentVersion = this.currentVersion;
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> client.getExceptionReportService().reportException(throwable, "master", finalCurrentVersion));
+    }
+
     @Override
     public Injector getGuice() {
-        return inector;
+        return injector;
     }
 
     @Override
@@ -273,5 +302,13 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
     public PortService getPortService() {
         return portService;
+    }
+
+    public PoloCloudClient getClient() {
+        return client;
+    }
+
+    public String getCurrentVersion() {
+        return currentVersion;
     }
 }

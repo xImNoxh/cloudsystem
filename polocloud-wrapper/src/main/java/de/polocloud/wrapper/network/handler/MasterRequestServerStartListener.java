@@ -49,7 +49,7 @@ public class MasterRequestServerStartListener implements IPacketHandler<Packet> 
 
         File serverFile = new File("storage/version/" + packet.getVersion().getTitle() + ".jar");
         if (!serverFile.exists()) {
-            Logger.log(LoggerType.INFO, "Downloading follwing jar... (" + packet.getVersion().getTitle() + ")...");
+            Logger.log(LoggerType.INFO, "Downloading following jar... (" + packet.getVersion().getTitle() + ")...");
             serverFile.getParentFile().mkdirs();
             try {
                 FileUtils.copyURLToFile(new URL(packet.getVersion().getUrl()), serverFile);
@@ -70,7 +70,7 @@ public class MasterRequestServerStartListener implements IPacketHandler<Packet> 
     }
 
     public void handleStaticServerStart(String serverName, long snowflake, File serverFile, int maxMemory, int maxPlayers) {
-        File serverDirectory = new File("static/" + serverName + "#" + +snowflake);
+        File serverDirectory = new File("static/" + serverName + "#" + snowflake);
 
         try {
             //copy server.jar and api to server directory
