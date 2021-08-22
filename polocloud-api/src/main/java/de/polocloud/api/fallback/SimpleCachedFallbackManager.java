@@ -44,6 +44,9 @@ public class SimpleCachedFallbackManager implements IFallbackManager {
     public IFallback getHighestFallback(ICloudPlayer cloudPlayer) {
 
         List<IFallback> availableFallbacks = this.getFallbacks(cloudPlayer);
+        if(availableFallbacks.isEmpty()){
+            return null;
+        }
         availableFallbacks.sort(Comparator.comparingInt(IFallback::getPriority));
 
         return availableFallbacks.get(availableFallbacks.size() - 1);

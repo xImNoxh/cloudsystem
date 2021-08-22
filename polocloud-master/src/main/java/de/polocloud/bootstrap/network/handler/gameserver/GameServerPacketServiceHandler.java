@@ -9,10 +9,7 @@ import de.polocloud.api.network.protocol.packet.RedirectPacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.*;
-import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.protocol.packet.master.MasterStartServerPacket;
-import de.polocloud.api.network.request.base.component.PoloComponent;
-import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.template.ITemplateService;
 import de.polocloud.api.wrapper.IWrapper;
 import de.polocloud.bootstrap.gameserver.SimpleGameServer;
@@ -46,6 +43,7 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
         new SimplePacketHandler<>(GameServerControlPlayerPacket.class, (packet) -> {
             //TODO fix only proxy join ctx.writeAndFlush(new MasterKickPlayerPacket(uuid, "§cPlease connect to the Proxy!"));
         });
+
 
         new SimplePacketHandler<>(GameServerSuccessfullyStartedPacket.class, packet -> PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(packet.getServerName()).thenAccept(it -> {
             it.setStatus(GameServerStatus.RUNNING);

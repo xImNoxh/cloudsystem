@@ -41,13 +41,13 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         super.channelActive(ctx);
         this.channelHandlerContext = ctx;
 
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new ChannelActiveEvent(ctx));
-
         networkConnection.setCtx(ctx);
         if (this.networkConnection instanceof SimpleNettyServer) {
             SimpleNettyServer simpleNettyServer = (SimpleNettyServer) networkConnection;
             simpleNettyServer.getConnectedClients().add(ctx.channel());
         }
+        //TODO in Spigot not called
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new ChannelActiveEvent(ctx));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet o) throws Exception {
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet o) {
         //TODO: CHECK ASYNC PACKET HANDLING IF ERRORS
         Scheduler.runtimeScheduler().schedule(() -> networkConnection.getProtocol().firePacketHandlers(channelHandlerContext, o));
     }

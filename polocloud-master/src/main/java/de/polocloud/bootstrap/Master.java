@@ -243,7 +243,10 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
             e.printStackTrace();
         }
         String finalCurrentVersion = this.currentVersion;
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> client.getExceptionReportService().reportException(throwable, "master", finalCurrentVersion));
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            throwable.printStackTrace();
+            client.getExceptionReportService().reportException(throwable, "master", finalCurrentVersion);
+        });
     }
 
     @Override
