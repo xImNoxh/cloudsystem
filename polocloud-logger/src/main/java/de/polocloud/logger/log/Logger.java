@@ -23,8 +23,6 @@ public class Logger {
         }
     }
 
-
-
     public static void logErr(String message) {
         LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + LoggerType.ERROR + "] » " + message));
     }

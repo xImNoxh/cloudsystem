@@ -10,7 +10,6 @@ public class LogService {
     public LogService() {
         logService = this;
         logFileService = new LogFileService();
-
     }
 
     public static LogService getLogService() {

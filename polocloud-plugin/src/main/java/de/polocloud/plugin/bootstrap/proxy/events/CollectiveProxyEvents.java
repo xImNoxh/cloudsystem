@@ -1,5 +1,6 @@
 package de.polocloud.plugin.bootstrap.proxy.events;
 
+import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
 import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
@@ -8,12 +9,14 @@ import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
+import org.bukkit.event.player.PlayerKickEvent;
 
 import java.util.UUID;
 
@@ -45,6 +48,14 @@ public class CollectiveProxyEvents implements Listener {
     }
 
     @EventHandler
+    public void handle(ServerKickEvent event) {
+        if (BaseComponent.toPlainText(event.getKickReasonComponent()).equalsIgnoreCase("Server closed")) {
+            event.setCancelled(true);
+            networkClient.sendPacket(new APIRequestPlayerMoveFallbackPacket(event.getPlayer().getName()));
+        }
+    }
+
+    @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
@@ -54,7 +65,7 @@ public class CollectiveProxyEvents implements Listener {
         }
 
         if (ProxyServer.getInstance().getPlayers().size() - 1 >= cloudPlugin.thisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.getPlayer().disconnect(property.getGameServerMaxPlayersMessage());
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(property.getGameServerMaxPlayersMessage()));
         }
     }
 

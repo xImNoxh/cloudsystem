@@ -16,9 +16,7 @@ public abstract class StepAcceptor {
     }
 
     public Predicate<String> isBoolean() {
-        return s -> {
-            return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
-        };
+        return s -> s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
     }
 
 }

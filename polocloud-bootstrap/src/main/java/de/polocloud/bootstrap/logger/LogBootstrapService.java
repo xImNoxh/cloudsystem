@@ -16,9 +16,7 @@ public class LogBootstrapService {
     }
 
     /**
-     *
      * Prints out the PoloCloud Header on Wrapper or Master startup
-     *
      */
     public void printSymbol() {
 

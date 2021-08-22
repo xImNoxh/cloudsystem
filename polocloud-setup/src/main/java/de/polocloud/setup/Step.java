@@ -30,7 +30,6 @@ public class Step {
         this.futureAnswer = futureAnswer;
     }
 
-
     public Step addStep(String question, Predicate<String> acceptor, String... possibleAnswers) {
         Step step = new Step(question, acceptor, possibleAnswers);
         nextStep = step;

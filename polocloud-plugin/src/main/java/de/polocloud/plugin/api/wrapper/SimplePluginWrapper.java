@@ -71,7 +71,6 @@ public class SimplePluginWrapper implements IWrapper {
     public void startServer(IGameServer gameServer) {
         gameServer.setPort(-1);
         sendPacket(new MasterStartServerPacket(gameServer, this));
-
     }
 
     @Override

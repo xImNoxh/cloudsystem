@@ -9,9 +9,7 @@ public class CloudInit {
 
         LogBootstrapService logBootstrapService = new LogBootstrapService();
         logBootstrapService.printSymbol();
-
-        //new ServiceTypeSetup().sendSetup();
-
+        
         boolean devMode = false;
         if(args.length == 2){
             if(args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("true")) {

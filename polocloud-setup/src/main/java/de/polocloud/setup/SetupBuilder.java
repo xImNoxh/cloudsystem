@@ -49,7 +49,7 @@ public class SetupBuilder {
             e.printStackTrace();
         }
 
-        if (answer.equalsIgnoreCase("cancel")) {
+        if (answer != null && answer.equalsIgnoreCase("cancel")) {
             setup.cancelSetup();
             return;
         }

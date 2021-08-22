@@ -14,7 +14,7 @@ public interface IFallbackManager {
      * @param cloudPlayer the player
      * @return boolean
      */
-    boolean isFallback(ICloudPlayer cloudPlayer);
+    boolean isOnFallback(ICloudPlayer cloudPlayer);
 
     /**
      * Gets a list of all available {@link IFallback}s
@@ -45,4 +45,8 @@ public interface IFallbackManager {
      * @return server
      */
     IGameServer getFallback(ICloudPlayer cloudPlayer);
+
+    void addFallback(IFallback fallback);
+
+    void setAvailableFallbacks(List<IFallback> fallbacks);
 }

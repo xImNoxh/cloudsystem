@@ -7,9 +7,9 @@ public enum Property {
     LOGIN_SERVERS(Maps.newConcurrentMap()),
     LOGIN_EVENTS(Maps.newConcurrentMap()),
 
-    MAINTENANCE_MESSAGE("this service is in maintenance"),
+    MAINTENANCE_MESSAGE("This service is currently in maintenance."),
 
-    MAX_PLAYERS_MESSAGE("this service is full");
+    MAX_PLAYERS_MESSAGE("This service is full!");
 
     private Object object;
 

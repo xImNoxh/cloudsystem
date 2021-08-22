@@ -33,15 +33,12 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
     @Override
     public synchronized void onEnable() {
         this.cloudPlugin.onEnable();
-
     }
 
     @Override
     public synchronized void onDisable() {
 
     }
-
-
 
     @Override
     public void shutdown() {

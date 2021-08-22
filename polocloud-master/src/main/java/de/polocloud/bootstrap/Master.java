@@ -174,6 +174,9 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
             Logger.log(LoggerType.INFO, "Adding a default Lobby fallback!");
             masterConfig.getProperties().getFallbackProperties().add(new SimpleFallback("Lobby", "", true, 1));
         }
+        for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbackProperties()) {
+            PoloCloudAPI.getInstance().getFallbackManager().addFallback(fallbackProperty);
+        }
         simpleConfigSaver.save(masterConfig, configFile);
         return masterConfig;
     }

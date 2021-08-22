@@ -65,7 +65,8 @@ public abstract class ServerCreator {
 
         List<IWrapper> suitableWrappers = new ArrayList<>();
 
-        wrapperClients.stream().filter(key -> Arrays.asList(template.getWrapperNames()).contains(key.getName())).forEach(it -> suitableWrappers.add(it));
+        wrapperClients.stream().filter(key -> Arrays.asList(template.getWrapperNames()).contains(key.getName())).forEach(suitableWrappers::add);
+
 
         if (suitableWrappers.isEmpty()) return null;
         return suitableWrappers.get(ThreadLocalRandom.current().nextInt(suitableWrappers.size()));
