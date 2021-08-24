@@ -117,7 +117,6 @@ public class MasterRequestServerStartListener implements IPacketHandler<Packet> 
         file.mkdirs();
     }
 
-
     private void handleDynamicServerStart(int port, String templateName, long snowflake, boolean isProxy, File poloCloudFile, int maxMemory, int maxPlayers, String serverName, String motd) {
         File serverDirectory = new File("tmp/" + serverName + "#" + snowflake);
         File poloCloudConfigFile = new File(serverDirectory + "/PoloCloud.json");
@@ -125,6 +124,10 @@ public class MasterRequestServerStartListener implements IPacketHandler<Packet> 
         try {
             //copy server.jar and api to server directory
             FileUtils.copyDirectory(new File("templates/" + templateName), serverDirectory);
+
+            //Copyies the every Proxy or GameServer Folder
+            FileUtils.copyDirectory(isProxy ? new File("templates/EVERY_PROXY") : new File("templates/EVERY_GAMESERVER"), serverDirectory);
+
             FileUtils.copyFile(poloCloudFile, new File(serverDirectory + (isProxy ? "/proxy.jar" : "/spigot.jar")));
             FileUtils.copyFile(new File("templates/PoloCloud-API.jar"), new File(serverDirectory + "/plugins/PoloCloud-API.jar"));
 

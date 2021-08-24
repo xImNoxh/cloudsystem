@@ -92,6 +92,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
         this.config = loadWrapperConfig();
 
+        this.checkNecessaryFolders();
         this.requestStaticServersStart();
         this.checkAndDeleteTmpFolder();
         this.checkPoloCloudAPI();
@@ -284,6 +285,17 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
                 Logger.log(LoggerType.ERROR, "Unexpected error while checking PoloCloud-API Jar!\n" +
                     "Please report this error.");
             }
+        }
+    }
+
+    public void checkNecessaryFolders(){
+        File EVERY_PROXY = new File("templates/EVERY_PROXY");
+        File EVERY_GAMESERVER = new File("templates/EVERY_GAMESERVER");
+        if(!EVERY_GAMESERVER.exists()){
+            EVERY_GAMESERVER.mkdirs();
+        }
+        if(!EVERY_PROXY.exists()){
+            EVERY_PROXY.mkdirs();
         }
     }
 
