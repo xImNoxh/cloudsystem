@@ -125,7 +125,9 @@ public class MasterRequestServerStartListener implements IPacketHandler<Packet> 
             //copy server.jar and api to server directory
             FileUtils.copyDirectory(new File("templates/" + templateName), serverDirectory);
 
-            //Copyies the every Proxy or GameServer Folder
+
+            FileUtils.copyDirectory(new File("templats/EVERY"), serverDirectory);
+            //Copies the every Proxy or GameServer Folder
             FileUtils.copyDirectory(isProxy ? new File("templates/EVERY_PROXY") : new File("templates/EVERY_GAMESERVER"), serverDirectory);
 
             FileUtils.copyFile(poloCloudFile, new File(serverDirectory + (isProxy ? "/proxy.jar" : "/spigot.jar")));

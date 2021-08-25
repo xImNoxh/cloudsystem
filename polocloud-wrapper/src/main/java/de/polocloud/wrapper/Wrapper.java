@@ -291,11 +291,15 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     public void checkNecessaryFolders(){
         File EVERY_PROXY = new File("templates/EVERY_PROXY");
         File EVERY_GAMESERVER = new File("templates/EVERY_GAMESERVER");
+        File EVERY_SERVER = new File("templates/EVERY");
         if(!EVERY_GAMESERVER.exists()){
             EVERY_GAMESERVER.mkdirs();
         }
         if(!EVERY_PROXY.exists()){
             EVERY_PROXY.mkdirs();
+        }
+        if(!EVERY_SERVER.exists()){
+            EVERY_SERVER.mkdirs();
         }
     }
 
