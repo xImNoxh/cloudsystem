@@ -34,7 +34,7 @@ public class FileTemplateLoader implements ITemplateLoader {
 
         for (File file : baseDir.listFiles()) {
             try {
-                if (file.isFile()) {
+                if (file.isFile() && file.getName().endsWith(".json")) {
                     templates.add(loadTemplate(file));
                 }
             } catch (IOException e) {
