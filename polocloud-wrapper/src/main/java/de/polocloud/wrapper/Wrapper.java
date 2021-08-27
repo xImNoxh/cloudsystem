@@ -86,7 +86,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         this.devMode = devMode;
 
         //TODO change IP to PoloCloud Servers on release
-        this.poloCloudClient = new PoloCloudClient("127.0.0.1", 4542);
+        this.poloCloudClient = new PoloCloudClient("37.114.60.98", 4542);
 
         registerUncaughtExceptionListener();
 

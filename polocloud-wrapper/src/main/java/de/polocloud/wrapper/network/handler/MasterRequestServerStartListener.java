@@ -1,11 +1,11 @@
 package de.polocloud.wrapper.network.handler;
 
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.network.protocol.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.Packet;
 import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.logger.log.types.LoggerType;
@@ -126,7 +126,7 @@ public class MasterRequestServerStartListener implements IPacketHandler<Packet> 
             FileUtils.copyDirectory(new File("templates/" + templateName), serverDirectory);
 
 
-            FileUtils.copyDirectory(new File("templats/EVERY"), serverDirectory);
+            FileUtils.copyDirectory(new File("templates/EVERY"), serverDirectory);
             //Copies the every Proxy or GameServer Folder
             FileUtils.copyDirectory(isProxy ? new File("templates/EVERY_PROXY") : new File("templates/EVERY_GAMESERVER"), serverDirectory);
 

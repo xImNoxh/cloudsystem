@@ -14,6 +14,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 
 public class Launcher {
 
@@ -26,24 +27,22 @@ public class Launcher {
 
     public static void main(String[] args) {
 
-        //TODO change to MainServer
-
-        //Inits the PoloCloudClient for the PoloCloudUpdater and for the ExceptionReporterService
-        PoloCloudClient client = new PoloCloudClient("127.0.0.1", 4542);
+        //Initializing the PoloCloudClient for the PoloCloudUpdater and for the ExceptionReporterService
+        PoloCloudClient client = new PoloCloudClient("37.114.60.98", 4542);
 
         //Checking the args for the type of bootstrap and for the devMode
-        if(args.length == 1){
+        if (args.length == 1) {
             if (!(args[0].equalsIgnoreCase("Master") || args[0].equalsIgnoreCase("Wrapper"))) {
                 System.out.println(PREFIX + args[0] + " is wrong argument!");
                 return;
             }
-        }else if(args.length == 2){
-            if(!(args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("true"))){
+        } else if (args.length == 2) {
+            if (!(args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("true"))) {
                 System.out.println("Please specify in a boolean ('true', 'false') if you want to enable the devmode!");
                 return;
             }
             devMode = Boolean.parseBoolean(args[1]);
-        }else{
+        } else {
             System.out.println(PREFIX + "Please specify what you want to start. (Master, Wrapper)");
             return;
         }
@@ -93,8 +92,8 @@ public class Launcher {
         //Checking for Updates
         checkForUpdates(currentVersion, forceUpdate, gson);
 
-        /**
-         * Old Method for native Support if the new UpdateServer isn't started or not functional
+        /*
+          Old Method for native Support if the new UpdateServer isn't started or not functional
          */
         //checkForUpdatesNative(currentVersion, forceUpdate, gson);
 
@@ -106,61 +105,148 @@ public class Launcher {
         }
 
         //Launching the bootstrap.jar File
-        try (JarFile jarFile = new JarFile(bootstrapFile)) {
+        try {
+            //First attempt
+            launchBootstrap(args);
+        } catch (ZipException exception) {
+            //Failed to launch the jar, maybe the jar is corrupt after bad update
+            //Launcher is trying to rescue the cloud with the old-bootstrap.jar backup file
 
-            URLClassLoader classLoader = new URLClassLoader(new URL[]{bootstrapFile.toURI().toURL()});
-            URLClassLoader urlClassLoader = new URLClassLoader(((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs());
-            Thread.currentThread().setContextClassLoader(classLoader);
+            System.out.println("Jar couldn't be launched, going back to backup version");
+            File backup = new File("old-bootstrap.jar");
 
-
-            String mainClass = "de.polocloud.bootstrap.Bootstrap";
-            Class<?> loadedClass = classLoader.loadClass(mainClass);
-            Method mainMethod = loadedClass.getMethod("main", String[].class);
-
-            final Object[] params = new Object[1];
-            params[0] = args;
-
-            urlClassLoader.close();
-            mainMethod.invoke(null, params);
-
+            //Applying backup file
+            if (backup.exists()) {
+                backup.renameTo(new File("bootstrap.jar"));
+                System.out.println("Backup File existed, try to launch...");
+                try {
+                    //Second launch try
+                    launchBootstrap(args);
+                } catch (ZipException exception1) {
+                    System.out.println("Second attempt failed! Stopping");
+                    System.exit(-1);
+                } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    client.getExceptionReportService().reportException(e, "launcher - booting bootstrap (" + args[0] + ")", currentVersion);
+                }
+            } else {
+                System.out.println("No backup version was found. Please contact the support or try later!");
+            }
         } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
             client.getExceptionReportService().reportException(e, "launcher - booting bootstrap (" + args[0] + ")", currentVersion);
         }
+
+        //Launching the bootstrap.jar File
+//        try (JarFile jarFile = new JarFile(bootstrapFile)) {
+//
+//            URLClassLoader classLoader = new URLClassLoader(new URL[]{bootstrapFile.toURI().toURL()});
+//            URLClassLoader urlClassLoader = new URLClassLoader(((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs());
+//            Thread.currentThread().setContextClassLoader(classLoader);
+//
+//
+//            String mainClass = "de.polocloud.bootstrap.Bootstrap";
+//            Class<?> loadedClass = classLoader.loadClass(mainClass);
+//            Method mainMethod = loadedClass.getMethod("main", String[].class);
+//
+//            final Object[] params = new Object[1];
+//            params[0] = args;
+//
+//            urlClassLoader.close();
+//            mainMethod.invoke(null, params);
+//
+//            System.out.println(PREFIX + "[Updater] Cleaning up...");
+//            new File("old-bootstrap.jar").delete();
+//            System.out.println(PREFIX + "[Updater] Done!");
+//        } catch (ZipException exception){
+//            System.out.println("Jar couldn't be launched, going back to backup version");
+//            File backup = new File("old-bootstrap.jar");
+//            if(backup.exists()){
+//                backup.renameTo(new File("bootstrap.jar"));
+//                System.out.println("Backup File existed, try to launch...");
+//            }else{
+//                System.out.println("No backup version was found. Please contact the support!");
+//            }
+//        } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+//            e.printStackTrace();
+//            client.getExceptionReportService().reportException(e, "launcher - booting bootstrap (" + args[0] + ")", currentVersion);
+//        }
     }
 
+    private static void launchBootstrap(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        File bootstrapFile = new File("bootstrap.jar");
 
-    private static void checkForUpdates(String currentVersion, boolean forceUpdate, Gson gson){
-        PoloCloudUpdater updater = new PoloCloudUpdater(devMode, currentVersion, "bootstrap", new File("bootstrap.jar"));
+        //Creating JarFile
+        new JarFile(bootstrapFile);
 
-        if(forceUpdate){
-            if(devMode){
+        //JarFile is not corrupt, launcher can clean up backup Jars
+        System.out.println(PREFIX + "[Updater] Cleaning up...");
+        new File("old-bootstrap.jar").delete();
+        System.out.println(PREFIX + "[Updater] Done!");
+
+        //Loading mainclass
+        URLClassLoader classLoader = new URLClassLoader(new URL[]{bootstrapFile.toURI().toURL()});
+        URLClassLoader urlClassLoader = new URLClassLoader(((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs());
+        Thread.currentThread().setContextClassLoader(classLoader);
+
+        String mainClass = "de.polocloud.bootstrap.Bootstrap";
+        Class<?> loadedClass = classLoader.loadClass(mainClass);
+        Method mainMethod = loadedClass.getMethod("main", String[].class);
+
+        final Object[] params = new Object[1];
+        params[0] = args;
+
+        urlClassLoader.close();
+        mainMethod.invoke(null, params);
+    }
+
+    private static void checkForUpdates(String currentVersion, boolean forceUpdate, Gson gson) {
+        File bootstrap = new File("bootstrap.jar");
+        PoloCloudUpdater updater = new PoloCloudUpdater(devMode, currentVersion, "bootstrap", bootstrap);
+
+        if (forceUpdate) {
+            if (devMode) {
                 System.out.println(PREFIX + "[Updater] Downloading latest development builds...");
+                bootstrap.renameTo(new File("old-bootstrap.jar"));
                 if (updater.download()) {
                     System.out.println(PREFIX + "[Updater] Successfully downloaded newest development build!");
                 } else {
                     System.out.println(PREFIX + "[Updater] Couldn't download latest development build!");
                 }
-            }else{
+            } else {
                 System.out.println(PREFIX + "[Updater] Force update activated. Downloading latest build...");
+                bootstrap.renameTo(new File("old-bootstrap.jar"));
                 if (updater.download()) {
+                    configObject.remove("version");
+                    configObject.put("version", updater.getFetchedVersion());
+                    try {
+                        FileWriter writer = new FileWriter(configFile);
+                        gson.toJson(configObject, writer);
+                        writer.flush();
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        PoloCloudClient.getInstance().getExceptionReportService().reportException(e, "launcher", currentVersion);
+                    }
                     System.out.println(PREFIX + "[Updater] Successfully downloaded newest build!");
                 } else {
                     System.out.println(PREFIX + "[Updater] Couldn't download latest build!");
                 }
             }
-        }else if(devMode){
+        } else if (devMode) {
             System.out.println(PREFIX + "[Updater] Downloading latest development builds...");
+            bootstrap.renameTo(new File("old-bootstrap.jar"));
             if (updater.download()) {
                 System.out.println(PREFIX + "[Updater] Successfully downloaded newest development build!");
             } else {
                 System.out.println(PREFIX + "[Updater] Couldn't download latest development build!");
             }
-        }else{
+        } else {
             System.out.println(PREFIX + "[Updater] Searching for updates...");
             if (updater.check()) {
                 System.out.println(PREFIX + "[Updater] Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");
                 System.out.println(PREFIX + "[Updater] downloading...");
+                bootstrap.renameTo(new File("old-bootstrap.jar"));
                 if (updater.download()) {
                     configObject.remove("version");
                     configObject.put("version", updater.getFetchedVersion());
@@ -185,8 +271,7 @@ public class Launcher {
 
     }
 
-    private static void checkForUpdatesNative(String currentVersion, boolean forceUpdate, Gson gson){
-
+    private static void checkForUpdatesNative(String currentVersion, boolean forceUpdate, Gson gson) {
         String baseUrl = "http://37.114.60.129:8870";
         String downloadUrl = baseUrl + "/updater/download/bootstrap";
         String versionUrl = baseUrl + "/updater/version/bootstrap";

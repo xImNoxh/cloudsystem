@@ -112,8 +112,7 @@ public class Master extends PoloCloudAPI implements IStartable, ITerminatable {
 
         };
 
-        //TODO change IP on release
-        this.client = new PoloCloudClient("127.0.0.1", 4542);
+        this.client = new PoloCloudClient("37.114.60.98", 4542);
         registerUncaughtExceptionListener();
 
         this.gameServerManager = new SimpleGameServerManager();
