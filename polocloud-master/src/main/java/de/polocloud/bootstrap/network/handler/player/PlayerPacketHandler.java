@@ -117,7 +117,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
         });
 
         new SimplePacketHandler<>(CloudPlayerUpdatePacket.class, packet -> {
-            Master.getInstance().getCloudPlayerManager().unregisterPlayer(packet.getCloudPlayer());
+            Master.getInstance().getCloudPlayerManager().updateObject(packet.getCloudPlayer());
             Master.getInstance().updateCache();
         });
 

@@ -77,12 +77,14 @@ public class ServiceStarter {
         File templateDirectory = FileConstants.getTemplateDirectory(template);
         File pluginsDirectory = new File(templateDirectory, "/plugins");
 
-        FileUtils.copyDirectory(templateDirectory, serverLocation);
-        FileUtils.copyFile(serverFile, new File(serverLocation, getJarFile()));
-
         if (!pluginsDirectory.exists()) {
             pluginsDirectory.mkdirs();
         }
+
+        FileUtils.copyDirectory(templateDirectory, serverLocation);
+        FileUtils.copyFile(serverFile, new File(serverLocation, getJarFile()));
+
+
 
         //Global templates
 

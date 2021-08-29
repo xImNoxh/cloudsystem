@@ -99,28 +99,37 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ServerConnectEvent event) {
-
         ProxiedPlayer proxiedPlayer = event.getPlayer();
         SimpleCloudPlayer cloudPlayer = (SimpleCloudPlayer) PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
-        if (proxiedPlayer.getServer() == null) {
-            IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(cloudPlayer);
-            ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(fallback.getName());
 
-            if (serverInfo == null) {
-                TextComponent textComponent = new TextComponent("§8[§bCloudPlugin§8] §cCouldn't find a suitable fallback to connect you to!");
-                proxiedPlayer.disconnect(textComponent);
+        //Player is joining the network
+        if (proxiedPlayer.getServer() == null) {
+
+            //Searching a fallback for the player
+            IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(cloudPlayer);
+
+            //No fallback was found
+            if (fallback == null || ProxyServer.getInstance().getServerInfo(fallback.getName()) == null) {
+                proxiedPlayer.disconnect(TextComponent.fromLegacyText("§8[§bCloudPlugin§8] §cCouldn't find a suitable fallback to connect you to!"));
                 event.setCancelled(true);
                 return;
             }
+
+            //Sending player to fallback
+            ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(fallback.getName());
             event.setCancelled(false);
             event.setTarget(serverInfo);
 
+            //Setting the new Server from the player
             Scheduler.runtimeScheduler().schedule(() -> {
                 cloudPlayer.setMinecraftServer(serverInfo.getName());
                 cloudPlayer.update();
             }, () -> PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(proxiedPlayer.getName()) != null);
 
         } else {
+            //Player is switching servers
+
+            //Setting new info for the player
             ServerInfo target = event.getTarget();
             cloudPlayer.setMinecraftServer(target.getName());
             cloudPlayer.update();
@@ -136,12 +145,12 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(PlayerDisconnectEvent event) {
         ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
         if (cloudPlayer == null) {
-            System.out.println("Tried unregistering nulled CloudPlayer");
+            System.err.println("Tried unregistering nulled CloudPlayer");
             return;
         }
         PoloCloudAPI.getInstance().getCloudPlayerManager().unregisterPlayer(cloudPlayer);
         networkClient.sendPacket(new GameServerPlayerDisconnectPacket(event.getPlayer().getUniqueId(), event.getPlayer().getName()));
-        networkClient.sendPacket(new CloudPlayerUnregisterPacket(PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName())));
+        networkClient.sendPacket(new CloudPlayerUnregisterPacket(cloudPlayer));
     }
 
 
