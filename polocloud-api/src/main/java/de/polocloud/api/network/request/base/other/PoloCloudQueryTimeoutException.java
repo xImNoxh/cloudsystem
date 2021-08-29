@@ -1,7 +1,7 @@
 package de.polocloud.api.network.request.base.other;
 
 
-import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.util.PoloHelper;
 
 public class PoloCloudQueryTimeoutException extends RuntimeException {
 
@@ -43,7 +43,7 @@ public class PoloCloudQueryTimeoutException extends RuntimeException {
     }
 
     public Class<? extends Exception> getParentClass() {
-        return PoloUtils.sneakyThrows(() -> (Class<? extends Exception>) Class.forName(parentClass));
+        return PoloHelper.sneakyThrows(() -> (Class<? extends Exception>) Class.forName(parentClass));
     }
 
     public int getCode() {

@@ -2,26 +2,28 @@ package de.polocloud.bootstrap.wrapper;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.master.MasterRequestServerStartPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterRequestsServerTerminatePacket;
-import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.TemplateType;
-import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
+import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
+import de.polocloud.api.network.packets.wrapper.WrapperRequestShutdownPacket;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.util.Snowflake;
-import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.PoloLogger;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
+public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
 
     private final String name;
     private final ChannelHandlerContext chx;
@@ -37,17 +39,14 @@ public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
     public void startServer(IGameServer gameServer){
         PoloCloudAPI.getInstance().getGameServerManager().registerGameServer(gameServer);
         try {
-            Logger.log(LoggerType.INFO, "Trying to start server " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + " on " + getName() + ".");
+            PoloLogger.print(LogLevel.INFO, "Requesting §3" + gameServer.getWrapper().getName() + " §7to start " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §b" + gameServer.getName() + "§7#§b" + gameServer.getSnowflake() + " §7on port §e" + gameServer.getPort() + "§7!");
 
-            ITemplate template = gameServer.getTemplate();
+            gameServer.setStatus(GameServerStatus.STARTING);
+            gameServer.update();
 
-            int port = template.getTemplateType().equals(TemplateType.MINECRAFT) ? -1 : Master.getInstance().getPortService().getNextStartedPort();
-            gameServer.setPort(port);
+            Packet packet = new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort());
+            sendPacket(packet);
 
-            sendPacket(new MasterRequestServerStartPacket(port, template.getName(), template.getVersion(), gameServer.getSnowflake(),
-                isProxy(template), template.getMaxMemory(), template.getMaxPlayers(), gameServer.getName(), gameServer.getMotd(), template.isStatic()));
-
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.STARTING));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,6 +54,7 @@ public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
 
     @Override
     public void stopServer(IGameServer gameServer) {
+        PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName()));
         sendPacket(new MasterRequestsServerTerminatePacket(gameServer));
     }
 
@@ -65,7 +65,7 @@ public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
     @Override
     public List<IGameServer> getServers() {
         List<IGameServer> list = new LinkedList<>();
-        List<IGameServer> gameServers = sneakyThrows(() -> PoloCloudAPI.getInstance().getGameServerManager().getGameServers().get());
+        List<IGameServer> gameServers = PoloCloudAPI.getInstance().getGameServerManager().getAllCached();
         for (IGameServer gameServer : gameServers) {
             if (gameServer.getWrapper().getName().equalsIgnoreCase(this.name)) {
                 list.add(gameServer);
@@ -86,15 +86,23 @@ public class SimpleMasterWrapper extends PoloUtils implements IWrapper {
 
     @Override
     public void sendPacket(Packet packet) {
-        this.chx.writeAndFlush(packet);
+        if (!isStillConnected()) {
+            return;
+        }
+        this.chx.writeAndFlush(packet).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if (!channelFuture.isSuccess()) {
+                    System.out.println("[SimpleMasterWrapper@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
+                    channelFuture.cause().printStackTrace();
+                }
+            }
+        });
     }
 
-    public ChannelHandlerContext getConnection() {
-        return this.chx;
-    }
-
-    public boolean isProxy(ITemplate template) {
-        return template.getTemplateType() == TemplateType.PROXY;
+    @Override
+    public boolean isStillConnected() {
+        return !this.chx.isRemoved() && this.chx.channel().isRegistered() && this.chx.channel().isActive() && this.chx.channel().isOpen() && this.chx.channel().isWritable();
     }
 
     @Override

@@ -1,8 +1,7 @@
 package de.polocloud.api.fallback.base;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.template.base.ITemplate;
 
 public class SimpleFallback implements IFallback{
 
@@ -23,7 +22,7 @@ public class SimpleFallback implements IFallback{
 
     @Override
     public ITemplate getTemplate() {
-        return PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getTemplateService().getTemplateByName(this.templateName).get());
+        return PoloCloudAPI.getInstance().getTemplateManager().getTemplate(this.templateName);
     }
 
     public String getFallbackPermission() {

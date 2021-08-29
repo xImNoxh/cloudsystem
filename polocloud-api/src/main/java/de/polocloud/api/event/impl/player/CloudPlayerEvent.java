@@ -1,11 +1,13 @@
 package de.polocloud.api.event.impl.player;
 
+import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.IEvent;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.player.ICloudPlayer;
 
 import java.io.IOException;
 
+@EventData(nettyFire = true)
 public abstract class CloudPlayerEvent implements IEvent {
 
     private ICloudPlayer player;

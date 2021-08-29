@@ -11,7 +11,7 @@ public enum Property {
 
     MAX_PLAYERS_MESSAGE("This service is full!");
 
-    private Object object;
+    private final Object object;
 
     Property(Object object) {
         this.object = object;

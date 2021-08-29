@@ -3,13 +3,16 @@ package de.polocloud.api.event;
 
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
+import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.ICancellable;
 import de.polocloud.api.event.base.IEvent;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.handling.EventMethod;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.IEventHandler;
-import de.polocloud.api.network.protocol.packet.api.EventPacket;
+import de.polocloud.api.network.packets.api.EventPacket;
+import de.polocloud.api.scheduler.Scheduler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -93,17 +96,24 @@ public class SimpleCachedEventManager implements IEventManager {
         callback.accept(event);
     }
 
+
     @Override
     public boolean fireEvent(IEvent event) {
 
-        if (event.globalFire()) {
+        EventData eventData = event.getClass().getAnnotation(EventData.class);
+
+        boolean nettyFire = eventData == null || eventData.nettyFire();
+        PoloType[] ignoredTypes = eventData != null ? eventData.ignoreTypes() : new PoloType[0];
+        boolean async = eventData != null && eventData.async();
+
+        if (nettyFire) {
             if (PoloCloudAPI.getInstance().getType().isPlugin()) {
                 if (PoloCloudAPI.getInstance().getConnection() != null) {
-                    PoloCloudAPI.getInstance().getConnection().sendPacket(new EventPacket(event, PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName()));
+                    PoloCloudAPI.getInstance().getConnection().sendPacket(new EventPacket(event, PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName(), ignoredTypes, async));
                 }
             } else {
                 if (PoloCloudAPI.getInstance().getConnection() != null) {
-                    PoloCloudAPI.getInstance().getConnection().sendPacket(new EventPacket(event, "cloud"));
+                    PoloCloudAPI.getInstance().getConnection().sendPacket(new EventPacket(event, "cloud", ignoredTypes, async));
                 }
             }
         }
@@ -111,7 +121,11 @@ public class SimpleCachedEventManager implements IEventManager {
         for (Class<? extends IEvent> aClass : this.eventHandlers.keySet()) {
             if (event.getClass().equals(aClass)) {
                 for (IEventHandler iEventHandler : this.eventHandlers.get(aClass)) {
-                    iEventHandler.handleEvent(event);
+                    if (async) {
+                        Scheduler.runtimeScheduler().async().schedule(() -> iEventHandler.handleEvent(event));
+                    } else {
+                        iEventHandler.handleEvent(event);
+                    }
                 }
             }
         }
@@ -119,10 +133,20 @@ public class SimpleCachedEventManager implements IEventManager {
             registeredClasses.forEach((object, methodList) -> {
                 for (EventMethod<EventHandler> em : methodList) {
                     if (em.getaClass().equals(event.getClass())) {
-                        try {
-                            em.getMethod().invoke(em.getListener(), event);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
+                        if (async) {
+                            Scheduler.runtimeScheduler().async().schedule(() -> {
+                                try {
+                                    em.getMethod().invoke(em.getListener(), event);
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        } else {
+                            try {
+                                em.getMethod().invoke(em.getListener(), event);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

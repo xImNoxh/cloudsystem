@@ -1,16 +1,20 @@
 package de.polocloud.api.network.protocol.buffer;
 
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.fallback.base.IFallback;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
 
 public interface IPacketBuffer {
+
+
+    IPacketBuffer avoidNulls();
 
     /**
      * The base {@link ByteBuf} instance of this buffer
@@ -83,9 +87,22 @@ public interface IPacketBuffer {
     ITemplate readTemplate() throws IOException;
 
     /**
+     * Writes an {@link IFallback} to this buffer
+     *
+     * @param fallback the fallback
+     * @throws IOException if something goes wrong while writing
+     */
+    void writeFallback(IFallback fallback) throws IOException;
+
+    /**
+     * Reads an {@link IFallback} from this buffer
+     */
+    IFallback readFallback() throws IOException;
+
+    /**
      * Reads a{@link String[]} from this buffer
      */
-    String[] readStringArray() throws IOException;
+    String[] readStrings() throws IOException;
 
     /**
      * Reads a custom object from this buffer
@@ -254,6 +271,6 @@ public interface IPacketBuffer {
      * @param array the array
      * @throws IOException if something goes wrong
      */
-    void writeStringArray(String[] array) throws IOException;
+    void writeStrings(String[] array) throws IOException;
 
 }

@@ -1,5 +1,6 @@
 package de.polocloud.api.network.request.base.future;
 
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.request.base.other.PoloCloudQueryTimeoutException;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 
@@ -41,6 +42,11 @@ public interface PoloFuture<T> {
      * @return the current future
      */
     PoloFuture<T> timeOut(long ticks, T timeOutValue);
+
+    /**
+     * The provided packet if sent
+     */
+    Packet pullPacket() throws PoloCloudQueryTimeoutException;
 
     /**
      * Marks this future as dummy

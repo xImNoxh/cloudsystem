@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class GameServerProperty {
 
-    private Map<Property, Object> properties;
+    private final Map<Property, Object> properties;
 
     public GameServerProperty() {
         this.properties = Maps.newConcurrentMap();

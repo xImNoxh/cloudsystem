@@ -1,6 +1,6 @@
 package de.polocloud.bootstrap.pubsub;
 
-import de.polocloud.api.network.protocol.packet.api.PublishPacket;
+import de.polocloud.api.network.packets.api.PublishPacket;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class MasterPubSubManager {
         String channel = packet.getChannel();
         if (subscriberMap.containsKey(channel)) {
             List<ChannelHandlerContext> channelHandlerContextList = subscriberMap.get(channel);
-            for (ChannelHandlerContext channelHandlerContext : channelHandlerContextList) {
+            for (ChannelHandlerContext channelHandlerContext : new ArrayList<>(channelHandlerContextList)) {
                 channelHandlerContext.writeAndFlush(packet);
             }
         }

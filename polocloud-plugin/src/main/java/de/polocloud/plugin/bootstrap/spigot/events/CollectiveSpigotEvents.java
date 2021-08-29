@@ -1,9 +1,8 @@
 package de.polocloud.plugin.bootstrap.spigot.events;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerControlPlayerPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecutePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerControlPlayerPacket;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -14,11 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.server.ServerListPingEvent;
-import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.Plugin;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CollectiveSpigotEvents implements Listener {
 
@@ -40,8 +35,8 @@ public class CollectiveSpigotEvents implements Listener {
 
     @EventHandler
     public void handle(ServerListPingEvent event) {
-        event.setMaxPlayers(cloudPlugin.thisService().getMaxPlayers());
-        event.setMotd(cloudPlugin.thisService().getMotd());
+        event.setMaxPlayers(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMaxPlayers());
+        event.setMotd(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMotd());
     }
 
     @EventHandler
@@ -50,12 +45,12 @@ public class CollectiveSpigotEvents implements Listener {
 
         Player player = event.getPlayer();
 
-        if (cloudPlugin.thisService().getTemplate().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
+        if (PoloCloudAPI.getInstance().getGameServerManager().getThisService().getTemplate().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, property.getGameServerMaintenanceMessage());
             return;
         }
 
-        if (Bukkit.getOnlinePlayers().size() >= cloudPlugin.thisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
+        if (Bukkit.getOnlinePlayers().size() >= PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, property.getGameServerMaxPlayersMessage());
             return;
         }
@@ -67,7 +62,7 @@ public class CollectiveSpigotEvents implements Listener {
     public void onCmd(PlayerCommandPreprocessEvent event) {
 
         try {
-            if (PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getMessage(), PoloCloudAPI.getInstance().getCloudPlayerManager().getOnlinePlayer(event.getPlayer().getName()).get())) {
+            if (PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getMessage(), PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName()))) {
                 event.setCancelled(true);
                 networkClient.sendPacket(new GameServerCloudCommandExecutePacket(event.getPlayer().getUniqueId(), event.getMessage().substring(1)));
             } else {

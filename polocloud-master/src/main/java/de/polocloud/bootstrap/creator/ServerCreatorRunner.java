@@ -3,8 +3,8 @@ package de.polocloud.bootstrap.creator;
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.bootstrap.Master;
 
 import java.util.Collection;
@@ -19,7 +19,7 @@ public class ServerCreatorRunner implements Runnable {
     private IGameServerManager gameServerManager;
 
     @Inject
-    private ITemplateService templateService;
+    private ITemplateManager templateService;
 
     private final ServerCreator creator = PoloCloudAPI.getInstance().getGuice().getInstance(SimpleServerCreator.class);
 
@@ -27,12 +27,8 @@ public class ServerCreatorRunner implements Runnable {
     public void run() {
 
         while (master.isRunning()) {
-            try {
-                Collection<ITemplate> loadedTemplates = templateService.getLoadedTemplates().get();
-                loadedTemplates.stream().filter(creator::check).forEach(creator::startServer);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+            Collection<ITemplate> loadedTemplates = templateService.getTemplates();
+            loadedTemplates.stream().filter(creator::check).forEach(creator::startServer);
 
             try {
                 Thread.sleep(1000);

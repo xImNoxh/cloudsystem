@@ -6,28 +6,26 @@ import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.fallback.base.IFallback;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterUpdatePlayerInfoPacket;
+import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.network.packets.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecutePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerPlayerDisconnectPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerPlayerRequestJoinPacket;
+import de.polocloud.api.network.packets.master.MasterPlayerRequestJoinResponsePacket;
+import de.polocloud.api.network.packets.master.MasterUpdatePlayerInfoPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
-import de.polocloud.api.template.TemplateType;
-import de.polocloud.bootstrap.Master;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
-import de.polocloud.logger.log.Logger;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -38,21 +36,17 @@ import java.util.stream.Collectors;
 public abstract class PlayerPacketServiceController {
 
     public void executeCommand(ICloudPlayerManager cloudPlayerManager, ICommandRunner command, UUID uuid, String[] args) {
-        try {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (String arg : args) {
-                stringBuilder.append(arg).append(" ");
-            }
-            PoloCloudAPI.getInstance().getCommandManager().runCommand(stringBuilder.toString(), cloudPlayerManager.getOnlinePlayer(uuid).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String arg : args) {
+            stringBuilder.append(arg).append(" ");
         }
+        PoloCloudAPI.getInstance().getCommandManager().runCommand(stringBuilder.toString(), cloudPlayerManager.getCachedObject(uuid));
     }
 
     public List<ICloudPlayer> getICloudPlayerByPacketResponse(ICloudPlayerManager manager, APIRequestCloudPlayerPacket.Action action, String value)
         throws ExecutionException, InterruptedException {
-        return isAllPacket(action) ? manager.getAllOnlinePlayers().get() : isNamePacket(action) ?
-            Lists.newArrayList(manager.getOnlinePlayer(value).get()) : Lists.newArrayList(manager.getOnlinePlayer(UUID.fromString(value)).get());
+        return isAllPacket(action) ? manager.getAllCached() : isNamePacket(action) ?
+            Lists.newArrayList(manager.getCached(value)) : Lists.newArrayList(manager.getCachedObject(UUID.fromString(value)));
     }
 
     public void sendICloudPlayerAPIResponse(ICloudPlayerManager manager, ChannelHandlerContext ctx, APIRequestCloudPlayerPacket packet) {
@@ -65,25 +59,20 @@ public abstract class PlayerPacketServiceController {
     }
 
     public void getOnlinePlayer(GameServerPlayerDisconnectPacket packet, UUID uuid, ICloudPlayerManager playerManager, Consumer<ICloudPlayer> player) {
-        try {
-            if (playerManager.isPlayerOnline(uuid).get())
-                player.accept(playerManager.getOnlinePlayer(packet.getUuid()).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        if (playerManager.isPlayerOnline(uuid))
+            player.accept(playerManager.getCachedObject(packet.getUuid()));
     }
 
     public void removeOnServerIfExist(ICloudPlayerManager playerManager, ICloudPlayer onlinePlayer) {
         convertService(onlinePlayer, (proxy, server) -> {
-            if (server) onlinePlayer.getMinecraftServer().getCloudPlayers().remove(onlinePlayer);
-            if (proxy) onlinePlayer.getProxyServer().getCloudPlayers().remove(onlinePlayer);
-            playerManager.unregister(onlinePlayer);
+            playerManager.unregisterPlayer(onlinePlayer);
         });
     }
 
     public void updateProxyInfoService(IGameServerManager manager, ICloudPlayerManager playerManager) {
-        manager.getGameServersByType(TemplateType.PROXY).thenAccept(proxyServerList -> playerManager.getAllOnlinePlayers().thenAccept(players ->
-            proxyServerList.forEach(it -> it.sendPacket(new MasterUpdatePlayerInfoPacket(players.size(), it.getTemplate().getMaxPlayers())))));
+        List<IGameServer> gameServersByType = manager.getGameServersByType(TemplateType.PROXY);
+        List<ICloudPlayer> players = playerManager.getAllCached();
+        gameServersByType.forEach(it -> it.sendPacket(new MasterUpdatePlayerInfoPacket(players.size(), it.getTemplate().getMaxPlayers())));
     }
 
     public void callConnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer) {
@@ -130,11 +119,7 @@ public abstract class PlayerPacketServiceController {
     }
 
     public void callCurrentServices(IGameServerManager serverManager, String snow, BiConsumer<IGameServer, IGameServer> service, ChannelHandlerContext ctx) {
-        try {
-            service.accept(serverManager.getGameServerByName(snow).get(), serverManager.getGameServerByConnection(ctx).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        service.accept(serverManager.getCached(snow), serverManager.getCachedObject(ctx));
     }
 
 
@@ -148,13 +133,13 @@ public abstract class PlayerPacketServiceController {
 
     public void sendConnectMessage(MasterConfig masterConfig, ICloudPlayer cloudPlayer) {
         if (masterConfig.getProperties().isLogPlayerConnections())
-            Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN + cloudPlayer.getName() + ConsoleColors.GRAY +
+            PoloLogger.print(LogLevel.INFO, "Player " + ConsoleColors.CYAN + cloudPlayer.getName() + ConsoleColors.GRAY +
                 " is playing on " + cloudPlayer.getMinecraftServer().getName() + "(" + cloudPlayer.getProxyServer().getName() + ")");
     }
 
     public void sendDisconnectMessage(MasterConfig masterConfig, GameServerPlayerDisconnectPacket placket) {
         if (masterConfig.getProperties().isLogPlayerConnections())
-            Logger.log(LoggerType.INFO, "Player " + ConsoleColors.CYAN + placket.getName() + ConsoleColors.GRAY + " is now disconnected!");
+            PoloLogger.print(LogLevel.INFO, "Player " + ConsoleColors.CYAN + placket.getName() + ConsoleColors.GRAY + " is now disconnected!");
     }
 
     public void sendMasterPlayerRequestJoinResponsePacket(ChannelHandlerContext ctx, UUID uuid, String serviceName, long snowflake) {

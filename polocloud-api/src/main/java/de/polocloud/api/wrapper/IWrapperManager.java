@@ -1,10 +1,10 @@
 package de.polocloud.api.wrapper;
 
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface IWrapperManager {
 
@@ -12,6 +12,13 @@ public interface IWrapperManager {
      * Gets a list of all connected {@link IWrapper}s
      */
     List<IWrapper> getWrappers();
+
+    /**
+     * Sets the cached {@link IWrapper} obejcts
+     *
+     * @param wrappers the cache
+     */
+    void setCachedObjects(List<IWrapper> wrappers);
 
     /**
      * Gets an {@link IWrapper} by name
@@ -43,13 +50,4 @@ public interface IWrapperManager {
      */
     void unregisterWrapper(IWrapper wrapper);
 
-    /**
-     * Updates the wrapper cache for all connections
-     */
-    void syncCache();
-
-    /**
-     * Updates the wrapper cache for a specific gameServer
-     */
-    void syncCache(IGameServer gameServer);
 }

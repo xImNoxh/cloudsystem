@@ -4,13 +4,24 @@ package de.polocloud.api.command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;
+import de.polocloud.api.scheduler.SchedulerRequest;
+import de.polocloud.api.util.Acceptable;
 
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
 
 public interface ICommandManager {
+
+    /**
+     * Enables the filter for this command
+     * to only allow certain commands to be executed
+     *
+     * @param filter the "filter"
+     */
+    void setFilter(Acceptable<ICommandRunner> filter);
 
     /**
      * Registers the given instance of the command listener

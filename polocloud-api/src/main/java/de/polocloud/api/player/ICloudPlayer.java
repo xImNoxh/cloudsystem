@@ -2,13 +2,20 @@ package de.polocloud.api.player;
 
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.INamable;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.pool.PoloObject;
+import de.polocloud.api.util.Snowflake;
 
 import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface ICloudPlayer extends INamable, Serializable, CommandExecutor {
+public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor {
+
+    @Override
+    default long getSnowflake() {
+        return Snowflake.getInstance().nextId();
+    }
 
     /**
      * Gets the {@link UUID} of this player
@@ -48,6 +55,11 @@ public interface ICloudPlayer extends INamable, Serializable, CommandExecutor {
      * @param permission the permission
      */
     CompletableFuture<Boolean> hasPermissions(String permission);
+
+    /**
+     * Updates this player all over the network
+     */
+    void update();
 
     /**
      * Kicks this player from the network

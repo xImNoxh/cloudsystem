@@ -1,14 +1,13 @@
 package de.polocloud.bootstrap.creator;
 
 import com.google.inject.Inject;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class SimpleServerCreator extends ServerCreator {
 
@@ -17,17 +16,15 @@ public class SimpleServerCreator extends ServerCreator {
 
     @Override
     public boolean check(ITemplate template) {
-        List<IGameServer> serversByTemplate = null;
-        try {
-            serversByTemplate = gameServerManager.getGameServersByTemplate(template).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        List<IGameServer> serversByTemplate = gameServerManager.getGameServersByTemplate(template);
+
         if (serversByTemplate == null) {
             return false;
         }
+
         if (template.isStatic()) {
-            return false;
+            //TODO CHECK
+           // return false;
         }
 
         if (template.getMaxServerCount() <= serversByTemplate.size()) {
@@ -51,10 +48,9 @@ public class SimpleServerCreator extends ServerCreator {
         percentage = (onlinePlayers * 100.0F) / (totalMaxPlayers);
 
         if (percentage >= template.getServerCreateThreshold()) {
-            Logger.log(LoggerType.INFO, "Group " + template.getName() + " is " + percentage + "% full! " + "(" + template.getServerCreateThreshold() + "% required)");
+            PoloLogger.print(LogLevel.INFO, "Group " + template.getName() + " is " + percentage + "% full! " + "(" + template.getServerCreateThreshold() + "% required)");
             return true;
         }
-
 
         return false;
 

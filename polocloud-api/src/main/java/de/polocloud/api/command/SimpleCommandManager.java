@@ -9,7 +9,8 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.command.runner.SimpleCommandRunner;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.util.Acceptable;
+import de.polocloud.api.util.PoloHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -20,6 +21,11 @@ import java.util.function.BiFunction;
 public class SimpleCommandManager implements ICommandManager {
 
     private final Map<String, ICommandRunner> dispatchers;
+
+    /**
+     * The current filter
+     */
+    private Acceptable<ICommandRunner> filter;
 
     //Transformers
     private static final Map<Class<?>, BiFunction<String, Parameter, ?>> transformers = new ConcurrentHashMap<>();
@@ -32,7 +38,7 @@ public class SimpleCommandManager implements ICommandManager {
      */
     public SimpleCommandManager() {
         this.dispatchers = new ConcurrentHashMap<>();
-
+        this.filter = null;
 
         this.registerTransformer(byte.class, (s, p) -> {
             try {
@@ -90,7 +96,7 @@ public class SimpleCommandManager implements ICommandManager {
         this.registerTransformer(String[].class, (s, parameter) -> s.split( " "));
         this.registerTransformer(ICloudPlayer.class, (s, p) -> {
             try {
-                return PoloCloudAPI.getInstance().getCloudPlayerManager().getOnlinePlayer(s).get();
+                return PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(s);
             } catch (Exception e) {
                 throw new NullPointerException("The player '" + s + "' seems not to be online!");
             }
@@ -109,7 +115,7 @@ public class SimpleCommandManager implements ICommandManager {
             }
 
             Class<?>[] parameterTypes = method.getParameterTypes();
-            String methodSignature = PoloUtils.getMethodSignature(method);
+            String methodSignature = PoloHelper.getMethodSignature(method);
             String name = cmd.name().toLowerCase();
 
             ICommandRunner dispatcher;
@@ -159,6 +165,9 @@ public class SimpleCommandManager implements ICommandManager {
         if (dispatcher == null) {
             return false;
         }
+        if (filter != null && !filter.isAccepted(dispatcher)) {
+            return true;
+        }
 
         String[] args = new String[split.length - 1];
         if (args.length > 0) {
@@ -191,6 +200,10 @@ public class SimpleCommandManager implements ICommandManager {
         return this.dispatchers;
     }
 
+    @Override
+    public void setFilter(Acceptable<ICommandRunner> filter) {
+        this.filter = filter;
+    }
 
     @Override
     public <T> void registerTransformer(Class<T> clazz, BiFunction<String, Parameter, T> transformer) {

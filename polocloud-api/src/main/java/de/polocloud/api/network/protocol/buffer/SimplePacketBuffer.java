@@ -4,22 +4,28 @@ import com.google.common.base.Charsets;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.gameserver.GameServerStatus;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.gameserver.DefaultGameServer;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.PacketRegistry;
+import de.polocloud.api.fallback.base.IFallback;
+import de.polocloud.api.fallback.base.SimpleFallback;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.base.SimpleGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.network.protocol.packet.PacketFactory;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.GameServerVersion;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.TemplateType;
-import de.polocloud.api.wrapper.IWrapper;
-import de.polocloud.api.wrapper.SimpleWrapper;
+import de.polocloud.api.player.SimpleCloudPlayer;
+import de.polocloud.api.template.SimpleTemplate;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.wrapper.base.IWrapper;
+import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,6 +35,12 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     public SimplePacketBuffer(ByteBuf byteBuf) {
         this.buf = byteBuf;
+    }
+
+    @Override
+    public IPacketBuffer avoidNulls() {
+        //TODO
+        return this;
     }
 
     @Override
@@ -105,275 +117,21 @@ public class SimplePacketBuffer implements IPacketBuffer {
         return buf.readByte();
     }
 
-    @Override
-    public ICloudPlayer readCloudPlayer() throws IOException {
-        String name = this.readString();
-        UUID uuid = UUID.fromString(this.readString());
-        IGameServer proxyServer = this.readGameServer();
-        IGameServer minecraftServer = this.readGameServer();
-
-        return new ICloudPlayer() {
-            @Override
-            public UUID getUUID() {
-                return uuid;
-            }
-
-            @Override
-            public IGameServer getProxyServer() {
-                return proxyServer;
-            }
-
-            @Override
-            public IGameServer getMinecraftServer() {
-                return minecraftServer;
-            }
-
-            @Override
-            public void runCommand(String command) {
-                PoloCloudAPI.getInstance().getCommandManager().runCommand(command, this);
-            }
-
-            @Override
-            public void sendMessage(String message) {
-                //TODO
-            }
-
-            @Override
-            public ExecutorType getType() {
-                return ExecutorType.PLAYER;
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return false;
-            }
-
-            @Override
-            public void sendTo(IGameServer gameServer) {
-                //TODO
-            }
-
-            @Override
-            public void kick(String message) {
-                //TODO
-            }
-
-            @Override
-            public void sendToFallback() {
-                //TODO
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public CompletableFuture<Boolean> hasPermissions(String permission) {
-                //TODO
-                return null;
-            }
-
-            @Override
-            public void sendTabList(String header, String footer) {
-                //TODO
-            }
-        };
-    }
-
-    @Override
-    public void writeCloudPlayer(ICloudPlayer cloudPlayer) throws IOException {
-
-        this.writeString(cloudPlayer.getName());
-        this.writeString(cloudPlayer.getUUID().toString());
-        this.writeGameServer(cloudPlayer.getProxyServer());
-        this.writeGameServer(cloudPlayer.getMinecraftServer());
-    }
 
     @Override
     public void writePacket(Packet packet) throws IOException {
-        this.writeInt(PacketRegistry.getPacketId(packet.getClass()));
+        this.writeInt(PacketFactory.getPacketId(packet.getClass()));
         packet.write(this);
     }
 
     @Override
     public <T extends Packet> T readPacket() throws IOException {
         int id = this.readInt();
-        return (T) PacketRegistry.createPacket(id);
+        return (T) PacketFactory.createPacket(id);
     }
 
     @Override
-    public IWrapper readWrapper() throws IOException {
-        long snowflake = readLong();
-        String name = readString();
-        return new SimpleWrapper(name, snowflake, PoloCloudAPI.getInstance().getConnection().ctx());
-    }
-
-    @Override
-    public void writeWrapper(IWrapper wrapper) throws IOException {
-        this.writeLong(wrapper.getSnowflake());
-        this.writeString(wrapper.getName());
-    }
-
-    @Override
-    public IGameServer readGameServer() throws IOException {
-        String name = readString();
-        String motd = readString();
-        GameServerStatus status = GameServerStatus.valueOf(readString());
-        long snowflake = this.readLong();
-
-        ITemplate template = readTemplate();
-
-        long totalMemory = this.readLong();
-        int onlinePlayers = this.readInt();
-        int port = this.readInt();
-        long ping = this.readLong();
-
-        long startTime = this.readLong();
-        int maxPlayers = this.readInt();
-        boolean serviceVisibility = this.readBoolean();
-
-        return new DefaultGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, totalMemory, port, maxPlayers, template);
-
-    }
-
-    @Override
-    public void writeGameServer(IGameServer gameServer) throws IOException {
-        writeString(gameServer.getName());
-        writeString(gameServer.getMotd());
-        writeString(gameServer.getStatus().toString());
-        this.writeLong(gameServer.getSnowflake());
-
-        writeTemplate(gameServer.getTemplate());
-
-        this.writeLong(gameServer.getTotalMemory());
-        this.writeInt(gameServer.getOnlinePlayers());
-        this.writeInt(gameServer.getPort());
-        this.writeLong(gameServer.getPing());
-        this.writeLong(gameServer.getStartTime());
-        this.writeInt(gameServer.getMaxPlayers());
-        this.writeBoolean(gameServer.getServiceVisibility());
-    }
-
-    @Override
-    public void writeTemplate(ITemplate template) throws IOException {
-
-        writeString(template.getName());
-
-        this.writeInt(template.getMinServerCount());
-        this.writeInt(template.getMaxServerCount());
-        this.writeInt(template.getMaxPlayers());
-
-        this.writeInt(template.getMaxMemory());
-
-        writeString(template.getMotd());
-
-        this.writeBoolean(template.isMaintenance());
-
-        writeString(template.getTemplateType().toString());
-        writeString(template.getVersion().toString());
-
-        writeStringArray(template.getWrapperNames());
-    }
-
-    @Override
-    public ITemplate readTemplate() throws IOException {
-        String name = readString();
-
-        int minServers = this.readInt();
-        int maxServers = this.readInt();
-
-        int maxPlayers = this.readInt();
-        int maxMemory = this.readInt();
-
-        String motd = readString();
-
-        boolean maintenance = this.readBoolean();
-
-        TemplateType templateType = TemplateType.valueOf(readString());
-        GameServerVersion version = GameServerVersion.valueOf(readString());
-
-        String[] wrapperNames = readStringArray();
-
-        return new ITemplate() {
-            @Override
-            public int getMinServerCount() {
-                return minServers;
-            }
-
-            @Override
-            public int getMaxServerCount() {
-                return maxServers;
-            }
-
-            @Override
-            public int getMaxPlayers() {
-                return maxPlayers;
-            }
-
-            @Override
-            public int getMaxMemory() {
-                return maxMemory;
-            }
-
-            @Override
-            public String getMotd() {
-                return motd;
-            }
-
-            @Override
-            public boolean isMaintenance() {
-                return maintenance;
-            }
-
-            @Override
-            public void setMaxPlayers(int maxPlayers) {
-                //TODO send packet to server ? or block ?
-                //TODO
-            }
-
-            @Override
-            public void setMaintenance(boolean state) {
-                //TODO
-            }
-
-            @Override
-            public TemplateType getTemplateType() {
-                return templateType;
-            }
-
-            @Override
-            public GameServerVersion getVersion() {
-                return version;
-            }
-
-            @Override
-            public int getServerCreateThreshold() {
-                //TODO
-                return -1;
-            }
-
-            @Override
-            public String[] getWrapperNames() {
-                return wrapperNames;
-            }
-
-            @Override
-            public boolean isStatic() {
-                return false;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-
-        };
-    }
-
-    @Override
-    public void writeStringArray(String[] arr) throws IOException {
+    public void writeStrings(String[] arr) throws IOException {
         this.writeInt(arr.length);
         for (String s : arr) {
             writeString(s);
@@ -381,7 +139,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
     }
 
     @Override
-    public String[] readStringArray() throws IOException {
+    public String[] readStrings() throws IOException {
         int length = this.readInt();
         String[] array = new String[length];
         for (int i = 0; i < length; i++) {
@@ -496,5 +254,206 @@ public class SimplePacketBuffer implements IPacketBuffer {
     @Override
     public void writeBoolean(boolean b) throws IOException {
         buf.writeBoolean(b);
+    }
+
+
+    @Override
+    public IGameServer readGameServer() throws IOException {
+
+        //Template
+        boolean nulled = this.readBoolean();
+        ITemplate template;
+        if (nulled) {
+            template = this.readTemplate();
+        } else {
+            template = null;
+        }
+
+        //Name and snowflake and port
+        String name = this.readString();
+        long snowflake = this.readLong();
+        int port = this.readInt();
+
+        //Extra values
+        String motd = this.readString();
+        GameServerStatus status = this.readEnum();
+
+        //Memory and ping
+        long memory = this.readLong();
+        long ping = this.readLong();
+
+        long startTime = this.readLong();
+        int maxPlayers = this.readInt();
+        boolean serviceVisibility = this.readBoolean();
+        boolean registered = this.readBoolean();
+
+        IGameServer gameServer = new SimpleGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, memory, port, maxPlayers, template);
+        gameServer.setRegistered(registered);;
+        return gameServer;
+
+    }
+
+    @Override
+    public void writeGameServer(IGameServer gameServer) throws IOException {
+
+        //Template
+        this.writeBoolean(gameServer.getTemplate() != null);
+        if (gameServer.getTemplate() != null) {
+            this.writeTemplate(gameServer.getTemplate());
+        }
+
+        //Name and snowflake and port
+        this.writeString(gameServer.getName());
+        this.writeLong(gameServer.getSnowflake());
+        this.writeInt(gameServer.getPort());
+
+        //Extra values
+        this.writeString(gameServer.getMotd());
+        this.writeEnum(gameServer.getStatus());
+
+        //Memory and ping
+        this.writeLong(gameServer.getTotalMemory());
+        this.writeLong(gameServer.getPing());
+
+        //Other values
+        this.writeLong(gameServer.getStartTime());
+        this.writeInt(gameServer.getMaxPlayers());
+        this.writeBoolean(gameServer.getServiceVisibility());
+        this.writeBoolean(gameServer.isRegistered());
+
+    }
+
+    @Override
+    public void writeTemplate(ITemplate template) throws IOException {
+
+        //Name of template
+        this.writeString(template.getName());
+
+        //Server counts
+        this.writeInt(template.getMinServerCount());
+        this.writeInt(template.getMaxServerCount());
+
+        //Other settings
+        this.writeInt(template.getMaxPlayers());
+        this.writeInt(template.getMaxMemory());
+        this.writeInt(template.getServerCreateThreshold());
+
+        //Maintenance and mode (static or dynamic)
+        this.writeBoolean(template.isMaintenance());
+        this.writeBoolean(template.isStatic());
+
+        //Template type and version
+        this.writeEnum(template.getTemplateType());
+        this.writeEnum(template.getVersion());
+
+        //The motd and allowed wrappers
+        this.writeString(template.getMotd() == null ? "" : template.getMotd());
+        this.writeStrings(template.getWrapperNames() == null ? new String[0] : template.getWrapperNames());
+
+    }
+
+    @Override
+    public ITemplate readTemplate() throws IOException {
+
+        //Name of template
+        String name = readString();
+
+        //Server counts
+        int minServers = this.readInt();
+        int maxServers = this.readInt();
+
+        //Other settings
+        int maxPlayers = this.readInt();
+        int maxMemory = this.readInt();
+        int createThreshold = this.readInt();
+
+        //Maintenance and mode (static or dynamic)
+        boolean maintenance = this.readBoolean();
+        boolean staticServer = this.readBoolean();
+
+        //Template type and version
+        TemplateType templateType = this.readEnum();
+        GameServerVersion version = this.readEnum();
+
+        //The motd and allowed wrappers
+        String motd = readString();
+        String[] wrapperNames = readStrings();
+
+        return new SimpleTemplate(name, staticServer, maxServers, minServers, templateType, version, maxPlayers, maxMemory, maintenance, motd, createThreshold, wrapperNames);
+    }
+
+
+    @Override
+    public IWrapper readWrapper() throws IOException {
+
+        long snowflake = readLong();
+        String name = readString();
+        return new SimpleWrapper(name, snowflake, PoloCloudAPI.getInstance().getConnection() == null ? null : PoloCloudAPI.getInstance().getConnection().ctx());
+    }
+
+    @Override
+    public void writeWrapper(IWrapper wrapper) throws IOException {
+        this.writeLong(wrapper.getSnowflake());
+        this.writeString(wrapper.getName());
+    }
+
+
+    @Override
+    public IFallback readFallback() throws IOException {
+        String name = this.readString();
+        String perm = this.readString();
+
+        int priority = this.readInt();
+        boolean forcedJoin = this.readBoolean();
+
+        return new SimpleFallback(name, perm, forcedJoin, priority);
+    }
+
+    @Override
+    public void writeFallback(IFallback fallback) throws IOException {
+
+        //Name and permission
+        this.writeString(fallback.getTemplateName());
+        this.writeString(fallback.getFallbackPermission());
+
+        //Other settings
+        this.writeInt(fallback.getPriority());
+        this.writeBoolean(fallback.isForcedJoin());
+    }
+
+    @Override
+    public ICloudPlayer readCloudPlayer() throws IOException {
+
+        //Name and UUID
+        String name = this.readString();
+        UUID uuid = readUUID();
+
+        //Proxy and server
+
+        String s1 = this.readString();
+        String s2 = this.readString();
+
+        String proxy = s1.trim().isEmpty() ? null : s1;
+        String minecraft = s2.trim().isEmpty() ? null : s2;
+
+        //Creating player and setting values
+        SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(name, uuid);
+
+        cloudPlayer.setProxyServer(proxy);
+        cloudPlayer.setMinecraftServer(minecraft);
+
+        return cloudPlayer;
+    }
+
+    @Override
+    public void writeCloudPlayer(ICloudPlayer cloudPlayer) throws IOException {
+
+        //Name and UUID
+        this.writeString(cloudPlayer.getName());
+        this.writeUUID(cloudPlayer.getUUID());
+
+        //Proxy and server
+        this.writeString(cloudPlayer.getProxyServer() == null ? "" : cloudPlayer.getProxyServer().getName());
+        this.writeString(cloudPlayer.getMinecraftServer() == null ? "" : cloudPlayer.getMinecraftServer().getName());
     }
 }

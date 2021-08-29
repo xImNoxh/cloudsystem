@@ -1,6 +1,6 @@
 package de.polocloud.api.pubsub;
 
-import de.polocloud.api.network.protocol.packet.api.PublishPacket;
+import de.polocloud.api.network.packets.api.PublishPacket;
 
 import java.util.function.Consumer;
 

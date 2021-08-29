@@ -1,9 +1,9 @@
 package de.polocloud.bootstrap.module;
 
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.logger.log.Logger;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.helper.LogLevel;
 
 import java.io.IOException;
 import java.net.URLClassLoader;
@@ -27,7 +27,7 @@ public class ModuleCache extends ConcurrentHashMap<CloudModule, ModuleLocalCache
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Logger.log(Logger.PREFIX + "The module " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + " unloaded...");
+                PoloLogger.getInstance().noPrefix().log(LogLevel.INFO, "The module §b" + moduleName + " §7unloaded...");
             }
         }
     }
@@ -44,10 +44,10 @@ public class ModuleCache extends ConcurrentHashMap<CloudModule, ModuleLocalCache
             remove(module);
 
             urlClassLoader.close();
-            Logger.log(LoggerType.INFO, Logger.PREFIX + ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "unloaded module » " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + "!");
+            PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "unloaded module » " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + "!");
         } catch (IOException exception) {
             exception.printStackTrace();
-            Logger.log(LoggerType.ERROR, Logger.PREFIX + ConsoleColors.RED + "Failed to unload module » " + ConsoleColors.LIGHT_BLUE + get(module).getModuleData().getName() + ConsoleColors.RED + "!" + ConsoleColors.GRAY);
+            PoloLogger.print(LogLevel.ERROR, ConsoleColors.RED + "Failed to unload module » " + ConsoleColors.LIGHT_BLUE + get(module).getModuleData().getName() + ConsoleColors.RED + "!" + ConsoleColors.GRAY);
         }
     }
 

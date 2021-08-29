@@ -1,30 +1,27 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
-import de.polocloud.api.gameserver.GameServerStatus;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.api.gameserver.APIRequestGameServerPacket;
-import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
-import de.polocloud.api.network.protocol.packet.command.CommandListAcceptorPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.ITemplateService;
-import de.polocloud.api.template.TemplateType;
+import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerPacket;
+import de.polocloud.api.network.packets.api.gameserver.APIResponseGameServerPacket;
+import de.polocloud.api.network.packets.master.MasterRequestServerListUpdatePacket;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.ITemplateManager;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.bootstrap.config.MasterConfig;
-import de.polocloud.logger.log.Logger;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public abstract class GameServerPacketController {
@@ -33,49 +30,27 @@ public abstract class GameServerPacketController {
     private IGameServerManager gameServerManager;
 
     @Inject
-    private ITemplateService templateService;
+    private ITemplateManager templateService;
 
     @Inject
     private MasterConfig masterConfig;
 
 
     public void getGameServerByConnection(ChannelHandlerContext ctx, Consumer<IGameServer> server) {
-        try {
-            server.accept(gameServerManager.getGameServerByConnection(ctx).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        server.accept(gameServerManager.getCachedObject(ctx));
     }
 
     public void getRedirectPacketConnection(long snowflake, Packet packetData) {
-        try {
-            IGameServer iGameServer = gameServerManager.getGameSererBySnowflake(snowflake).get();
-            iGameServer.sendPacket(packetData);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        IGameServer iGameServer = gameServerManager.getCached(snowflake);
+        iGameServer.sendPacket(packetData);
     }
 
     public void getTemplateByName(String name, Consumer<ITemplate> tmp) {
-        try {
-            tmp.accept(templateService.getTemplateByName(name).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        tmp.accept(templateService.getTemplate(name));
     }
 
     public void getGameServerBySnowflake(Consumer<IGameServer> server, long snowflake) {
-        try {
-            server.accept(gameServerManager.getGameSererBySnowflake(snowflake).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendCloudCommandAcceptList(IGameServer gameServer) {
-        if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT))
-            gameServer.sendPacket(new CommandListAcceptorPacket(Lists.newArrayList(), Lists.newArrayList()));
-
+        server.accept(gameServerManager.getCached(snowflake));
     }
 
     public void updateProxyServerList(IGameServer gameServer) {
@@ -88,11 +63,7 @@ public abstract class GameServerPacketController {
     }
 
     public void getGameServerByProxyType(Consumer<List<IGameServer>> iGameServerConsumer) {
-        try {
-            iGameServerConsumer.accept(gameServerManager.getGameServersByType(TemplateType.PROXY).get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        iGameServerConsumer.accept(gameServerManager.getGameServersByType(TemplateType.PROXY));
     }
 
     public void confirmPacketTypeResponse(APIRequestGameServerPacket.Action action, IGameServer service, UUID id, String value) {
@@ -102,19 +73,13 @@ public abstract class GameServerPacketController {
     }
 
     public void sendServerStartLog(IGameServer server) {
-        Logger.log(LoggerType.INFO, "The server " + ConsoleColors.LIGHT_BLUE + server.getName() + ConsoleColors.GRAY
+        PoloLogger.print(LogLevel.INFO, "The server " + ConsoleColors.LIGHT_BLUE + server.getName() + ConsoleColors.GRAY
             + " is now " + ConsoleColors.GREEN + "connected" + ConsoleColors.GRAY + ". (" + (System.currentTimeMillis() - server.getStartTime()) + "ms)");
 
-        PoloCloudAPI.getInstance().getWrapperManager().syncCache(server);
-    }
-
-    public void callServerStartedEvent(IGameServer gameServer) {
-        //  subManager.publish("polo:event:serverStarted", gameServer.getName());
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(gameServer, CloudGameServerStatusChangeEvent.Status.RUNNING));
     }
 
     public void getGameServerByTemplate(String name, Consumer<List<IGameServer>> services) {
-        getTemplateByName(name, template -> gameServerManager.getGameServersByTemplate(template).thenAccept(it -> services.accept(it)));
+        getTemplateByName(name, template -> services.accept(gameServerManager.getGameServersByTemplate(template)));
     }
 
     public void setListGameServerData(APIRequestGameServerPacket.Action type, IGameServer server, UUID id, String value) {
@@ -145,11 +110,11 @@ public abstract class GameServerPacketController {
     }
 
     public void getGameServerList(APIRequestGameServerPacket.Action type, Consumer<List<IGameServer>> services, String value) {
-        (type.equals(APIRequestGameServerPacket.Action.ALL) ? gameServerManager.getGameServers() : gameServerManager.getGameServersByType(TemplateType.valueOf(value))).thenAccept(it -> services.accept(it));
+        services.accept(type.equals(APIRequestGameServerPacket.Action.ALL) ? gameServerManager.getAllCached() : gameServerManager.getGameServersByType(TemplateType.valueOf(value)));
     }
 
     public void getGameServerSingleton(APIRequestGameServerPacket.Action type, Consumer<IGameServer> service, String value) {
-        (type.equals(APIRequestGameServerPacket.Action.NAME) ? gameServerManager.getGameServerByName(value) : gameServerManager.getGameSererBySnowflake(Long.parseLong(value))).thenAccept(it -> service.accept(it));
+        service.accept(type.equals(APIRequestGameServerPacket.Action.NAME) ? gameServerManager.getCached(value) : gameServerManager.getCached(Long.parseLong(value)));
     }
 
 

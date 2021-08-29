@@ -1,5 +1,7 @@
 package de.polocloud.bootstrap;
 
+import de.polocloud.api.common.PoloType;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.bootstrap.logger.LogBootstrapService;
 import de.polocloud.wrapper.Wrapper;
 
@@ -18,16 +20,23 @@ public class CloudInit {
         }
 
         if (args[0].equalsIgnoreCase("master")) {
+            PoloHelper.PRE_POLO_TYPE = PoloType.MASTER;
             //start master
             Master master = new Master();
             master.start();
+
+
         } else if (args[0].equalsIgnoreCase("wrapper")) {
+            PoloHelper.PRE_POLO_TYPE = PoloType.WRAPPER;
             //start wrapper
             Wrapper wrapper = new Wrapper(devMode);
             wrapper.start();
         } else if (args[0].equalsIgnoreCase("both")) {
+            PoloHelper.PRE_POLO_TYPE = PoloType.MASTER_AND_WRAPPER;
+
             Master master = new Master();
             master.start();
+
             Wrapper wrapper = new Wrapper(devMode);
             wrapper.start();
         }

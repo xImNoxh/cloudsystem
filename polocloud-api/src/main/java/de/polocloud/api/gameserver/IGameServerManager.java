@@ -1,22 +1,15 @@
 package de.polocloud.api.gameserver;
 
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.TemplateType;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.pool.ObjectPool;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.TemplateType;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface IGameServerManager {
-
-    /**
-     * Gets an {@link IGameServer} by its name
-     * and returns a {@link CompletableFuture} to handle the response
-     * async or sync
-     *
-     * @param name the name of the server
-     */
-    CompletableFuture<IGameServer> getGameServerByName(String name);
+public interface IGameServerManager extends ObjectPool<IGameServer> {
 
     /**
      * Gets an {@link IGameServer} by its {@link ChannelHandlerContext}
@@ -25,23 +18,7 @@ public interface IGameServerManager {
      *
      * @param ctx the channelHandlerContext
      */
-    CompletableFuture<IGameServer> getGameServerByConnection(ChannelHandlerContext ctx);
-
-    /**
-     * Gets an {@link IGameServer} by its snowflake
-     * and returns a {@link CompletableFuture} to handle the response
-     * async or sync
-     *
-     * @param snowflake the name of the snowflake
-     */
-    CompletableFuture<IGameServer> getGameSererBySnowflake(long snowflake);
-
-    /**
-     * Gets a collection of all loaded {@link IGameServer}s
-     * and returns a {@link CompletableFuture} to handle the response
-     * async or sync
-     */
-    CompletableFuture<List<IGameServer>> getGameServers();
+    IGameServer getCachedObject(ChannelHandlerContext ctx);
 
     /**
      * Gets a collection of all loaded {@link IGameServer}s
@@ -50,7 +27,9 @@ public interface IGameServerManager {
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
      */
-    CompletableFuture<List<IGameServer>> getGameServersByTemplate(ITemplate template);
+    default List<IGameServer> getGameServersByTemplate(ITemplate template) {
+        return this.getAllCached(iGameServer -> iGameServer.getTemplate().getName().equalsIgnoreCase(template.getName()));
+    }
 
     /**
      * Gets a collection of all loaded {@link IGameServer}s
@@ -59,7 +38,9 @@ public interface IGameServerManager {
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
      */
-    CompletableFuture<List<IGameServer>> getGameServersByType(TemplateType type);
+    default List<IGameServer> getGameServersByType(TemplateType type) {
+        return getAllCached(iGameServer -> iGameServer.getTemplate().getTemplateType().equals(type));
+    }
 
     /**
      * Registers an {@link IGameServer} in cache
@@ -82,4 +63,5 @@ public interface IGameServerManager {
      * @return current gameServer
      */
     IGameServer getThisService();
+
 }

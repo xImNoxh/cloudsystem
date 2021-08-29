@@ -2,6 +2,8 @@ package de.polocloud.api.network.request.base.component;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.network.INetworkConnection;
+import de.polocloud.api.network.packets.other.BuffedPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.request.IRequestManager;
 import de.polocloud.api.network.request.base.future.PoloFuture;
 import de.polocloud.api.network.request.base.future.SimpleFuture;
@@ -61,6 +63,11 @@ public class SimpleComponent<T> implements PoloComponent<T> {
      */
     private long completionTimeMillis;
 
+    /**
+     * A provided extra packet
+     */
+    private Packet packet;
+
     public PoloComponent<T> data(Object data) {
         if (data == null) {
             System.out.println("Nulled object set as Data for PoloComponent!");
@@ -72,6 +79,12 @@ public class SimpleComponent<T> implements PoloComponent<T> {
             this.data = (T) data;
             this.success = true;
         }
+        return this;
+    }
+
+    @Override
+    public PoloComponent<T> packet(Packet packet) {
+        this.packet = packet;
         return this;
     }
 
@@ -122,12 +135,12 @@ public class SimpleComponent<T> implements PoloComponent<T> {
     @Override
     public PoloFuture<T> query() {
         INetworkConnection networkConnection = PoloCloudAPI.getInstance().getConnection();
-        PoloFuture<T> query = new SimpleFuture<>(this);
+        SimpleFuture<T> query = new SimpleFuture<>(this);
 
         IRequestManager requestManager = networkConnection.getRequestManager();
 
         this.completionTimeMillis = System.currentTimeMillis();
-        ((SimpleFuture<T>)query).setCompletionTimeMillis(System.currentTimeMillis());
+        query.setCompletionTimeMillis(System.currentTimeMillis());
 
         requestManager.addRequest(this.id, query);
         respond();
@@ -168,8 +181,26 @@ public class SimpleComponent<T> implements PoloComponent<T> {
         String key = (isResponse() ? "response" : "request");
 
         JsonData data = new JsonData();
-        data.append(key, this);
+        JsonData sub = new JsonData();
 
+        sub.append("typeClass", this.typeClass);
+        sub.append("data", this.data);
+        sub.append("exception", this.exception);
+        sub.append("target", this.target);
+        sub.append("completionTimeMillis", this.completionTimeMillis);
+        sub.append("success", this.success);
+        sub.append("id", this.id);
+        sub.append("response", this.response);
+        sub.append("key", this.key);
+        sub.append("document", this.document);
+
+        data.append(key, sub);
+
+        if (packet != null) {
+            BuffedPacket buffedPacket = new BuffedPacket(packet);
+            buffedPacket.setSnowflake(Long.parseLong(this.id));
+            PoloCloudAPI.getInstance().sendPacket(buffedPacket);
+        }
         PoloCloudAPI.getInstance().getPubSubManager().publish("cloud::api::" + key, data.toString());
     }
 

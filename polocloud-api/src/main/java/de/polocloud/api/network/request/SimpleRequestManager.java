@@ -3,16 +3,20 @@ package de.polocloud.api.network.request;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.protocol.packet.api.PublishPacket;
+import de.polocloud.api.network.packets.api.PublishPacket;
+import de.polocloud.api.network.packets.other.BuffedPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.component.SimpleComponent;
 import de.polocloud.api.network.request.base.future.PoloFuture;
 import de.polocloud.api.network.request.base.future.SimpleFuture;
 import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.template.TemplateType;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.util.PoloHelper;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -40,6 +44,25 @@ public class SimpleRequestManager implements IRequestManager {
         this.requestHandlers = new LinkedList<>();
 
         Scheduler.runtimeScheduler().schedule(() -> {
+
+            connection.getProtocol().registerPacketHandler(new IPacketHandler<BuffedPacket>() {
+                @Override
+                public void handlePacket(ChannelHandlerContext ctx, BuffedPacket obj) {
+                    Packet packet = obj.getPacket();
+                    packet.setSnowflake(obj.getSnowflake());
+                    PoloFuture<?> poloFuture = futures.get(String.valueOf(packet.getSnowflake()));
+                    if (poloFuture != null) {
+                        ((SimpleFuture<?>)poloFuture).setPacket(packet);
+                        futures.put(String.valueOf(packet.getSnowflake()), poloFuture);
+                    }
+                }
+
+                @Override
+                public Class<? extends Packet> getPacketClass() {
+                    return BuffedPacket.class;
+                }
+            });
+
             PoloCloudAPI.getInstance().getPubSubManager().subscribe("cloud::api::request", new Consumer<PublishPacket>() {
                 @Override
                 public void accept(PublishPacket publishPacket) {
@@ -107,7 +130,7 @@ public class SimpleRequestManager implements IRequestManager {
                         } else if (aClass.equals(String.class)) {
                             response.data(data.getString("data"));
                         } else if (Enum.class.isAssignableFrom(aClass)) {
-                            response.data(Objects.requireNonNull(PoloUtils.getEnumByName(aClass, data.getString("data"))));
+                            response.data(Objects.requireNonNull(PoloHelper.getEnumByName(aClass, data.getString("data"))));
                         } else {
                             response.data(data.getObject("data", aClass));
                         }
@@ -125,6 +148,11 @@ public class SimpleRequestManager implements IRequestManager {
 
                         SimpleFuture<?> future = (SimpleFuture<?>) retrieveFuture(response.getId());
                         if (future == null) {
+                            if (PoloCloudAPI.getInstance().getType().isCloud()) {
+                                //PoloCloudAPI.getInstance().getCommandExecutor().sendMessage("§cTried to retrieve Future with id §e" + response.getId() + " §cbut was not found!");
+                            } else {
+                                //System.out.println("[RequestManager] Tried to retrieve Future with id " + response.getId() + " but was not found!");
+                            }
                             return;
                         }
                         PoloComponent<?> request = future.getRequest();

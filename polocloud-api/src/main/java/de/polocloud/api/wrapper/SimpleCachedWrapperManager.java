@@ -1,9 +1,6 @@
 package de.polocloud.api.wrapper;
 
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.common.PoloType;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.wrapper.WrapperCachePacket;
+import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Collections;
@@ -12,12 +9,16 @@ import java.util.List;
 
 public class SimpleCachedWrapperManager implements IWrapperManager {
 
-    private final List<IWrapper> wrappers;
+    private List<IWrapper> wrappers;
 
     public SimpleCachedWrapperManager() {
         this.wrappers = new LinkedList<>();
     }
 
+    @Override
+    public void setCachedObjects(List<IWrapper> wrappers) {
+        this.wrappers = wrappers;
+    }
 
     @Override
     public List<IWrapper> getWrappers() {
@@ -54,15 +55,4 @@ public class SimpleCachedWrapperManager implements IWrapperManager {
         }
     }
 
-    @Override
-    public void syncCache() {
-        WrapperCachePacket packet = new WrapperCachePacket();
-        PoloCloudAPI.getInstance().getConnection().sendPacket(packet, PoloType.PLUGIN_PROXY);
-        PoloCloudAPI.getInstance().getConnection().sendPacket(packet, PoloType.PLUGIN_SPIGOT);
-    }
-
-    @Override
-    public void syncCache(IGameServer gameServer) {
-        gameServer.sendPacket(new WrapperCachePacket());
-    }
 }

@@ -1,10 +1,10 @@
 package de.polocloud.api.pubsub;
 
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.api.PublishPacket;
-import de.polocloud.api.network.protocol.packet.api.SubscribePacket;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.packets.api.PublishPacket;
+import de.polocloud.api.network.packets.api.SubscribePacket;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;

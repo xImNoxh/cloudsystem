@@ -1,7 +1,7 @@
 package de.polocloud.api.fallback;
 
 import de.polocloud.api.fallback.base.IFallback;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
 
 import java.util.List;
@@ -46,7 +46,17 @@ public interface IFallbackManager {
      */
     IGameServer getFallback(ICloudPlayer cloudPlayer);
 
-    void addFallback(IFallback fallback);
+    /**
+     * Registers an {@link IFallback} in cache
+     *
+     * @param fallback the fallback
+     */
+    void registerFallback(IFallback fallback);
 
+    /**
+     * Sets the available fallbacks
+     *
+     * @param fallbacks the fallbacks
+     */
     void setAvailableFallbacks(List<IFallback> fallbacks);
 }

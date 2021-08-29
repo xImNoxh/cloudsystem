@@ -1,12 +1,13 @@
 package de.polocloud.plugin.bootstrap.proxy;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
+import de.polocloud.plugin.bootstrap.proxy.commands.CloudCommand;
 import de.polocloud.plugin.bootstrap.proxy.events.CollectiveProxyEvents;
 import de.polocloud.plugin.bootstrap.proxy.register.ProxyPacketRegister;
-import de.polocloud.plugin.protocol.config.ConfigReader;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -26,6 +27,8 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public synchronized void onEnable() {
         this.cloudPlugin.onEnable();
+
+        PoloCloudAPI.getInstance().getCommandManager().registerCommand(new CloudCommand());
     }
 
     @Override
@@ -40,7 +43,7 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
 
     @Override
     public int getPort() {
-        JsonData jsonData = ConfigReader.getJson();
+        JsonData jsonData = this.cloudPlugin.getJson();
         if (jsonData == null) {
             System.out.println("[ProxyBootstrap] Couldn't read JsonFile!");
             return port;

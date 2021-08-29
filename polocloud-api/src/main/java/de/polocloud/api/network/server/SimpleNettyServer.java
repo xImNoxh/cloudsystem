@@ -3,27 +3,38 @@ package de.polocloud.api.network.server;
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.event.base.IListener;
+import de.polocloud.api.event.handling.EventHandler;
+import de.polocloud.api.event.impl.net.ChannelActiveEvent;
+import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.packet.ForwardingPacket;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.PacketRegistry;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.codec.PacketDecoder;
+import de.polocloud.api.network.protocol.codec.PacketEncoder;
+import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthDeserializer;
+import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthSerializer;
 import de.polocloud.api.network.protocol.packet.handler.*;
 import de.polocloud.api.network.request.SimpleRequestManager;
 import de.polocloud.api.network.request.IRequestManager;
-import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 import javax.inject.Named;
 import java.net.InetSocketAddress;
-import java.util.LinkedList;
+import java.nio.channels.ClosedChannelException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleNettyServer implements INettyServer {
+public class SimpleNettyServer implements INettyServer, IListener {
 
 
     /**
@@ -37,11 +48,6 @@ public class SimpleNettyServer implements INettyServer {
     @Inject private IProtocol protocol;
 
     /**
-     * All connected clients
-     */
-    private List<Channel> connectedClients;
-
-    /**
      * The channel
      */
     private Channel channel;
@@ -51,16 +57,22 @@ public class SimpleNettyServer implements INettyServer {
      */
     private final IRequestManager requestManager;
 
+    /**
+     * All connected clients
+     */
+    private final ChannelGroup connectedClients;
+
     private ChannelHandlerContext ctx;
 
     public SimpleNettyServer() {
-        this.connectedClients = new LinkedList<>();
+        this.connectedClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         this.requestManager = new SimpleRequestManager(this);
+
+        PoloCloudAPI.getInstance().getEventManager().registerListener(this);
     }
 
     @Override
     public void start() {
-        PacketRegistry.registerDefaultInternalPackets();
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -84,21 +96,32 @@ public class SimpleNettyServer implements INettyServer {
         } catch (Exception exc) {
             exc.printStackTrace();
         }
-        System.out.println("Starting new Server on port » " + this.port);
     }
+
+
+    @EventHandler
+    public void handleInactive(ChannelInactiveEvent event) {
+        ChannelHandlerContext chx = event.getChx();
+        Channel channel = chx.channel();
+        this.connectedClients.removeIf(c -> c.id().asLongText().equalsIgnoreCase(channel.id().asLongText()));
+    }
+
+    @EventHandler
+    public void handleActive(ChannelActiveEvent event) {
+        ChannelHandlerContext chx = event.getChx();
+        Channel channel = chx.channel();
+        this.connectedClients.add(channel);
+    }
+
 
     @Override
     public boolean terminate() {
-        return true;
+        return this.channel.close().isSuccess();
     }
 
     @Override
     public List<Channel> getConnectedClients() {
-        return connectedClients;
-    }
-
-    public void setConnectedClients(List<Channel> connectedClients) {
-        this.connectedClients = connectedClients;
+        return new ArrayList<>(connectedClients);
     }
 
     @Override
@@ -116,7 +139,6 @@ public class SimpleNettyServer implements INettyServer {
         return new InetSocketAddress(this.port);
     }
 
-
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
@@ -124,11 +146,9 @@ public class SimpleNettyServer implements INettyServer {
     @Override
     public void sendPacket(Packet packet, PoloType receiver) {
         if (receiver == PoloType.GENERAL_GAMESERVER || receiver == PoloType.PLUGIN_PROXY || receiver == PoloType.PLUGIN_SPIGOT) {
-            PoloCloudAPI.getInstance().getGameServerManager().getGameServers().thenAccept(iGameServers -> {
-                for (IGameServer iGameServer : iGameServers) {
-                    iGameServer.sendPacket(packet);
-                }
-            });
+            for (IGameServer iGameServer : PoloCloudAPI.getInstance().getGameServerManager().getAllCached()) {
+                iGameServer.sendPacket(packet);
+            }
         }
         if (receiver == PoloType.WRAPPER) {
             for (IWrapper wrapper : PoloCloudAPI.getInstance().getWrapperManager().getWrappers()) {
@@ -149,8 +169,31 @@ public class SimpleNettyServer implements INettyServer {
 
     @Override
     public void sendPacket(Packet packet) {
+        if (channel == null) {
+            Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () -> channel != null);
+            return;
+        }
+        if (!channel.isOpen() || !channel.isWritable() || !channel.isActive()) {
+            Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () -> channel != null);
+            return;
+        }
         for (Channel connectedClient : this.connectedClients) {
-            connectedClient.writeAndFlush(packet);
+            if (!connectedClient.isOpen() || !connectedClient.isWritable() || !connectedClient.isActive() || !connectedClient.isRegistered()) {
+                System.out.println("[NettyServer] Couldn't send Packet " + packet.getClass().getSimpleName() + " to Channel with ID " + connectedClient.id().asLongText() + " because Channel is not opened or writable!");
+                System.out.println("[NettyServer] Unregistering Channel...");
+                this.connectedClients.remove(connectedClient);
+                return;
+            }
+            connectedClient.writeAndFlush(packet).addListener((ChannelFutureListener) channelFuture -> {
+                if (!channelFuture.isSuccess()) {
+                    Throwable cause = channelFuture.cause();
+                    if (cause instanceof ClosedChannelException) {
+                        return;
+                    }
+                    System.out.println("[NettyServer@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
+                    cause.printStackTrace();
+                }
+            });
         }
     }
 }

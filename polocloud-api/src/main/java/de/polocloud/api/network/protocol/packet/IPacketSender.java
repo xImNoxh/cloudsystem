@@ -1,6 +1,7 @@
 package de.polocloud.api.network.protocol.packet;
 
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 
 public interface IPacketSender {
 

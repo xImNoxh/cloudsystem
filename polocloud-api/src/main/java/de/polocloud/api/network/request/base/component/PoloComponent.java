@@ -1,5 +1,6 @@
 package de.polocloud.api.network.request.base.component;
 
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.request.base.future.PoloFuture;
 import de.polocloud.api.config.JsonData;
 
@@ -7,6 +8,10 @@ public interface PoloComponent<T> {
 
     static <V> PoloComponent<V> request(Class<V> vClass) {
         return new SimpleComponent<>();
+    }
+
+    static <V> PoloComponent<V> request(Class<V> vClass, String key) {
+        return (PoloComponent<V>) new SimpleComponent<>().key(key);
     }
 
     /**
@@ -116,10 +121,19 @@ public interface PoloComponent<T> {
 
     /**
      * Sets the data of this component
+     *
      * @param t the data
      * @return current component
      */
     PoloComponent<T> value(T t);
+
+    /**
+     * Puts a {@link Packet} into this component
+     *
+     * @param packet the packet
+     * @return current component
+     */
+    PoloComponent<T> packet(Packet packet);
 
     /**
      * Sets the error of this response

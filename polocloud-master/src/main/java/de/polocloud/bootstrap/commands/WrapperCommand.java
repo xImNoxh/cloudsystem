@@ -6,18 +6,14 @@ import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.identifier.TabCompletable;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.wrapper.WrapperRequestShutdownPacket;
-import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class WrapperCommand implements CommandListener, TabCompletable {
 
@@ -43,7 +39,7 @@ public class WrapperCommand implements CommandListener, TabCompletable {
                 String wrapperName = params[1];
                 IWrapper wrapper = wrapperManager.getWrapper(wrapperName);
                 if (wrapper == null) {
-                    Logger.log(LoggerType.WARNING, Logger.PREFIX + "§cThere is no Wrapper with the name §e" + wrapperName + " §cconnected!");
+                    PoloLogger.print(LogLevel.WARNING, "§cThere is no Wrapper with the name §e" + wrapperName + " §cconnected!");
                     return;
                 }
                 wrapperName = wrapper.getName();
@@ -56,7 +52,7 @@ public class WrapperCommand implements CommandListener, TabCompletable {
             }
 
         } else if (params.length == 2 && params[0].equalsIgnoreCase("info")) {
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "Stay tuned?!");
+            PoloLogger.print(LogLevel.INFO, "Stay tuned?!");
         }
     }
 

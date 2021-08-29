@@ -22,7 +22,7 @@ public class PortService {
     }
 
     public boolean isDetectedPort(int port) throws ExecutionException, InterruptedException {
-        return gameServerManager.getGameServers().get().stream().anyMatch(it -> it.getPort() == port);
+        return gameServerManager.getAllCached().stream().anyMatch(it -> it.getPort() == port);
     }
 
 

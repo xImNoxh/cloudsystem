@@ -1,7 +1,10 @@
 package de.polocloud.api.network;
 
+import de.polocloud.api.network.helper.IStartable;
+import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.request.IRequestManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,7 +23,7 @@ public interface INetworkConnection extends IStartable, ITerminatable, IPacketSe
 
     /**
      * The {@link IProtocol} instance of this connection
-     * to manage {@link de.polocloud.api.network.protocol.IPacketHandler}s
+     * to manage {@link IPacketHandler}s
      *
      * @return the protocol instance
      */
@@ -42,10 +45,9 @@ public interface INetworkConnection extends IStartable, ITerminatable, IPacketSe
 
     /**
      * The netty {@link ChannelHandlerContext} of this connection
-     *
-     * @return netty channel-context instance
      */
     void setCtx(ChannelHandlerContext ctx);
+
     /**
      * Gets the address the connection is bound or connected to
      * If...

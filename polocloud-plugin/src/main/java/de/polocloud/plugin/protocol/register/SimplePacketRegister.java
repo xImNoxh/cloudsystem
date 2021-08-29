@@ -1,7 +1,7 @@
 package de.polocloud.plugin.protocol.register;
 
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.plugin.CloudPlugin;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -10,11 +10,11 @@ import java.util.function.Consumer;
 
 public class SimplePacketRegister<T extends Packet> {
 
-    public SimplePacketRegister(Class<? extends Packet> clazz, Consumer<T> packet) {
+    public SimplePacketRegister(Class<? extends Packet> clazz, Consumer<T> consumer) {
         CloudPlugin.getCloudPluginInstance().getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                packet.accept((T) obj);
+            public void handlePacket(ChannelHandlerContext ctx, Packet packet) {
+                consumer.accept((T) packet);
             }
 
             @Override
@@ -24,11 +24,11 @@ public class SimplePacketRegister<T extends Packet> {
         });
     }
 
-    public SimplePacketRegister(Class<? extends Packet> clazz, BiConsumer<ChannelHandlerContext, T> packet) {
+    public SimplePacketRegister(Class<? extends Packet> clazz, BiConsumer<ChannelHandlerContext, T> consumer) {
         CloudPlugin.getCloudPluginInstance().getNetworkClient().registerPacketHandler(new IPacketHandler<Packet>() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                packet.accept(ctx, (T) obj);
+            public void handlePacket(ChannelHandlerContext ctx, Packet packet) {
+                consumer.accept(ctx, (T) packet);
             }
 
             @Override

@@ -1,9 +1,9 @@
 package de.polocloud.bootstrap.pubsub;
 
 import com.google.inject.Inject;
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.network.protocol.packet.api.PublishPacket;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.packets.api.PublishPacket;
 import io.netty.channel.ChannelHandlerContext;
 
 public class PublishPacketHandler implements IPacketHandler<Packet> {

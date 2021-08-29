@@ -33,12 +33,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>de.polocloud.setup</groupId>
-      <artifactId>polocloud-setup</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>de.polocloud</groupId>
       <artifactId>polocloud-client</artifactId>
       <version>1.0-SNAPSHOT</version>

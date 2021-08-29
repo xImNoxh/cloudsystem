@@ -65,6 +65,18 @@ public class JsonData {
     }
 
     /**
+     * Constructs a filled Document
+     */
+    public JsonData(JsonElement jsonElement) {
+        this();
+        if (jsonElement.isJsonObject()) {
+            this.jsonObject = jsonElement.getAsJsonObject();
+        } else {
+            this.append(jsonElement);
+        }
+    }
+
+    /**
      * Constructs a document from File
      */
     public JsonData(File file) {

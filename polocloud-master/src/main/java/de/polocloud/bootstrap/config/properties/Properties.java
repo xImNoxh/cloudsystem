@@ -13,7 +13,10 @@ public class Properties implements IConfig {
     private int maxSimultaneouslyStartingTemplates = 2;
     private int port = 8869;
     private int defaultProxyStartPort = 25565;
+    private int defaultServerStartPort = 30000;
+
     private LinkedList<SimpleFallback> fallbackProperties = Lists.newLinkedList();
+
 
     public int getPort() {
         return port;
@@ -33,6 +36,18 @@ public class Properties implements IConfig {
 
     public LinkedList<SimpleFallback> getFallbackProperties() {
         return fallbackProperties;
+    }
+
+    public void setDefaultProxyStartPort(int defaultProxyStartPort) {
+        this.defaultProxyStartPort = defaultProxyStartPort;
+    }
+
+    public void setDefaultServerStartPort(int defaultServerStartPort) {
+        this.defaultServerStartPort = defaultServerStartPort;
+    }
+
+    public int getDefaultServerStartPort() {
+        return defaultServerStartPort;
     }
 
     public int getDefaultProxyStartPort() {

@@ -7,8 +7,8 @@ import de.polocloud.api.command.annotation.CommandPermission;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 
 public class StopCommand implements CommandListener {
 
@@ -21,7 +21,7 @@ public class StopCommand implements CommandListener {
     @CommandPermission("cloud.stop")
     @CommandExecutors(ExecutorType.CONSOLE)
     public void execute(CommandExecutor executor, String[] args) {
-        Logger.log(LoggerType.INFO, Logger.PREFIX + "Stopping...");
+        PoloLogger.print(LogLevel.INFO, "Stopping...");
         Master.getInstance().terminate();
     }
 }

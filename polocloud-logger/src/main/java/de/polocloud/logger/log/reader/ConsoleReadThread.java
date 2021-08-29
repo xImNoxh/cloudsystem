@@ -1,9 +1,10 @@
 package de.polocloud.logger.log.reader;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.helper.LogLevel;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
@@ -29,12 +30,12 @@ public class ConsoleReadThread extends Thread {
             try {
                 this.consoleReader.setPrompt("");
                 this.consoleReader.resetPromptLine("", "", 0);
-                while ((line = this.consoleReader.readLine(Logger.PREFIX)) != null && !line.trim().isEmpty()) {
+                while ((line = this.consoleReader.readLine(PoloLogger.getInstance() == null ? "" : (PoloLogger.getInstance().getPrefix() == null ? "" : PoloLogger.getInstance().getPrefix()))) != null && !line.trim().isEmpty()) {
                     this.consoleReader.setPrompt("");
 
                     if (PoloCloudAPI.getInstance() != null) {
                         if (!PoloCloudAPI.getInstance().getCommandManager().runCommand(line, PoloCloudAPI.getInstance().getCommandExecutor())) {
-                            Logger.log(LoggerType.INFO, Logger.PREFIX + "Unknown command... Please use the " + ConsoleColors.LIGHT_BLUE + "help " + ConsoleColors.GRAY + "command.");
+                            PoloLogger.print(LogLevel.INFO, "Unknown command... Please use the " + ConsoleColors.LIGHT_BLUE + "help " + ConsoleColors.GRAY + "command.");
                         }
 
                     }

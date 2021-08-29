@@ -1,8 +1,8 @@
 package de.polocloud.bootstrap.network;
 
 import com.google.common.collect.Lists;
-import de.polocloud.api.network.protocol.IPacketHandler;
-import de.polocloud.api.network.protocol.packet.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -29,11 +29,11 @@ public class SimplePacketHandler<T extends Packet> implements IPacketHandler<Pac
     }
 
     @Override
-    public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-        packet = obj.getClass();
+    public void handlePacket(ChannelHandlerContext ctx, Packet packet) {
+        this.packet = packet.getClass();
 
-        if (action != null) action.accept((T) obj);
-        if (actions != null) actions.accept(ctx, (T) obj);
+        if (action != null) action.accept((T) packet);
+        if (actions != null) actions.accept(ctx, (T) packet);
     }
 
     @Override

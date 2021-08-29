@@ -3,9 +3,9 @@ package de.polocloud.bootstrap.module;
 import com.google.gson.Gson;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.logger.log.Logger;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.helper.LogLevel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,7 +58,7 @@ public class MasterModuleLoader {
                 CloudModule module = (CloudModule) PoloCloudAPI.getInstance().getGuice().getInstance(cl);
                 cache.put(module, new ModuleLocalCache(loader, data));
                 module.onLoad();
-                Logger.log(LoggerType.INFO, (prefix ? Logger.PREFIX : "") + "The module is now " +
+                PoloLogger.print(LogLevel.INFO, "The module is now " +
                     ConsoleColors.LIGHT_BLUE + data.getName() + ConsoleColors.GRAY + " loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
             } catch (MalformedURLException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -111,7 +111,7 @@ public class MasterModuleLoader {
             CloudModule module = (CloudModule) PoloCloudAPI.getInstance().getGuice().getInstance(cl);
             cache.put(module, new ModuleLocalCache(loader, moduleData));
             module.onLoad();
-            Logger.log(LoggerType.INFO, Logger.PREFIX + "The module » " +
+            PoloLogger.print(LogLevel.INFO, "The module » " +
                 ConsoleColors.LIGHT_BLUE + moduleData.getName() + ConsoleColors.GRAY + " is now loaded (Starting time: " + (System.currentTimeMillis() - time) + "ms)");
         } catch (MalformedURLException | ClassNotFoundException e) {
             e.printStackTrace();

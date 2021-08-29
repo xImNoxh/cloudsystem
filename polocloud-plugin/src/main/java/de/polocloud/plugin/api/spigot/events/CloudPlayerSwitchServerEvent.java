@@ -1,7 +1,7 @@
 package de.polocloud.plugin.api.spigot.events;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -30,15 +30,17 @@ public class CloudPlayerSwitchServerEvent extends Event {
     }
 
     public CompletableFuture<IGameServer> getFrom() {
-        return PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(fromName);
+        return null;
+       // return PoloCloudAPI.getInstance().getGameServerManager().getCachedObject(fromName);
     }
 
     public CompletableFuture<IGameServer> getTo() {
-        return PoloCloudAPI.getInstance().getGameServerManager().getGameServerByName(toName);
+        return null;
+        // return PoloCloudAPI.getInstance().getGameServerManager().getCachedObject(toName);
     }
 
-    public CompletableFuture<ICloudPlayer> getPlayer() {
-        return PoloCloudAPI.getInstance().getCloudPlayerManager().getOnlinePlayer(playerName);
+    public ICloudPlayer getPlayer() {
+        return PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(playerName);
     }
 
     @Override

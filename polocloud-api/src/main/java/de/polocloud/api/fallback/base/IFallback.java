@@ -1,6 +1,6 @@
 package de.polocloud.api.fallback.base;
 
-import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.template.base.ITemplate;
 
 public interface IFallback {
 

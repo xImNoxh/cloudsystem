@@ -1,80 +1,88 @@
 package de.polocloud.logger.log;
 
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.logger.log.types.LoggerType;
 import jline.console.ConsoleReader;
 import org.fusesource.jansi.Ansi;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Logger {
 
     public static final String PREFIX = ConsoleColors.LIGHT_BLUE + "PoloCloud " + ConsoleColors.GRAY + "» ";
-    private static ConsoleReader consoleReader;
+    private static ConsoleReader CONSOLE_READER;
 
-    public static void boot() {
+    public static Logger INSTANCE;
+    public static boolean USE_PREFIX = false;
+
+
+
+
+    public void boot() {
         try {
-            consoleReader = new ConsoleReader(System.in, System.out);
+            INSTANCE = this;
+            CONSOLE_READER = new ConsoleReader(System.in, System.out);
             new LogService();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void logErr(String message) {
-        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + LoggerType.ERROR + "] » " + message));
+    public static void log(String message) {
+        log(LoggerType.PREFIX, message);
+    }
+
+    public static Logger prefix() {
+        USE_PREFIX = true;
+        return INSTANCE;
     }
 
     public static void log(LoggerType loggerType, String message) {
+
+        if (!loggerType.equals(LoggerType.INFO) && !loggerType.equals(LoggerType.PREFIX)) {
+            message = "§7[" + loggerType.getConsoleColors() + loggerType.getLabel() + "§7] " + message + ConsoleColors.RESET;
+        }
+        if (loggerType == LoggerType.PREFIX) {
+            message = PREFIX + message;
+        }
+
+        if (USE_PREFIX) {
+            USE_PREFIX = false;
+            message = Logger.PREFIX + message;
+        }
         message = ConsoleColors.translateColorCodes('§', message);
+
         try {
-            if (!loggerType.equals(LoggerType.INFO)) {
-                consoleReader.println(ConsoleColors.GRAY + "[" + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY + "] " + message + ConsoleColors.RESET);
-            } else {
-                consoleReader.println(ConsoleColors.GRAY + message + ConsoleColors.RESET);
-            }
-            consoleReader.drawLine();
-            consoleReader.flush();
-        } catch (IOException e) {
+            CONSOLE_READER.println('\r' + message);
+            CONSOLE_READER.drawLine();
+            CONSOLE_READER.flush();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes("[" + getSimpleTime() + " | " + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY + "] » " + message));
+
+        LogService.getLogService().getLogFileService().getLogFileWriter().write(ConsoleColors.replaceColorCodes("[" + PoloHelper.getSimpleTime() + " | " + loggerType.getConsoleColors() + loggerType.getLabel() + ConsoleColors.GRAY + "] » " + message));
     }
 
-    public static void log(String message) {
+    public static void logPrefixLess(String message) {
+        message = ConsoleColors.translateColorCodes('§', message);
         try {
-            consoleReader.println(Ansi.ansi().eraseLine(Ansi.Erase.ALL).toString() + message);
-            consoleReader.drawLine();
-            consoleReader.flush();
+            CONSOLE_READER.println(Ansi.ansi().eraseLine(Ansi.Erase.ALL).toString() + message);
+            CONSOLE_READER.drawLine();
+            CONSOLE_READER.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LogService.getLogService().getLogFileService().getLogFileWriter().write(replaceColorCodes(message));
+        LogService.getLogService().getLogFileService().getLogFileWriter().write(ConsoleColors.replaceColorCodes(message));
     }
 
     public static ConsoleReader getConsoleReader() {
-        return consoleReader;
+        return CONSOLE_READER;
     }
 
-    public static String replaceColorCodes(String s) {
-        for (ConsoleColors value : ConsoleColors.values()) {
-            s = s.replace(value.toString(), " ");
-        }
-
-        return s;
-    }
-
-    public static String getSimpleTime() {
-        return new SimpleDateFormat("HH:mm:ss").format(new Date());
-    }
-
-    public static String getSimpleDate() {
-        return new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-    }
 
     public static void newLine() {
-        log(" ");
+        logPrefixLess(" ");
     }
 }

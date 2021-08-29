@@ -1,28 +1,29 @@
 package de.polocloud.bootstrap.setup;
 
-import de.polocloud.api.template.GameServerVersion;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.ITemplateService;
-import de.polocloud.api.template.TemplateType;
-import de.polocloud.bootstrap.template.SimpleTemplate;
+import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.ITemplateManager;
+import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.template.SimpleTemplate;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.logger.log.types.LoggerType;
-import de.polocloud.setup.FutureAnswer;
-import de.polocloud.setup.Setup;
-import de.polocloud.setup.SetupBuilder;
-import de.polocloud.setup.Step;
-import de.polocloud.setup.accepter.StepAcceptor;
-import de.polocloud.setup.accepter.StepAnswer;
+import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.setup.FutureAnswer;
+import de.polocloud.api.setup.Setup;
+import de.polocloud.api.setup.SetupBuilder;
+import de.polocloud.api.setup.Step;
+import de.polocloud.api.setup.accepter.StepAcceptor;
+import de.polocloud.api.setup.accepter.StepAnswer;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class CreateTemplateSetup extends StepAcceptor implements Setup {
 
-    private ITemplateService templateService;
+    private ITemplateManager templateService;
 
-    public CreateTemplateSetup(ITemplateService templateService) {
+    public CreateTemplateSetup(ITemplateManager templateService) {
         this.templateService = templateService;
     }
 
@@ -47,6 +48,7 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
             .addStep("Static ? (true/false)", isBoolean())
             .addStep("ServerCreateThreshold ? (0-100)%", isInteger());
 
+
         setupBuilder.setStepAnswer(new StepAnswer() {
             @Override
             public void callFinishSetup(List<Step> steps) {
@@ -66,7 +68,7 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
                 ITemplate template = new SimpleTemplate(name, isStatic, maxServerCount, minServerCount, templateType, gameServerVersion, maxPlayers, memory, true, "A default Polo Service", threshold, wrappers);
                 templateService.getTemplateSaver().save(template);
                 templateService.reloadTemplates();
-                Logger.log(LoggerType.INFO, Logger.PREFIX + "You " + ConsoleColors.GREEN + "complete " + ConsoleColors.GRAY + "the setup.");
+                PoloLogger.print(LogLevel.INFO, "You " + ConsoleColors.GREEN + "complete " + ConsoleColors.GRAY + "the setup.");
             }
         });
         setupBuilder.nextQuestion(step, Logger.getConsoleReader());

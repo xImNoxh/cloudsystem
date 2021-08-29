@@ -1,42 +1,35 @@
 package de.polocloud.api.player;
 
-import de.polocloud.api.template.ITemplate;
+import de.polocloud.api.pool.ObjectPool;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface ICloudPlayerManager {
+public interface ICloudPlayerManager extends ObjectPool<ICloudPlayer> {
 
     /**
      * Registers an {@link ICloudPlayer} in cache
      *
      * @param cloudPlayer the cloudPlayer
      */
-    void register(ICloudPlayer cloudPlayer);
+    void registerPlayer(ICloudPlayer cloudPlayer);
+
+    @Override
+    default void updateObject(ICloudPlayer object) {
+        if (this.getCached(object.getName()) == null) {
+            this.registerPlayer(object);
+            return;
+        }
+        ObjectPool.super.updateObject(object);
+    }
 
     /**
      * Unregisters an {@link ICloudPlayer} in cache
      *
      * @param cloudPlayer the cloudPlayer
      */
-    void unregister(ICloudPlayer cloudPlayer);
-
-    /**
-     * Gets a collection of all loaded {@link ICloudPlayer}s
-     * and returns a {@link CompletableFuture} to handle the response
-     * async or sync
-     */
-    CompletableFuture<List<ICloudPlayer>> getAllOnlinePlayers();
-
-    /**
-     * Gets an {@link ICloudPlayer} by its name
-     * and returns a {@link CompletableFuture} to handle the response
-     * async or sync
-     *
-     * @param name the name of the player
-     */
-    CompletableFuture<ICloudPlayer> getOnlinePlayer(String name);
+    void unregisterPlayer(ICloudPlayer cloudPlayer);
 
     /**
      * Gets an {@link ICloudPlayer} by its uuid
@@ -45,20 +38,36 @@ public interface ICloudPlayerManager {
      *
      * @param uuid the uuid of the player
      */
-    CompletableFuture<ICloudPlayer> getOnlinePlayer(UUID uuid);
+    default ICloudPlayer getCachedObject(UUID uuid) {
+        return getOptional(uuid).orElse(null);
+    }
+
+    /**
+     * Loads an {@link Optional} for the object
+     *
+     * @param uniqueId the uuid of the player
+     * @return optional
+     */
+    default Optional<ICloudPlayer> getOptional(UUID uniqueId) {
+        return getAllCached().stream().filter(cloudPlayer -> cloudPlayer.getUUID().equals(uniqueId)).findFirst();
+    }
 
     /**
      * Checks if an {@link ICloudPlayer} is online
      *
      * @param name the name of the player
      */
-    CompletableFuture<Boolean> isPlayerOnline(String name);
+    default boolean isPlayerOnline(String name) {
+        return getCached(name) != null;
+    }
 
     /**
      * Checks if an {@link ICloudPlayer} is online
      *
      * @param uuid the uuid of the player
      */
-    CompletableFuture<Boolean> isPlayerOnline(UUID uuid);
+    default boolean isPlayerOnline(UUID uuid) {
+        return getCachedObject(uuid) != null;
+    }
 
 }

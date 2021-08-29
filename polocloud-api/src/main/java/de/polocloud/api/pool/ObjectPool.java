@@ -1,27 +1,56 @@
 package de.polocloud.api.pool;
 
 import de.polocloud.api.network.request.base.future.PoloFuture;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-public interface ObjectPool<V extends PoloObject> extends Iterable<V> {
+public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
 
     /**
      * Loads a list of all cached objects
      *
      * @return list
      */
-    List<V> getCachedObjects();
+    List<V> getAllCached();
+
+    /**
+     * Loads a list of all cached objects
+     * if they match a given condition
+     *
+     * @param filter the condition
+     * @return list
+     */
+    default List<V> getAllCached(Predicate<V> filter) {
+        return this.getAllCached().stream().filter(filter).collect(Collectors.toList());
+    }
+
+    /**
+     * Updates an Object within the cache
+     *
+     * @param object the object to update
+     */
+    default void updateObject(V object) {
+        V cachedObject = this.getCached(object.getName());
+        if (cachedObject != null) {
+            int index = this.getAllCached().indexOf(cachedObject);
+            getAllCached().set(index, object);
+        } else {
+            getAllCached().add(object);
+        }
+    }
 
     /**
      * Sets the current cached objects
      *
      * @param cachedObjects the objects
      */
-    void setCachedObjects(List<V> cachedObjects);
+    void setCached(List<V> cachedObjects);
 
     /**
      * Searches for an object by its name
@@ -29,33 +58,19 @@ public interface ObjectPool<V extends PoloObject> extends Iterable<V> {
      * @param name the name
      * @return object or null
      */
-    V getCachedObject(String name);
+    default V getCached(String name) {
+        return getOptional(name).orElse(null);
+    }
 
     /**
-     * Searches for an object by its uuid
+     * Searches for an object by its snowflake
      *
-     * @param uniqueId the uuid
+     * @param snowflake the uuid
      * @return object or null
      */
-    V getCachedObject(UUID uniqueId);
-
-    /**
-     * Gets an object from the cloud but does not
-     * block the main thread and accepts the consumer after
-     *
-     * @param name the name of the object
-     * @param consumer the consumer
-     */
-    void getObjectAsync(String name, Consumer<V> consumer);
-
-    /**
-     * Gets an object from the cloud but does not
-     * block the main thread and accepts the consumer after
-     *
-     * @param snowflake the snowflake of the object
-     * @param consumer the consumer
-     */
-    void getObjectAsync(long snowflake, Consumer<V> consumer);
+    default V getCached(long snowflake) {
+        return getOptional(snowflake).orElse(null);
+    }
 
     /**
      * Gets an object synced from the cloud
@@ -65,7 +80,17 @@ public interface ObjectPool<V extends PoloObject> extends Iterable<V> {
      * @param name the name
      * @return response or null if timed out
      */
-    PoloFuture<V> getObjectSync(String name);
+    PoloFuture<V> get(String name);
+
+    /**
+     * Gets an object synced from the cloud
+     * via packet and response
+     * (This might take some time to process)
+     *
+     * @param snowflake the snowflake
+     * @return response or null if timed out
+     */
+    PoloFuture<V> get(long snowflake);
 
     /**
      * Loads an {@link Optional} for the object
@@ -74,7 +99,7 @@ public interface ObjectPool<V extends PoloObject> extends Iterable<V> {
      * @return optional
      */
     default Optional<V> getOptional(String name) {
-        return this.getCachedObjects().stream().filter(v -> v.getName().equalsIgnoreCase(name)).findFirst();
+        return this.getAllCached().stream().filter(v -> v.getName().equalsIgnoreCase(name)).findFirst();
     }
 
     /**
@@ -84,15 +109,12 @@ public interface ObjectPool<V extends PoloObject> extends Iterable<V> {
      * @return optional
      */
     default Optional<V> getOptional(long snowflake) {
-        return this.getCachedObjects().stream().filter(v -> v.getSnowflake() == snowflake).findFirst();
+        return this.getAllCached().stream().filter(v -> v.getSnowflake() == snowflake).findFirst();
     }
-    /**
-     * Gets an object synced from the cloud
-     * via packet and response
-     * (This might take some time to process)
-     *
-     * @param uniqueId the uuid
-     * @return response or null if timed out
-     */
-    PoloFuture<V> getObjectSync(UUID uniqueId);
+
+    @NotNull
+    @Override
+    default Iterator<V> iterator() {
+        return getAllCached().iterator();
+    }
 }

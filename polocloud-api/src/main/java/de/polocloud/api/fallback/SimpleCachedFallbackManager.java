@@ -2,11 +2,10 @@ package de.polocloud.api.fallback;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.fallback.base.IFallback;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.util.PoloUtils;
+import de.polocloud.api.template.base.ITemplate;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -29,13 +28,9 @@ public class SimpleCachedFallbackManager implements IFallbackManager {
         return availableFallbacks;
     }
 
+
     private List<IFallback> getFallbacks(ICloudPlayer cloudPlayer) {
-
-        //List which contains possible Fallbacks for the specific player
         List<IFallback> list = new LinkedList<>();
-
-        //Scanning through the local availableFallbacks for fallbacks for the specific player
-        //Parameters: the fallback has ForcedJoin activated, the fallback has a permission which the player doesn't have or have
         for (IFallback availableFallback : this.availableFallbacks) {
             if (availableFallback.isForcedJoin() || availableFallback.getFallbackPermission() == null || availableFallback.getFallbackPermission().trim().isEmpty() || (cloudPlayer != null && cloudPlayer.hasPermission(availableFallback.getFallbackPermission()))) {
                 list.add(availableFallback);
@@ -44,52 +39,45 @@ public class SimpleCachedFallbackManager implements IFallbackManager {
         return list;
     }
 
-    /**
-     * Getting a IFallback with the best priority for the specific player
-     * @param cloudPlayer the player
-     * @return 's null when no fallback was found or return's an IFallback
-     */
     @Override
     public IFallback getHighestFallback(ICloudPlayer cloudPlayer) {
+
         List<IFallback> availableFallbacks = this.getFallbacks(cloudPlayer);
+        if (availableFallbacks.isEmpty()) {
+            return null;
+        }
+
         availableFallbacks.sort(Comparator.comparingInt(IFallback::getPriority));
-        return availableFallbacks.isEmpty() ? null : availableFallbacks.get(availableFallbacks.size() - 1);
+
+        return availableFallbacks.get(availableFallbacks.size() - 1);
     }
 
-
-    /**
-     * Searching the best GameServer from a Fallback (Template)
-     * @param fallback the fallback
-     * @return 's a Gameserver of an IFallback
-     */
     @Override
     public IGameServer getFallback(IFallback fallback) {
+        if (fallback == null) {
+            return null;
+        }
         IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
 
-        ITemplate iTemplate = PoloUtils.sneakyThrows(() -> PoloCloudAPI.getInstance().getTemplateService().getTemplateByName(fallback.getTemplateName()).get());
-        List<IGameServer> gameServers = PoloUtils.sneakyThrows(() -> gameServerManager.getGameServersByTemplate(iTemplate).get());
+        ITemplate iTemplate = PoloCloudAPI.getInstance().getTemplateManager().getTemplate(fallback.getTemplateName());
+        List<IGameServer> gameServers = gameServerManager.getGameServersByTemplate(iTemplate);
 
         return gameServers.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
     }
 
-    /**
-     * Final method for getting a fallback for a Player
-     * @param cloudPlayer the player
-     * @return 's a Gameserver of an IFallback
-     */
     @Override
     public IGameServer getFallback(ICloudPlayer cloudPlayer) {
         IFallback highestFallback = getHighestFallback(cloudPlayer);
         return this.getFallback(highestFallback);
     }
 
-    public void addFallback(IFallback fallback){
+    @Override
+    public void registerFallback(IFallback fallback) {
         this.availableFallbacks.add(fallback);
-        availableFallbacks.sort(Comparator.comparingInt(IFallback::getPriority));
     }
 
-    public void setAvailableFallbacks(List<IFallback> availableFallbacks) {
-        this.availableFallbacks = availableFallbacks;
-        availableFallbacks.sort(Comparator.comparingInt(IFallback::getPriority));
+    @Override
+    public void setAvailableFallbacks(List<IFallback> fallbacks) {
+        this.availableFallbacks = fallbacks;
     }
 }

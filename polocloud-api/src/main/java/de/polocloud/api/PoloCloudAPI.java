@@ -5,30 +5,40 @@ import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.config.loader.IConfigLoader;
-import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.event.IEventManager;
 import de.polocloud.api.event.SimpleCachedEventManager;
-import de.polocloud.api.event.base.IEvent;
 import de.polocloud.api.fallback.IFallbackManager;
 import de.polocloud.api.fallback.SimpleCachedFallbackManager;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
+import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.port.IPortManager;
+import de.polocloud.api.logger.PoloLoggerFactory;
+import de.polocloud.api.logger.def.SimplePoloLoggerFactory;
+import de.polocloud.api.messaging.IMessageManager;
+import de.polocloud.api.messaging.def.SimpleCachedMessageManager;
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.placeholder.IPlaceHolder;
+import de.polocloud.api.network.helper.ITerminatable;
+import de.polocloud.api.network.protocol.packet.IPacketReceiver;
+import de.polocloud.api.network.protocol.packet.PacketFactory;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.packets.api.other.MasterCache;
+import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.placeholder.IPlaceHolderManager;
 import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.player.SimpleCachedCloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
-import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.template.ITemplateManager;
+import de.polocloud.api.template.SimpleCachedTemplateManager;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
+import org.reflections.Reflections;
 
+import java.io.File;
 import java.util.Optional;
 
-public abstract class PoloCloudAPI {
+public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     //Other fields
     private final PoloType type;
@@ -39,19 +49,59 @@ public abstract class PoloCloudAPI {
     protected final IWrapperManager wrapperManager;
     protected final IEventManager eventManager;
     protected final IFallbackManager fallbackManager;
+    protected final IGameServerManager gameServerManager;
+    protected final ITemplateManager templateManager;
+    protected final ICloudPlayerManager cloudPlayerManager;
+    protected final PoloLoggerFactory loggerFactory;
+    protected final IMessageManager messageManager;
+
+    /**
+     * The port cache for finding new ports
+     */
+    protected final IPortManager portManager;
 
     protected PoloCloudAPI(PoloType type) {
         instance = this;
 
         this.type = type;
 
+        this.registerPackets();
+
+        this.loggerFactory = new SimplePoloLoggerFactory(new File("poloLogs/"));
+        this.portManager = new SimpleCachedPortManager(25565, 30000); //Modified later
         this.eventManager = new SimpleCachedEventManager();
         this.commandManager = new SimpleCommandManager();
         this.placeHolderManager = new SimpleCachedPlaceHolderManager();
         this.wrapperManager = new SimpleCachedWrapperManager();
         this.fallbackManager = new SimpleCachedFallbackManager();
-
+        this.gameServerManager = new SimpleCachedGameServerManager();
+        this.cloudPlayerManager = new SimpleCachedCloudPlayerManager();
+        this.templateManager = new SimpleCachedTemplateManager();
+        this.messageManager = new SimpleCachedMessageManager();
     }
+
+    /**
+     * Sets the cache for this api instance
+     * and sets all values of the cache for the given managers
+     *
+     * @param cache the cache object
+     */
+    public void setCache(MasterCache cache) {
+        this.cloudPlayerManager.setCached(cache.getCloudPlayers());
+        this.gameServerManager.setCached(cache.getGameServers());
+        this.templateManager.setCachedObjects(cache.getTemplates());
+        this.wrapperManager.setCachedObjects(cache.getWrappers());
+        this.fallbackManager.setAvailableFallbacks(cache.getFallbacks());
+    }
+
+    /**
+     * Terminates this {@link PoloCloudAPI} instance
+     * and shuts down all needed manager instances
+     *
+     * @return true if it was successfully terminated
+     */
+    @Override
+    public abstract boolean terminate();
 
     /**
      * Updates the cache of the current instance
@@ -72,27 +122,9 @@ public abstract class PoloCloudAPI {
     public abstract INetworkConnection getConnection();
 
     /**
-     * The current {@link ITemplateService} to manage
-     * all the cached {@link de.polocloud.api.template.ITemplate}s
-     */
-    public abstract ITemplateService getTemplateService();
-
-    /**
      * The current {@link CommandExecutor} (e.g. console)
      */
     public abstract CommandExecutor getCommandExecutor();
-
-    /**
-     * The current {@link IGameServerManager} instance
-     * to manage all {@link de.polocloud.api.gameserver.IGameServer}s
-     */
-    public abstract IGameServerManager getGameServerManager();
-
-    /**
-     * The current {@link ICloudPlayerManager} instance
-     * to manage all {@link de.polocloud.api.player.ICloudPlayer}s
-     */
-    public abstract ICloudPlayerManager getCloudPlayerManager();
 
     /**
      * The current {@link IPubSubManager} to manage all
@@ -150,8 +182,16 @@ public abstract class PoloCloudAPI {
         return type;
     }
 
+    public PoloLoggerFactory getLoggerFactory() {
+        return loggerFactory;
+    }
+
     public IEventManager getEventManager() {
         return eventManager;
+    }
+
+    public ICloudPlayerManager getCloudPlayerManager() {
+        return cloudPlayerManager;
     }
 
     public ICommandManager getCommandManager() {
@@ -162,6 +202,14 @@ public abstract class PoloCloudAPI {
         return placeHolderManager;
     }
 
+    public ITemplateManager getTemplateManager() {
+        return templateManager;
+    }
+
+    public IGameServerManager getGameServerManager() {
+        return gameServerManager;
+    }
+
     public IFallbackManager getFallbackManager() {
         return fallbackManager;
     }
@@ -169,4 +217,34 @@ public abstract class PoloCloudAPI {
     public IWrapperManager getWrapperManager() {
         return wrapperManager;
     }
+
+    public IMessageManager getMessageManager() {
+        return messageManager;
+    }
+
+    public IPortManager getPortManager() {
+        return portManager;
+    }
+
+    /**
+     * Auto registers all packets
+     */
+    private void registerPackets() {
+        try {
+            int autoId = 0;
+            Reflections reflections = new Reflections(INetworkConnection.class.getPackage().getName());
+
+            for (Class<? extends Packet> cls : reflections.getSubTypesOf(Packet.class)) {
+                AutoRegistry annotation = cls.getAnnotation(AutoRegistry.class);
+                if (annotation != null) {
+                    PacketFactory.registerPacket(autoId, cls);
+                    autoId++;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

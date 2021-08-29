@@ -1,48 +1,39 @@
 package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.IGameServer;
-import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.gameserver.APIResponseGameServerPacket;
-import de.polocloud.api.network.protocol.packet.api.template.APIResponseTemplatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerExecuteCommandPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerShutdownPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerUpdatePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerKickPacket;
-import de.polocloud.api.network.protocol.packet.wrapper.WrapperCachePacket;
+import de.polocloud.api.gameserver.base.SimpleGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPacket;
+import de.polocloud.api.network.packets.api.gameserver.APIResponseGameServerPacket;
+import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.other.MasterCache;
+import de.polocloud.api.network.packets.api.template.APIResponseTemplatePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
+import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.api.server.SimpleGameServer;
-import de.polocloud.plugin.api.wrapper.SimplePluginWrapper;
+
 import de.polocloud.plugin.bootstrap.IBootstrap;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class NetworkPluginRegister {
 
     public NetworkPluginRegister(IBootstrap bootstrap) {
 
-        new SimplePacketRegister<>(WrapperCachePacket.class, (Consumer<WrapperCachePacket>) packet -> {
-            IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
-            wrapperManager.getWrappers().clear();
-            for (String name : packet.getWrappers().keySet()) {
-                long snowflake = packet.getWrappers().get(name);
-                wrapperManager.registerWrapper(new SimplePluginWrapper(name, snowflake));
-            }
-        });
-        new SimplePacketRegister<GameServerUpdatePacket>(GameServerUpdatePacket.class, (ctx, packet) -> {
-            IGameServer gameserver = packet.getGameServer();
-            CloudPlugin.getCloudPluginInstance().setGameServer(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
-                gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
-                gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate(), gameserver.getCloudPlayers()));
+        new SimplePacketRegister<GlobalCachePacket>(GlobalCachePacket.class, globalCachePacket -> {
+            MasterCache masterCache = globalCachePacket.getMasterCache();
+            PoloCloudAPI.getInstance().setCache(masterCache);
         });
 
         new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown());
@@ -71,9 +62,10 @@ public class NetworkPluginRegister {
             CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
 
             for (IGameServer gameserver : tmp) {
+
                 response.add(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
                     gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
-                    gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate(), gameserver.getCloudPlayers()));
+                    gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate()));
             }
             completableFuture.complete((packet.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
         });

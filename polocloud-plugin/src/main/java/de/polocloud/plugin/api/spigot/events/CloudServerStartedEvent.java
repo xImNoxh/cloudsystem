@@ -1,6 +1,6 @@
 package de.polocloud.plugin.api.spigot.events;
 
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

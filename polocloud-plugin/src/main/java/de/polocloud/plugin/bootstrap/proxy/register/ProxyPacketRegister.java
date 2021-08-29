@@ -1,14 +1,18 @@
 package de.polocloud.plugin.bootstrap.proxy.register;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.network.protocol.packet.api.EventPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerUnregisterPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.proxy.ProxyTablistUpdatePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerRequestJoinResponsePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendMessagePacket;
-import de.polocloud.api.network.protocol.packet.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.network.protocol.packet.master.MasterRequestServerListUpdatePacket;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.packets.api.EventPacket;
+import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
+import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
+import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
+import de.polocloud.api.network.packets.master.MasterPlayerRequestJoinResponsePacket;
+import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
+import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
+import de.polocloud.api.network.packets.master.MasterRequestServerListUpdatePacket;
+import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -21,7 +25,9 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ProxyPacketRegister {
 
@@ -40,10 +46,17 @@ public class ProxyPacketRegister {
             loginEvent.completeIntent(plugin);
         });
 
-        new SimplePacketRegister<MasterRequestServerListUpdatePacket>(MasterRequestServerListUpdatePacket.class, packet -> ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(
-            packet.getName(), InetSocketAddress.createUnresolved(packet.getHost(), packet.getPort()),
-            "PoloCloud", false
-        )));
+        new SimplePacketRegister<>(GlobalCachePacket.class, (Consumer<GlobalCachePacket>) globalCachePacket -> {
+
+            for (IGameServer gameServer : globalCachePacket.getMasterCache().getGameServers()) {
+                if (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY) {
+                    continue;
+                }
+                ProxyServer.getInstance().getServers().put(gameServer.getName(), ProxyServer.getInstance().constructServerInfo(gameServer.getName(), new InetSocketAddress(gameServer.getHost(), gameServer.getPort()), "PoloCloud", false));
+            }
+        });
+
+       // new SimplePacketRegister<MasterRequestServerListUpdatePacket>(MasterRequestServerListUpdatePacket.class, packet -> ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(packet.getName(), new InetSocketAddress(packet.getHost() == null ? "127.0.0.1" : packet.getHost(), packet.getPort()), "PoloCloud", false)));
 
         new SimplePacketRegister<MasterPlayerSendToServerPacket>(MasterPlayerSendToServerPacket.class, packet -> {
             UUID uuid = packet.getUuid();
@@ -55,11 +68,22 @@ public class ProxyPacketRegister {
 
         new SimplePacketRegister<EventPacket>(EventPacket.class, eventPacket -> {
 
-            if (!eventPacket.getExcept().equalsIgnoreCase("null") && eventPacket.getExcept().equalsIgnoreCase("cloud")) {
-                return;
-            }
+            Runnable runnable = () -> {
+                if (Arrays.asList(eventPacket.getIgnoredTypes()).contains(PoloCloudAPI.getInstance().getType())) {
+                    return;
+                }
+                if (!eventPacket.getExcept().equalsIgnoreCase("null") && eventPacket.getExcept().equalsIgnoreCase("cloud")) {
+                    return;
+                }
 
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
+                PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
+            };
+
+            if (eventPacket.isAsync()) {
+                Scheduler.runtimeScheduler().async().schedule(runnable);
+            } else {
+                runnable.run();
+            }
         });
 
         new SimplePacketRegister<MasterPlayerSendMessagePacket>(MasterPlayerSendMessagePacket.class, packet -> {

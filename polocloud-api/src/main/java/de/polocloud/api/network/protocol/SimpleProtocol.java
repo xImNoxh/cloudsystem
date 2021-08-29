@@ -2,10 +2,12 @@ package de.polocloud.api.network.protocol;
 
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.ForwardingPacket;
-import de.polocloud.api.network.protocol.packet.Packet;
-import de.polocloud.api.wrapper.IWrapper;
+import de.polocloud.api.network.protocol.packet.base.other.ForwardingPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
+import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -26,31 +28,43 @@ public class SimpleProtocol implements IProtocol {
     /**
      * All registered {@link IPacketHandler}s
      */
-    private final Map<Class<? extends Packet>, List<IPacketHandler<Packet>>> packetHandlers;
+    private final Map<Class<? extends Packet>, List<IPacketHandler<? extends Packet>>> packetHandlers;
 
     public SimpleProtocol() {
         this.packetHandlers = new HashMap<>();
 
-        this.registerPacketHandler(new IPacketHandler<Packet>() {
+        this.registerPacketHandler(new IPacketHandler<ForwardingPacket>() {
             @Override
-            public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-                ForwardingPacket packet = (ForwardingPacket)obj;
-                String receiver = packet.getReceiver();
-                Packet forwardingPacket = packet.getPacket();
-                switch (packet.getType()) {
+            public void handlePacket(ChannelHandlerContext ctx, ForwardingPacket obj) {
+                String receiver = obj.getReceiver();
+                Packet forwardingPacket = obj.getPacket();
+                switch (obj.getType()) {
                     case WRAPPER:
+                        if (PoloCloudAPI.getInstance().getType() == PoloType.WRAPPER) {
+                            PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, forwardingPacket);
+                            return;
+                        }
                         IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
                         IWrapper wrapper = wrapperManager.getWrapper(receiver);
                         wrapper.sendPacket(forwardingPacket);
                         break;
                     case MASTER:
-                        handlePacket(ctx, forwardingPacket);
+                        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                            PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, forwardingPacket);
+                            return;
+                        } else {
+                            PoloCloudAPI.getInstance().sendPacket(obj);
+                        }
                         break;
                     case PLUGIN_SPIGOT:
                     case PLUGIN_PROXY:
                     case GENERAL_GAMESERVER:
+                        if (PoloCloudAPI.getInstance().getType().isPlugin()) {
+                            PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, forwardingPacket);
+                            return;
+                        }
                         IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
-                        gameServerManager.getGameServerByName(receiver).thenAccept(gameServer -> gameServer.sendPacket(forwardingPacket));
+                        gameServerManager.getCached(receiver).sendPacket(forwardingPacket);
                         break;
                     default:
                         break;
@@ -65,8 +79,8 @@ public class SimpleProtocol implements IProtocol {
     }
 
     @Override
-    public void registerPacketHandler(IPacketHandler<Packet> packetHandler) {
-        List<IPacketHandler<Packet>> list = packetHandlers.containsKey(packetHandler.getPacketClass()) ? packetHandlers.get(packetHandler.getPacketClass()) : new ArrayList<>();
+    public void registerPacketHandler(IPacketHandler<? extends Packet> packetHandler) {
+        List<IPacketHandler<? extends Packet>> list = packetHandlers.containsKey(packetHandler.getPacketClass()) ? packetHandlers.get(packetHandler.getPacketClass()) : new ArrayList<>();
         list.add(packetHandler);
         packetHandlers.put(packetHandler.getPacketClass(), list);
 
@@ -75,11 +89,13 @@ public class SimpleProtocol implements IProtocol {
     @Override
     public void firePacketHandlers(ChannelHandlerContext ctx, Packet packet) {
         if (packetHandlers.containsKey(packet.getClass())) {
-            List<IPacketHandler<Packet>> iPacketHandlers = packetHandlers.get(packet.getClass());
-            for (IPacketHandler<Packet> iPacketHandler : iPacketHandlers) {
+
+            List<IPacketHandler<? extends Packet>> iPacketHandlers = packetHandlers.get(packet.getClass());
+            for (IPacketHandler iPacketHandler : iPacketHandlers) {
                 iPacketHandler.handlePacket(ctx, packet);
             }
         }
     }
 
 }
+

@@ -1,11 +1,13 @@
 package de.polocloud.api.event.impl.net;
 
+import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.IEvent;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
 
+@EventData
 public class ChannelInactiveEvent implements IEvent {
 
     private final ChannelHandlerContext chx;
@@ -20,16 +22,9 @@ public class ChannelInactiveEvent implements IEvent {
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
-
     }
 
     @Override
     public void read(IPacketBuffer buf) throws IOException {
-
-    }
-
-    @Override
-    public boolean globalFire() {
-        return false;
     }
 }

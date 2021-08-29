@@ -1,15 +1,18 @@
 package de.polocloud.api.event.impl.server;
 
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.event.base.EventData;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 
 import java.io.IOException;
 
+@EventData(nettyFire = true)
 public class CloudGameServerStatusChangeEvent extends GameServerEvent {
 
-    private Status status;
+    private GameServerStatus status;
 
-    public CloudGameServerStatusChangeEvent(IGameServer gameServer, Status status) {
+    public CloudGameServerStatusChangeEvent(IGameServer gameServer, GameServerStatus status) {
         super(gameServer);
         this.status = status;
     }
@@ -18,24 +21,18 @@ public class CloudGameServerStatusChangeEvent extends GameServerEvent {
     public void read(IPacketBuffer buf) throws IOException {
         super.read(buf);
 
-        status = Status.valueOf(buf.readString());
+        status = buf.readEnum();
     }
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
         super.write(buf);
 
-        buf.writeString(status.name());
+        buf.writeEnum(status);
     }
 
-    public Status getStatus() {
+    public GameServerStatus getStatus() {
         return status;
-    }
-
-    public enum Status {
-        STARTING,
-        RUNNING,
-        STOPPING,
     }
 
 }

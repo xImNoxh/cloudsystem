@@ -1,12 +1,8 @@
 package de.polocloud.api.network.client;
 
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.IStartable;
-import de.polocloud.api.network.ITerminatable;
-import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.packet.IPacketSender;
-import de.polocloud.api.network.server.INettyServer;
-import io.netty.channel.ChannelHandlerContext;
+
+import java.util.function.Consumer;
 
 /**
  * This interface does not implement any other methods
@@ -18,4 +14,5 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public interface INettyClient extends INetworkConnection {
 
+    void start(Consumer<INettyClient> consumer);
 }

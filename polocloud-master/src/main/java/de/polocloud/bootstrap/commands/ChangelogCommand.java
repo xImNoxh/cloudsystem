@@ -6,8 +6,8 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.LoggerType;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -22,14 +22,14 @@ public class ChangelogCommand implements CommandListener, TabCompletable {
     @Command(name = "changelog", description = "Show the latest changes", aliases = "")
     public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(onlyFirstArgs = {"bootstrap", "api"}, min = 0, max = 1, message = {"----[Changelog]----", "Use §3changelog §7show the changelog", "Use §3changelog bootstrap/api §7to show the changelog of the specific type", "----[/Changelog]----"}) String... params) {
        if(params.length == 0){
-           Logger.log(LoggerType.INFO, Logger.PREFIX + "Loading §3changelog§7...");
+           PoloLogger.print(LogLevel.INFO, "Loading §3changelog§7...");
            String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getCurrentVersion());
-           Logger.log(LoggerType.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n----[/Changelog]----");
+           PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n----[/Changelog]----");
        }else if(params.length == 1){
            if(params[0].equalsIgnoreCase("bootstrap")){
-               Logger.log(LoggerType.INFO, Logger.PREFIX + "Loading §3changelog§7...");
+               PoloLogger.print(LogLevel.INFO, "Loading §3changelog§7...");
                String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getCurrentVersion());
-               Logger.log(LoggerType.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n]\n----[/Changelog]----");
+               PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n]\n----[/Changelog]----");
            } else{
                //Send help
            }
@@ -41,7 +41,7 @@ public class ChangelogCommand implements CommandListener, TabCompletable {
     private void sendHelp(){
         String[] helpArray = new String[] {"----[Changelog]----", "Use §3changelog §7show the changelog", "Use §3changelog bootstrap §7to show the changelog of the bootstrap", "----[/Changelog]----"};
         for (String s : helpArray) {
-            Logger.log(LoggerType.INFO, s);
+            PoloLogger.print(LogLevel.INFO, s);
         }
     }
 

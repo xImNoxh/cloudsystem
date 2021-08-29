@@ -52,4 +52,17 @@ public enum ConsoleColors {
         }
         return input + ConsoleColors.RESET;
     }
+
+    /**
+     * Removes all the Minecraft-Color-Codes out of a given {@link String}
+     *
+     * @param s the input to be replaced
+     * @return the formatted string without any color codes
+     */
+    public static String replaceColorCodes(String s) {
+        for (ConsoleColors value : ConsoleColors.values()) {
+            s = s.replace("§" + value.getChar(), "");
+        }
+        return s;
+    }
 }

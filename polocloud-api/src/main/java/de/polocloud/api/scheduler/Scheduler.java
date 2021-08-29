@@ -1,6 +1,8 @@
 package de.polocloud.api.scheduler;
 
 
+import de.polocloud.api.scheduler.base.SimpleScheduler;
+
 import java.util.List;
 
 public interface Scheduler {

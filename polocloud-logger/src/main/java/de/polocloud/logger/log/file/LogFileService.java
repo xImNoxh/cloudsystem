@@ -1,6 +1,6 @@
 package de.polocloud.logger.log.file;
 
-import de.polocloud.logger.log.Logger;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +46,8 @@ public class LogFileService {
     }
 
     public File getCurrentDayLog() {
-        new File("log/" + Logger.getSimpleDate()).mkdirs();
-        File file = new File("log/" + Logger.getSimpleDate() + "/services.log");
+        new File("log/" + PoloHelper.getSimpleDate()).mkdirs();
+        File file = new File("log/" + PoloHelper.getSimpleDate() + "/services.log");
         if (!file.exists()) {
             try {
                 file.createNewFile();

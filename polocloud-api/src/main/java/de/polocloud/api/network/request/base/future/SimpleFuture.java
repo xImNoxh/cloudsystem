@@ -1,6 +1,8 @@
 package de.polocloud.api.network.request.base.future;
 
 
+import de.polocloud.api.network.packets.other.TextPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.request.base.other.PoloCloudQueryTimeoutException;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.component.SimpleComponent;
@@ -19,11 +21,6 @@ public class SimpleFuture<T> implements PoloFuture<T> {
      * The request
      */
     private PoloComponent<T> request;
-
-    /**
-     * The response
-     */
-    private PoloComponent<?> nettyResponse;
 
     /**
      * The latches to lock and unlock
@@ -60,6 +57,11 @@ public class SimpleFuture<T> implements PoloFuture<T> {
      */
     private long completionTimeMillis = -1L;
 
+    /**
+     * The extra packet
+     */
+    private Packet packet;
+
     public SimpleFuture(PoloComponent<T> request) {
         this.request = request;
         this.countDownLatches = new ArrayList<>();
@@ -73,7 +75,8 @@ public class SimpleFuture<T> implements PoloFuture<T> {
         SimpleComponent<T> simpleComponent = new SimpleComponent<>();
         simpleComponent.id(this.request.getId());
         simpleComponent.data(blockingObject);
-        simpleComponent.success(true);
+        simpleComponent.success(false);
+        simpleComponent.packet(new TextPacket("Non-Blocking-Packet"));
 
         this.completeFuture(simpleComponent);
         return this;
@@ -112,25 +115,13 @@ public class SimpleFuture<T> implements PoloFuture<T> {
     }
 
 
-    public T pullValue1() throws PoloCloudQueryTimeoutException {
+    @Override
+    public Packet pullPacket() {
+        return packet;
+    }
 
-        if (success) {
-            return response;
-        }
-        CountDownLatch latch = new CountDownLatch(1);
-        this.countDownLatches.add(latch);
-
-        while (latch.getCount() > 0) {
-            try {
-                latch.await();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (success) {
-            return response;
-        }
-        throw getError() == null ? new PoloCloudQueryTimeoutException("The request timed out and no error was provided!") : new PoloCloudQueryTimeoutException(getError());
+    public void setPacket(Packet packet) {
+        this.packet = packet;
     }
 
     /**
@@ -139,12 +130,10 @@ public class SimpleFuture<T> implements PoloFuture<T> {
      * @param response the response
      */
     public void completeFuture(PoloComponent<?> response) {
-
         if (this.completed) {
             return;
         }
 
-        this.nettyResponse = response;
         this.completed = true;
         this.success = response.isSuccess();
         this.completionTimeMillis = response.getCompletionTimeMillis();

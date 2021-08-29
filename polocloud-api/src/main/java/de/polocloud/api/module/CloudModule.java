@@ -5,8 +5,8 @@ import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayerManager;
-import de.polocloud.api.template.ITemplate;
-import de.polocloud.api.template.ITemplateService;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.ITemplateManager;
 
 public abstract class CloudModule {
 
@@ -14,7 +14,7 @@ public abstract class CloudModule {
     private IGameServerManager gameServerManager;
 
     @Inject
-    private ITemplateService templateService;
+    private ITemplateManager templateService;
 
     @Inject
     private ICloudPlayerManager playerManager;
@@ -42,7 +42,7 @@ public abstract class CloudModule {
 
     public abstract boolean copyOnService(ITemplate... templates);
 
-    public ITemplateService getTemplateService() {
+    public ITemplateManager getTemplateService() {
         return templateService;
     }
 

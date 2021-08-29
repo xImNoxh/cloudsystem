@@ -1,10 +1,12 @@
 package de.polocloud.api.event.impl.net;
 
+import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.IEvent;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 
 import java.io.IOException;
 
+@EventData
 public class NettyExceptionEvent implements IEvent {
 
     private final Throwable throwable;
@@ -37,8 +39,4 @@ public class NettyExceptionEvent implements IEvent {
 
     }
 
-    @Override
-    public boolean globalFire() {
-        return false;
-    }
 }

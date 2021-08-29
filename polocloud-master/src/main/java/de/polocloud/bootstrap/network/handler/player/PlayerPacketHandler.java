@@ -2,29 +2,23 @@ package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
-import de.polocloud.api.gameserver.IGameServer;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.protocol.packet.api.cloudplayer.APIRequestCloudPlayerPacket;
-import de.polocloud.api.network.protocol.packet.api.fallback.APIRequestPlayerMoveFallbackPacket;
-import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerRegisterPacket;
-import de.polocloud.api.network.protocol.packet.cloudplayer.CloudPlayerUnregisterPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerCloudCommandExecutePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerDisconnectPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerRequestJoinPacket;
-import de.polocloud.api.network.protocol.packet.gameserver.GameServerPlayerUpdatePacket;
-import de.polocloud.api.network.protocol.packet.gameserver.permissions.PermissionCheckResponsePacket;
+import de.polocloud.api.network.packets.api.cloudplayer.APIRequestCloudPlayerPacket;
+import de.polocloud.api.network.packets.api.fallback.APIRequestPlayerMoveFallbackPacket;
+import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
+import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
+import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecutePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerPlayerDisconnectPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerPlayerRequestJoinPacket;
+import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.request.ResponseHandler;
-import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
-import de.polocloud.bootstrap.player.SimpleCloudPlayer;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
-
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class PlayerPacketHandler extends PlayerPacketServiceController {
 
@@ -50,7 +44,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
             sendICloudPlayerAPIResponse(playerManager, ctx, packet));
 
         new SimplePacketHandler<>(APIRequestPlayerMoveFallbackPacket.class, packet ->
-            playerManager.getOnlinePlayer(packet.getPlayername()).thenAccept(player -> sendToFallback(player)));
+            playerManager.getCached(packet.getPlayername()).thenAccept(player -> sendToFallback(player)));
 
         new SimplePacketHandler<>(PermissionCheckResponsePacket.class, packet ->
             ResponseHandler.getCompletableFuture(packet.getRequest(), true).complete(packet.isResponse()));
@@ -64,34 +58,31 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
             });
         });
 
-        new SimplePacketHandler<GameServerPlayerUpdatePacket>(GameServerPlayerUpdatePacket.class, (ctx, packet) -> {
+        //TODO
+        /*new SimplePacketHandler<GameServerPlayerUpdatePacket>(GameServerPlayerUpdatePacket.class, (ctx, packet) -> {
             String name = packet.getName();
             UUID uuid = packet.getUuid();
             callCurrentServices(serverManager, packet.getTargetServer(), (targetServer, proxyServer) -> {
                 ICloudPlayer cloudPlayer = null;
                 boolean isOnline = false;
-                try {
-                    if (isOnline = playerManager.isPlayerOnline(uuid).get()) {
-                        cloudPlayer = playerManager.getOnlinePlayer(uuid).get();
-                    } else {
-                        cloudPlayer = new SimpleCloudPlayer(name, uuid);
-                        ((SimpleCloudPlayer) cloudPlayer).setProxyGameServer(proxyServer);
-                        cloudPlayer.getProxyServer().getCloudPlayers().add(cloudPlayer);
-                        playerManager.register(cloudPlayer);
+                if (!playerManager.isPlayerOnline(uuid)) {
+                    cloudPlayer = playerManager.getCachedObject(uuid);
+                } else {
+                    cloudPlayer = new de.polocloud.api.player.SimpleCloudPlayer(name, uuid);
+                    ((de.polocloud.api.player.SimpleCloudPlayer) cloudPlayer).setProxyServer(proxyServer.getName());
+                    cloudPlayer.getProxyServer().getCloudPlayers().add(cloudPlayer);
+                    playerManager.registerPlayer(cloudPlayer);
 
-                        callConnectEvent(pubSubManager, cloudPlayer);
-                        updateProxyInfoService(serverManager, playerManager);
+                    callConnectEvent(pubSubManager, cloudPlayer);
+                    updateProxyInfoService(serverManager, playerManager);
 
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
                 }
 
                 IGameServer from = cloudPlayer.getMinecraftServer();
 
                 if (cloudPlayer.getMinecraftServer() != null) cloudPlayer.getMinecraftServer().getCloudPlayers().remove(cloudPlayer);
 
-                ((SimpleCloudPlayer) cloudPlayer).setMinecraftGameServer(targetServer);
+                ((de.polocloud.api.player.SimpleCloudPlayer) cloudPlayer).setMinecraftServer(targetServer.getName());
                 targetServer.getCloudPlayers().add(cloudPlayer);
 
                 IGameServer to = cloudPlayer.getMinecraftServer();
@@ -103,7 +94,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 }
                 sendConnectMessage(masterConfig, cloudPlayer);
             }, ctx);
-        });
+        });*/
 
         new SimplePacketHandler<GameServerPlayerRequestJoinPacket>(GameServerPlayerRequestJoinPacket.class,
             (ctx, packet) -> getSearchedFallback(packet, (iFallback, uuid) -> {
@@ -115,12 +106,19 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 sendMasterPlayerRequestJoinResponsePacket(ctx, uuid, gameServer == null ? "" : gameServer.getName(), gameServer == null ? -1 : gameServer.getSnowflake());
             }));
 
-        new SimplePacketHandler<CloudPlayerRegisterPacket>(CloudPlayerRegisterPacket.class, packet -> {
-            Master.getInstance().getCloudPlayerManager().register(packet.getCloudPlayer());
+        new SimplePacketHandler<>(CloudPlayerRegisterPacket.class, packet -> {
+            Master.getInstance().getCloudPlayerManager().registerPlayer(packet.getCloudPlayer());
+            Master.getInstance().updateCache();
         });
 
-        new SimplePacketHandler<CloudPlayerUnregisterPacket>(CloudPlayerUnregisterPacket.class, packet -> {
-            Master.getInstance().getCloudPlayerManager().unregister(packet.getCloudPlayer());
+        new SimplePacketHandler<>(CloudPlayerUnregisterPacket.class, packet -> {
+            Master.getInstance().getCloudPlayerManager().unregisterPlayer(packet.getCloudPlayer());
+            Master.getInstance().updateCache();
+        });
+
+        new SimplePacketHandler<>(CloudPlayerUpdatePacket.class, packet -> {
+            Master.getInstance().getCloudPlayerManager().unregisterPlayer(packet.getCloudPlayer());
+            Master.getInstance().updateCache();
         });
 
     }

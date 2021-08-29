@@ -8,6 +8,11 @@ public enum PoloType {
     MASTER,
 
     /**
+     * The master and wrapper process
+     */
+    MASTER_AND_WRAPPER,
+
+    /**
      * The wrapper process
      */
     WRAPPER,
@@ -25,7 +30,12 @@ public enum PoloType {
     /**
      * GameServer instance
      */
-    GENERAL_GAMESERVER;
+    GENERAL_GAMESERVER,
+
+    /**
+     * This should not happen to appear
+     */
+    NONE;
 
     /**
      * Checks if this enum-type
@@ -39,6 +49,14 @@ public enum PoloType {
     }
 
     /**
+     * The display name formatted
+     * where the first letter is uppercase
+     */
+    public String getName() {
+        return name().toUpperCase().charAt(0) + name().substring(1).toLowerCase();
+    }
+
+    /**
      * Checks if this enum-type
      * is instance of spigot or proxy to
      * check if it's a plugin-instance
@@ -46,6 +64,6 @@ public enum PoloType {
      * @return boolean
      */
     public boolean isPlugin() {
-        return this == PLUGIN_SPIGOT || this == PLUGIN_PROXY;
+        return this == PLUGIN_SPIGOT || this == PLUGIN_PROXY || this == GENERAL_GAMESERVER;
     }
 }
