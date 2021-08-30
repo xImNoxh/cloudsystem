@@ -10,7 +10,7 @@ public class PacketFactory {
 
     /**
      * All registered packets with following concept
-     *
+     * <p>
      * <ID, Class of Packet>  to be able to get the class of an id
      */
     public static final Map<Integer, Class<? extends Packet>> REGISTERED_PACKETS;
@@ -33,7 +33,7 @@ public class PacketFactory {
     /**
      * Registers an {@link Packet} with a given id
      *
-     * @param id the id of the packet
+     * @param id     the id of the packet
      * @param packet the class of the packet
      */
     public static void registerPacket(int id, Class<? extends Packet> packet) {
@@ -72,7 +72,7 @@ public class PacketFactory {
      * @param id the packet id
      * @return packet instance
      */
-    public static Packet createPacket(int id)  {
+    public static Packet createPacket(int id) {
         if (!REGISTERED_PACKETS.containsKey(id)) {
             return null;
         }

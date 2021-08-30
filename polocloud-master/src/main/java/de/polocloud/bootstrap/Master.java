@@ -13,6 +13,7 @@ import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.event.impl.net.NettyExceptionEvent;
+import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.PoloLogger;
@@ -31,6 +32,7 @@ import de.polocloud.api.util.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
+import de.polocloud.bootstrap.fallback.FallbackSearchService;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
@@ -39,8 +41,6 @@ import de.polocloud.bootstrap.network.SimplePacketService;
 import de.polocloud.bootstrap.network.ports.PortService;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
-import de.polocloud.api.fallback.base.SimpleFallback;
-import de.polocloud.bootstrap.fallback.FallbackSearchService;
 import de.polocloud.client.PoloCloudClient;
 import de.polocloud.logger.log.types.ConsoleColors;
 
@@ -60,15 +60,11 @@ public class Master extends PoloCloudAPI implements IStartable {
     private final FallbackSearchService fallbackSearchService;
     private final ModuleService moduleService;
     private final PortService portService;
+    private final MasterConfig masterConfig;
+    private final PoloCloudClient client;
     private IPubSubManager pubSubManager;
-
     private SimpleNettyServer nettyServer;
     private boolean running = false;
-
-    private final MasterConfig masterConfig;
-
-    private final PoloCloudClient client;
-
     private String currentVersion = "N/A";
 
     public Master() {
@@ -106,6 +102,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.commandManager.registerCommand(new HelpCommand());
         this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
         this.commandManager.registerCommand(new ChangelogCommand());
+        this.commandManager.registerCommand(new MeCommand());
         this.commandManager.registerCommand(injector.getInstance(GameServerCommand.class));
         this.commandManager.registerCommand(injector.getInstance(WrapperCommand.class));
 
@@ -114,13 +111,13 @@ public class Master extends PoloCloudAPI implements IStartable {
         new Thread(getGuice().getInstance(ServerCreatorRunner.class)).start();
     }
 
+    public static Master getInstance() {
+        return (Master) PoloCloudAPI.getInstance();
+    }
+
     @Override
     public INetworkConnection getConnection() {
         return this.nettyServer;
-    }
-
-    public static Master getInstance() {
-        return (Master) PoloCloudAPI.getInstance();
     }
 
     private MasterConfig loadConfig() {
@@ -197,18 +194,16 @@ public class Master extends PoloCloudAPI implements IStartable {
             }
 
             commandExecutor.sendMessage("§cShutting down in §e2 Seconds§c...");
-            loggerFactory.shutdown(() -> {
-                Scheduler.runtimeScheduler().schedule(() -> {
-                    commandExecutor.sendMessage("§7All §bGameServers §7were §cstopped§7!");
-                    commandExecutor.sendMessage("Shutting down Master...");
-                    System.exit(0);
-                }, 40L);
-            });
+            loggerFactory.shutdown(() -> Scheduler.runtimeScheduler().schedule(() -> {
+                commandExecutor.sendMessage("§7All §bGameServers §7were §cstopped§7!");
+                commandExecutor.sendMessage("Shutting down Master...");
+                System.exit(0);
+            }, 40L));
         });
         return terminate;
     }
 
-    private void registerUncaughtExceptionListener(){
+    private void registerUncaughtExceptionListener() {
         JsonData jsonData = new JsonData(new File("launcher.json"));
         this.currentVersion = jsonData.fallback("N/A").getString("version");
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -226,6 +221,7 @@ public class Master extends PoloCloudAPI implements IStartable {
     public String getName() {
         return getType().name();
     }
+
     @Override
     public Injector getGuice() {
         return injector;

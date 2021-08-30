@@ -14,10 +14,10 @@ import de.polocloud.api.event.IEventManager;
 import de.polocloud.api.event.SimpleCachedEventManager;
 import de.polocloud.api.fallback.IFallbackManager;
 import de.polocloud.api.fallback.SimpleCachedFallbackManager;
-import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
-import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 import de.polocloud.api.gameserver.port.IPortManager;
+import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
 import de.polocloud.api.guice.own.Guice;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
@@ -29,24 +29,23 @@ import de.polocloud.api.module.IModuleHolder;
 import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.ITerminatable;
+import de.polocloud.api.network.packets.api.other.MasterCache;
 import de.polocloud.api.network.packets.other.TextPacket;
-import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.network.packets.api.other.MasterCache;
-import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.scheduler.base.SimpleScheduler;
-import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.placeholder.IPlaceHolderManager;
 import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.player.SimpleCachedCloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
+import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.scheduler.base.SimpleScheduler;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.SimpleCachedTemplateManager;
+import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.system.SystemManager;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import org.reflections.Reflections;
@@ -56,9 +55,10 @@ import java.util.Optional;
 
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
-    //Other fields
-    private final PoloType type;
-
+    /**
+     * The instance of the cloud api
+     */
+    private static PoloCloudAPI instance;
     //All manager instances
     protected final ICommandManager commandManager;
     protected final IPlaceHolderManager placeHolderManager;
@@ -71,11 +71,14 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final PoloLoggerFactory loggerFactory;
     protected final IMessageManager messageManager;
     protected final IModuleHolder moduleHolder;
+    protected final SystemManager systemManager;
 
     /**
      * The port cache for finding new ports
      */
     protected final IPortManager portManager;
+    //Other fields
+    private final PoloType type;
 
     protected PoloCloudAPI(PoloType type) {
         instance = this;
@@ -96,12 +99,28 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.templateManager = new SimpleCachedTemplateManager();
         this.messageManager = new SimpleCachedMessageManager();
         this.moduleHolder = new ModuleService(FileConstants.MASTER_MODULES);
+        this.systemManager = new SystemManager();
 
         Guice.bind(Scheduler.class).toInstance(new SimpleScheduler());
         Guice.bind(Snowflake.class).toInstance(new Snowflake());
 
         Guice.bind(IConfigLoader.class).toInstance(new SimpleConfigLoader());
         Guice.bind(IConfigSaver.class).toInstance(new SimpleConfigSaver());
+    }
+
+    /**
+     * Gets the current {@link PoloCloudAPI}
+     */
+    public static PoloCloudAPI getInstance() {
+        return instance;
+    }
+
+    /**
+     * Returns an optional instance to maybe check
+     * if the instance is present or something similar
+     */
+    public static Optional<PoloCloudAPI> optionalInstance() {
+        return Optional.ofNullable(instance);
     }
 
     /**
@@ -144,9 +163,9 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     /**
      * Updates the cache of the current instance
-     *
+     * <p>
      * If....
-     *
+     * <p>
      * 'MASTER' -> Sends cache to all servers
      * 'PLUGIN' -> Requests cache from master
      */
@@ -165,6 +184,12 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      */
     public abstract INetworkConnection getConnection();
 
+    //========================================
+
+    // Class provided field getters and setters
+
+    //========================================
+
     /**
      * The current {@link CommandExecutor} (e.g. console)
      */
@@ -182,37 +207,11 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      */
     public abstract Injector getGuice();
 
-    //========================================
-
-    // Class provided field getters and setters
-
-    //========================================
-
-    /**
-     * The instance of the cloud api
-     */
-    private static PoloCloudAPI instance;
-
-    /**
-     * Gets the current {@link PoloCloudAPI}
-     */
-    public static PoloCloudAPI getInstance() {
-        return instance;
-    }
-
-    /**
-     * Returns an optional instance to maybe check
-     * if the instance is present or something similar
-     */
-    public static Optional<PoloCloudAPI> optionalInstance() {
-        return Optional.ofNullable(instance);
-    }
-
     /**
      * Sends a {@link Packet} to the other connection side
-     *
+     * <p>
      * If this instance is...
-     *
+     * <p>
      * 'CLOUD/SERVER' -> Will send to all connected clients
      * 'BRIDGE/SPIGOT/PROXY' -> WIll send to the Master
      *
@@ -272,6 +271,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public IPortManager getPortManager() {
         return portManager;
+    }
+
+    public SystemManager getSystemManager() {
+        return systemManager;
     }
 
     /**
