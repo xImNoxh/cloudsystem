@@ -29,6 +29,10 @@ public class SimpleCachedScreenManager implements IScreenManager {
      */
     private boolean inScreen;
 
+    public SimpleCachedScreenManager() {
+        this.registeredScreens = new HashMap<>();
+    }
+
     /**
      * Sets current screen
      *
@@ -37,10 +41,6 @@ public class SimpleCachedScreenManager implements IScreenManager {
     public void prepare(IScreen screen) {
         this.screen = screen;
         this.inScreen = true;
-    }
-
-    public SimpleCachedScreenManager() {
-        this.registeredScreens = new HashMap<>();
     }
 
     /**
@@ -96,7 +96,7 @@ public class SimpleCachedScreenManager implements IScreenManager {
      * @return screen output
      */
     public IScreen getScreen(String name) {
-        return this.registeredScreens.get(name);
+        return this.registeredScreens.get(name.toLowerCase());
     }
 
 }
