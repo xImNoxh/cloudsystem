@@ -6,6 +6,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
@@ -16,6 +17,7 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
@@ -33,8 +35,6 @@ import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
 import de.polocloud.bootstrap.listener.NettyExceptionListener;
-import de.polocloud.bootstrap.module.MasterModuleLoader;
-import de.polocloud.bootstrap.module.ModuleCache;
 import de.polocloud.bootstrap.network.SimplePacketService;
 import de.polocloud.bootstrap.network.ports.PortService;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
@@ -58,8 +58,7 @@ public class Master extends PoloCloudAPI implements IStartable {
     private final SimpleConfigSaver simpleConfigSaver = new SimpleConfigSaver();
 
     private final FallbackSearchService fallbackSearchService;
-    private final ModuleCache moduleCache;
-    private final MasterModuleLoader moduleLoader;
+    private final ModuleService moduleService;
     private final PortService portService;
     private IPubSubManager pubSubManager;
 
@@ -93,8 +92,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.templateManager.loadTemplates(TemplateStorage.FILE);
 
         this.fallbackSearchService = new FallbackSearchService(masterConfig);
-        this.moduleCache = new ModuleCache();
-        this.moduleLoader = new MasterModuleLoader(moduleCache);
+        this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
 
         this.templateManager.getTemplateLoader().loadTemplates();
 
@@ -113,7 +111,6 @@ public class Master extends PoloCloudAPI implements IStartable {
 
 
         //Server-Runner thread starting
-        this.moduleLoader.loadModules(false);
         new Thread(getGuice().getInstance(ServerCreatorRunner.class)).start();
     }
 
@@ -168,11 +165,20 @@ public class Master extends PoloCloudAPI implements IStartable {
             StringBuilder builder = new StringBuilder();
             this.templateManager.getTemplates().forEach(key -> builder.append(key.getName()).append("(").append(key.getServerCreateThreshold()).append("%), "));
             PoloLogger.print(LogLevel.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 2));
+
+            this.moduleService.load();
+
         } else {
             PoloLogger.print(LogLevel.INFO, "No Templates found to be loaded!");
         }
 
         PoloLogger.print(LogLevel.INFO, "The master is §asuccessfully §7started.");
+    }
+
+    @Override
+    public void reload() {
+        this.updateCache();
+        this.moduleService.reload();
     }
 
     @Override
@@ -185,18 +191,19 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.running = false;
         boolean terminate = this.nettyServer.terminate();
 
+        this.moduleService.shutdown(() -> {
+            for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
+                gameServer.terminate();
+            }
 
-        for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
-            gameServer.terminate();
-        }
-
-        commandExecutor.sendMessage("§cShutting down in §e2 Seconds§c...");
-        this.loggerFactory.shutdown(() -> {
-            Scheduler.runtimeScheduler().schedule(() -> {
-                commandExecutor.sendMessage("§7All §bGameServers §7were §cstopped§7!");
-                commandExecutor.sendMessage("Shutting down Master...");
-                System.exit(0);
-            }, 40L);
+            commandExecutor.sendMessage("§cShutting down in §e2 Seconds§c...");
+            loggerFactory.shutdown(() -> {
+                Scheduler.runtimeScheduler().schedule(() -> {
+                    commandExecutor.sendMessage("§7All §bGameServers §7were §cstopped§7!");
+                    commandExecutor.sendMessage("Shutting down Master...");
+                    System.exit(0);
+                }, 40L);
+            });
         });
         return terminate;
     }
@@ -233,6 +240,10 @@ public class Master extends PoloCloudAPI implements IStartable {
         return masterConfig;
     }
 
+    public ModuleService getModuleService() {
+        return moduleService;
+    }
+
     @Override
     public CommandExecutor getCommandExecutor() {
         return commandExecutor;
@@ -242,16 +253,8 @@ public class Master extends PoloCloudAPI implements IStartable {
         return nettyServer;
     }
 
-    public MasterModuleLoader getModuleLoader() {
-        return moduleLoader;
-    }
-
     public boolean isRunning() {
         return running;
-    }
-
-    public ModuleCache getModuleCache() {
-        return moduleCache;
     }
 
     public FallbackSearchService getFallbackSearchService() {

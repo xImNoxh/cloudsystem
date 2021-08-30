@@ -17,6 +17,7 @@ import de.polocloud.api.scheduler.Scheduler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class SimpleCachedEventManager implements IEventManager {
@@ -28,8 +29,8 @@ public class SimpleCachedEventManager implements IEventManager {
     private final Map<Class<? extends IEvent>, List<IEventHandler<?>>> eventHandlers;
 
     public SimpleCachedEventManager() {
-        this.registeredClasses = new HashMap<>();
-        this.eventHandlers = new HashMap<>();
+        this.registeredClasses = new ConcurrentHashMap<>();
+        this.eventHandlers = new ConcurrentHashMap<>();
     }
 
     @Override

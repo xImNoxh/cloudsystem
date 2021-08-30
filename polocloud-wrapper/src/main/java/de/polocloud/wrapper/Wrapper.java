@@ -143,6 +143,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     }
 
     @Override
+    public void reload() {
+        updateCache();
+    }
+
+    @Override
     public void receivePacket(Packet packet) {
         nettyClient.getProtocol().firePacketHandlers(nettyClient.ctx(), packet);
     }

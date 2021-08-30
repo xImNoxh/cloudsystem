@@ -4,7 +4,7 @@ import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
 import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
 
-@AutoRegistry//(id = 0x40)
+@AutoRegistry
 public class TextPacket extends SimplePacket {
 
     @PacketSerializable(String.class)

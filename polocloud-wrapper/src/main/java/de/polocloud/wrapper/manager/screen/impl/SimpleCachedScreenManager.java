@@ -48,20 +48,22 @@ public class SimpleCachedScreenManager implements IScreenManager {
      */
     public void quitCurrentScreen() {
         this.inScreen = false;
-
+        PoloCloudAPI.getInstance().getCommandManager().setFilter(null);
         if (this.screen == null) {
             return;
         }
 
         PoloLogger.print(LogLevel.INFO, "§cYou left the §esession §cof the service §e" + this.screen.getScreenName() + "§c!");
-        try {
-            this.screen.stop();
-        } catch (ThreadDeath e) {
-            //Ignoring
+        if (this.screen.getThread().isAlive()) {
+            try {
+                this.screen.stop();
+            } catch (ThreadDeath e) {
+                //Ignoring
+            }
         }
         this.screen = null;
-        PoloCloudAPI.getInstance().getCommandManager().setFilter(null);
     }
+
 
     @Override
     public IScreen getScreen() {

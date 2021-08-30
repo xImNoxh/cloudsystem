@@ -23,6 +23,10 @@ public class FileConstants {
     public static final File WRAPPER_STORAGE = new File("storage/");
     public static final File WRAPPER_STORAGE_VERSIONS = new File(WRAPPER_STORAGE, "version/");
 
+
+    //Master stuff
+    public static final File MASTER_MODULES = new File("modules/");
+
     public static File getTemplateDirectory(ITemplate template) {
         return new File(WRAPPER_TEMPLATES, template.getName() + "/");
     }

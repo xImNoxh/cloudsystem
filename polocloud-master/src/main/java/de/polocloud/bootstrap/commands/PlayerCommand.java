@@ -64,8 +64,8 @@ public class PlayerCommand implements CommandListener, TabCompletable {
             PoloLogger.print(LogLevel.INFO, "----[Player]----");
             PoloLogger.print(LogLevel.INFO, "§7Name §7: §b" + cloudPlayer.getName());
             PoloLogger.print(LogLevel.INFO, "§7UUID §7: §b" + cloudPlayer.getUUID());
-            PoloLogger.print(LogLevel.INFO, "§7Proxy §7: §b" + cloudPlayer.getProxyServer() == null ? "Logging in..." : cloudPlayer.getProxyServer().getName());
-            PoloLogger.print(LogLevel.INFO, "§7Server §7: §b" + cloudPlayer.getMinecraftServer() == null ? "Logging in..." : cloudPlayer.getMinecraftServer().getName());
+            PoloLogger.print(LogLevel.INFO, "§7Proxy §7: §b" + (cloudPlayer.getProxyServer() == null ? "Logging in..." : cloudPlayer.getProxyServer().getName()));
+            PoloLogger.print(LogLevel.INFO, "§7Server §7: §b" + (cloudPlayer.getMinecraftServer() == null ? "Logging in..." : cloudPlayer.getMinecraftServer().getName()));
             PoloLogger.print(LogLevel.INFO, "----[/Player]----");
 
         } else if (params.length >= 3) {

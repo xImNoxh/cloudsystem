@@ -38,7 +38,9 @@ public class SimpleCachedCloudPlayerManager implements ICloudPlayerManager {
 
     @Override
     public void registerPlayer(ICloudPlayer cloudPlayer) {
-        this.cachedObjects.add(cloudPlayer);
+        if (this.getCached(cloudPlayer.getName()) == null) {
+            this.cachedObjects.add(cloudPlayer);
+        }
     }
 
     @Override

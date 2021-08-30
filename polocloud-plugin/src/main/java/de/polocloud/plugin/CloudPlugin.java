@@ -1,11 +1,9 @@
 package de.polocloud.plugin;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.INetworkConnection;
@@ -20,7 +18,6 @@ import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 
-import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -109,6 +106,11 @@ public class CloudPlugin extends PoloCloudAPI {
     @Override
     public void receivePacket(Packet packet) {
         networkClient.getProtocol().firePacketHandlers(networkClient.ctx(), packet);
+    }
+
+    @Override
+    public void reload() {
+        updateCache();
     }
 
     public JsonData getJson() {

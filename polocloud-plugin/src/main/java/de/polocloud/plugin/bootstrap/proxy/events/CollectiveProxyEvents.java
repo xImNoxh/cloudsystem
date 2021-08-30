@@ -2,10 +2,9 @@ package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.network.packets.api.fallback.APIRequestPlayerMoveFallbackPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
-import de.polocloud.api.network.packets.gameserver.GameServerPlayerDisconnectPacket;
+
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.SimpleCloudPlayer;
 import de.polocloud.api.scheduler.Scheduler;
@@ -19,7 +18,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -30,8 +28,8 @@ public class CollectiveProxyEvents implements Listener {
     private CloudPlugin cloudPlugin;
     private Plugin plugin;
 
-    private GameServerProperty property;
-    private NetworkClient networkClient;
+    private final GameServerProperty property;
+    private final NetworkClient networkClient;
 
     public CollectiveProxyEvents(Plugin plugin) {
         this.plugin = plugin;
@@ -145,11 +143,11 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(PlayerDisconnectEvent event) {
         ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
         if (cloudPlayer == null) {
-            System.err.println("Tried unregistering nulled CloudPlayer");
+            IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
+            PoloCloudAPI.getInstance().messageCloud(thisService.getName() + " tried to unregister '" + event.getPlayer().getName() + ":" + event.getPlayer().getUniqueId() + "' but it's ICloudPlayer was null!");
             return;
         }
         PoloCloudAPI.getInstance().getCloudPlayerManager().unregisterPlayer(cloudPlayer);
-        networkClient.sendPacket(new GameServerPlayerDisconnectPacket(event.getPlayer().getUniqueId(), event.getPlayer().getName()));
         networkClient.sendPacket(new CloudPlayerUnregisterPacket(cloudPlayer));
     }
 

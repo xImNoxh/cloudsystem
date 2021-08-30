@@ -1,5 +1,6 @@
 package de.polocloud.api.template.base;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.INamable;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.template.helper.GameServerVersion;
@@ -99,6 +100,13 @@ public interface ITemplate extends PoloObject<ITemplate> {
      *              Nothing is saved here if not saved in the template
      */
     boolean isStatic();
+
+    /**
+     * Checks if this {@link ITemplate} is a {@link de.polocloud.api.fallback.base.IFallback} instance
+     */
+    default boolean isLobby() {
+        return PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().stream().anyMatch(fallback -> fallback.getTemplateName().equalsIgnoreCase(this.getName()));
+    }
 
     default boolean isDynamic() {
         return !isStatic();

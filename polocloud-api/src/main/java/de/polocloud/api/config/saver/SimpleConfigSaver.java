@@ -12,6 +12,9 @@ public class SimpleConfigSaver implements IConfigSaver {
     @Override
     public void save(IConfig config, File file) {
         try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
             FileWriter writer = new FileWriter(file);
             PoloHelper.GSON_INSTANCE.toJson(config, writer);
             writer.flush();

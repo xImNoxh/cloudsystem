@@ -1,64 +1,55 @@
 package de.polocloud.api.module;
 
-import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
-import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.player.ICloudPlayerManager;
-import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.template.ITemplateManager;
+import de.polocloud.api.guice.own.GuiceObject;
+import de.polocloud.api.guice.own.Inject;
+import de.polocloud.api.module.info.ModuleInfo;
 
-public abstract class CloudModule {
+import java.io.File;
 
-    @Inject
-    private IGameServerManager gameServerManager;
+public abstract class CloudModule extends GuiceObject {
 
     @Inject
-    private ITemplateManager templateService;
+    protected IConfigLoader configLoader;
 
     @Inject
-    private ICloudPlayerManager playerManager;
+    protected IConfigSaver configSaver;
 
-    @Inject
-    private IConfigLoader configLoader;
+    protected File dataDirectory;
 
-    @Inject
-    private IConfigSaver configSaver;
+    protected File moduleFile;
 
     /**
-     * Called when the Module is being loaded
+     * Registers all tasks for a {@link CloudModule}
+     *
+     * @param classObject the class object to register all tasks in
      */
-    public abstract void onLoad();
+    public void registerTask(Object classObject) {
+        PoloCloudAPI.getInstance().getModuleHolder().registerModuleTasks(this, classObject);
+    }
 
     /**
-     * Called when the module is being stopped
+     * Gets an {@link ModuleInfo} of this module
      */
-    public abstract void onShutdown();
-
-    /**
-     * Checks if the module can be reloaded
-     */
-    public abstract boolean canReload();
-
-    public abstract boolean copyOnService(ITemplate... templates);
-
-    public ITemplateManager getTemplateService() {
-        return templateService;
+    public ModuleInfo info() {
+        return getClass().isAnnotationPresent(ModuleInfo.class) ? getClass().getAnnotation(ModuleInfo.class) : null;
     }
 
-    public IConfigLoader getConfigLoader() {
-        return configLoader;
+    public void setDataDirectory(File dataDirectory) {
+        this.dataDirectory = dataDirectory;
     }
 
-    public ICloudPlayerManager getPlayerManager() {
-        return playerManager;
+    public void setModuleFile(File moduleFile) {
+        this.moduleFile = moduleFile;
     }
 
-    public IGameServerManager getGameServerManager() {
-        return gameServerManager;
+    public File getModuleFile() {
+        return moduleFile;
     }
 
-    public IConfigSaver getConfigSaver() {
-        return configSaver;
+    public File getDataDirectory() {
+        return dataDirectory;
     }
 }

@@ -9,8 +9,9 @@ import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
+import de.polocloud.api.module.info.ModuleState;
+import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.module.ModuleLocalCache;
 import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.io.File;
@@ -28,24 +29,21 @@ public class ReloadCommand implements CommandListener, TabCompletable {
         if (args[0].equalsIgnoreCase("all")) {
             long start = System.currentTimeMillis();
             PoloLogger.print(LogLevel.INFO, "Initializing cloud reload...");
-            Master.getInstance().getModuleCache().unloadModules();
-            Master.getInstance().getModuleLoader().loadModules(true);
-            PoloCloudAPI.getInstance().updateCache();
-
+            PoloCloudAPI.getInstance().reload();
             PoloLogger.print(LogLevel.INFO, "Cloud " + ConsoleColors.GREEN + "completed " + ConsoleColors.GRAY + "reload. (" + (System.currentTimeMillis() - start) + "ms)");
 
         } else if (args[0].equalsIgnoreCase("module") && args.length == 2) {
             String moduleName = args[1];
-            CloudModule module = Master.getInstance().getModuleCache().getModuleByName(moduleName);
+            ModuleService moduleService = Master.getInstance().getModuleService();
+            CloudModule module = moduleService.getModule(moduleName);
+
             if (module == null) {
-                PoloLogger.print(LogLevel.WARNING, "The module » " + ConsoleColors.LIGHT_BLUE + moduleName + ConsoleColors.GRAY + " isn't loaded!");
+                PoloLogger.print(LogLevel.WARNING, "§cThe module §e" + moduleName + " §cseems not to be loaded!");
                 return;
             }
             long started = System.currentTimeMillis();
-            PoloLogger.print(LogLevel.INFO, "Reloading » " + ConsoleColors.LIGHT_BLUE + Master.getInstance().getModuleCache().get(module).getModuleData().getName() + ConsoleColors.GRAY + "...");
-            File moduleFile = Master.getInstance().getModuleCache().get(module).getModuleData().getFile();
-            Master.getInstance().getModuleCache().unloadModule(module);
-            Master.getInstance().getModuleLoader().loadModule(moduleFile);
+            PoloLogger.print(LogLevel.INFO, "§7Reloading Module §b" + module.info().name() + "§7...");
+            moduleService.callTasks(module, ModuleState.RELOADING);
             PoloLogger.print(LogLevel.INFO, "Reload completed! (took " + (System.currentTimeMillis() - started) + "ms)");
 
         }
@@ -55,8 +53,8 @@ public class ReloadCommand implements CommandListener, TabCompletable {
     public List<String> onTabComplete(CommandExecutor executor, String[] args) {
         if (args.length == 1 && args[0].equalsIgnoreCase("module")) {
             List<String> data = new LinkedList<>();
-            for (ModuleLocalCache value : Master.getInstance().getModuleCache().values()) {
-                data.add(value.getModuleData().getName());
+            for (CloudModule value : Master.getInstance().getModuleService().getModules()) {
+                data.add(value.info().name());
             }
             return data;
         }
