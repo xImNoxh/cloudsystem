@@ -75,7 +75,6 @@ public class GlobalCachePacket extends Packet {
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
-
         buf.writeInt(gameServers.size());
         for (IGameServer gameServer : gameServers) {
             buf.writeGameServer(gameServer);
@@ -106,6 +105,7 @@ public class GlobalCachePacket extends Packet {
     public void read(IPacketBuffer buf) throws IOException {
 
         int size = buf.readInt();
+
         this.gameServers = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             this.gameServers.add(buf.readGameServer());
@@ -130,6 +130,7 @@ public class GlobalCachePacket extends Packet {
         }
 
         size = buf.readInt();
+        fallbacks = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             fallbacks.add(buf.readFallback());
         }
