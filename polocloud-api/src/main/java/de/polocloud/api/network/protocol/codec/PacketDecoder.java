@@ -15,7 +15,6 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext chx, ByteBuf byteBuf, List<Object> output) throws Exception {
-
         IPacketBuffer buf = new SimplePacketBuffer(byteBuf);
 
         int id = buf.readInt();
@@ -39,9 +38,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         output.add(packet);
-
     }
 
 }

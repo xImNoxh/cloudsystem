@@ -30,7 +30,7 @@
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
-      <version>4.1.65.Final</version>
+      <version>4.1.67.Final</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->

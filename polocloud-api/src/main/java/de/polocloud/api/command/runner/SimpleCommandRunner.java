@@ -185,8 +185,8 @@ public class SimpleCommandRunner implements ICommandRunner {
             return;
         }
 
-        boolean tooFewArguments = minimumParameters == -1 ? false : args.length < this.minimumParameters;
-        boolean tooManyArguments = maximumParameters == -1 ? false : args.length > this.maximumParameters;
+        boolean tooFewArguments = minimumParameters != -1 && args.length < this.minimumParameters;
+        boolean tooManyArguments = maximumParameters != -1 && args.length > this.maximumParameters;
         if (tooFewArguments || tooManyArguments) {
             for (String s : message) {
                 source.sendMessage(s.replace("%min%", this.minimumParameters + "").replace("%max%", this.maximumParameters + ""));
@@ -239,8 +239,8 @@ public class SimpleCommandRunner implements ICommandRunner {
         }
 
         if (varargsIndex >= 0) {
-            tooFewArguments = minimumVariableArgs == -1 ? false : variableArgs.size() < this.minimumVariableArgs;
-            tooManyArguments = maximumVariableArgs == -1 ? false : variableArgs.size() > this.maximumVariableArgs;
+            tooFewArguments = minimumVariableArgs != -1 && variableArgs.size() < this.minimumVariableArgs;
+            tooManyArguments = maximumVariableArgs != -1 && variableArgs.size() > this.maximumVariableArgs;
             if (tooFewArguments || tooManyArguments) {
                 for (String s : message) {
                     source.sendMessage(s.replace("%min%", this.minimumParameters + "").replace("%max%", this.maximumParameters + ""));

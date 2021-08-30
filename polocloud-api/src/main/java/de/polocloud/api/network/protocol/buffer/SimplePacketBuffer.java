@@ -2,7 +2,6 @@ package de.polocloud.api.network.protocol.buffer;
 
 import com.google.common.base.Charsets;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.fallback.base.SimpleFallback;
@@ -24,10 +23,7 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetSocketAddress;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class SimplePacketBuffer implements IPacketBuffer {
 
@@ -78,6 +74,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         } else {
             ByteBuf part = buf.readBytes(i);
             String s = part.toString(Charsets.UTF_8);
+            part.release();
 
             if (s.length() > maxLength) {
                 throw new DecoderException("The received string length is longer than maximum allowed (" + i + " > " + maxLength + ")");
@@ -164,8 +161,10 @@ public class SimplePacketBuffer implements IPacketBuffer {
     public <T extends Enum<T>> T readEnum() throws IOException {
         Class<?> enumClass;
         try {
-            enumClass = Class.forName(this.readString());
-            return (T) enumClass.getEnumConstants()[this.readVarInt()];
+            String classString = this.readString();
+            enumClass = Class.forName(classString);
+            int varInt = this.readVarInt();
+            return (T) enumClass.getEnumConstants()[varInt];
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -271,26 +270,32 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
         //Name and snowflake and port
         String name = this.readString();
+
         long snowflake = this.readLong();
+
         int port = this.readInt();
 
         //Extra values
         String motd = this.readString();
+
         GameServerStatus status = this.readEnum();
 
         //Memory and ping
         long memory = this.readLong();
+
         long ping = this.readLong();
 
         long startTime = this.readLong();
+
         int maxPlayers = this.readInt();
+
         boolean serviceVisibility = this.readBoolean();
+
         boolean registered = this.readBoolean();
 
         IGameServer gameServer = new SimpleGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, memory, port, maxPlayers, template);
-        gameServer.setRegistered(registered);;
+        gameServer.setRegistered(registered);
         return gameServer;
-
     }
 
     @Override
@@ -364,19 +369,24 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
         //Other settings
         int maxPlayers = this.readInt();
+
         int maxMemory = this.readInt();
+
         int createThreshold = this.readInt();
 
         //Maintenance and mode (static or dynamic)
         boolean maintenance = this.readBoolean();
+
         boolean staticServer = this.readBoolean();
 
         //Template type and version
         TemplateType templateType = this.readEnum();
+
         GameServerVersion version = this.readEnum();
 
         //The motd and allowed wrappers
         String motd = readString();
+
         String[] wrapperNames = readStrings();
 
         return new SimpleTemplate(name, staticServer, maxServers, minServers, templateType, version, maxPlayers, maxMemory, maintenance, motd, createThreshold, wrapperNames);

@@ -5,22 +5,23 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
-import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.RedirectPacket;
 import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyResponsePacket;
 import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerPacket;
-import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
-import de.polocloud.api.network.packets.gameserver.*;
+import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 
 public class GameServerPacketServiceHandler extends GameServerPacketController {
 
@@ -72,7 +73,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(packet.getServerName());
 
             gameServer.setStatus(GameServerStatus.RUNNING);
-            System.out.println("RUNNING");
             gameServer.update();
 
             sendServerStartLog(gameServer);

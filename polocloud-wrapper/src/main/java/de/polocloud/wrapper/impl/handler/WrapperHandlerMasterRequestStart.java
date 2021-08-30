@@ -42,15 +42,12 @@ public class WrapperHandlerMasterRequestStart implements IPacketHandler<Packet> 
                 serviceStarter.copyFiles();
                 serviceStarter.createProperties();
                 serviceStarter.createCloudFiles();
-                serviceStarter.start(new Consumer<IGameServer>() {
-                    @Override
-                    public void accept(IGameServer server) {
-                        //If in screen not sending message!
-                        if (Wrapper.getInstance().getScreenManager().getScreen() != null && Wrapper.getInstance().getScreenManager().isInScreen()) {
-                            return;
-                        }
-                        PoloLogger.print(LogLevel.INFO, "§7Queued GameServer §b" + server.getName() + " §7[§7Port: §b" + server.getPort() + " §7| §7Mode: §b" + (server.getTemplate().isDynamic() ? "DYNAMIC" : "STATIC") + "_" + server.getTemplate().getTemplateType() + "§7]");
+                serviceStarter.start(server -> {
+                    //If in screen not sending message!
+                    if (Wrapper.getInstance().getScreenManager().getScreen() != null && Wrapper.getInstance().getScreenManager().isInScreen()) {
+                        return;
                     }
+                    PoloLogger.print(LogLevel.INFO, "§7Queued GameServer §b" + server.getName() + " §7[§7Port: §b" + server.getPort() + " §7| §7Mode: §b" + (server.getTemplate().isDynamic() ? "DYNAMIC" : "STATIC") + "_" + server.getTemplate().getTemplateType() + "§7]");
                 });
             } catch (Exception e) {
                 e.printStackTrace();

@@ -38,7 +38,7 @@ public class ScreenCommand implements CommandListener, TabCompletable {
                 }
             } else {
                 String serverName = args[0];
-                IScreen screen = screenManager.getScreen(serverName);
+                IScreen screen = screenManager.getScreen(serverName.toLowerCase());
                 if (screen != null && screen.getCachedLines() != null) {
                     if (screen.getCachedLines().isEmpty()) {
                         PoloLogger.print(LogLevel.WARNING, "§7This screen doesn't have anything to §edisplay §7yet!");

@@ -17,9 +17,6 @@ public class Logger {
     public static Logger INSTANCE;
     public static boolean USE_PREFIX = false;
 
-
-
-
     public void boot() {
         try {
             INSTANCE = this;

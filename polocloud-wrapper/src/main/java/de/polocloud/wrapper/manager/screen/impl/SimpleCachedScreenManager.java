@@ -75,7 +75,7 @@ public class SimpleCachedScreenManager implements IScreenManager {
 
     @Override
     public void registerScreen(String name, IScreen screen) {
-        registeredScreens.put(name, screen);
+        registeredScreens.put(name.toLowerCase(), screen);
     }
 
     @Override
