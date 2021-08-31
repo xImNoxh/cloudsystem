@@ -49,7 +49,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     private final Injector injector;
 
     /**
-     * The wrapper config object
+     * The wrapper config object (default)
      */
     private final WrapperConfig config;
 
