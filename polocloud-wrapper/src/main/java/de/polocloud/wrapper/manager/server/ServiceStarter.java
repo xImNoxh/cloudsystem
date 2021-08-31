@@ -4,6 +4,7 @@ import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
@@ -19,6 +20,8 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ServiceStarter {
@@ -84,6 +87,18 @@ public class ServiceStarter {
         FileUtils.copyDirectory(templateDirectory, serverLocation);
         FileUtils.copyFile(serverFile, new File(serverLocation, getJarFile()));
 
+        for (File file : Wrapper.getInstance().getModuleCopyService().getCachedModule().keySet()) {
+            List<ModuleCopyType> types = Arrays.asList(Wrapper.getInstance().getModuleCopyService().getCachedModule().get(file));
+            if(types.contains(ModuleCopyType.ALL)){
+                FileUtils.copyFile(file, new File(serverLocation + "/plugins/", file.getName()));
+            }else if(types.contains(ModuleCopyType.PROXIES) && template.getTemplateType().equals(TemplateType.PROXY)){
+                FileUtils.copyFile(file, new File(serverLocation + "/plugins/", file.getName()));
+            }else if(types.contains(ModuleCopyType.SPIGOT) && template.getTemplateType().equals(TemplateType.MINECRAFT)){
+                FileUtils.copyFile(file, new File(serverLocation + "/plugins/", file.getName()));
+            }else if(types.contains(ModuleCopyType.LOBBIES) && template.isLobby()){
+                FileUtils.copyFile(file, new File(serverLocation + "/plugins/", file.getName()));
+            }
+        }
 
 
         //Global templates
@@ -145,9 +160,8 @@ public class ServiceStarter {
      * Creates all the cloud files
      * containing information to identify services
      *
-     * @throws Exception if something goes wrong
      */
-    public void createCloudFiles() throws Exception{
+    public void createCloudFiles() {
 
         //config
         File poloCloudConfigFile = new File(serverLocation + "/PoloCloud.json");
@@ -177,24 +191,23 @@ public class ServiceStarter {
      * Starts the service finally
      * (Using some lines of code by CryCodes for me)
      *
-     * @throws Exception if something goes wrong
      */
-    public void start(Consumer<IGameServer> consumer) throws Exception {
+    public void start(Consumer<IGameServer> consumer) {
 
         String[] command = new String[]{
-                        "java",
-                        "-XX:+UseG1GC",
-                        "-XX:MaxGCPauseMillis=50",
-                        "-XX:-UseAdaptiveSizePolicy",
-                        "-XX:CompileThreshold=100",
-                        "-Dcom.mojang.eula.agree=true",
-                        "-Dio.netty.recycler.maxCapacity=0",
-                        "-Dio.netty.recycler.maxCapacity.default=0",
-                        "-Djline.terminal=jline.UnsupportedTerminal",
-                        "-Xmx" + template.getMaxMemory() + "M",
-                        "-jar",
-                        getJarFile(),
-                        service.getTemplate().getTemplateType() == TemplateType.MINECRAFT ? "nogui" : ""
+            "java",
+            "-XX:+UseG1GC",
+            "-XX:MaxGCPauseMillis=50",
+            "-XX:-UseAdaptiveSizePolicy",
+            "-XX:CompileThreshold=100",
+            "-Dcom.mojang.eula.agree=true",
+            "-Dio.netty.recycler.maxCapacity=0",
+            "-Dio.netty.recycler.maxCapacity.default=0",
+            "-Djline.terminal=jline.UnsupportedTerminal",
+            "-Xmx" + template.getMaxMemory() + "M",
+            "-jar",
+            getJarFile(),
+            service.getTemplate().getTemplateType() == TemplateType.MINECRAFT ? "nogui" : ""
         };
 
         Scheduler.runtimeScheduler().schedule(() -> {
@@ -216,9 +229,7 @@ public class ServiceStarter {
                     process.waitFor();
                     //Stopped
                     ServiceStopper serviceStopper = new ServiceStopper(service);
-                    serviceStopper.stop(iGameServer -> {
-                        PoloLogger.print(LogLevel.INFO, "§7Server §3" + iGameServer.getName() + "§7#§3" + iGameServer.getSnowflake() + " §7was §cstopped§7!");
-                    });
+                    serviceStopper.stop(iGameServer -> PoloLogger.print(LogLevel.INFO, "§7Server §3" + iGameServer.getName() + "§7#§3" + iGameServer.getSnowflake() + " §7was §cstopped§7!"));
 
                     return;
                 }

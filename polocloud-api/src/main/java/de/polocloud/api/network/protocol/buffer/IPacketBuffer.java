@@ -8,6 +8,7 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.buffer.ByteBuf;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -25,6 +26,11 @@ public interface IPacketBuffer {
      * Reads a {@link String} from this buffer
      */
     String readString() throws IOException;
+
+    /**
+     * Reads a {@link File} from this buffer
+     */
+    File readFile() throws IOException;
 
     /**
      * Reads a var {@link Integer} from this buffer
@@ -116,6 +122,8 @@ public interface IPacketBuffer {
      */
     UUID readUUID() throws IOException;
 
+    int[] readInts() throws IOException;
+
     /**
      * Reads a {@link Enum} from this buffer
      */
@@ -168,6 +176,14 @@ public interface IPacketBuffer {
      * @throws IOException if something goes wrong
      */
     void writeString(String s) throws IOException;
+
+    /**
+     * Writes a {@link File} to this buffer
+     *
+     * @param f the file for the transfer
+     * @throws IOException if something goes wrong
+     */
+    void writeFile(File f) throws IOException;
 
     /**
      * Writes an {@link Integer} object to this buffer
@@ -272,5 +288,7 @@ public interface IPacketBuffer {
      * @throws IOException if something goes wrong
      */
     void writeStrings(String[] array) throws IOException;
+
+    void writeInts(int[] ints) throws IOException;
 
 }

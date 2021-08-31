@@ -170,6 +170,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         }
 
         PoloLogger.print(LogLevel.INFO, "The master is §asuccessfully §7started.");
+
     }
 
     @Override

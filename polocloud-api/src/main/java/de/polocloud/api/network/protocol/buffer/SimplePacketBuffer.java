@@ -22,7 +22,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.UUID;
 
 public class SimplePacketBuffer implements IPacketBuffer {
@@ -83,6 +85,31 @@ public class SimplePacketBuffer implements IPacketBuffer {
             }
         }
     }
+
+    @Override
+    public File readFile() throws IOException {
+        String name = readString();
+        int size = readInt();
+        ByteBuf part = buf.readBytes(size);
+        byte[] bytes = new byte[size];
+        part.readBytes(bytes);
+        part.release();
+
+        File tempDir = new File("tempFiles/");
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+        return Files.write(new File(tempDir.getPath() + "/" + name).toPath(), bytes).toFile();
+    }
+
+    @Override
+    public void writeFile(File f) throws IOException {
+        writeString(f.getName());
+        byte[] fileContent = Files.readAllBytes(f.toPath());
+        writeInt(fileContent.length);
+        writeBytes(fileContent);
+    }
+
 
     @Override
     public int readInt() throws IOException {
@@ -146,6 +173,24 @@ public class SimplePacketBuffer implements IPacketBuffer {
     }
 
     @Override
+    public void writeInts(int[] val) throws IOException {
+        this.writeInt(val.length);
+        for (int i : val) {
+            writeInt(i);
+        }
+    }
+
+    @Override
+    public int[] readInts() throws IOException {
+        int length = this.readInt();
+        int[] array = new int[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = readInt();
+        }
+        return array;
+    }
+
+    @Override
     public <T> T readCustom(Class<T> wrapperClass) throws IOException {
         String clazz = readString();
         String json = readString();
@@ -153,7 +198,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
     }
 
     @Override
-    public UUID readUUID() throws IOException{
+    public UUID readUUID() throws IOException {
         return new UUID(readLong(), readLong());
     }
 
@@ -185,7 +230,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     @Override
     public void writeVarInt(int input) throws IOException {
-        while ((input & -128) != 0){
+        while ((input & -128) != 0) {
             buf.writeByte(input & 127 | 128);
             input >>>= 7;
         }
@@ -194,14 +239,14 @@ public class SimplePacketBuffer implements IPacketBuffer {
     }
 
     @Override
-    public void writeUUID(UUID uuid) throws IOException{
+    public void writeUUID(UUID uuid) throws IOException {
         this.writeLong(uuid.getMostSignificantBits());
         this.writeLong(uuid.getLeastSignificantBits());
     }
 
     @Override
     public void writeString(String s) throws IOException {
-        if(s == null) {
+        if (s == null) {
             s = "";
         }
 

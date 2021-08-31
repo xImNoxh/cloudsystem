@@ -8,18 +8,18 @@ import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.guice.google.PoloAPIGuiceModule;
+import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;
+import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.helper.ITerminatable;
-import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.packets.api.other.CacheRequestPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.wrapper.bootup.InternalWrapperBootstrap;
@@ -29,9 +29,10 @@ import de.polocloud.wrapper.impl.commands.StopCommand;
 import de.polocloud.wrapper.impl.config.WrapperConfig;
 import de.polocloud.wrapper.impl.guice.WrapperGuiceModule;
 import de.polocloud.wrapper.impl.handler.*;
+import de.polocloud.wrapper.manager.module.ModuleCopyService;
 import de.polocloud.wrapper.manager.screen.IScreen;
-import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 import de.polocloud.wrapper.manager.screen.IScreenManager;
+import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 
 import java.net.InetSocketAddress;
 
@@ -39,33 +40,31 @@ import java.net.InetSocketAddress;
 public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     /**
-     * The connection
-     */
-    private SimpleNettyClient nettyClient;
-
-    /**
      * The Google guice injector
      */
     private final Injector injector;
-
     /**
      * The wrapper config object
      */
     private final WrapperConfig config;
-
     /**
      * The {@link IScreenManager} to manage all server outputs
      */
     private final IScreenManager screenManager;
-
     /**
      * The {@link IPubSubManager} instance
      */
     private final IPubSubManager pubSubManager;
+    /**
+     * The connection
+     */
+    private SimpleNettyClient nettyClient;
+
+    private ModuleCopyService moduleCopyService;
 
     public Wrapper(boolean devMode) {
         super(PoloType.WRAPPER);
-                                                                                //PoloCloudClient reference (Address and port)
+        //PoloCloudClient reference (Address and port)
         InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, new InetSocketAddress("37.114.60.98", 4542));
 
         this.screenManager = new SimpleCachedScreenManager();
@@ -77,6 +76,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         this.nettyClient = this.injector.getInstance(SimpleNettyClient.class);
         this.pubSubManager = new SimplePubSubManager(nettyClient);
 
+        this.moduleCopyService = new ModuleCopyService();
+
         //Loading wrapper boot
         bootstrap.registerUncaughtExceptionListener();
         bootstrap.checkAndDeleteTmpFolder();
@@ -86,6 +87,10 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         this.commandManager.registerCommand(new StopCommand());
         this.commandManager.registerCommand(new HelpCommand());
         this.commandManager.registerCommand(new ScreenCommand());
+    }
+
+    public static Wrapper getInstance() {
+        return (Wrapper) PoloCloudAPI.getInstance();
     }
 
     @Override
@@ -106,6 +111,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerShutdownRequest());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerCacheUpdate());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerMasterRequestTerminate());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerFileTransfer());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerTransferModules());
 
             PoloLogger.print(LogLevel.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
 
@@ -156,6 +163,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     public String getName() {
         return getType().name();
     }
+
     @Override
     public INetworkConnection getConnection() {
         return this.nettyClient;
@@ -182,9 +190,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             }
         }
 
-        this.loggerFactory.shutdown(() -> {
-            Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
-        });
+        this.loggerFactory.shutdown(() -> Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L));
         return terminate;
     }
 
@@ -196,8 +202,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         return screenManager;
     }
 
-    public static Wrapper getInstance() {
-        return (Wrapper) PoloCloudAPI.getInstance();
+    public ModuleCopyService getModuleCopyService() {
+        return moduleCopyService;
     }
-
 }
