@@ -10,9 +10,12 @@ import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.request.ResponseHandler;
+import de.polocloud.api.property.IProperty;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class SimpleCloudPlayer implements ICloudPlayer {
 
@@ -119,5 +122,25 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     @Override
     public boolean hasPermission(String permission) {
         return false;
+    }
+
+    @Override
+    public List<IProperty> getProperties() {
+        return PoloCloudAPI.getInstance().getPropertyManager().getProperties(this.uniqueId);
+    }
+
+    @Override
+    public IProperty getProperty(String name) {
+        return PoloCloudAPI.getInstance().getPropertyManager().getProperty(this.uniqueId, name);
+    }
+
+    @Override
+    public void insertProperty(Consumer<IProperty> consumer) {
+        PoloCloudAPI.getInstance().getPropertyManager().insertProperty(this.uniqueId, consumer);
+    }
+
+    @Override
+    public void deleteProperty(String name) {
+        PoloCloudAPI.getInstance().getPropertyManager().deleteProperty(this.uniqueId, name);
     }
 }

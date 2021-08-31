@@ -20,7 +20,8 @@ public class WrapperPacketHandlerService extends WrapperHandlerServiceController
             }
 
             wrapperManager.registerWrapper(client);
-            sendWrapperSuccessfully(packet);
+
+            sendWrapperSuccessfully(client, packet);
         }, ctx));
     }
 }

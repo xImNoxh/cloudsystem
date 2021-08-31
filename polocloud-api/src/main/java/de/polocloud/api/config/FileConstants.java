@@ -26,6 +26,8 @@ public class FileConstants {
 
     //Master stuff
     public static final File MASTER_MODULES = new File("modules/");
+    public static final File MASTER_GLOBAL = new File("global/");
+    public static final File MASTER_PLAYER_PROPERTIES = new File(MASTER_GLOBAL, "properties");
 
     public static File getTemplateDirectory(ITemplate template) {
         return new File(WRAPPER_TEMPLATES, template.getName() + "/");

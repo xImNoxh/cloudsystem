@@ -48,7 +48,7 @@ public class CloudCommand implements CommandListener {
 
     @Command(name = "cloud", description = "Manage the cloud system ingame", aliases = "c")
     @CommandExecutors(ExecutorType.PLAYER)
-    public void execute(CommandExecutor sender, String... params) {
+    public void execute(CommandExecutor sender, String[] fullArgs, String... params) {
         ICloudPlayer player = (ICloudPlayer) sender;
         IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
         try {

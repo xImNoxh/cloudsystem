@@ -7,12 +7,15 @@ import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPa
 import de.polocloud.api.network.packets.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
 import de.polocloud.api.network.packets.api.other.MasterCache;
+import de.polocloud.api.network.packets.api.other.PropertyCachePacket;
 import de.polocloud.api.network.packets.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
 
@@ -20,6 +23,7 @@ import de.polocloud.plugin.bootstrap.IBootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -30,6 +34,11 @@ public class NetworkPluginRegister {
         new SimplePacketRegister<GlobalCachePacket>(GlobalCachePacket.class, globalCachePacket -> {
             MasterCache masterCache = globalCachePacket.getMasterCache();
             PoloCloudAPI.getInstance().setCache(masterCache);
+        });
+
+        new SimplePacketRegister<PropertyCachePacket>(PropertyCachePacket.class, propertyCachePacket -> {
+            Map<UUID, List<IProperty>> properties = propertyCachePacket.getProperties();
+            ((SimpleCachedPropertyManager)PoloCloudAPI.getInstance().getPropertyManager()).setProperties(properties);
         });
 
         new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown());

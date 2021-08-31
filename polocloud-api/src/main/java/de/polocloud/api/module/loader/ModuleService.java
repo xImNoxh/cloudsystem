@@ -192,7 +192,7 @@ public class ModuleService implements IModuleHolder {
         LinkedHashMap<File, ModuleCopyType[]> returnList = new LinkedHashMap<>();
         for (CloudModule module : modules) {
             List<ModuleCopyType> types = Arrays.asList(module.info().copyTypes());
-            if (types.contains(ModuleCopyType.ALL) || types.contains(ModuleCopyType.PROXIES) || types.contains(ModuleCopyType.SPIGOT) || types.contains(ModuleCopyType.LOBBIES)) {
+            if (!types.contains(ModuleCopyType.NONE)) {
                 returnList.put(module.getModuleFile(), module.info().copyTypes());
             }
         }

@@ -147,6 +147,7 @@ public interface IPacketBuffer {
      */
     void writePacket(Packet packet) throws IOException;
 
+
     /**
      * Writes a {@link UUID} object to this buffer
      *

@@ -11,12 +11,16 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.loader.ModuleService;
+import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.IPropertyManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ReloadCommand implements CommandListener, TabCompletable {
 

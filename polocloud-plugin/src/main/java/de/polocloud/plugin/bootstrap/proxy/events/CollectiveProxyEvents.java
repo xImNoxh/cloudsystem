@@ -7,6 +7,7 @@ import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
 
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.SimpleCloudPlayer;
+import de.polocloud.api.property.IProperty;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -131,6 +132,21 @@ public class CollectiveProxyEvents implements Listener {
             ServerInfo target = event.getTarget();
             cloudPlayer.setMinecraftServer(target.getName());
             cloudPlayer.update();
+        }
+    }
+
+
+    @EventHandler
+    public void handleCommand(ChatEvent event) {
+        if (event.isCommand() || event.isProxyCommand()) {
+
+            ProxiedPlayer proxiedPlayer = (ProxiedPlayer)event.getSender();
+            ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(proxiedPlayer.getUniqueId());
+
+            if (PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getMessage().split("/")[1], cloudPlayer)) {
+                event.setCancelled(true);
+            }
+
         }
     }
 

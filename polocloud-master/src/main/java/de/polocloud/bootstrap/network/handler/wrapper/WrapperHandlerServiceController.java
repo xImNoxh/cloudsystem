@@ -51,11 +51,11 @@ public abstract class WrapperHandlerServiceController {
         response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new SimpleMasterWrapper(packet.getName(), ctx));
     }
 
-    public void sendWrapperSuccessfully(WrapperLoginPacket packet) {
+    public void sendWrapperSuccessfully(IWrapper wrapper, WrapperLoginPacket packet) {
         PoloLogger.print(LogLevel.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
         LinkedHashMap<File, ModuleCopyType[]> modulesWithInfo = Master.getInstance().getModuleService().getAllModulesToCopyWithInfo();
         if (!modulesWithInfo.isEmpty()) {
-            PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getName()).sendPacket(new WrapperTransferModulesPacket(modulesWithInfo));
+            wrapper.sendPacket(new WrapperTransferModulesPacket(modulesWithInfo));
         }
     }
 

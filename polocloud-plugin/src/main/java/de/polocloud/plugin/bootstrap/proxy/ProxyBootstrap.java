@@ -27,8 +27,6 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public synchronized void onEnable() {
         this.cloudPlugin.onEnable();
-
-        PoloCloudAPI.getInstance().getCommandManager().registerCommand(new CloudCommand());
     }
 
     @Override

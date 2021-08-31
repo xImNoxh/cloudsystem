@@ -33,13 +33,13 @@ public abstract class PlayerPacketServiceController {
         for (String arg : args) {
             stringBuilder.append(arg).append(" ");
         }
-        PoloCloudAPI.getInstance().getCommandManager().runCommand(stringBuilder.toString(), cloudPlayerManager.getCachedObject(uuid));
+        PoloCloudAPI.getInstance().getCommandManager().runCommand(stringBuilder.toString(), cloudPlayerManager.getCached(uuid));
     }
 
     public List<ICloudPlayer> getICloudPlayerByPacketResponse(ICloudPlayerManager manager, APIRequestCloudPlayerPacket.Action action, String value)
         throws ExecutionException, InterruptedException {
         return isAllPacket(action) ? manager.getAllCached() : isNamePacket(action) ?
-            Lists.newArrayList(manager.getCached(value)) : Lists.newArrayList(manager.getCachedObject(UUID.fromString(value)));
+            Lists.newArrayList(manager.getCached(value)) : Lists.newArrayList(manager.getCached(UUID.fromString(value)));
     }
 
     public void sendICloudPlayerAPIResponse(ICloudPlayerManager manager, ChannelHandlerContext ctx, APIRequestCloudPlayerPacket packet) {

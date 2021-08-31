@@ -22,8 +22,11 @@ import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.other.PropertyCachePacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.server.SimpleNettyServer;
+import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
@@ -45,20 +48,20 @@ import de.polocloud.client.PoloCloudClient;
 import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.io.File;
-import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class Master extends PoloCloudAPI implements IStartable {
 
-    private final Injector injector;
+    private Injector injector;
 
     private final CommandExecutor commandExecutor;
 
     private final SimpleConfigLoader simpleConfigLoader = new SimpleConfigLoader();
     private final SimpleConfigSaver simpleConfigSaver = new SimpleConfigSaver();
 
-    private final FallbackSearchService fallbackSearchService;
-    private final ModuleService moduleService;
+    private FallbackSearchService fallbackSearchService;
+    private ModuleService moduleService;
     private final PortService portService;
     private final MasterConfig masterConfig;
     private final PoloCloudClient client;
@@ -80,35 +83,39 @@ public class Master extends PoloCloudAPI implements IStartable {
 
         this.masterConfig = this.loadConfig();
 
-        this.portManager.setProxyPort(masterConfig.getProperties().getDefaultProxyStartPort());
-        this.portManager.setServerPort(masterConfig.getProperties().getDefaultServerStartPort());
+        if (this.propertyManager.loadProperties()) {
 
-        this.injector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateManager, this.cloudPlayerManager));
+            this.portManager.setProxyPort(masterConfig.getProperties().getDefaultProxyStartPort());
+            this.portManager.setServerPort(masterConfig.getProperties().getDefaultServerStartPort());
 
-        this.templateManager.loadTemplates(TemplateStorage.FILE);
+            this.injector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateManager, this.cloudPlayerManager));
 
-        this.fallbackSearchService = new FallbackSearchService(masterConfig);
-        this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
+            this.templateManager.loadTemplates(TemplateStorage.FILE);
 
-        this.templateManager.getTemplateLoader().loadTemplates();
+            this.fallbackSearchService = new FallbackSearchService(masterConfig);
+            this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
 
-        //Event handler registering
-        this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
+            this.templateManager.getTemplateLoader().loadTemplates();
 
-        //Registering all commands
-        this.commandManager.registerCommand(new StopCommand());
-        this.commandManager.registerCommand(new TemplateCommand(templateManager, gameServerManager));
-        this.commandManager.registerCommand(new ReloadCommand());
-        this.commandManager.registerCommand(new HelpCommand());
-        this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
-        this.commandManager.registerCommand(new ChangelogCommand());
-        this.commandManager.registerCommand(new MeCommand());
-        this.commandManager.registerCommand(injector.getInstance(GameServerCommand.class));
-        this.commandManager.registerCommand(injector.getInstance(WrapperCommand.class));
+            //Event handler registering
+            this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
+
+            //Registering all commands
+            this.commandManager.registerCommand(new StopCommand());
+            this.commandManager.registerCommand(new TemplateCommand(templateManager, gameServerManager));
+            this.commandManager.registerCommand(new ReloadCommand());
+            this.commandManager.registerCommand(new HelpCommand());
+            this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
+            this.commandManager.registerCommand(new ChangelogCommand());
+            this.commandManager.registerCommand(new MeCommand());
+            this.commandManager.registerCommand(injector.getInstance(GameServerCommand.class));
+            this.commandManager.registerCommand(injector.getInstance(WrapperCommand.class));
 
 
-        //Server-Runner thread starting
-        new Thread(getGuice().getInstance(ServerCreatorRunner.class)).start();
+            //Server-Runner thread starting
+            new Thread(getGuice().getInstance(ServerCreatorRunner.class)).start();
+        };
+
     }
 
     public static Master getInstance() {
@@ -181,6 +188,7 @@ public class Master extends PoloCloudAPI implements IStartable {
     @Override
     public void updateCache() {
         this.getConnection().sendPacket(new GlobalCachePacket());
+        this.getConnection().sendPacket(new PropertyCachePacket());
     }
 
     @Override

@@ -3,6 +3,7 @@ package de.polocloud.api.network.packets.api.other;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.property.IProperty;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -13,6 +14,8 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @AutoRegistry
 public class GlobalCachePacket extends Packet {

@@ -38,6 +38,8 @@ import de.polocloud.api.placeholder.IPlaceHolderManager;
 import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.player.SimpleCachedCloudPlayerManager;
+import de.polocloud.api.property.IPropertyManager;
+import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.scheduler.base.SimpleScheduler;
@@ -71,6 +73,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final PoloLoggerFactory loggerFactory;
     protected final IMessageManager messageManager;
     protected final IModuleHolder moduleHolder;
+    protected final IPropertyManager propertyManager;
     protected final SystemManager systemManager;
 
     /**
@@ -99,6 +102,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.templateManager = new SimpleCachedTemplateManager();
         this.messageManager = new SimpleCachedMessageManager();
         this.moduleHolder = new ModuleService(FileConstants.MASTER_MODULES);
+        this.propertyManager = new SimpleCachedPropertyManager();
         this.systemManager = new SystemManager();
 
         Guice.bind(Scheduler.class).toInstance(new SimpleScheduler());
@@ -235,6 +239,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public ICloudPlayerManager getCloudPlayerManager() {
         return cloudPlayerManager;
+    }
+
+    public IPropertyManager getPropertyManager() {
+        return propertyManager;
     }
 
     public ICommandManager getCommandManager() {

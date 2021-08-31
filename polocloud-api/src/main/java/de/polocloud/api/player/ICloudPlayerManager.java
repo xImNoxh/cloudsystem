@@ -38,7 +38,7 @@ public interface ICloudPlayerManager extends ObjectPool<ICloudPlayer> {
      *
      * @param uuid the uuid of the player
      */
-    default ICloudPlayer getCachedObject(UUID uuid) {
+    default ICloudPlayer getCached(UUID uuid) {
         return getOptional(uuid).orElse(null);
     }
 
@@ -67,7 +67,7 @@ public interface ICloudPlayerManager extends ObjectPool<ICloudPlayer> {
      * @param uuid the uuid of the player
      */
     default boolean isPlayerOnline(UUID uuid) {
-        return getCachedObject(uuid) != null;
+        return getCached(uuid) != null;
     }
 
 }

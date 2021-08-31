@@ -467,6 +467,12 @@ public class JsonData {
         }
         return list;
     }
+
+    public <T> Object getObjectOrFallback(String key, Class<T> tClass) {
+
+        return this.jsonObject.get(key);
+    }
+
     /**
      * Gets a raw {@link Object} stored under a given key
      *
@@ -474,7 +480,59 @@ public class JsonData {
      * @return the object or (null if no fallbackValue is defined or the fallbackValue)
      */
     public Object getObject(String key) {
+        JsonElement jsonElement = this.jsonObject.get(key);
+
+        if (jsonElement.isJsonPrimitive()) {
+            JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
+            if (primitive.isBoolean()) {
+                return primitive.getAsBoolean();
+            } else if (primitive.isString()) {
+                return primitive.getAsString();
+            } else if (primitive.isJsonNull()) {
+                return null;
+            } else if (primitive.isNumber()) {
+                return primitive.getAsNumber();
+            }
+        } else if (jsonElement.isJsonObject()) {
+            return jsonElement.getAsJsonObject();
+        } else if (jsonElement.isJsonArray()) {
+            return jsonElement.getAsJsonArray();
+        } else if (jsonElement.isJsonNull()) {
+            return null;
+        }
+
         return this.jsonObject.get(key);
+    }
+
+    /**
+     * Gets a raw {@link Object} stored under a given key
+     *
+     * @param key the key where its stored
+     * @return the object or (null if no fallbackValue is defined or the fallbackValue)
+     */
+    public <T> Object getOrFallback(String key, Class<T> tClass) {
+        JsonElement jsonElement = this.jsonObject.get(key);
+
+        if (jsonElement.isJsonPrimitive()) {
+            JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
+            if (primitive.isBoolean()) {
+                return primitive.getAsBoolean();
+            } else if (primitive.isString()) {
+                return primitive.getAsString();
+            } else if (primitive.isJsonNull()) {
+                return null;
+            } else if (primitive.isNumber()) {
+                return primitive.getAsNumber();
+            }
+        } else if (jsonElement.isJsonObject()) {
+            return jsonElement.getAsJsonObject();
+        } else if (jsonElement.isJsonArray()) {
+            return jsonElement.getAsJsonArray();
+        } else if (jsonElement.isJsonNull()) {
+            return null;
+        }
+
+        return GSON.fromJson(this.jsonObject.get(key), tClass);
     }
 
     /**
@@ -484,6 +542,10 @@ public class JsonData {
      * @return the object
      */
     public JsonData getData(String key) {
+        if (!this.jsonObject.has(key) || this.jsonObject.get(key).isJsonNull() && this.fallbackValue != null) {
+            this.append(key, this.fallbackValue);
+            return this.fallbackValue != null && this.fallbackValue instanceof JsonData ? (JsonData) this.fallbackValue : null;
+        }
         return new JsonData(this.getJsonObject(key));
     }
 
@@ -627,6 +689,10 @@ public class JsonData {
      */
     public JsonElement getBase() {
         return this.jsonObject;
+    }
+
+    public JsonObject getAsJson() {
+        return this.jsonObject.getAsJsonObject();
     }
 
     /**

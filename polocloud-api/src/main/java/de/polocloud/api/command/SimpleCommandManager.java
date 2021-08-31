@@ -132,16 +132,10 @@ public class SimpleCommandManager implements ICommandManager {
                 continue;
             }
 
-            ICommandRunner oldDispatcher = this.dispatchers.put(name, dispatcher);
-            if (oldDispatcher != null) {
-                //PoloCloudAPI.getInstance().getCommandExecutor().sendMessage("Overwriting old /" + name + " from " + oldDispatcher.getCommand().plugin() + " with new handler from " + dispatcher.getCommand().plugin());
-            }
+            this.dispatchers.put(name, dispatcher);
             for (String _alias : cmd.aliases()) {
                 String alias = _alias.toLowerCase();
-                oldDispatcher = this.dispatchers.put(alias, dispatcher);
-                if (oldDispatcher != null) {
-                   // PoloCloudAPI.getInstance().getCommandExecutor().sendMessage("Overwriting old /" + alias + " from " + oldDispatcher.getCommand().plugin() + " with new handler from " + dispatcher.getCommand().plugin());
-                }
+                this.dispatchers.put(alias, dispatcher);
             }
         }
     }
