@@ -19,30 +19,28 @@ public class SimpleCachedMessageManager implements IMessageManager {
     public SimpleCachedMessageManager() {
         this.registeredChannels = new UniqueMap<>();
 
-        Scheduler.runtimeScheduler().schedule(() -> {
-            PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new IPacketHandler<ChannelMessagePacket>() {
-                @Override
-                public void handlePacket(ChannelHandlerContext ctx, ChannelMessagePacket packet) {
-                    IMessageChannel<Object> messageChannel = getChannel(packet.getChannel());
+        Scheduler.runtimeScheduler().schedule(() -> PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new IPacketHandler<ChannelMessagePacket>() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, ChannelMessagePacket packet) {
+                IMessageChannel<Object> messageChannel = getChannel(packet.getChannel());
 
-                    if (messageChannel != null) {
-                        for (IMessageListener listener : ((SimpleMessageChannel<?>) messageChannel).getListeners()) {
-                            try {
-                                listener.handleMessage(packet.getProvidedObject(), packet.getStartTime());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                if (messageChannel != null) {
+                    for (IMessageListener listener : ((SimpleMessageChannel<?>) messageChannel).getListeners()) {
+                        try {
+                            listener.handleMessage(packet.getProvidedObject(), packet.getStartTime());
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-
                 }
 
-                @Override
-                public Class<ChannelMessagePacket> getPacketClass() {
-                    return ChannelMessagePacket.class;
-                }
-            });
-        }, () -> PoloCloudAPI.getInstance().getConnection() != null);
+            }
+
+            @Override
+            public Class<ChannelMessagePacket> getPacketClass() {
+                return ChannelMessagePacket.class;
+            }
+        }), () -> PoloCloudAPI.getInstance().getConnection() != null);
     }
 
     @Override

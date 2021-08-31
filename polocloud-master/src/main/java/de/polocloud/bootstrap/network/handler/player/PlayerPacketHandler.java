@@ -1,8 +1,6 @@
 package de.polocloud.bootstrap.network.handler.player;
 
 import com.google.inject.Inject;
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.packets.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
@@ -12,9 +10,6 @@ import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecute
 
 import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.request.ResponseHandler;
-import de.polocloud.api.network.request.base.component.PoloComponent;
-import de.polocloud.api.network.request.base.other.IRequestHandler;
-import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;

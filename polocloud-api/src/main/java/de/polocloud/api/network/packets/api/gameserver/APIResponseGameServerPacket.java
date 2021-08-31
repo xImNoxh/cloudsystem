@@ -71,7 +71,7 @@ public class APIResponseGameServerPacket extends Packet {
     public enum Type {
         SINGLE,
         LIST,
-        BOOLEAN;
+        BOOLEAN
     }
 
 }

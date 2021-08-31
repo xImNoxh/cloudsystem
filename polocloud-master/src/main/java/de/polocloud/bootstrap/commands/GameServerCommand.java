@@ -230,13 +230,13 @@ public class GameServerCommand implements CommandListener {
                     return;
                 }
 
-                String command = "";
+                StringBuilder command = new StringBuilder();
                 for (int i = 3; i < args.length; i++) {
-                    command += args[i] + " ";
+                    command.append(args[i]).append(" ");
                 }
-                command = command.substring(0, command.length() - 1);
+                command = new StringBuilder(command.substring(0, command.length() - 1));
                 PoloLogger.print(LogLevel.INFO, "Processing...");
-                gameServer.sendPacket(new GameServerExecuteCommandPacket(command));
+                gameServer.sendPacket(new GameServerExecuteCommandPacket(command.toString()));
                 PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully executed command » " + ConsoleColors.LIGHT_BLUE + command + ConsoleColors.GRAY + " on server » " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "!");
 
             }

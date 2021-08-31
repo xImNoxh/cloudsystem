@@ -5,6 +5,7 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.IModuleHolder;
+import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.info.ModuleTask;
 import de.polocloud.api.module.info.ScheduledModuleTask;
@@ -187,6 +188,17 @@ public class ModuleService implements IModuleHolder {
         }
     }
 
+    public LinkedHashMap<File, ModuleCopyType[]> getAllModulesToCopyWithInfo() {
+        LinkedHashMap<File, ModuleCopyType[]> returnList = new LinkedHashMap<>();
+        for (CloudModule module : modules) {
+            List<ModuleCopyType> types = Arrays.asList(module.info().copyTypes());
+            if (types.contains(ModuleCopyType.ALL) || types.contains(ModuleCopyType.PROXIES) || types.contains(ModuleCopyType.SPIGOT) || types.contains(ModuleCopyType.LOBBIES)) {
+                returnList.put(module.getModuleFile(), module.info().copyTypes());
+            }
+        }
+        return returnList;
+    }
+
     public Map<Class<? extends CloudModule>, List<IListener>> getModuleListener() {
         return moduleListener;
     }
@@ -197,6 +209,10 @@ public class ModuleService implements IModuleHolder {
 
     public List<CloudModule> getModules() {
         return modules;
+    }
+
+    public void addModule(CloudModule module) {
+        this.modules.add(module);
     }
 
     public ModuleLoader getModuleLoader() {

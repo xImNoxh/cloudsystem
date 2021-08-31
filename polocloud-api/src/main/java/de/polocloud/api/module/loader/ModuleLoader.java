@@ -1,6 +1,5 @@
 package de.polocloud.api.module.loader;
 
-import com.google.gson.JsonObject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.config.FileConstants;
@@ -10,7 +9,6 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.info.ModuleInfo;
 import de.polocloud.api.module.info.ModuleState;
-import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.PoloHelper;
 
 import java.io.File;
@@ -18,8 +16,6 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ModuleLoader {
 
@@ -71,7 +67,7 @@ public class ModuleLoader {
                     if (file.getName().endsWith(".jar")) {
 
                         ModuleHelper moduleHelper = new ModuleHelper(file);
-                        Class<?> loadedClass = null;
+                        Class<?> loadedClass;
                         URLClassLoader urlClassLoader = moduleHelper.classLoader();
 
                         JarFile jarFile = new JarFile(file);
@@ -140,7 +136,7 @@ public class ModuleLoader {
                         moduleService.registerModuleTasks(cloudModule, cloudModule);
                         moduleService.callTasks(cloudModule, ModuleState.LOADING);
 
-                        moduleService.getModules().add(cloudModule);
+                        moduleService.addModule(cloudModule);
                         PoloLogger.print(LogLevel.INFO, "§7The Cloud-Module §b" + info.name() + " §7[§7Author§b: " + Arrays.toString(info.authors()) + " §7| Version§b: " + info.version() + " §7| Copy§b: " + Arrays.toString(info.copyTypes()) + "§7] §7was loaded!");
 
                     }

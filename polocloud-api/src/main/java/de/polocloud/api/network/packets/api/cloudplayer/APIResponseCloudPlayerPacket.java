@@ -73,7 +73,7 @@ public class APIResponseCloudPlayerPacket extends Packet {
     public enum Type {
         SINGLE,
         LIST,
-        BOOLEAN;
+        BOOLEAN
     }
 
 }

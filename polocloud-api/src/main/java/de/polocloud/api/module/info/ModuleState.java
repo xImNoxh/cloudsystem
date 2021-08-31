@@ -20,5 +20,5 @@ public enum ModuleState {
     /**
      * Module is reloading
      */
-    RELOADING;
+    RELOADING
 }

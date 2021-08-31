@@ -10,17 +10,13 @@ import de.polocloud.api.network.packets.api.other.MasterCache;
 import de.polocloud.api.network.packets.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerShutdownPacket;
-import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
-import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.request.ResponseHandler;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
 
 import de.polocloud.plugin.bootstrap.IBootstrap;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,6 @@
 package de.polocloud.bootstrap.wrapper;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.logger.helper.LogLevel;
@@ -9,14 +8,11 @@ import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.network.packets.wrapper.WrapperRequestShutdownPacket;
-import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
-import de.polocloud.bootstrap.Master;
 import de.polocloud.api.logger.PoloLogger;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -89,13 +85,10 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
         if (!isStillConnected()) {
             return;
         }
-        this.chx.writeAndFlush(packet).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                if (!channelFuture.isSuccess()) {
-                    System.out.println("[SimpleMasterWrapper@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
-                    channelFuture.cause().printStackTrace();
-                }
+        this.chx.writeAndFlush(packet).addListener((ChannelFutureListener) channelFuture -> {
+            if (!channelFuture.isSuccess()) {
+                System.out.println("[SimpleMasterWrapper@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
+                channelFuture.cause().printStackTrace();
             }
         });
     }

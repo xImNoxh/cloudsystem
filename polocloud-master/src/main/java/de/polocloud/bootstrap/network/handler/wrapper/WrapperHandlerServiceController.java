@@ -2,15 +2,14 @@ package de.polocloud.bootstrap.network.handler.wrapper;
 
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.base.SimpleGameServer;
-import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.packets.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
-import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.network.packets.wrapper.WrapperTransferModulesPacket;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.wrapper.SimpleMasterWrapper;
 import de.polocloud.bootstrap.config.MasterConfig;
 import de.polocloud.api.logger.PoloLogger;
@@ -18,8 +17,9 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public abstract class WrapperHandlerServiceController {
 
@@ -53,6 +53,10 @@ public abstract class WrapperHandlerServiceController {
 
     public void sendWrapperSuccessfully(WrapperLoginPacket packet) {
         PoloLogger.print(LogLevel.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
+        LinkedHashMap<File, ModuleCopyType[]> modulesWithInfo = Master.getInstance().getModuleService().getAllModulesToCopyWithInfo();
+        if (!modulesWithInfo.isEmpty()) {
+            PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getName()).sendPacket(new WrapperTransferModulesPacket(modulesWithInfo));
+        }
     }
 
 }

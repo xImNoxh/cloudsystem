@@ -79,7 +79,7 @@ public class ModuleHelper {
 
     /**
      * Loads the class loader
-     * @return
+     * @return the URLClassLoder from the loaded class
      */
     public URLClassLoader classLoader() {
         try {
@@ -129,8 +129,7 @@ public class ModuleHelper {
                 if (je.getName().contains(name)){
                     String className = je.getName().substring(0,je.getName().length()-6);
                     className = className.replace('/', '.');
-                    Class<?> c = cl.loadClass(className);
-                    return c;
+                    return cl.loadClass(className);
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

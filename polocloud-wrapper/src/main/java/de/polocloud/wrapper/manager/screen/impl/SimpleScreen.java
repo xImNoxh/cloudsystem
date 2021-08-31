@@ -4,7 +4,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.PoloLog;
-import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.wrapper.Wrapper;

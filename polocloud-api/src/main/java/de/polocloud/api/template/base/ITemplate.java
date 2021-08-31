@@ -1,13 +1,10 @@
 package de.polocloud.api.template.base;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.common.INamable;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.Snowflake;
-
-import java.io.Serializable;
 
 public interface ITemplate extends PoloObject<ITemplate> {
 

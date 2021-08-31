@@ -56,7 +56,7 @@ public class APIRequestCloudPlayerPacket extends Packet {
         BY_NAME,
         BY_UUID,
         ONLINE_UUID,
-        ONLINE_NAME;
+        ONLINE_NAME
     }
 
 }

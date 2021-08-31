@@ -2,7 +2,6 @@ package de.polocloud.logger.log;
 
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.logger.log.types.ConsoleColors;
-import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.logger.log.types.LoggerType;
 import jline.console.ConsoleReader;
 import org.fusesource.jansi.Ansi;

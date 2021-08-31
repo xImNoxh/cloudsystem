@@ -4,14 +4,12 @@ package de.polocloud.api.command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;
-import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.util.Acceptable;
 
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
 
 public interface ICommandManager {
 

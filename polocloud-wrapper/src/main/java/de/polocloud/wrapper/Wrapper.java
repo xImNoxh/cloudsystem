@@ -29,6 +29,7 @@ import de.polocloud.wrapper.impl.commands.StopCommand;
 import de.polocloud.wrapper.impl.config.WrapperConfig;
 import de.polocloud.wrapper.impl.guice.WrapperGuiceModule;
 import de.polocloud.wrapper.impl.handler.*;
+import de.polocloud.wrapper.manager.module.ModuleCopyService;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 import de.polocloud.wrapper.manager.screen.IScreenManager;
@@ -63,6 +64,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
      */
     private final IPubSubManager pubSubManager;
 
+    private ModuleCopyService moduleCopyService;
+
     public Wrapper(boolean devMode) {
         super(PoloType.WRAPPER);
                                                                                 //PoloCloudClient reference (Address and port)
@@ -76,6 +79,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
         this.nettyClient = this.injector.getInstance(SimpleNettyClient.class);
         this.pubSubManager = new SimplePubSubManager(nettyClient);
+
+        this.moduleCopyService = new ModuleCopyService();
 
         //Loading wrapper boot
         bootstrap.registerUncaughtExceptionListener();
@@ -106,6 +111,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerShutdownRequest());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerCacheUpdate());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerMasterRequestTerminate());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerFileTransfer());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerTransferModules());
 
             PoloLogger.print(LogLevel.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
 
@@ -171,6 +178,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         return injector;
     }
 
+
     @Override
     public boolean terminate() {
         boolean terminate = this.nettyClient.terminate();
@@ -182,9 +190,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             }
         }
 
-        this.loggerFactory.shutdown(() -> {
-            Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
-        });
+        this.loggerFactory.shutdown(() -> Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L));
         return terminate;
     }
 
@@ -200,4 +206,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         return (Wrapper) PoloCloudAPI.getInstance();
     }
 
+    public ModuleCopyService getModuleCopyService() {
+        return moduleCopyService;
+    }
 }

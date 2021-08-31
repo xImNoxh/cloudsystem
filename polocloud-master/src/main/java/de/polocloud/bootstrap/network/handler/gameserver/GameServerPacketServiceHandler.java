@@ -30,16 +30,13 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
     public GameServerPacketServiceHandler() {
 
-        PoloCloudAPI.getInstance().getConnection().getRequestManager().registerRequestHandler(new IRequestHandler<String>() {
-            @Override
-            public void handle(PoloComponent<String> request) {
-                if (request.getKey().equalsIgnoreCase("polo::api::service::request::register")) {
-                    PoloCloudAPI.getInstance().updateCache();
-                    PoloComponent<String> response = request.createResponse(String.class);
-                    response.value("Handshake received!");
-                    response.respond();
+        PoloCloudAPI.getInstance().getConnection().getRequestManager().registerRequestHandler((IRequestHandler<String>) request -> {
+            if (request.getKey().equalsIgnoreCase("polo::api::service::request::register")) {
+                PoloCloudAPI.getInstance().updateCache();
+                PoloComponent<String> response = request.createResponse(String.class);
+                response.value("Handshake received!");
+                response.respond();
 
-                }
             }
         });
 

@@ -1,8 +1,6 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
 import com.google.inject.Inject;
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -56,9 +54,7 @@ public abstract class GameServerPacketController {
     public void updateProxyServerList(IGameServer gameServer) {
         ITemplate template = gameServer.getTemplate();
         if (template.getTemplateType() == TemplateType.MINECRAFT) {
-            getGameServerByProxyType(iGameServers -> iGameServers.stream().filter(key -> key.getStatus() == GameServerStatus.RUNNING).forEach(it -> {
-                it.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake()));
-            }));
+            getGameServerByProxyType(iGameServers -> iGameServers.stream().filter(key -> key.getStatus() == GameServerStatus.RUNNING).forEach(it -> it.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake()))));
         }
     }
 

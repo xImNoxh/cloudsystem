@@ -2,7 +2,6 @@ package de.polocloud.api.template.helper;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public enum GameServerVersion implements Serializable {
 
@@ -67,7 +66,7 @@ public enum GameServerVersion implements Serializable {
     }
 
     public static Object[] prettyValues(TemplateType templateType) {
-        return Arrays.stream(values()).filter(key -> key.getTemplateType().equals(templateType)).map(GameServerVersion::getTitle).collect(Collectors.toList()).toArray();
+        return Arrays.stream(values()).filter(key -> key.getTemplateType().equals(templateType)).map(GameServerVersion::getTitle).toArray();
     }
 
     public String getTitle() {

@@ -1,21 +1,14 @@
 package de.polocloud.api.network.protocol.packet.handler;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.event.impl.net.NettyExceptionEvent;
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.scheduler.Scheduler;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 

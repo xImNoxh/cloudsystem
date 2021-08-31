@@ -6,8 +6,6 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.function.Consumer;
 
 @AutoRegistry
 public class GameServerUpdatePacket extends Packet {

@@ -8,7 +8,6 @@ import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.bootstrap.Master;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 
 public class ServerCreatorRunner implements Runnable {
 

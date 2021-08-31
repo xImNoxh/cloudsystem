@@ -1,8 +1,6 @@
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.scheduler.base.SimpleScheduler;
 
@@ -12,8 +10,6 @@ public class Comparison extends AbstractModule {
     public static void main(String[] args) {
         new Comparison();
     }
-
-
 
     public Comparison() {
         System.out.println("Google || =========================");

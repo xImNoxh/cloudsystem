@@ -5,8 +5,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
-import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPacket;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class PlayerPacketServiceController {

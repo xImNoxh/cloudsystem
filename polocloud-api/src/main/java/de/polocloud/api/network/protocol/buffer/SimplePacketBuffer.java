@@ -22,7 +22,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.UUID;
 
 public class SimplePacketBuffer implements IPacketBuffer {
@@ -114,6 +116,48 @@ public class SimplePacketBuffer implements IPacketBuffer {
         return buf.readByte();
     }
 
+
+    @Override
+    public File readFile() throws IOException {
+        String name = readString();
+        int size = readInt();
+        ByteBuf part = buf.readBytes(size);
+        byte[] bytes = new byte[size];
+        part.readBytes(bytes);
+        part.release();
+
+        File tempDir = new File("tempFiles/");
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+        return Files.write(new File(tempDir.getPath() + "/" + name).toPath(), bytes).toFile();
+    }
+
+    @Override
+    public int[] readInts() throws IOException {
+        int length = this.readInt();
+        int[] array = new int[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = readInt();
+        }
+        return array;
+    }
+
+    @Override
+    public void writeInts(int[] ints) throws IOException {
+        this.writeInt(ints.length);
+        for (int i : ints) {
+            writeInt(i);
+        }
+    }
+
+    @Override
+    public void writeFile(File f) throws IOException {
+        writeString(f.getName());
+        byte[] fileContent = Files.readAllBytes(f.toPath());
+        writeInt(fileContent.length);
+        writeBytes(fileContent);
+    }
 
     @Override
     public void writePacket(Packet packet) throws IOException {

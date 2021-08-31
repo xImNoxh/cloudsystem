@@ -62,9 +62,7 @@ public abstract class SimplePacket extends Packet {
                         Field declaredField = aClass.getDeclaredField(name);
                         declaredField.setAccessible(true);
                         declaredField.set(this, value1);
-                    } catch (NoSuchFieldException e) {
-
-                    }
+                    } catch (NoSuchFieldException ignored) {  }
                 }
             }
         } catch (Exception e) {

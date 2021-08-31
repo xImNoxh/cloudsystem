@@ -5,10 +5,6 @@ import de.polocloud.api.common.ExceptionRunnable;
 import de.polocloud.api.common.ExceptionSupplier;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.logger.helper.MinecraftColor;
-import de.polocloud.api.network.protocol.ProtocolState;
-import de.polocloud.api.util.map.MapEntry;
-import de.polocloud.api.util.map.UniqueMap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -92,13 +88,10 @@ public class PoloHelper {
         folder.delete();
     }
     public static ChannelFutureListener getChannelFutureListener(Class<?> instance) {
-        return new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                if (!channelFuture.isSuccess()) {
-                    System.out.println("[" + instance.getName() + "]" + " ran into an error:");
-                    channelFuture.cause().printStackTrace();
-                }
+        return channelFuture -> {
+            if (!channelFuture.isSuccess()) {
+                System.out.println("[" + instance.getName() + "]" + " ran into an error:");
+                channelFuture.cause().printStackTrace();
             }
         };
     }
@@ -126,7 +119,7 @@ public class PoloHelper {
             URL resource = resources.nextElement();
             classes.addAll(findClasses(new File(resource.getFile()), packageName));
         }
-        return classes.toArray(new Class[classes.size()]);
+        return classes.toArray(new Class[0]);
     }
 
     /**

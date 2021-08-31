@@ -1,7 +1,5 @@
 package de.polocloud.api.messaging;
 
-import de.polocloud.api.network.helper.IConnection;
-
 public interface IMessageListener<T> {
 
     /**

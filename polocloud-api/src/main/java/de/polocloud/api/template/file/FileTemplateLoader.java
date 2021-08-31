@@ -9,10 +9,7 @@ import de.polocloud.api.template.loading.ITemplateLoader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class FileTemplateLoader implements ITemplateLoader {
 
@@ -32,7 +29,7 @@ public class FileTemplateLoader implements ITemplateLoader {
 
         List<ITemplate> templates = new ArrayList<>();
 
-        for (File file : baseDir.listFiles()) {
+        for (File file : Objects.requireNonNull(baseDir.listFiles())) {
             try {
                 if (file.isFile() && file.getName().endsWith(".json")) {
                     templates.add(loadTemplate(file));

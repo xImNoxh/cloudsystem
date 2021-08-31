@@ -47,5 +47,5 @@ public interface IPortManager {
      *
      * @param serverPort the port
      */
-    public void setServerPort(int serverPort);
+    void setServerPort(int serverPort);
 }

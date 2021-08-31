@@ -1,12 +1,10 @@
 package de.polocloud.api.player;
 
 import de.polocloud.api.command.executor.CommandExecutor;
-import de.polocloud.api.common.INamable;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.util.Snowflake;
 
-import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 

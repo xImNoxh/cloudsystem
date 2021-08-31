@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 
 public class WrapperPacketHandlerService extends WrapperHandlerServiceController {
 

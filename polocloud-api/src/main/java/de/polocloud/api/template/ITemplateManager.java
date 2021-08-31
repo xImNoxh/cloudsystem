@@ -1,11 +1,9 @@
 package de.polocloud.api.template;
 
-import de.polocloud.api.pool.ObjectPool;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.loading.ITemplateLoader;
 import de.polocloud.api.template.loading.ITemplateSaver;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,7 +31,7 @@ public interface ITemplateManager {
      *
      * @param templates the templates
      */
-    public void setCachedObjects(List<ITemplate> templates);
+    void setCachedObjects(List<ITemplate> templates);
 
     /**
      * Gets an {@link ITemplate} by its name

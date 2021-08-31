@@ -33,9 +33,7 @@ public abstract class ServiceProperties {
                 }
                 fileWriter.close();
 
-            } catch (IOException ignored) {
-                ignored.printStackTrace();
-            }
+            } catch (IOException ignored) { }
         }
     }
 

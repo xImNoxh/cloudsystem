@@ -258,13 +258,13 @@ public class CloudCommand implements CommandListener {
                             return;
                         }
 
-                        String content = "";
+                        StringBuilder content = new StringBuilder();
                         for (int i = 4; i < params.length; i++) {
-                            content += params[i] + " ";
+                            content.append(params[i]).append(" ");
                         }
-                        content = content.substring(0, content.length() - 1);
+                        content = new StringBuilder(content.substring(0, content.length() - 1));
                         player.sendMessage(prefix + "Processing...");
-                        gameServer.sendPacket(new GameServerExecuteCommandPacket(content));
+                        gameServer.sendPacket(new GameServerExecuteCommandPacket(content.toString()));
                         player.sendMessage(prefix + "§aSuccessfully executed command » §b" + content + " §7on server » §b" + gameServer.getName() + "§7!");
                     } else if (params[1].equalsIgnoreCase("player")) {
                         String targetPlayerName = params[2];
@@ -281,22 +281,22 @@ public class CloudCommand implements CommandListener {
                             player.sendMessage(prefix + "----[/Cloud-Player]----");
                             return;
                         }
-                        String content = "";
+                        StringBuilder content = new StringBuilder();
                         for (int i = 4; i < params.length; i++) {
-                            content += params[i] + " ";
+                            content.append(params[i]).append(" ");
                         }
-                        content = content.substring(0, content.length() - 1);
+                        content = new StringBuilder(content.substring(0, content.length() - 1));
 
                         if (params[3].equalsIgnoreCase("kick")) {
                             player.sendMessage(prefix + "Kicking...");
-                            targetPlayer.kick(content);
+                            targetPlayer.kick(content.toString());
                             player.sendMessage(prefix + "§aSuccessfully §7kicked player » §b" + targetPlayer.getName() + " §7for » §b" + content + "§7!");
                         } else if (params[3].equalsIgnoreCase("message")) {
                             player.sendMessage(prefix + "Messaging...");
                             targetPlayer.sendMessage("§7" + player.getName() + " -> you » " + content);
                             player.sendMessage(prefix + "§aSuccessfully §7messaged player » §b" + targetPlayer.getName() + "! (message » §b" + content + "§7)");
                         } else if (params[3].equalsIgnoreCase("send")) {
-                            IGameServer gameServer = gameServerManager.getCached(content);
+                            IGameServer gameServer = gameServerManager.getCached(content.toString());
                             if (gameServer == null) {
                                 player.sendMessage(prefix + "The gameserver » §b" + content + " §7isn't online!");
                                 return;

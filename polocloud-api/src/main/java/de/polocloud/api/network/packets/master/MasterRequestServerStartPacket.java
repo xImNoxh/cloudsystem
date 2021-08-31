@@ -3,7 +3,6 @@ package de.polocloud.api.network.packets.master;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.template.helper.GameServerVersion;
 
 import java.io.IOException;
 

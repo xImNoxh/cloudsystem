@@ -3,7 +3,6 @@ package de.polocloud.api.gameserver.base;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
-import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
@@ -274,7 +273,7 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void sendPacket(Packet packet) {
         if (this.channelHandlerContext != null) {
-            this.channelHandlerContext.writeAndFlush(packet).addListener(PoloHelper.getChannelFutureListener(SimpleGameServer.class));;
+            this.channelHandlerContext.writeAndFlush(packet).addListener(PoloHelper.getChannelFutureListener(SimpleGameServer.class));
             return;
         }
         PoloCloudAPI.getInstance().getConnection().sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.name, packet));

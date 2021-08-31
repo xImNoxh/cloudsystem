@@ -1,6 +1,5 @@
 package de.polocloud.bootstrap;
 
-import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.Logger;
 
 public class Bootstrap {

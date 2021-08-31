@@ -14,7 +14,6 @@ import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.logger.log.types.ConsoleColors;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

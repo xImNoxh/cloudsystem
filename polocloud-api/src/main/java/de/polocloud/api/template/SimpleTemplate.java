@@ -5,7 +5,6 @@ import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.Snowflake;
 
 public class SimpleTemplate implements ITemplate {
 

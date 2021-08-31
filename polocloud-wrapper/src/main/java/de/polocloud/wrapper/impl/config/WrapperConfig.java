@@ -2,9 +2,6 @@ package de.polocloud.wrapper.impl.config;
 
 import de.polocloud.api.config.IConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class WrapperConfig implements IConfig {
 
     private String loginKey;

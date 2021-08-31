@@ -4,7 +4,6 @@ import de.polocloud.api.network.request.base.future.PoloFuture;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class SimpleCachedCloudPlayerManager implements ICloudPlayerManager {
 

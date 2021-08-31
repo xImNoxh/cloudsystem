@@ -2,7 +2,6 @@ package de.polocloud.api.template.loading;
 
 import de.polocloud.api.template.base.ITemplate;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface ITemplateLoader {

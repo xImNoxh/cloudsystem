@@ -3,8 +3,6 @@ package de.polocloud.api.util.map.request;
 import de.polocloud.api.util.map.MapEntry;
 import de.polocloud.api.util.map.UniqueMap;
 
-import java.util.Map;
-
 public class RemoveRequest<K, V> {
 
     private final UniqueMap<K, V> parent;

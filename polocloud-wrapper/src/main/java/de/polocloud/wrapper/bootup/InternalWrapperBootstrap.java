@@ -134,6 +134,13 @@ public class InternalWrapperBootstrap {
                     "Please report this error.");
             }
         }
+        File tempFilesDir = new File("tempFiles/");
+        if (tempFilesDir.exists()) {
+            try {
+                FileUtils.forceDelete(tempFilesDir);
+            } catch (IOException ignored) {
+            }
+        }
     }
 
     /**

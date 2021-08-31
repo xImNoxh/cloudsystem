@@ -10,7 +10,6 @@ import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacke
 import de.polocloud.api.network.packets.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.network.packets.master.MasterRequestServerListUpdatePacket;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.plugin.CloudPlugin;

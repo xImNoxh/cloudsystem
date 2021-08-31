@@ -1,6 +1,5 @@
 package de.polocloud.api.wrapper;
 
-import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 

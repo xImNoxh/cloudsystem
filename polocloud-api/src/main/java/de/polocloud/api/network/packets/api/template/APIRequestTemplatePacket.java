@@ -53,7 +53,7 @@ public class APIRequestTemplatePacket extends Packet {
 
     public enum Type {
         SINGLE,
-        LIST;
+        LIST
     }
 
     public enum Action {

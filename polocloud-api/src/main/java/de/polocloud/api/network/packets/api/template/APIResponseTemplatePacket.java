@@ -70,7 +70,7 @@ public class APIResponseTemplatePacket extends Packet {
     public enum Type {
         SINGLE,
         LIST,
-        BOOLEAN;
+        BOOLEAN
     }
 
 }
