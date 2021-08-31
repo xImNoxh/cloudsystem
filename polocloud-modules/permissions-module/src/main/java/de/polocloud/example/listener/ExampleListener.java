@@ -10,7 +10,6 @@ public class ExampleListener implements IListener {
     @EventHandler
     public void handle(CloudPlayerJoinNetworkEvent event) {
         ICloudPlayer player = event.getPlayer();
-        System.out.println(player.getName() + " joined the network");
-        player.sendMessage("Hallo Du hs!");
+
     }
 }

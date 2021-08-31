@@ -12,7 +12,7 @@ import de.polocloud.example.config.ExampleConfig;
     name = "Permissions",
     version = "1.0",
     authors = "HttpMarco",
-    copyTypes = ModuleCopyType.PROXIES
+    copyTypes = ModuleCopyType.ALL
 )
 public class PermissionModule extends CloudModule {
 

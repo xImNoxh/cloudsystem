@@ -14,9 +14,9 @@ public class RankCommand implements CommandListener {
         description = "None"
     )
     public void execute(CommandExecutor executor, String[] fullArgs, String... args) {
-
+        executor.sendMessage("test2");
         if(!executor.hasPermission("cloud.permissions")){
-
+            executor.sendMessage("test1");
             return;
         }
 
