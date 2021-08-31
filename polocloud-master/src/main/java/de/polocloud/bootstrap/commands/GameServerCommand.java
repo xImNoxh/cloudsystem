@@ -1,0 +1,262 @@
+package de.polocloud.bootstrap.commands;
+
+import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.command.annotation.Arguments;
+import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.gameserver.base.SimpleGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.ITemplateManager;
+import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.wrapper.base.IWrapper;
+import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.logger.helper.LogLevel;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+public class GameServerCommand implements CommandListener {
+
+    @Inject
+    private IGameServerManager gameServerManager;
+
+    @Inject
+    private ITemplateManager templateService;
+
+    @Inject
+    private Snowflake snowflake;
+
+    public GameServerCommand() {
+    }
+
+    @Command(name = "gameserver", description = "Manage a Gameserver", aliases = "gs")
+    public void execute(CommandExecutor sender, String[] rawArgs,
+                        @Arguments(onlyFirstArgs =
+                            {"stop", "shutdown", "start", "copy", "info", "execute"},
+                            min = 2, max = 3, message =
+                            {"----[Gameserver]----",
+                                "Use §3gameserver stop/shutdown <server> §7to shutdown a gameserver",
+                                "Use §3gameserver start <template> §7to start a new gameserver",
+                                "Use §3gameserver start <server> <amount> §7to start multiple new gameservers at once",
+                                "Use §3gameserver copy <server> worlds/entire §7to copy the temp files of a server into its template",
+                                "Use §3gameserver info <server> §7to get information of a gameserver",
+                                "Use §3gameserver execute <server> <command> §7to execute a command on a gameserver",
+                                "----[Gameserver]----"}
+                        ) String... args) {
+        try {
+            IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
+            if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("shutdown")) {
+                String name = args[1];
+                IGameServer gameServer = gameServerManager.getCached(name);
+
+                if (gameServer == null) {
+                    PoloLogger.print(LogLevel.WARNING, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
+                } else {
+                    if (gameServer.getStatus() == GameServerStatus.RUNNING) {
+                        gameServer.stop();
+                        PoloLogger.print(LogLevel.INFO, "Requesting §7'§b" + gameServer.getWrapper().getName() + "§7' to stop §3" + gameServer.getName() + "§7#§b" + gameServer.getSnowflake() + "§7..." );
+                    } else {
+                        gameServer.terminate();
+                        PoloLogger.print(LogLevel.WARNING, "The GameServer §e" + gameServer.getName() + " §7is not Running... §cTerminating Process§7...");
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("start") && args.length == 2) {
+                String templateName = args[1];
+                ITemplate template = templateService.getTemplate(templateName);
+                if (template == null) {
+                    PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
+                } else {
+                    int size = gameServerManager.getGameServersByTemplate(template).size();
+                    if (size >= template.getMaxServerCount()) {
+                        PoloLogger.print(LogLevel.ERROR, "Cannot start the servers, the maximal server online count of » " + ConsoleColors.LIGHT_BLUE + template.getMaxServerCount()
+                            + ConsoleColors.GRAY + " was reached! (Online » " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + ")");
+                        return;
+                    }
+
+                    Optional<IWrapper> optionalWrapperClient = wrapperManager.getWrappers().stream().findAny();
+
+                    if (!optionalWrapperClient.isPresent()) {
+                        PoloLogger.print(LogLevel.ERROR, "No available Wrapper connected!");
+                        return;
+                    }
+
+                    IWrapper wrapperClient = optionalWrapperClient.get();
+
+                    PoloLogger.print(LogLevel.INFO, "Requesting start...");
+                    SimpleGameServer gameServer = new SimpleGameServer(
+                        template.getName() + "-" + searchForAvailableID(template),
+                        template.getMotd(),
+                        true,
+                        GameServerStatus.PENDING,
+                        snowflake.nextId(),
+                        -1L,
+                        System.currentTimeMillis(),
+                        template.getMaxMemory(),
+                        PoloCloudAPI.getInstance().getPortManager().getPort(template),
+                        template.getMaxPlayers(),
+                        template
+                    );
+
+                    wrapperClient.startServer(gameServer);
+                }
+            } else if (args[0].equalsIgnoreCase("info")) {
+                String name = args[1];
+                IGameServer gameServer = gameServerManager.getCached(name);
+                if (gameServer == null) {
+                    PoloLogger.print(LogLevel.WARNING, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
+                    return;
+                }
+
+                PoloLogger.print(LogLevel.INFO, "----[Information]----");
+                PoloLogger.print(LogLevel.INFO, "Gameserver » " + ConsoleColors.LIGHT_BLUE + gameServer.getName());
+                PoloLogger.print(LogLevel.INFO, "Total memory » " + ConsoleColors.LIGHT_BLUE + gameServer.getTotalMemory() + "mb");
+                PoloLogger.print(LogLevel.INFO, "Id » " + ConsoleColors.LIGHT_BLUE + "#" + gameServer.getSnowflake());
+                PoloLogger.print(LogLevel.INFO, "Status » " + ConsoleColors.LIGHT_BLUE + gameServer.getStatus());
+                PoloLogger.print(LogLevel.INFO, "Started time » " + ConsoleColors.LIGHT_BLUE + gameServer.getStartTime());
+                PoloLogger.print(LogLevel.INFO, "Ping » " + ConsoleColors.LIGHT_BLUE + gameServer.getPing() + "ms");
+                PoloLogger.print(LogLevel.INFO, "----[/Information]----");
+
+            } else if (args[0].equalsIgnoreCase("start") && args.length == 3) {
+                String templateName = args[1];
+                ITemplate template = templateService.getTemplate(templateName);
+                if (template == null) {
+                    PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
+                } else {
+                    String amountString = args[2];
+                    int amount;
+                    try {
+                        amount = Integer.parseInt(amountString);
+                    } catch (NumberFormatException exception) {
+                        PoloLogger.print(LogLevel.ERROR, "Please provide a real number (int)");
+                        return;
+                    }
+
+                    if (amount < 0) {
+                        PoloLogger.print(LogLevel.ERROR, "You cannot start " + amountString + " servers!");
+                        return;
+                    }
+                    int size = gameServerManager.getGameServersByTemplate(template).size();
+                    if ((size + amount) >= template.getMaxServerCount()) {
+                        PoloLogger.print(LogLevel.ERROR, "Cannot start the server, the maximal server online count of » " + ConsoleColors.LIGHT_BLUE + template.getMaxServerCount()
+                            + ConsoleColors.GRAY + " was reached! (With new servers » " + ConsoleColors.LIGHT_BLUE + (size + amount) + ConsoleColors.GRAY + ")");
+                        return;
+                    }
+
+                    Optional<IWrapper> optionalWrapperClient = wrapperManager.getWrappers().stream().findAny();
+
+                    if (!optionalWrapperClient.isPresent()) {
+                        PoloLogger.print(LogLevel.ERROR, "No available Wrapper connected!");
+                        return;
+                    }
+
+                    IWrapper wrapperClient = optionalWrapperClient.get();
+
+                    for (int i = 0; i < amount; i++) {
+                        PoloLogger.print(LogLevel.INFO, "Requesting start...");
+
+                        String name = template.getName() + "-" + searchForAvailableID(template);
+
+                        SimpleGameServer gameServer = new SimpleGameServer(
+                            name,
+                            template.getMotd(),
+                            true,
+                            GameServerStatus.PENDING,
+                            snowflake.nextId(),
+                            -1L,
+                            System.currentTimeMillis(),
+                            template.getMaxMemory(),
+                            PoloCloudAPI.getInstance().getPortManager().getPort(template),
+                            template.getMaxPlayers(),
+                            template
+                        );
+
+                        wrapperClient.startServer(gameServer);
+                    }
+                    PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully requested start for » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + " servers!");
+                }
+            } else if (args[0].equalsIgnoreCase("copy")) {
+                String name = args[1];
+                String type = args[2];
+                IGameServer gameServer = gameServerManager.getCached(name);
+                if (gameServer == null) {
+                    PoloLogger.print(LogLevel.WARNING, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
+                    return;
+                }
+                if (!gameServer.getStatus().equals(GameServerStatus.RUNNING)) {
+                    PoloLogger.print(LogLevel.INFO, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't completely stopped or started!");
+                    return;
+                }
+                if (type.equalsIgnoreCase("worlds")) {
+                    if (gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY)) {
+                        PoloLogger.print(LogLevel.INFO, "A Proxy Server doesn't have worlds, so its not compatibly with the 'worlds' mode, please use the 'entire' type!");
+                        return;
+                    }
+                    PoloLogger.print(LogLevel.INFO, "Copying " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "...");
+                    List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
+                    for (IWrapper wrapper : wrappers) {
+                        wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.WORLD, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
+                    }
+                } else if (type.equalsIgnoreCase("entire")) {
+                    PoloLogger.print(LogLevel.INFO, "Copying " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "...");
+                    List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
+                    for (IWrapper wrapper : wrappers) {
+                        wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.ENTIRE, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
+                    }
+                } else {
+                    PoloLogger.print(LogLevel.INFO, "Use following command: " + ConsoleColors.LIGHT_BLUE +
+                        "gameserver copy <gameserver> entire/worlds");
+                    PoloLogger.print(LogLevel.INFO, "Explanation: \n" +
+                        ConsoleColors.LIGHT_BLUE + "entire: " + ConsoleColors.GRAY + "copies the entire GameServer to the template\n" +
+                        ConsoleColors.LIGHT_BLUE + "worlds: " + ConsoleColors.GRAY + "only copies the worlds of the GameServer to the template");
+                }
+            } else if (args[0].equalsIgnoreCase("execute")) {
+                String name = args[1];
+                IGameServer gameServer = gameServerManager.getCached(name);
+                if (gameServer == null) {
+                    PoloLogger.print(LogLevel.WARNING, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
+                    return;
+                }
+
+                String command = "";
+                for (int i = 3; i < args.length; i++) {
+                    command += args[i] + " ";
+                }
+                command = command.substring(0, command.length() - 1);
+                PoloLogger.print(LogLevel.INFO, "Processing...");
+                gameServer.sendPacket(new GameServerExecuteCommandPacket(command));
+                PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully executed command » " + ConsoleColors.LIGHT_BLUE + command + ConsoleColors.GRAY + " on server » " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "!");
+
+            }
+        } catch (InterruptedException | ExecutionException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    private void sendHelp() {
+        PoloLogger.print(LogLevel.INFO, "----[Gameserver]----");
+        PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver stop/shutdown <server> " + ConsoleColors.GRAY + "to shutdown a gameserver");
+        PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver start <template> " + ConsoleColors.GRAY + "to start a new gameserver");
+        PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver start <server> <amount> " + ConsoleColors.GRAY + "to start multiple new gameservers at once");
+        PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver copy <server> worlds/entire " + ConsoleColors.GRAY + "to copy the temp files of a server into its template");
+        PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver info <server> " + ConsoleColors.GRAY + "to get information of a gameserver");
+        PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver execute <server> <command> " + ConsoleColors.GRAY + "to execute a command on a gameserver");
+        PoloLogger.print(LogLevel.INFO, "----[/Gameserver]----");
+    }
+
+    private int searchForAvailableID(ITemplate template) throws ExecutionException, InterruptedException {
+        return gameServerManager.getGameServersByTemplate(template).size() + 1;
+    }
+}
