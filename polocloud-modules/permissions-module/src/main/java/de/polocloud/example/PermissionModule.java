@@ -7,30 +7,30 @@ import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.info.ModuleTask;
 import de.polocloud.example.config.ExampleConfig;
 
-import java.io.File;
-import java.util.UUID;
-
 @ModuleInfo(
-    main = ExampleModule.class,
-    name = "ExampleModule",
+    main = PermissionModule.class,
+    name = "Permissions",
     version = "1.0",
-    authors = "Lystx",
-    copyTypes = ModuleCopyType.NONE
+    authors = "HttpMarco",
+    copyTypes = ModuleCopyType.PROXIES
 )
-public class ExampleModule extends CloudModule {
+public class PermissionModule extends CloudModule {
 
     private ExampleConfig config;
 
-    private static ExampleModule instance;
+    private static PermissionModule instance;
 
-    public ExampleModule() {
+    public PermissionModule() {
         instance = this;
     }
 
     @ModuleTask(id = 1, state = ModuleState.LOADING)
     public void loadModule() {
-        System.out.println("Loading Example module...");
-        this.config = configLoader.load(ExampleConfig.class, new ExampleConfig(true, "yourS", UUID.randomUUID()), new File(this.dataDirectory, "config.json"), this.configSaver);
+
+
+
+        //System.out.println("Loading Example module...");
+       // this.config = configLoader.load(ExampleConfig.class, new ExampleConfig(true, "yourS", UUID.randomUUID()), new File(this.dataDirectory, "config.json"), this.configSaver);
 
     }
 
@@ -50,7 +50,7 @@ public class ExampleModule extends CloudModule {
         return config;
     }
 
-    public static ExampleModule getInstance() {
+    public static PermissionModule getInstance() {
         return instance;
     }
 }

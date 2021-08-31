@@ -19,6 +19,7 @@
     <module>polocloud-plugin</module>
     <module>polocloud-modules</module>
     <module>polocloud-modules/permissions-module</module>
+      <module>polocloud-database</module>
   </modules>
 
   <repositories>
