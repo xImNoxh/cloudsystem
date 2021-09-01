@@ -41,28 +41,32 @@ public abstract class SimplePacket extends Packet {
                         cl = "java.lang.Byte";
                     }
 
-                    Class<?> typeClass = Class.forName(cl);
+                     try {
+                        Class<?> typeClass = Class.forName(cl);
+                         Object value1;
 
-                    Object value1;
+                         if (sub.has("generic") && typeClass.equals(List.class)) {
+                             value1 = new LinkedList<>();
+                             if (sub.has("wrapperClass")) {
+                                 Class<?> wrapperClass = Class.forName(sub.getString("wrapperClass"));
 
-                    if (sub.has("generic") && typeClass.equals(List.class)) {
-                        value1 = new LinkedList<>();
-                        if (sub.has("wrapperClass")) {
-                            Class<?> wrapperClass = Class.forName(sub.getString("wrapperClass"));
+                                 for (JsonElement value : sub.getElement("value").getAsJsonArray()) {
+                                     ((List)value1).add(JsonData.GSON.fromJson(value, wrapperClass));
+                                 }
+                             }
+                         } else {
+                             value1 = JsonData.GSON.fromJson(sub.getElement("value").toString(), typeClass);
+                         }
 
-                            for (JsonElement value : sub.getElement("value").getAsJsonArray()) {
-                                ((List)value1).add(JsonData.GSON.fromJson(value, wrapperClass));
-                            }
-                        }
-                    } else {
-                        value1 = JsonData.GSON.fromJson(sub.getElement("value").toString(), typeClass);
+                         try {
+                             Field declaredField = aClass.getDeclaredField(name);
+                             declaredField.setAccessible(true);
+                             declaredField.set(this, value1);
+                         } catch (NoSuchFieldException ignored) {  }
+                    } catch (ClassNotFoundException e) {
+                         //Ignoring
                     }
 
-                    try {
-                        Field declaredField = aClass.getDeclaredField(name);
-                        declaredField.setAccessible(true);
-                        declaredField.set(this, value1);
-                    } catch (NoSuchFieldException ignored) {  }
                 }
             }
         } catch (Exception e) {

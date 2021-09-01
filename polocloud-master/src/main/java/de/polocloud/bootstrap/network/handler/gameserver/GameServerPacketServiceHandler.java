@@ -17,10 +17,12 @@ import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerPacke
 import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
+import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.wrapper.base.IWrapper;
+import de.polocloud.api.wrapper.base.SimpleWrapper;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 
 public class GameServerPacketServiceHandler extends GameServerPacketController {
@@ -57,7 +59,12 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             IGameServer gameServer = packet.getGameServer();
             IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());
 
-            wrapper.startServer(gameServer);
+            if (wrapper instanceof SimpleWrapper) {
+                wrapper.startServer(gameServer);
+            } else {
+                PoloCloudAPI.getInstance().sendPacket(new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort()));
+            }
+
         });
 
         new SimplePacketHandler<>(APIRequestGameServerCopyResponsePacket.class, packet ->

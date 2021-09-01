@@ -79,7 +79,7 @@ public class GameServerCommand implements CommandListener {
                 if (template == null) {
                     PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                 } else {
-                    int size = gameServerManager.getGameServersByTemplate(template).size();
+                    int size = gameServerManager.getCached(template).size();
                     if (size >= template.getMaxServerCount()) {
                         PoloLogger.print(LogLevel.ERROR, "Cannot start the servers, the maximal server online count of » " + ConsoleColors.LIGHT_BLUE + template.getMaxServerCount()
                             + ConsoleColors.GRAY + " was reached! (Online » " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + ")");
@@ -107,7 +107,7 @@ public class GameServerCommand implements CommandListener {
                         template.getMaxMemory(),
                         PoloCloudAPI.getInstance().getPortManager().getPort(template),
                         template.getMaxPlayers(),
-                        template
+                        template.getName()
                     );
 
                     wrapperClient.startServer(gameServer);
@@ -148,7 +148,7 @@ public class GameServerCommand implements CommandListener {
                         PoloLogger.print(LogLevel.ERROR, "You cannot start " + amountString + " servers!");
                         return;
                     }
-                    int size = gameServerManager.getGameServersByTemplate(template).size();
+                    int size = gameServerManager.getCached(template).size();
                     if ((size + amount) >= template.getMaxServerCount()) {
                         PoloLogger.print(LogLevel.ERROR, "Cannot start the server, the maximal server online count of » " + ConsoleColors.LIGHT_BLUE + template.getMaxServerCount()
                             + ConsoleColors.GRAY + " was reached! (With new servers » " + ConsoleColors.LIGHT_BLUE + (size + amount) + ConsoleColors.GRAY + ")");
@@ -180,7 +180,7 @@ public class GameServerCommand implements CommandListener {
                             template.getMaxMemory(),
                             PoloCloudAPI.getInstance().getPortManager().getPort(template),
                             template.getMaxPlayers(),
-                            template
+                            template.getName()
                         );
 
                         wrapperClient.startServer(gameServer);
@@ -257,6 +257,6 @@ public class GameServerCommand implements CommandListener {
     }
 
     private int searchForAvailableID(ITemplate template) throws ExecutionException, InterruptedException {
-        return gameServerManager.getGameServersByTemplate(template).size() + 1;
+        return gameServerManager.getCached(template).size() + 1;
     }
 }

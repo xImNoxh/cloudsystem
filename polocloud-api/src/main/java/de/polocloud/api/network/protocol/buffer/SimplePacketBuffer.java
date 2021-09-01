@@ -304,37 +304,23 @@ public class SimplePacketBuffer implements IPacketBuffer {
     public IGameServer readGameServer() throws IOException {
 
         //Template
-        boolean nulled = this.readBoolean();
-        ITemplate template;
-        if (nulled) {
-            template = this.readTemplate();
-        } else {
-            template = null;
-        }
+        String template = this.readString();
 
         //Name and snowflake and port
         String name = this.readString();
-
         long snowflake = this.readLong();
-
         int port = this.readInt();
 
         //Extra values
         String motd = this.readString();
-
         GameServerStatus status = this.readEnum();
 
         //Memory and ping
         long memory = this.readLong();
-
         long ping = this.readLong();
-
         long startTime = this.readLong();
-
         int maxPlayers = this.readInt();
-
         boolean serviceVisibility = this.readBoolean();
-
         boolean registered = this.readBoolean();
 
         IGameServer gameServer = new SimpleGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, memory, port, maxPlayers, template);
@@ -346,10 +332,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
     public void writeGameServer(IGameServer gameServer) throws IOException {
 
         //Template
-        this.writeBoolean(gameServer.getTemplate() != null);
-        if (gameServer.getTemplate() != null) {
-            this.writeTemplate(gameServer.getTemplate());
-        }
+        this.writeString(gameServer.getTemplate() == null ? "no_template_provided" : gameServer.getTemplate().getName());
 
         //Name and snowflake and port
         this.writeString(gameServer.getName());

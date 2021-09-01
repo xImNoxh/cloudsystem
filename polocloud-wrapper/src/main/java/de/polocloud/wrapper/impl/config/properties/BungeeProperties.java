@@ -16,7 +16,7 @@ public class BungeeProperties extends ServiceProperties {
             "  - bungeecord.command.server",
             "  - bungeecord.command.list",
             "  admin:",
-            "  - cloud.test",
+            "  - cloud.use",
             "  - bungeecord.command.alert",
             "  - bungeecord.command.end",
             "  - bungeecord.command.ip",

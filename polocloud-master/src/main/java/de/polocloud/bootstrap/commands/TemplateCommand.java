@@ -55,7 +55,7 @@ public class TemplateCommand implements CommandListener {
                     PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                 } else {
                     PoloLogger.print(LogLevel.INFO, "Stopping template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "...");
-                    List<IGameServer> gameServersInTemplate = gameServerManager.getGameServersByTemplate(template);
+                    List<IGameServer> gameServersInTemplate = gameServerManager.getCached(template);
                     int size = gameServersInTemplate.size();
                     for (IGameServer gameServer : gameServersInTemplate) {
                         gameServer.stop();
@@ -106,7 +106,7 @@ public class TemplateCommand implements CommandListener {
                             template.setMaintenance(state);
                             templateService.getTemplateSaver().save(template);
 
-                            for (IGameServer gameServer : gameServerManager.getGameServersByTemplate(template)) {
+                            for (IGameServer gameServer : gameServerManager.getCached(template)) {
                                 gameServer.update();
                             }
 

@@ -40,8 +40,7 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
             gameServer.setStatus(GameServerStatus.STARTING);
             gameServer.update();
 
-            Packet packet = new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort());
-            sendPacket(packet);
+            sendPacket(new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort()));
 
         } catch (Exception e) {
             e.printStackTrace();

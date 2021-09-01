@@ -6,6 +6,9 @@ import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.request.base.future.PoloFuture;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.wrapper.base.IWrapper;
+import de.polocloud.api.wrapper.ex.NoWrapperFoundException;
 import io.netty.channel.ChannelHandlerContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class SimpleCachedGameServerManager implements IGameServerManager {
 
@@ -44,8 +48,50 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     }
 
     @Override
-    public IGameServer getCachedObject(ChannelHandlerContext ctx) {
+    public IGameServer getCached(ChannelHandlerContext ctx) {
         return this.cachedObjects.stream().filter(iGameServer -> iGameServer.ctx().equals(ctx)).findFirst().orElse(null);
+    }
+
+    @Override
+    public void startServer(ITemplate template, int count) throws NoWrapperFoundException {
+
+        List<IGameServer> gameServersByTemplate = getCached(template);
+        for (int i = 0; i < count; i++) {
+            Optional<IWrapper> optionalWrapperClient = PoloCloudAPI.getInstance().getWrapperManager().getWrappers().stream().findAny();
+
+            if (!optionalWrapperClient.isPresent()) {
+                throw new NoWrapperFoundException();
+            }
+
+            IWrapper wrapperClient = optionalWrapperClient.get();
+
+            IGameServer iGameServer = IGameServer.create();
+            iGameServer.applyTemplate(template); //Memory, motd, maxplayers
+            iGameServer.setName(template.getName() + "-" + gameServersByTemplate.size() + (i + 1));
+            iGameServer.newSnowflake();
+            iGameServer.setStartedTime(System.currentTimeMillis());
+            iGameServer.setPort(-1);
+            iGameServer.setVisible(false);
+            iGameServer.setStatus(GameServerStatus.PENDING);
+
+            wrapperClient.startServer(iGameServer);
+        }
+    }
+
+    @Override
+    public void stopServer(IGameServer gameServer) throws NoWrapperFoundException {
+        IWrapper wrapper = gameServer.getWrapper();
+        if (wrapper == null) {
+            throw new NoWrapperFoundException();
+        }
+        wrapper.stopServer(gameServer);
+    }
+
+    @Override
+    public void stopServers(ITemplate template) throws NoWrapperFoundException{
+        for (IGameServer server : new ArrayList<>(getCached(template))) {
+            stopServer(server);
+        }
     }
 
     @Override

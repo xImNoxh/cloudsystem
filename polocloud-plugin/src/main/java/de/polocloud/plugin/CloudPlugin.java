@@ -7,6 +7,8 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.messaging.IMessageChannel;
+import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.packets.api.other.CacheRequestPacket;
 import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
@@ -40,12 +42,14 @@ public class CloudPlugin extends PoloCloudAPI {
 
 
     public CloudPlugin(IBootstrap bootstrap) {
-        super(bootstrap.getType());
+        super(bootstrap.getBridge().getEnvironment());
 
         this.bootstrap = bootstrap;
         this.gameServerProperty = new GameServerProperty();
         this.networkClient = new NetworkClient(bootstrap);
         this.pubSubManager = new SimplePubSubManager(networkClient);
+
+        this.setPoloBridge(bootstrap.getBridge());
 
     }
 

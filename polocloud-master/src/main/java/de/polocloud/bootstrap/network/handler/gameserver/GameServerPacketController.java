@@ -35,7 +35,7 @@ public abstract class GameServerPacketController {
 
 
     public void getGameServerByConnection(ChannelHandlerContext ctx, Consumer<IGameServer> server) {
-        server.accept(gameServerManager.getCachedObject(ctx));
+        server.accept(gameServerManager.getCached(ctx));
     }
 
     public void getRedirectPacketConnection(long snowflake, Packet packetData) {
@@ -59,7 +59,7 @@ public abstract class GameServerPacketController {
     }
 
     public void getGameServerByProxyType(Consumer<List<IGameServer>> iGameServerConsumer) {
-        iGameServerConsumer.accept(gameServerManager.getGameServersByType(TemplateType.PROXY));
+        iGameServerConsumer.accept(gameServerManager.getCached(TemplateType.PROXY));
     }
 
     public void confirmPacketTypeResponse(APIRequestGameServerPacket.Action action, IGameServer service, UUID id, String value) {
@@ -75,7 +75,7 @@ public abstract class GameServerPacketController {
     }
 
     public void getGameServerByTemplate(String name, Consumer<List<IGameServer>> services) {
-        getTemplateByName(name, template -> services.accept(gameServerManager.getGameServersByTemplate(template)));
+        getTemplateByName(name, template -> services.accept(gameServerManager.getCached(template)));
     }
 
     public void setListGameServerData(APIRequestGameServerPacket.Action type, IGameServer server, UUID id, String value) {
@@ -106,7 +106,7 @@ public abstract class GameServerPacketController {
     }
 
     public void getGameServerList(APIRequestGameServerPacket.Action type, Consumer<List<IGameServer>> services, String value) {
-        services.accept(type.equals(APIRequestGameServerPacket.Action.ALL) ? gameServerManager.getAllCached() : gameServerManager.getGameServersByType(TemplateType.valueOf(value)));
+        services.accept(type.equals(APIRequestGameServerPacket.Action.ALL) ? gameServerManager.getAllCached() : gameServerManager.getCached(TemplateType.valueOf(value)));
     }
 
     public void getGameServerSingleton(APIRequestGameServerPacket.Action type, Consumer<IGameServer> service, String value) {

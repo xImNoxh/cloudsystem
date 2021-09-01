@@ -1,6 +1,8 @@
 package de.polocloud.api.player;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.bridge.PoloPluginBridge;
+import de.polocloud.api.bridge.PoloPluginBungeeBridge;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
@@ -32,41 +34,39 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         this.uniqueId = uniqueId;
     }
 
-
-    @Override
-    public UUID getUUID() {
-        return this.uniqueId;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public IGameServer getMinecraftServer() {
-        return PoloCloudAPI.getInstance().getGameServerManager().getCached(this.minecraftServer);
-    }
-
     @Override
     public void sendTo(IGameServer gameServer) {
+        PoloPluginBridge poloBridge = PoloCloudAPI.getInstance().getPoloBridge();
+        if (poloBridge != null && poloBridge instanceof PoloPluginBungeeBridge) {
+            ((PoloPluginBungeeBridge)poloBridge).connect(this.uniqueId, gameServer.getName());
+            return;
+        }
         MasterPlayerSendToServerPacket packet = new MasterPlayerSendToServerPacket(this.uniqueId, gameServer.getName());
         PoloCloudAPI.getInstance().sendPacket(packet);
     }
 
     @Override
     public void sendTabList(String header, String footer) {
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
+            PoloCloudAPI.getInstance().getPoloBridge().sendTabList(this.uniqueId, header, footer);
+            return;
+        }
         ProxyTablistUpdatePacket packet = new ProxyTablistUpdatePacket(this.uniqueId, header, footer);
         PoloCloudAPI.getInstance().sendPacket(packet);
     }
 
     @Override
     public Future<Boolean> hasPermissions(String permission) {
-        Future<Boolean> completableFuture = new CompletableFuture<>();
-        UUID requestId = UUID.randomUUID();
-        PermissionCheckResponsePacket packet = new PermissionCheckResponsePacket(requestId, permission, this.uniqueId, false);
-        ResponseHandler.register(requestId, completableFuture);
-        getProxyServer().sendPacket(packet);
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
+            completableFuture.complete(PoloCloudAPI.getInstance().getPoloBridge().hasPermission(this.uniqueId, permission));
+        } else {
+            UUID requestId = UUID.randomUUID();
+            PermissionCheckResponsePacket packet = new PermissionCheckResponsePacket(requestId, permission, this.uniqueId, false);
+            ResponseHandler.register(requestId, completableFuture);
+            getProxyServer().sendPacket(packet);
+        }
         return completableFuture;
     }
 
@@ -78,6 +78,10 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public void kick(String reason) {
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
+            PoloCloudAPI.getInstance().getPoloBridge().kickPlayer(this.uniqueId, reason);
+            return;
+        }
         MasterPlayerKickPacket packet = new MasterPlayerKickPacket(this.uniqueId, reason);
         PoloCloudAPI.getInstance().sendPacket(packet);
     }
@@ -97,14 +101,6 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         return PoloCloudAPI.getInstance().getGameServerManager().getCached(this.proxyServer);
     }
 
-    public void setMinecraftServer(String minecraftServer) {
-        this.minecraftServer = minecraftServer;
-    }
-
-    public void setProxyServer(String proxyServer) {
-        this.proxyServer = proxyServer;
-    }
-
     @Override
     public void runCommand(String command) {
         PoloCloudAPI.getInstance().getCommandManager().runCommand(command, this);
@@ -112,6 +108,10 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public void sendMessage(String text) {
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
+            PoloCloudAPI.getInstance().getPoloBridge().sendMessage(this.uniqueId, text);
+            return;
+        }
         MasterPlayerSendMessagePacket packet = new MasterPlayerSendMessagePacket(this.uniqueId, text);
         PoloCloudAPI.getInstance().sendPacket(packet);
     }
@@ -149,4 +149,28 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     public void deleteProperty(String name) {
         PoloCloudAPI.getInstance().getPropertyManager().deleteProperty(this.uniqueId, name);
     }
+
+    public void setMinecraftServer(String minecraftServer) {
+        this.minecraftServer = minecraftServer;
+    }
+
+    public void setProxyServer(String proxyServer) {
+        this.proxyServer = proxyServer;
+    }
+
+    @Override
+    public UUID getUUID() {
+        return this.uniqueId;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public IGameServer getMinecraftServer() {
+        return PoloCloudAPI.getInstance().getGameServerManager().getCached(this.minecraftServer);
+    }
+
 }

@@ -15,7 +15,6 @@ import de.polocloud.api.logger.helper.LogLevel;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class FallbackSearchService {
@@ -47,7 +46,7 @@ public class FallbackSearchService {
                 PoloLogger.print(LogLevel.WARNING, "A fallback server in the config.json was a proxy server. A proxy server is not compatible as a fallback server!");
                 continue;
             }
-            List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getGameServersByTemplate(template);
+            List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getCached(template);
 
             if(!gameServersByTemplate.isEmpty()){
                 gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer.getStatus() == GameServerStatus.RUNNING).collect(Collectors.toList());

@@ -1,6 +1,7 @@
 package de.polocloud.api;
 
 import com.google.inject.Injector;
+import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -55,6 +56,15 @@ import org.reflections.Reflections;
 import java.io.File;
 import java.util.Optional;
 
+@APIVersion(
+    version = "alpha-1.0",
+    developers = {
+        "iPommes",
+        "Max_DE",
+        "HttpMarco",
+        "Lystx"
+    }
+)
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     /**
@@ -77,7 +87,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final SystemManager systemManager;
 
     //The bridge instance
-    protected PoloMinecraftBridge minecraftBridge;
+    protected PoloPluginBridge poloBridge;
 
     /**
      * The port cache for finding new ports
@@ -288,12 +298,19 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         return systemManager;
     }
 
-    public PoloMinecraftBridge getMinecraftBridge() {
-        return minecraftBridge;
+    public PoloPluginBridge getPoloBridge() {
+        return poloBridge;
     }
 
-    public void setMinecraftBridge(PoloMinecraftBridge minecraftBridge) {
-        this.minecraftBridge = minecraftBridge;
+    public void setPoloBridge(PoloPluginBridge minecraftBridge) {
+        this.poloBridge = minecraftBridge;
+    }
+
+    /**
+     * Gets an {@link APIVersion} instance of this api
+     */
+    public APIVersion getVersion() {
+        return getClass().getAnnotation(APIVersion.class);
     }
 
     /**

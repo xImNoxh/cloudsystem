@@ -77,7 +77,7 @@ public class SimpleGameServer implements IGameServer {
     /**
      * The template (group)
      */
-    private ITemplate template;
+    private String template;
 
     /**
      * If authenticated
@@ -97,7 +97,7 @@ public class SimpleGameServer implements IGameServer {
     public SimpleGameServer() {
     }
 
-    public SimpleGameServer(String name, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long ping, long startedTime, long memory, int port, int maxplayers, ITemplate template) {
+    public SimpleGameServer(String name, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long ping, long startedTime, long memory, int port, int maxplayers, String template) {
         this.name = name;
         this.motd = motd;
         this.serviceVisibility = serviceVisibility;
@@ -112,6 +112,7 @@ public class SimpleGameServer implements IGameServer {
         this.registered = false;
         this.host = "127.0.0.1";
     }
+
 
     @Override
     public void setHost(String host) {
@@ -194,7 +195,7 @@ public class SimpleGameServer implements IGameServer {
     }
 
     public void setTemplate(ITemplate template) {
-        this.template = template;
+        this.template = template.getName();
     }
 
     @Override
@@ -214,7 +215,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public ITemplate getTemplate() {
-        return template;
+        return PoloCloudAPI.getInstance().getTemplateManager().getTemplate(this.template);
     }
 
     @Override

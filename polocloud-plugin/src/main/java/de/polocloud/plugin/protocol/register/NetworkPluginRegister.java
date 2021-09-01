@@ -17,7 +17,6 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.plugin.CloudPlugin;
 
 import de.polocloud.plugin.bootstrap.IBootstrap;
 
@@ -41,11 +40,11 @@ public class NetworkPluginRegister {
             ((SimpleCachedPropertyManager)PoloCloudAPI.getInstance().getPropertyManager()).setProperties(properties);
         });
 
-        new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> CloudPlugin.getCloudPluginInstance().getBootstrap().shutdown());
+        new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().shutdown());
 
-        new SimplePacketRegister<MasterPlayerKickPacket>(MasterPlayerKickPacket.class, packet -> bootstrap.kick(packet.getUuid(), packet.getMessage()));
+        new SimplePacketRegister<MasterPlayerKickPacket>(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().kickPlayer(packet.getUuid(), packet.getMessage()));
 
-        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> bootstrap.executeCommand(packet.getCommand()));
+        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().executeCommand(packet.getCommand()));
 
         new SimplePacketRegister<APIResponseCloudPlayerPacket>(APIResponseCloudPlayerPacket.class, packet -> {
             UUID requestId = packet.getRequestId();
@@ -70,7 +69,7 @@ public class NetworkPluginRegister {
 
                 response.add(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
                     gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
-                    gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate()));
+                    gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate().getName()));
             }
             completableFuture.complete((packet.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
         });

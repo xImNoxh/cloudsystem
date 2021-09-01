@@ -22,7 +22,7 @@ public class TemplatePacketHandler extends TemplatePacketServiceController {
         new SimplePacketHandler<APIRequestTemplatePacket>(APIRequestTemplatePacket.class, (ctx, packet) -> {
             UUID requestId = packet.getRequestId();
             APIRequestTemplatePacket.Action action = packet.getAction();
-            final IGameServer requestServer = gameServerManager.getCachedObject(ctx);
+            final IGameServer requestServer = gameServerManager.getCached(ctx);
             if (action == APIRequestTemplatePacket.Action.NAME) {
                 requestServer.sendPacket(new APIResponseTemplatePacket(requestId,
                     Collections.singletonList(templateService.getTemplate(packet.getValue())), APIResponseTemplatePacket.Type.SINGLE));

@@ -8,6 +8,8 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.messaging.IMessageChannel;
+import de.polocloud.api.messaging.IMessageManager;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.loader.ModuleService;

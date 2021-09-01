@@ -1,15 +1,8 @@
 package de.polocloud.plugin.bootstrap;
 
-import de.polocloud.api.common.PoloType;
-
-import java.util.UUID;
+import de.polocloud.api.bridge.PoloPluginBridge;
 
 public interface IBootstrap {
-
-    /**
-     * Shuts down this bootstrap instance
-     */
-    void shutdown();
 
     /**
      * The port of the bootstrap
@@ -29,25 +22,9 @@ public interface IBootstrap {
     void registerPacketListening();
 
     /**
-     * The type of the bootstrap
-     * to identify if proxy or spigot
+     * The bridge instance
      */
-    PoloType getType();
-
-    /**
-     * Kicks a player from the server or proxy
-     *
-     * @param uuid the uuid of the player
-     * @param message the reason for the kick
-     */
-    void kick(UUID uuid, String message);
-
-    /**
-     * Executes a console command
-     *
-     * @param command the command-line to execute
-     */
-    void executeCommand(String command);
+    PoloPluginBridge getBridge();
 
 
 }

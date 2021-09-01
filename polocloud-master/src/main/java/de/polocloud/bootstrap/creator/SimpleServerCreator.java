@@ -16,7 +16,7 @@ public class SimpleServerCreator extends ServerCreator {
 
     @Override
     public boolean check(ITemplate template) {
-        List<IGameServer> serversByTemplate = gameServerManager.getGameServersByTemplate(template);
+        List<IGameServer> serversByTemplate = gameServerManager.getCached(template);
 
         if (serversByTemplate == null) {
             return false;

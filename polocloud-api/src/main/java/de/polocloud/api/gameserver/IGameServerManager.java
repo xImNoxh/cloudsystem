@@ -4,6 +4,7 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.pool.ObjectPool;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.wrapper.ex.NoWrapperFoundException;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      *
      * @param ctx the channelHandlerContext
      */
-    IGameServer getCachedObject(ChannelHandlerContext ctx);
+    IGameServer getCached(ChannelHandlerContext ctx);
 
     /**
      * Gets a collection of all loaded {@link IGameServer}s
@@ -27,7 +28,7 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
      */
-    default List<IGameServer> getGameServersByTemplate(ITemplate template) {
+    default List<IGameServer> getCached(ITemplate template) {
         return this.getAllCached(iGameServer -> iGameServer.getTemplate().getName().equalsIgnoreCase(template.getName()));
     }
 
@@ -38,7 +39,7 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
      */
-    default List<IGameServer> getGameServersByType(TemplateType type) {
+    default List<IGameServer> getCached(TemplateType type) {
         return getAllCached(iGameServer -> iGameServer.getTemplate().getTemplateType().equals(type));
     }
 
@@ -55,6 +56,28 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      * @param gameServer the gameServer
      */
     void unregisterGameServer(IGameServer gameServer);
+
+    /**
+     * Starts a new {@link IGameServer} from an {@link ITemplate}
+     *
+     * @param count the amount of servers
+     * @param template the template
+     */
+    void startServer(ITemplate template, int count) throws NoWrapperFoundException;
+
+    /**
+     * Stops an {@link IGameServer}
+     *
+     * @param gameServer the server
+     */
+    void stopServer(IGameServer gameServer) throws NoWrapperFoundException;
+
+    /**
+     * Stops all {@link IGameServer}s of an {@link ITemplate}
+     *
+     * @param template the template
+     */
+    void stopServers(ITemplate template) throws NoWrapperFoundException;
 
     /**
      * Gets the current {@link IGameServer} if Spigot or Proxy-Instance
