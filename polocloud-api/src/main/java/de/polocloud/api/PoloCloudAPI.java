@@ -76,6 +76,9 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final IPropertyManager propertyManager;
     protected final SystemManager systemManager;
 
+    //The bridge instance
+    protected PoloMinecraftBridge minecraftBridge;
+
     /**
      * The port cache for finding new ports
      */
@@ -283,6 +286,14 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public SystemManager getSystemManager() {
         return systemManager;
+    }
+
+    public PoloMinecraftBridge getMinecraftBridge() {
+        return minecraftBridge;
+    }
+
+    public void setMinecraftBridge(PoloMinecraftBridge minecraftBridge) {
+        this.minecraftBridge = minecraftBridge;
     }
 
     /**

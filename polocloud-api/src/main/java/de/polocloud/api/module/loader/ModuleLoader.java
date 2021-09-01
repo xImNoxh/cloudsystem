@@ -95,10 +95,6 @@ public class ModuleLoader {
                                 if (CloudModule.class.isAssignableFrom(loadedClass)) {
                                     if (loadedClass.isAnnotationPresent(ModuleInfo.class)) {
                                         cloudModule = (CloudModule) loadedClass.newInstance();
-                                        File dataDir = new File(FileConstants.MASTER_MODULES, cloudModule.info().name() + "/");
-                                        dataDir.mkdirs();
-                                        cloudModule.setDataDirectory(dataDir);
-                                        cloudModule.setModuleFile(file);
                                     } else {
                                         PoloLogger.print(LogLevel.INFO, "§cThe class §e" + loadedClass.getName() + " §cof the Module §e" + file.getName() + " §cdoesn't have a §e@" + ModuleInfo.class.getSimpleName() + "-Annotation!");
                                     }
@@ -143,6 +139,11 @@ public class ModuleLoader {
                         }
 
                         ModuleInfo info = cloudModule.info();
+
+                        File dataDir = new File(FileConstants.MASTER_MODULES, cloudModule.info().name() + "/");
+                        dataDir.mkdirs();
+                        cloudModule.setDataDirectory(dataDir);
+                        cloudModule.setModuleFile(file);
 
                         if (hasSpaces(cloudModule.info().name())) {
                             PoloLogger.print(LogLevel.ERROR, "§cCloudModule-Names may not contain any §espaces§c! Please fix this and try to load the module again");
