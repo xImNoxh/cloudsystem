@@ -55,8 +55,6 @@ public class ProxyPacketRegister {
             }
         });
 
-       // new SimplePacketRegister<MasterRequestServerListUpdatePacket>(MasterRequestServerListUpdatePacket.class, packet -> ProxyServer.getInstance().getServers().put(packet.getName(), ProxyServer.getInstance().constructServerInfo(packet.getName(), new InetSocketAddress(packet.getHost() == null ? "127.0.0.1" : packet.getHost(), packet.getPort()), "PoloCloud", false)));
-
         new SimplePacketRegister<MasterPlayerSendToServerPacket>(MasterPlayerSendToServerPacket.class, packet -> {
             UUID uuid = packet.getUuid();
             if (ProxyServer.getInstance().getPlayer(uuid) != null) {

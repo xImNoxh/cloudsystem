@@ -1,8 +1,11 @@
 package de.polocloud.api.network.packets.api.other;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.port.IPortManager;
+import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
@@ -25,6 +28,7 @@ public class GlobalCachePacket extends Packet {
     private List<ITemplate> templates;
     private List<IWrapper> wrappers;
     private List<IFallback> fallbacks;
+    private SimpleCachedPortManager portManager;
 
     public GlobalCachePacket() {
         MasterCache masterCache = new MasterCache(PoloCloudAPI.getInstance());
@@ -34,6 +38,7 @@ public class GlobalCachePacket extends Packet {
         this.templates = masterCache.getTemplates();
         this.wrappers = masterCache.getWrappers();
         this.fallbacks = masterCache.getFallbacks();
+        this.portManager = (SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager();
 
         this.clearDoubles();
     }
@@ -76,6 +81,10 @@ public class GlobalCachePacket extends Packet {
         return new MasterCache(this.gameServers, this.cloudPlayers, this.templates, this.wrappers, this.fallbacks);
     }
 
+    public IPortManager getPortManager() {
+        return portManager;
+    }
+
     @Override
     public void write(IPacketBuffer buf) throws IOException {
         buf.writeInt(gameServers.size());
@@ -102,6 +111,8 @@ public class GlobalCachePacket extends Packet {
         for (IFallback fallback : fallbacks) {
             buf.writeFallback(fallback);
         }
+
+        buf.writeString(JsonData.GSON.toJson(this.portManager));
     }
 
     @Override
@@ -137,5 +148,8 @@ public class GlobalCachePacket extends Packet {
         for (int i = 0; i < size; i++) {
             fallbacks.add(buf.readFallback());
         }
+
+        String json = buf.readString();
+        this.portManager = JsonData.GSON.fromJson(json, SimpleCachedPortManager.class);
     }
 }

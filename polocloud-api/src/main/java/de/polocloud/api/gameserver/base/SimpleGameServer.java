@@ -254,11 +254,11 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void stop() {
-        if (getWrapper() == null) {
+        IWrapper wrapper = getWrapper();
+        if (wrapper == null) {
             return;
         }
-        PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(this);
-        getWrapper().sendPacket(new MasterRequestsServerTerminatePacket(this));
+        wrapper.stopServer(this);
     }
 
     @Override

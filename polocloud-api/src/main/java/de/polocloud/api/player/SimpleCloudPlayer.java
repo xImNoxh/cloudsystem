@@ -137,7 +137,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public IProperty getProperty(String name) {
-        return PoloCloudAPI.getInstance().getPropertyManager().getProperty(this.uniqueId, name);
+        return getProperties().stream().filter(property -> property.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     @Override

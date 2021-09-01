@@ -3,6 +3,10 @@ package de.polocloud.api.wrapper.base;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
+import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
+import de.polocloud.api.network.packets.master.MasterStopServerPacket;
 import de.polocloud.api.network.protocol.packet.base.other.ForwardingPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
@@ -76,15 +80,25 @@ public class SimpleWrapper implements IWrapper {
 
     @Override
     public void startServer(IGameServer gameServer) {
+        PoloCloudAPI.getInstance().sendPacket(new GameServerRegisterPacket(gameServer.getSnowflake(), gameServer.getPort()));
         PoloCloudAPI.getInstance().getGameServerManager().registerGameServer(gameServer);
-        gameServer.setPort(-1);
 
-        sendPacket(new MasterStartServerPacket(gameServer, this));
+        if (PoloCloudAPI.getInstance().getType().isPlugin()) {
+            PoloCloudAPI.getInstance().sendPacket(new MasterStartServerPacket(gameServer, this));
+        } else {
+            PoloCloudAPI.getInstance().sendPacket(new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort()));
+        }
     }
 
     @Override
     public void stopServer(IGameServer gameServer) {
+        PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
         PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName()));
-        sendPacket(new MasterRequestsServerTerminatePacket(gameServer));
+
+        if (PoloCloudAPI.getInstance().getType().isPlugin()) {
+            PoloCloudAPI.getInstance().sendPacket(new MasterStopServerPacket(gameServer, this));
+        } else {
+            sendPacket(new MasterRequestsServerTerminatePacket(gameServer));
+        }
     }
 }

@@ -6,7 +6,7 @@ import de.polocloud.api.network.protocol.packet.base.Packet;
 
 import java.io.IOException;
 
-@AutoRegistry//(id = 0x25)
+@AutoRegistry
 public class GameServerRegisterPacket extends Packet {
 
     private long snowflake;

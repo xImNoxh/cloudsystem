@@ -63,16 +63,13 @@ public class SimpleCachedPropertyManager implements IPropertyManager {
                 JsonData multiProperties = jsonData.fallback(new JsonData()).getData("multiProperties");
 
                 for (String key : singleProperties.keySet()) {
-                    JsonData sub = jsonData.getData(key);
-                    IProperty property = new SimpleProperty(sub.getString("Name"), new ArrayList<>(), sub.getElement("value"));
+                    JsonData sub = singleProperties.getData(key);
+                    IProperty property = new SimpleProperty(sub.getString("name"), new ArrayList<>(), sub.getElement("value"));
                     properties.add(property);
                 }
 
-                for (String key : multiProperties.keySet()) {
-                    JsonData sub = jsonData.getData(key);
-                    IProperty property = sub.getAs(SimpleProperty.class);
-                    properties.add(property);
-                }
+                properties.addAll(this.getProperty(multiProperties));
+
                 downloaded += 1;
                 this.properties.put(uniqueId, properties);
                 pb.stepTo((long) ((downloaded * 100L) / (max * 1.0)));
@@ -81,6 +78,22 @@ public class SimpleCachedPropertyManager implements IPropertyManager {
             pb.close();
         }
         return true;
+    }
+
+    private List<SimpleProperty> getProperty(JsonData data) {
+        List<SimpleProperty> list = new ArrayList<>();
+        for (String key : data.keySet()) {
+            JsonData sub = data.getData(key);
+            if (sub.has("value") && sub.has("name")) {
+                SimpleProperty property = sub.getAs(SimpleProperty.class);
+                list.add(property);
+            } else {
+                List<SimpleProperty> property = getProperty(sub);
+                SimpleProperty p = new SimpleProperty(key, property, null);
+                list.add(p);
+            }
+        }
+        return list;
     }
 
     @Override

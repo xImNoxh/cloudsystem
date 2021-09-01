@@ -4,6 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
@@ -49,6 +50,7 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
 
     @Override
     public void stopServer(IGameServer gameServer) {
+        PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
         PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName()));
         sendPacket(new MasterRequestsServerTerminatePacket(gameServer));
     }

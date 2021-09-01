@@ -5,26 +5,25 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.property.IProperty;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class SimpleProperty implements IProperty {
 
-    private String key;
+    private String name;
 
     private JsonElement value;
 
     private final List<SimpleProperty> properties;
 
     public SimpleProperty() {
-        this.key = "";
+        this.name = "";
         this.properties = new ArrayList<>();
         this.value = null;
     }
 
     public SimpleProperty(String name, List<SimpleProperty> properties, JsonElement storage) {
-        this.key = name;
+        this.name = name;
         this.properties = properties;
         this.value = storage;
     }
@@ -65,7 +64,7 @@ public class SimpleProperty implements IProperty {
 
     @Override
     public void setName(String key) {
-        this.key = key;
+        this.name = key;
     }
 
     @Override
@@ -86,7 +85,7 @@ public class SimpleProperty implements IProperty {
 
     @Override
     public String getName() {
-        return key;
+        return name;
     }
 
     @Override
@@ -94,4 +93,9 @@ public class SimpleProperty implements IProperty {
         return value;
     }
 
+
+    @Override
+    public String toString() {
+        return "{\"" + name + "\" : " + value + "}";
+    }
 }

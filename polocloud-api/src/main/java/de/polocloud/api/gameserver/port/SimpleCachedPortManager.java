@@ -4,28 +4,24 @@ package de.polocloud.api.gameserver.port;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This Service searches for a free Port
  * for a certain group
  * It will look for ports within a specific range of the proxyStartPort or serverStartPort
  */
-public class SimpleCachedPortManager implements IPortManager, Serializable {
-
-    private static final long serialVersionUID = -6055013827003323170L;
+public class SimpleCachedPortManager implements IPortManager {
 
     /**
      * The used ports
      */
-    private final List<String> portList;
+    private ArrayList<String> portList;
 
     /**
      * The used proxy ports
      */
-    private final List<String> proxyPortList;
+    private ArrayList<String> proxyPortList;
 
     /**
      * The start proxyPort and start serverPort
@@ -35,8 +31,8 @@ public class SimpleCachedPortManager implements IPortManager, Serializable {
     public SimpleCachedPortManager(int proxyPort, int serverPort) {
         this.proxyPort = proxyPort;
         this.serverPort = serverPort;
-        this.portList = new LinkedList<>();
-        this.proxyPortList = new LinkedList<>();
+        this.portList = new ArrayList<>();
+        this.proxyPortList = new ArrayList<>();
     }
 
     @Override
@@ -74,6 +70,30 @@ public class SimpleCachedPortManager implements IPortManager, Serializable {
             return i;
         }
         return 404;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setPortList(ArrayList<String> portList) {
+        this.portList = portList;
+    }
+
+    public void setProxyPortList(ArrayList<String> proxyPortList) {
+        this.proxyPortList = proxyPortList;
+    }
+
+    public ArrayList<String> getPortList() {
+        return portList;
+    }
+
+    public ArrayList<String> getProxyPortList() {
+        return proxyPortList;
     }
 
     @Override

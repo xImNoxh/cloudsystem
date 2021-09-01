@@ -97,7 +97,11 @@ public abstract class SimplePacket extends Packet {
                                 sub.append("wrapperClass", ((List<?>) o).get(0).getClass().getName());
                             }
                         } else {
-                            sub.append("typeClass", annotation.value() == Class.class ? o.getClass().getName() : annotation.value().getName());
+                            try {
+                                sub.append("typeClass", annotation.value() == Class.class ? o.getClass().getName() : annotation.value().getName());
+                            } catch (Exception e) {
+                                //Ignoring
+                            }
                         }
 
                         jsonObject.append(declaredField.getName(), sub);

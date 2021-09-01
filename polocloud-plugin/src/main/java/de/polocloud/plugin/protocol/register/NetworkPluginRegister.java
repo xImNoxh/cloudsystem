@@ -3,6 +3,8 @@ package de.polocloud.plugin.protocol.register;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.port.IPortManager;
+import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
 import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPacket;
 import de.polocloud.api.network.packets.api.gameserver.APIResponseGameServerPacket;
 import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
@@ -33,6 +35,13 @@ public class NetworkPluginRegister {
         new SimplePacketRegister<GlobalCachePacket>(GlobalCachePacket.class, globalCachePacket -> {
             MasterCache masterCache = globalCachePacket.getMasterCache();
             PoloCloudAPI.getInstance().setCache(masterCache);
+
+            IPortManager portManager = globalCachePacket.getPortManager();
+            PoloCloudAPI.getInstance().getPortManager().setProxyPort(((SimpleCachedPortManager)portManager).getProxyPort());
+            PoloCloudAPI.getInstance().getPortManager().setServerPort(((SimpleCachedPortManager)portManager).getServerPort());
+
+            ((SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager()).setPortList(((SimpleCachedPortManager)portManager).getPortList());
+            ((SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager()).setProxyPortList(((SimpleCachedPortManager)portManager).getProxyPortList());
         });
 
         new SimplePacketRegister<PropertyCachePacket>(PropertyCachePacket.class, propertyCachePacket -> {

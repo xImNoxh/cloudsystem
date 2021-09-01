@@ -95,6 +95,9 @@ public class SimpleScreen extends Thread implements IScreen {
                 if (Wrapper.getInstance().getConfig().isLogServerOutput()) {
 
                     PoloLogger logger = PoloCloudAPI.getInstance().getLoggerFactory().getLoggerOrCreate("servers/" + getService().getTemplate().getName() + "/");
+                    if (logger == null || serviceName == null) {
+                        continue;
+                    }
                     PoloLog log = logger.getLog(serviceName + "#" + snowflake);
                     if (log == null) {
                         log = logger.createLog(serviceName + "#" + snowflake);

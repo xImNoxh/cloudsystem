@@ -67,10 +67,10 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
 
             IGameServer iGameServer = IGameServer.create();
             iGameServer.applyTemplate(template); //Memory, motd, maxplayers
-            iGameServer.setName(template.getName() + "-" + gameServersByTemplate.size() + (i + 1));
+            iGameServer.setName(template.getName() + "-" + (gameServersByTemplate.size() + (i + 1)));
             iGameServer.newSnowflake();
             iGameServer.setStartedTime(System.currentTimeMillis());
-            iGameServer.setPort(-1);
+            iGameServer.setPort(PoloCloudAPI.getInstance().getPortManager().getPort(template));
             iGameServer.setVisible(false);
             iGameServer.setStatus(GameServerStatus.PENDING);
 
@@ -107,6 +107,9 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
 
     @Override
     public void unregisterGameServer(IGameServer gameServer) {
+        if (gameServer == null) {
+            return;
+        }
         IGameServer cachedObject = this.getCached(gameServer.getName());
 
         cachedObjects.remove(cachedObject);

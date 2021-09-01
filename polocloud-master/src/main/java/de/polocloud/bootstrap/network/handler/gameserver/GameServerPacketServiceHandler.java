@@ -19,8 +19,11 @@ import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStarted
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
+import de.polocloud.api.network.packets.master.MasterStopServerPacket;
+import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.other.IRequestHandler;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.base.SimpleWrapper;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
@@ -53,18 +56,33 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
         });
 
+        new SimplePacketHandler<>(WrapperServerStoppedPacket.class, packet -> {
+            String name = packet.getName();
+            IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(name);
+            if (gameServer != null) {
+                PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(gameServer);
+                PoloLogger.print(LogLevel.INFO, "Wrapper §3" + gameServer.getWrapper().getName() + " §7stopped " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §c" + gameServer.getName() + "§7#§4" + gameServer.getSnowflake() + "§7!");
+            }
+        });
 
         new SimplePacketHandler<>(MasterStartServerPacket.class, packet -> {
 
             IGameServer gameServer = packet.getGameServer();
             IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());
 
-            if (wrapper instanceof SimpleWrapper) {
-                wrapper.startServer(gameServer);
-            } else {
-                PoloCloudAPI.getInstance().sendPacket(new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort()));
-            }
+            wrapper.startServer(gameServer);
 
+        });
+
+        new SimplePacketHandler<>(MasterStopServerPacket.class, packet -> {
+
+            IGameServer gameServer = packet.getGameServer();
+            IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());
+            if (gameServer != null) {
+                PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(gameServer);
+                PoloLogger.print(LogLevel.INFO, "Wrapper §3" + gameServer.getWrapper().getName() + " §7stopped " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §c" + gameServer.getName() + "§7#§4" + gameServer.getSnowflake() + "§7!");
+            }
+            wrapper.stopServer(gameServer);
         });
 
         new SimplePacketHandler<>(APIRequestGameServerCopyResponsePacket.class, packet ->
@@ -91,6 +109,9 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
         new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> getGameServerBySnowflake(server -> {
 
+            if (server == null) {
+                return;
+            }
             ((SimpleGameServer) server).setChannelHandlerContext(ctx);
             server.setPort(packet.getPort());
             server.setRegistered(true);

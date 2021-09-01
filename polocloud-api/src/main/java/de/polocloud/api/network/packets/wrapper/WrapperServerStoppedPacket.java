@@ -1,29 +1,25 @@
-package de.polocloud.api.network.packets.gameserver;
+package de.polocloud.api.network.packets.wrapper;
 
-import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.util.AutoRegistry;
 
 import java.io.IOException;
 
 @AutoRegistry
-public class GameServerUnregisterPacket extends Packet {
+public class WrapperServerStoppedPacket extends Packet {
 
     private String name;
     private long snowflake;
 
-    public GameServerUnregisterPacket() {
-    }
-
-    public GameServerUnregisterPacket(long snowflake, String name) {
-        this.snowflake = snowflake;
+    public WrapperServerStoppedPacket(String name, long snowflake) {
         this.name = name;
+        this.snowflake = snowflake;
     }
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
         buf.writeString(name);
-
         buf.writeLong(snowflake);
     }
 
@@ -37,8 +33,8 @@ public class GameServerUnregisterPacket extends Packet {
         return name;
     }
 
+    @Override
     public long getSnowflake() {
         return snowflake;
     }
-
 }

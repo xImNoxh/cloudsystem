@@ -1,10 +1,12 @@
 package de.polocloud.wrapper.manager.server;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.ModuleCopyType;
+import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
@@ -228,9 +230,15 @@ public class ServiceStarter {
 
                     //Waiting for process to stop
                     process.waitFor();
+
                     //Stopped
                     ServiceStopper serviceStopper = new ServiceStopper(service);
-                    serviceStopper.stop(iGameServer -> PoloLogger.print(LogLevel.INFO, "§7Server §3" + iGameServer.getName() + "§7#§3" + iGameServer.getSnowflake() + " §7was §cstopped§7!"));
+                    serviceStopper.stop(iGameServer -> {
+                        PoloCloudAPI.getInstance().sendPacket(new WrapperServerStoppedPacket(iGameServer.getName(), iGameServer.getSnowflake()));
+
+                        //Check if removed from cache between stopping and accepting consumer
+                        PoloLogger.print(LogLevel.INFO, "§7Server §3" + iGameServer.getName() + "§7#§3" + iGameServer.getSnowflake() + " §7was §cstopped§7!");
+                    });
 
                     return;
                 }
