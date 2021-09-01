@@ -1,12 +1,15 @@
 package de.polocloud.api.module.loader;
 
+import com.google.gson.JsonObject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.config.FileConstants;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
+import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.module.info.ModuleInfo;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.util.PoloHelper;
@@ -69,45 +72,59 @@ public class ModuleLoader {
                         ModuleHelper moduleHelper = new ModuleHelper(file);
                         Class<?> loadedClass;
                         URLClassLoader urlClassLoader = moduleHelper.classLoader();
-
-                        JarFile jarFile = new JarFile(file);
-                        Enumeration<JarEntry> e = jarFile.entries();
-
+                        JsonObject jsonObject = moduleHelper.loadJson("module.json");
 
                         List<IListener> listeners = new LinkedList<>();
                         List<CommandListener> commandListeners = new LinkedList<>();
                         CloudModule cloudModule = null;
 
-                        while (e.hasMoreElements()) {
-                            JarEntry jarEntry = e.nextElement();
-                            if (jarEntry.isDirectory() || !jarEntry.getName().endsWith(".class")) {
-                                continue;
-                            }
-                            String className = jarEntry.getName().substring(0, jarEntry.getName().length() - 6);
-                            className = className.replace('/', '.');
 
-                            loadedClass = urlClassLoader.loadClass(className);
-                            if (CloudModule.class.isAssignableFrom(loadedClass)) {
-                                if (loadedClass.isAnnotationPresent(ModuleInfo.class)) {
-                                    cloudModule = (CloudModule) loadedClass.newInstance();
-                                    File dataDir = new File(FileConstants.MASTER_MODULES, cloudModule.info().name() + "/");
-                                    dataDir.mkdirs();
-                                    cloudModule.setDataDirectory(dataDir);
-                                    cloudModule.setModuleFile(file);
-                                } else {
-                                    PoloLogger.print(LogLevel.INFO, "§cThe class §e" + loadedClass.getName() + " §cof the Module §e" + file.getName() + " §cdoesn't have a §e@" + ModuleInfo.class.getSimpleName() + "-Annotation!");
+                        if (jsonObject == null) {
+                            JarFile jarFile = new JarFile(file);
+                            Enumeration<JarEntry> e = jarFile.entries();
+
+
+
+                            while (e.hasMoreElements()) {
+                                JarEntry jarEntry = e.nextElement();
+                                if (jarEntry.isDirectory() || !jarEntry.getName().endsWith(".class")) {
+                                    continue;
                                 }
-                            } else if (IListener.class.isAssignableFrom(loadedClass)) {
+                                String className = jarEntry.getName().substring(0, jarEntry.getName().length() - 6);
+                                className = className.replace('/', '.');
 
-                                IListener instance = (IListener) PoloHelper.getInstance(loadedClass);
-                                listeners.add(instance);
+                                loadedClass = urlClassLoader.loadClass(className);
+                                if (CloudModule.class.isAssignableFrom(loadedClass)) {
+                                    if (loadedClass.isAnnotationPresent(ModuleInfo.class)) {
+                                        cloudModule = (CloudModule) loadedClass.newInstance();
+                                        File dataDir = new File(FileConstants.MASTER_MODULES, cloudModule.info().name() + "/");
+                                        dataDir.mkdirs();
+                                        cloudModule.setDataDirectory(dataDir);
+                                        cloudModule.setModuleFile(file);
+                                    } else {
+                                        PoloLogger.print(LogLevel.INFO, "§cThe class §e" + loadedClass.getName() + " §cof the Module §e" + file.getName() + " §cdoesn't have a §e@" + ModuleInfo.class.getSimpleName() + "-Annotation!");
+                                    }
+                                } else if (IListener.class.isAssignableFrom(loadedClass)) {
 
-                            } else if (CommandListener.class.isAssignableFrom(loadedClass)) {
-                                CommandListener instance = (CommandListener) PoloHelper.getInstance(loadedClass);
-                                commandListeners.add(instance);
+                                    IListener instance = (IListener) PoloHelper.getInstance(loadedClass);
+                                    listeners.add(instance);
+
+                                } else if (CommandListener.class.isAssignableFrom(loadedClass)) {
+                                    CommandListener instance = (CommandListener) PoloHelper.getInstance(loadedClass);
+                                    commandListeners.add(instance);
+                                }
+
                             }
-
+                        } else {
+                            String main = jsonObject.get("main").getAsString();
+                            try {
+                                Class<? extends CloudModule> mainClass = (Class<? extends CloudModule>) Class.forName(main);
+                                cloudModule = mainClass.newInstance();
+                            } catch (ClassNotFoundException e) {
+                                PoloLogger.print(LogLevel.ERROR, "§cCouldn't find main class §e" + main + "§c! Or maybe it doesn't extend the Module-Class ?");
+                            }
                         }
+
                         if (cloudModule == null) {
                             PoloLogger.print(LogLevel.ERROR, "§cNo Class extending §e" + CloudModule.class.getSimpleName() + " §cwas found in file §e" + file.getName() + "§c!");
                             return;

@@ -63,7 +63,7 @@ public class ModuleHelper {
     public JsonObject loadJson(String filename) {
         String file = this.loadFile(filename);
         if (file == null) {
-            return new JsonObject();
+            return null;
         }
         return new JsonParser().parse(file).getAsJsonObject();
     }

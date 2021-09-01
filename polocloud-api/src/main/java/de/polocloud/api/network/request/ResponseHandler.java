@@ -4,10 +4,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 public class ResponseHandler {
 
-    private static final Map<UUID, CompletableFuture<?>> futureMap = new ConcurrentHashMap<>();
+    private static final Map<UUID, Future<?>> futureMap = new ConcurrentHashMap<>();
 
     public static <T> CompletableFuture<T> getCompletableFuture(UUID requestId, boolean autoRemove) {
         if (autoRemove) {
@@ -17,7 +18,7 @@ public class ResponseHandler {
         }
     }
 
-    public static void register(UUID requestID, CompletableFuture<?> completableFuture) {
+    public static void register(UUID requestID, Future<?> completableFuture) {
         futureMap.put(requestID, completableFuture);
     }
 

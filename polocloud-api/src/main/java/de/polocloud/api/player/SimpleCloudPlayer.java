@@ -15,6 +15,8 @@ import de.polocloud.api.property.IProperty;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 public class SimpleCloudPlayer implements ICloudPlayer {
@@ -59,8 +61,8 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
-    public CompletableFuture<Boolean> hasPermissions(String permission) {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+    public Future<Boolean> hasPermissions(String permission) {
+        Future<Boolean> completableFuture = new CompletableFuture<>();
         UUID requestId = UUID.randomUUID();
         PermissionCheckResponsePacket packet = new PermissionCheckResponsePacket(requestId, permission, this.uniqueId, false);
         ResponseHandler.register(requestId, completableFuture);
@@ -121,7 +123,11 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public boolean hasPermission(String permission) {
-        return false;
+        try {
+            return hasPermissions(permission).get();
+        } catch (InterruptedException | ExecutionException e) {
+            return false;
+        }
     }
 
     @Override

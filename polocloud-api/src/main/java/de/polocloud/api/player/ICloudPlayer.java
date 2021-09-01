@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor {
@@ -57,7 +58,7 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor 
      *
      * @param permission the permission
      */
-    CompletableFuture<Boolean> hasPermissions(String permission);
+    Future<Boolean> hasPermissions(String permission);
 
     /**
      * Updates this player all over the network
