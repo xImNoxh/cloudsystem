@@ -36,6 +36,8 @@ public class BungeeProperties extends ServiceProperties {
             "groups:",
             "  HttpMarco:",
             "  - admin",
+            "  Lystx:",
+            "  - admin",
             "listeners:",
             "- query_port: 25577",
             "  motd: '" + motd + "'",

@@ -83,8 +83,6 @@ public class ModuleLoader {
                             JarFile jarFile = new JarFile(file);
                             Enumeration<JarEntry> e = jarFile.entries();
 
-
-
                             while (e.hasMoreElements()) {
                                 JarEntry jarEntry = e.nextElement();
                                 if (jarEntry.isDirectory() || !jarEntry.getName().endsWith(".class")) {
@@ -118,7 +116,7 @@ public class ModuleLoader {
                         } else {
                             String main = jsonObject.get("main").getAsString();
                             try {
-                                Class<? extends CloudModule> mainClass = (Class<? extends CloudModule>) Class.forName(main);
+                                Class<? extends CloudModule> mainClass = (Class<? extends CloudModule>) urlClassLoader.loadClass(main);
                                 cloudModule = mainClass.newInstance();
                             } catch (ClassNotFoundException e) {
                                 PoloLogger.print(LogLevel.ERROR, "§cCouldn't find main class §e" + main + "§c! Or maybe it doesn't extend the Module-Class ?");
