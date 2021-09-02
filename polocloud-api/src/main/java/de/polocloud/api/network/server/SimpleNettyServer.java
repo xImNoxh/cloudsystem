@@ -8,6 +8,7 @@ import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.codec.PacketDecoder;
@@ -18,6 +19,7 @@ import de.polocloud.api.network.protocol.packet.handler.*;
 import de.polocloud.api.network.request.SimpleRequestManager;
 import de.polocloud.api.network.request.IRequestManager;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.util.map.UniqueMap;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -62,11 +64,14 @@ public class SimpleNettyServer implements INettyServer, IListener {
      */
     private final ChannelGroup connectedClients;
 
+    private final UniqueMap<PoloType, INettyClient> connectedInfos;
+
     private ChannelHandlerContext ctx;
 
     public SimpleNettyServer() {
         this.connectedClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         this.requestManager = new SimpleRequestManager(this);
+        this.connectedInfos = new UniqueMap<>();
 
         PoloCloudAPI.getInstance().getEventManager().registerListener(this);
     }
@@ -113,15 +118,44 @@ public class SimpleNettyServer implements INettyServer, IListener {
         this.connectedClients.add(channel);
     }
 
+    @Override
+    public void sendPacket(Packet packet, Channel... channels) {
+        for (Channel connectedClient : channels) {
+            if (!connectedClient.isOpen() || !connectedClient.isWritable() || !connectedClient.isActive() || !connectedClient.isRegistered()) {
+                System.out.println("[NettyServer] Couldn't send Packet " + packet.getClass().getSimpleName() + " to Channel with ID " + connectedClient.id().asLongText() + " because Channel is not opened or writable!");
+                System.out.println("[NettyServer] Unregistering Channel...");
+                this.connectedClients.remove(connectedClient);
+                return;
+            }
+            connectedClient.writeAndFlush(packet).addListener((ChannelFutureListener) channelFuture -> {
+                if (!channelFuture.isSuccess()) {
+                    Throwable cause = channelFuture.cause();
+                    if (cause instanceof ClosedChannelException) {
+                        return;
+                    }
+                    System.out.println("[NettyServer@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
+                    cause.printStackTrace();
+                }
+            });
+        }
+    }
 
     @Override
     public boolean terminate() {
+        if (this.channel == null) {
+            return false;
+        }
         return this.channel.close().isSuccess();
     }
 
     @Override
     public List<Channel> getConnectedClients() {
         return new ArrayList<>(connectedClients);
+    }
+
+    @Override //TODO
+    public UniqueMap<PoloType, INettyClient> getClientsWithType() {
+        return connectedInfos;
     }
 
     @Override
@@ -177,23 +211,6 @@ public class SimpleNettyServer implements INettyServer, IListener {
             Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () -> channel != null);
             return;
         }
-        for (Channel connectedClient : this.connectedClients) {
-            if (!connectedClient.isOpen() || !connectedClient.isWritable() || !connectedClient.isActive() || !connectedClient.isRegistered()) {
-                System.out.println("[NettyServer] Couldn't send Packet " + packet.getClass().getSimpleName() + " to Channel with ID " + connectedClient.id().asLongText() + " because Channel is not opened or writable!");
-                System.out.println("[NettyServer] Unregistering Channel...");
-                this.connectedClients.remove(connectedClient);
-                return;
-            }
-            connectedClient.writeAndFlush(packet).addListener((ChannelFutureListener) channelFuture -> {
-                if (!channelFuture.isSuccess()) {
-                    Throwable cause = channelFuture.cause();
-                    if (cause instanceof ClosedChannelException) {
-                        return;
-                    }
-                    System.out.println("[NettyServer@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
-                    cause.printStackTrace();
-                }
-            });
-        }
+        this.sendPacket(packet, this.connectedClients.toArray(new Channel[0]));
     }
 }

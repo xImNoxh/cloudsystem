@@ -29,7 +29,7 @@ public class SimpleCachedMessageManager implements IMessageManager {
                         try {
                             listener.handleMessage(packet.getProvidedObject(), packet.getStartTime());
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            //Couldn't handle
                         }
                     }
                 }
@@ -46,6 +46,7 @@ public class SimpleCachedMessageManager implements IMessageManager {
     @Override
     public <T> IMessageChannel<T> registerChannel(Class<T> wrapperClass, String channelName) {
         IMessageChannel<T> messageChannel = new SimpleMessageChannel<>(channelName);
+
         this.registeredChannels.put(wrapperClass).toValue(messageChannel);
         return messageChannel;
     }

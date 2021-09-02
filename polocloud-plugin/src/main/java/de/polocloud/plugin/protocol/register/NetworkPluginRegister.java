@@ -14,7 +14,7 @@ import de.polocloud.api.network.packets.api.template.APIResponseTemplatePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
-import de.polocloud.api.network.request.ResponseHandler;
+import de.polocloud.api.network.request.PacketMessenger;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
@@ -58,7 +58,7 @@ public class NetworkPluginRegister {
         new SimplePacketRegister<APIResponseCloudPlayerPacket>(APIResponseCloudPlayerPacket.class, packet -> {
             UUID requestId = packet.getRequestId();
             List<ICloudPlayer> response = packet.getResponse();
-            CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
+            CompletableFuture<Object> completableFuture = PacketMessenger.getCompletableFuture(requestId, true);
             if (packet.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
                 completableFuture.complete(response.get(0));
             } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.LIST) {
@@ -72,7 +72,7 @@ public class NetworkPluginRegister {
             UUID requestId = packet.getRequestId();
             List<IGameServer> tmp = packet.getResponse();
             List<IGameServer> response = new ArrayList<>();
-            CompletableFuture<Object> completableFuture = ResponseHandler.getCompletableFuture(requestId, true);
+            CompletableFuture<Object> completableFuture = PacketMessenger.getCompletableFuture(requestId, true);
 
             for (IGameServer gameserver : tmp) {
 
@@ -85,7 +85,7 @@ public class NetworkPluginRegister {
 
         new SimplePacketRegister<APIResponseTemplatePacket>(APIResponseTemplatePacket.class, packet -> {
             List<ITemplate> response = new ArrayList<>(packet.getResponse());
-            ResponseHandler.getCompletableFuture(packet.getRequestId(), true).complete(
+            PacketMessenger.getCompletableFuture(packet.getRequestId(), true).complete(
                 packet.getType() == APIResponseTemplatePacket.Type.SINGLE ? response.get(0) : response);
         });
 

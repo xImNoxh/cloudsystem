@@ -1,8 +1,12 @@
 package de.polocloud.api.network.packets.other;
 
+import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.player.SimpleCloudPlayer;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
 import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
+
+import java.util.List;
 
 @AutoRegistry
 public class TextPacket extends SimplePacket {

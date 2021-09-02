@@ -5,6 +5,7 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -42,7 +43,7 @@ public abstract class SimplePacket extends Packet {
                     }
 
                      try {
-                        Class<?> typeClass = Class.forName(cl);
+                         Class<?> typeClass = Class.forName(cl);
                          Object value1;
 
                          if (sub.has("generic") && typeClass.equals(List.class)) {
@@ -51,11 +52,11 @@ public abstract class SimplePacket extends Packet {
                                  Class<?> wrapperClass = Class.forName(sub.getString("wrapperClass"));
 
                                  for (JsonElement value : sub.getElement("value").getAsJsonArray()) {
-                                     ((List)value1).add(JsonData.GSON.fromJson(value, wrapperClass));
+                                     ((List)value1).add(PoloHelper.GSON_INSTANCE.fromJson(value, wrapperClass));
                                  }
                              }
                          } else {
-                             value1 = JsonData.GSON.fromJson(sub.getElement("value").toString(), typeClass);
+                             value1 = PoloHelper.GSON_INSTANCE.fromJson(sub.getElement("value").toString(), typeClass);
                          }
 
                          try {

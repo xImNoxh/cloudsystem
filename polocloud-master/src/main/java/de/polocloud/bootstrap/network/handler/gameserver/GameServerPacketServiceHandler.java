@@ -2,6 +2,7 @@ package de.polocloud.bootstrap.network.handler.gameserver;
 
 import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
@@ -20,7 +21,10 @@ import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
 import de.polocloud.api.network.packets.master.MasterStopServerPacket;
+import de.polocloud.api.network.packets.other.PingPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
+import de.polocloud.api.network.protocol.packet.base.response.Response;
+import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.request.base.component.PoloComponent;
 import de.polocloud.api.network.request.base.other.IRequestHandler;
 import de.polocloud.api.template.helper.TemplateType;
@@ -65,6 +69,12 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             }
         });
 
+        new SimplePacketHandler<>(PingPacket.class, pingPacket -> {
+            long start = pingPacket.getStart();
+
+            pingPacket.respond(new Response(new JsonData("time", (System.currentTimeMillis() - start)), ResponseState.SUCCESS));
+        });
+
         new SimplePacketHandler<>(MasterStartServerPacket.class, packet -> {
 
             IGameServer gameServer = packet.getGameServer();
@@ -75,6 +85,7 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
         });
 
         new SimplePacketHandler<>(MasterStopServerPacket.class, packet -> {
+
 
             IGameServer gameServer = packet.getGameServer();
             IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());

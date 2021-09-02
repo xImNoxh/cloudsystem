@@ -1,9 +1,14 @@
 package de.polocloud.api.network.server;
 
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.network.INetworkConnection;
+import de.polocloud.api.network.client.INettyClient;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.util.map.UniqueMap;
 import io.netty.channel.Channel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface does not implement any other methods
@@ -18,4 +23,17 @@ public interface INettyServer extends INetworkConnection {
      * Gets a list of all connected {@link Channel}s
      */
     List<Channel> getConnectedClients();
+
+    /**
+     * Sends a {@link Packet} to specific {@link Channel}s only
+     *
+     * @param packet the packet
+     * @param channels the channels
+     */
+    void sendPacket(Packet packet, Channel... channels);
+
+    /**
+     * Gets a map of all connected clients
+     */
+    UniqueMap<PoloType, INettyClient> getClientsWithType();
 }

@@ -2,6 +2,8 @@ package de.polocloud.bootstrap.logger;
 
 
 import com.google.gson.JsonObject;
+import de.polocloud.api.APIVersion;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.logger.log.LogService;
 import de.polocloud.api.logger.PoloLogger;
@@ -11,6 +13,7 @@ import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
 import java.io.FileReader;
+import java.util.Arrays;
 
 public class LogBootstrapService {
 
@@ -27,13 +30,7 @@ public class LogBootstrapService {
 
         new ConsoleReadThread(Logger.getConsoleReader());
 
-        String currentVersion = "No version fetched";
-        try {
-            FileReader reader = new FileReader("launcher.json");
-            currentVersion = PoloHelper.GSON_INSTANCE.fromJson(reader, JsonObject.class).get("version").getAsString();
-            reader.close();
-        } catch (Exception ignored) {
-        }
+        APIVersion version = PoloCloudAPI.class.getAnnotation(APIVersion.class);
 
         Logger.logPrefixLess("\n" +
             "  _____      _        _____ _                 _ \n" +
@@ -43,10 +40,9 @@ public class LogBootstrapService {
             " | |  | (_) | | (_) | |____| | (_) | |_| | (_| |\n" +
             " |_|   \\___/|_|\\___/ \\_____|_|\\___/ \\__,_|\\__,_|\n" +
             "                                                \n");
-        PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + "HttpMarco, Max_DE");
-        PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + currentVersion +
-            ConsoleColors.GRAY + " (@Alpha) | ©opyright by PoloCloud.");
-        PoloLogger.print(LogLevel.INFO, "Problems or questions? Our Discord » " + ConsoleColors.LIGHT_BLUE + "https://discord.gg/HyRnsdkUBA");
+        PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
+        PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + version.version() + ConsoleColors.GRAY + " (" + version.identifier() + ") | ©opyright by PoloCloud.");
+        PoloLogger.print(LogLevel.INFO, "Problems or questions? Our Discord » " + ConsoleColors.LIGHT_BLUE + version.discord());
         Logger.newLine();
     }
 }

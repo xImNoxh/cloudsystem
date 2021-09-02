@@ -14,6 +14,8 @@ public interface IProtocol {
      */
     void registerPacketHandler(IPacketHandler<? extends Packet> packetHandler);
 
+    void unregisterPacketHandler(IPacketHandler<?> packetHandler);
+
     /**
      * Handles all registered {@link IPacketHandler}s with a given
      * {@link ChannelHandlerContext} and the received {@link Packet} object

@@ -110,11 +110,28 @@ public class SimpleCachedEventManager implements IEventManager {
         if (nettyFire) {
             if (PoloCloudAPI.getInstance().getType().isPlugin()) {
                 if (PoloCloudAPI.getInstance().getConnection() != null) {
-                    PoloCloudAPI.getInstance().getConnection().sendPacket(new EventPacket(event, PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName(), ignoredTypes, async));
+                    PoloCloudAPI
+                        .getInstance()
+                        .getConnection()
+                        .sendPacket(new EventPacket(
+                            event,
+                            PoloCloudAPI
+                                .getInstance()
+                                .getGameServerManager()
+                                .getThisService()
+                                .getName(),
+                            ignoredTypes,
+                            async
+                        ));
                 }
             } else {
                 if (PoloCloudAPI.getInstance().getConnection() != null) {
-                    PoloCloudAPI.getInstance().getConnection().sendPacket(new EventPacket(event, "cloud", ignoredTypes, async));
+                    PoloCloudAPI
+                        .getInstance()
+                        .getConnection()
+                        .sendPacket(
+                            new EventPacket(event, "cloud", ignoredTypes, async)
+                        );
                 }
             }
         }

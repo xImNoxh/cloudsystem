@@ -94,6 +94,7 @@ public class SimpleWrapper implements IWrapper {
     public void stopServer(IGameServer gameServer) {
         PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
         PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName()));
+        PoloCloudAPI.getInstance().getPortManager().removePort(gameServer.getPort());
 
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {
             PoloCloudAPI.getInstance().sendPacket(new MasterStopServerPacket(gameServer, this));

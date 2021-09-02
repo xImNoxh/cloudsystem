@@ -52,6 +52,7 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
     public void stopServer(IGameServer gameServer) {
         PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
         PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName()));
+        PoloCloudAPI.getInstance().getPortManager().removePort(gameServer.getPort());
         sendPacket(new MasterRequestsServerTerminatePacket(gameServer));
     }
 

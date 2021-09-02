@@ -1,5 +1,6 @@
 package de.polocloud.api.logger.def;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLog;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogHandler;
@@ -77,8 +78,7 @@ public class SimplePoloLog implements PoloLog {
             this.header.add("Current Log : '" + this.name + "#" + this.snowflake + "'");
             this.header.add("===================");
             this.header.add(
-                //TODO VERSION FIELD
-                "Polo Version: N/A" + "\n" +
+                "Polo Version: " + PoloCloudAPI.getInstance().getVersion().version() + "\n" +
                     "Operating System: " + System.getProperty("os.name") + " (" + System.getProperty("os.version") + ")\n" +
                     "System Architecture: " + System.getProperty("os.arch") + "\n" +
                     "Java Version: " + System.getProperty("java.version") + " (" + System.getProperty("java.vendor") + ")"

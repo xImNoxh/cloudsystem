@@ -19,6 +19,16 @@ public @interface APIVersion {
     String version();
 
     /**
+     * THe discord link
+     */
+    String discord();
+
+    /**
+     * The state identifier
+     */
+    String identifier();
+
+    /**
      * All main devs of this cloud
      */
     String[] developers();

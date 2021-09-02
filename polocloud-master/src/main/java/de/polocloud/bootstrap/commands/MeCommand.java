@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.commands;
 
+import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -13,14 +14,14 @@ import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.logger.log.types.ConsoleColors;
 
-public class MeCommand implements CommandListener {
+import java.util.Arrays;
 
-    public MeCommand() {
-    }
+public class MeCommand implements CommandListener {
 
     @Command(name = "me", description = "Information about the Cloud", aliases = "cloudinfo")
     public void execute(CommandExecutor sender, String[] fullArgs, String... params) {
-        new ConsoleReadThread(Logger.getConsoleReader());
+        APIVersion version = PoloCloudAPI.getInstance().getVersion();
+
         Logger.logPrefixLess("\n" +
             "  _____      _        _____ _                 _ \n" +
             " |  __ \\    | |      / ____| |               | |\n" +
@@ -29,9 +30,9 @@ public class MeCommand implements CommandListener {
             " | |  | (_) | | (_) | |____| | (_) | |_| | (_| |\n" +
             " |_|   \\___/|_|\\___/ \\_____|_|\\___/ \\__,_|\\__,_|\n" +
             "                                                \n");
-        PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + "HttpMarco, Max_DE");
-        PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + Master.getInstance().getCurrentVersion() +
-            ConsoleColors.GRAY + " (@Alpha) | ©opyright by PoloCloud.");
+        PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
+        PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + version.version() + ConsoleColors.GRAY + " (" + version.identifier() + ") | ©opyright by PoloCloud.");
+
         Logger.newLine();
         PoloLogger.print(LogLevel.INFO, "§7Connected wrappers » §3" + PoloCloudAPI.getInstance().getWrapperManager().getWrappers().size());
         PoloLogger.print(LogLevel.INFO, "§7Loaded commands » §3" + PoloCloudAPI.getInstance().getCommandManager().getCommands().size());
@@ -42,6 +43,7 @@ public class MeCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "§7Online players » §3" + PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().size());
         PoloLogger.print(LogLevel.INFO, "§7Running gameservers » §3" + PoloCloudAPI.getInstance().getGameServerManager().getAllCached().size());
         PoloLogger.print(LogLevel.INFO, "§7Running threads » §3" + Thread.activeCount());
+
         Logger.newLine();
         PoloLogger.print(LogLevel.INFO, "§7System CPU load » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().roundDouble(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getProcessCpuLoad()) + "%");
         PoloLogger.print(LogLevel.INFO, "§7Process CPU Load » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().roundDouble(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getProcessCpuLoad()) + "%");
@@ -49,6 +51,7 @@ public class MeCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "§7Used memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemUsedMemory()));
         PoloLogger.print(LogLevel.INFO, "§7Available memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemFreeMemory()));
         Logger.newLine();
+
         PoloLogger.print(LogLevel.INFO, "§7Checking your version...");
         new Thread(() -> {
             PoloCloudUpdater cloudUpdater = new PoloCloudUpdater(false, Master.getInstance().getCurrentVersion(), "bootstrap", null);
@@ -59,9 +62,7 @@ public class MeCommand implements CommandListener {
                 PoloLogger.print(LogLevel.INFO, "§7You are running the latest version! (" + Master.getInstance().getCurrentVersion() + ")");
             }
         }).start();
-        
-        //TODO giveout debug information
-        //PoloLogger.print(LogLevel.INFO, "§7Sent packets §8» §3" + PoloCloudAPI.getInstance().getWrapperManager().getWrappers().size());
+
     }
 
 }

@@ -12,6 +12,7 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.io.IOException;
@@ -112,7 +113,7 @@ public class GlobalCachePacket extends Packet {
             buf.writeFallback(fallback);
         }
 
-        buf.writeString(JsonData.GSON.toJson(this.portManager));
+        buf.writeString(PoloHelper.GSON_INSTANCE.toJson(this.portManager));
     }
 
     @Override
@@ -150,6 +151,6 @@ public class GlobalCachePacket extends Packet {
         }
 
         String json = buf.readString();
-        this.portManager = JsonData.GSON.fromJson(json, SimpleCachedPortManager.class);
+        this.portManager = PoloHelper.GSON_INSTANCE.fromJson(json, SimpleCachedPortManager.class);
     }
 }

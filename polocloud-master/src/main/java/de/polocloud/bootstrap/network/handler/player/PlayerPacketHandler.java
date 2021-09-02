@@ -14,7 +14,7 @@ import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacke
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.network.request.ResponseHandler;
+import de.polocloud.api.network.request.PacketMessenger;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.config.MasterConfig;
@@ -45,7 +45,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
             sendICloudPlayerAPIResponse(playerManager, ctx, packet));
 
         new SimplePacketHandler<>(PermissionCheckResponsePacket.class, packet ->
-            ResponseHandler.getCompletableFuture(packet.getRequest(), true).complete(packet.isResponse()));
+            PacketMessenger.getCompletableFuture(packet.getRequest(), true).complete(packet.isResponse()));
 
         new SimplePacketHandler<>(MasterPlayerSendMessagePacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));

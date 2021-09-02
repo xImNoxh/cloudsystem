@@ -7,8 +7,8 @@ import de.polocloud.api.util.system.ressources.impl.SimpleResourceProvider;
 
 public class SystemManager {
 
-    private IResourceConverter resourceConverter;
-    private IResourceProvider resourceProvider;
+    private final IResourceConverter resourceConverter;
+    private final IResourceProvider resourceProvider;
 
     public SystemManager() {
         resourceConverter = new SimpleResourceConverter();

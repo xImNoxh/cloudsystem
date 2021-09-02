@@ -8,8 +8,15 @@ import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
+import de.polocloud.api.network.packets.other.PingPacket;
+import de.polocloud.api.network.protocol.packet.base.response.Response;
+import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
+import de.polocloud.api.network.request.PacketMessenger;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.property.IProperty;
@@ -17,10 +24,16 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.system.ressources.IResourceConverter;
+import de.polocloud.api.util.system.ressources.IResourceProvider;
 import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class CloudCommand implements CommandListener {
 
@@ -50,30 +63,55 @@ public class CloudCommand implements CommandListener {
         ITemplateManager templateManager = PoloCloudAPI.getInstance().getTemplateManager();
         IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
         ICloudPlayerManager cloudPlayerManager = PoloCloudAPI.getInstance().getCloudPlayerManager();
+        IResourceConverter resourceConverter = PoloCloudAPI.getInstance().getSystemManager().getResourceConverter();
+        IResourceProvider resourceProvider = PoloCloudAPI.getInstance().getSystemManager().getResourceProvider();
 
         if (player.hasPermission("cloud.use")) {
 
 
             if (params.length == 1) {
-                if (params[0].equalsIgnoreCase("ver") || params[0].equalsIgnoreCase("version")) {
+                if (params[0].equalsIgnoreCase("info")) {
                     APIVersion version = PoloCloudAPI.getInstance().getVersion();
                     player.sendMessage(prefix + "§7PoloCloud §b" + version.version());
                     player.sendMessage(prefix + "Thanks to §3" + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
-                } else if (params[0].equalsIgnoreCase("debug")) {
+                    player.sendMessage("§8");
+                    player.sendMessage(prefix + "§7Global Servers §8: §3" + gameServerManager.getAllCached().size());
+                    player.sendMessage(prefix + "§7Spigot Servers §8: §3" + gameServerManager.getCached(TemplateType.MINECRAFT).size());
+                    player.sendMessage(prefix + "§7Proxy Servers §8: §3" + gameServerManager.getCached(TemplateType.PROXY).size());
+                    player.sendMessage(prefix + "§7Current Server §8: §3" + gameServerManager.getThisService().getName());
+                    player.sendMessage("§8");
+                    player.sendMessage(prefix + "§7Available Wrappers §8: §3" + wrapperManager.getWrappers().size());
+                    player.sendMessage(prefix + "§7Current Wrapper §8: §3" + gameServerManager.getThisService().getWrapper().getName());
+                    player.sendMessage("§8");
+                    player.sendMessage(prefix + "§7Global Templates §8: §3" + templateManager.getTemplates().size());
+                    player.sendMessage(prefix + "§7Spigot Templates §8: §3" + (int) templateManager.getTemplates().stream().filter(template -> template.getTemplateType() == TemplateType.MINECRAFT).count());
+                    player.sendMessage(prefix + "§7Proxy Templates §8: §3" + (int) templateManager.getTemplates().stream().filter(template -> template.getTemplateType() == TemplateType.PROXY).count());
+                    player.sendMessage("§8");
+                    IGameServer highest = gameServerManager.getAllCached().stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
+                    IGameServer lowest = gameServerManager.getAllCached().stream().min(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
 
-                    IProperty property = player.getProperty("lobbySystem");
+                    player.sendMessage(prefix + "§7Online Players §8: §3" +  cloudPlayerManager.getAllCached().size());
+                    player.sendMessage(prefix + "§7Most Players §8: §3" +  (highest == null ? "N/A" : highest.getName() + " §8(§3" + highest.getOnlinePlayers() + "§8)"));
+                    player.sendMessage(prefix + "§7Fewest Players §8: §3" +  (lowest == null ? "N/A" : (lowest.getName().equalsIgnoreCase(highest == null ? "" : highest.getName()) ? "Same players" : lowest.getName() + " §8(§3" + lowest.getOnlinePlayers() + "§8)")));
 
-                    player.sendMessage(property.toString());
-                    for (IProperty sub : property.getProperties()) {
-                       player.sendMessage(sub.toString());
-                       if (!sub.isSingleProperty()) {
-                           for (IProperty subProperty : sub.getProperties()) {
-                               player.sendMessage(subProperty.toString());
-                           }
-                       }
-                    }
+                    player.sendMessage("§8");
+                    player.sendMessage(prefix + "§7OS §8: §3" + resourceProvider.getSystem().getName());
+                    player.sendMessage(prefix + "§7Used memory §8: §3" + resourceConverter.convertLongToSize(resourceProvider.getSystemUsedMemory()));
+                    player.sendMessage(prefix + "§7Free memory §8: §3" + resourceConverter.convertLongToSize(resourceProvider.getSystemFreeMemory()));
+                    player.sendMessage(prefix + "§7Physical Memory §8: §3" + resourceConverter.convertLongToSize(resourceProvider.getSystemPhysicalMemory()));
+                    player.sendMessage(prefix + "§7System CPU §8: §3" + resourceProvider.getSystemCpuLoad() + "%");
+                    player.sendMessage(prefix + "§7Process CPU §8: §3" + resourceProvider.getProcessCpuLoad() + "%");
+                    player.sendMessage(prefix + "§7Virutal Cores §8: §3" + resourceProvider.getSystemProcessors());
+                    player.sendMessage("§8");
 
-                    player.sendMessage(prefix + "§7Debug executed!");
+                    Response response = PacketMessenger.newInstance().blocking().timeOutAfter(TimeUnit.SECONDS, 3L).orElse(new Response(new JsonData("time", -1L), ResponseState.TIMED_OUT)).send(new PingPacket(System.currentTimeMillis()));
+
+                    player.sendMessage(prefix + "§7Cloud-Ping §b" + response.getDocument().getLong("time") + "ms");
+                    player.sendMessage("§8");
+
+                } else if (params[0].equalsIgnoreCase("rl")) {
+                    PoloCloudAPI.getInstance().reload();
+                    player.sendMessage(prefix + "§7The Cloud was §areloaded§8!");
                 } else {
                     sendHelp(player);
                 }
@@ -140,182 +178,68 @@ public class CloudCommand implements CommandListener {
                     } catch (NumberFormatException e) {
                         player.sendMessage(prefix + "§cPlease provide a valid §enumber§c!");
                     }
+                } else if (params[0].equalsIgnoreCase("copy")) {
+                    String server = params[1];
+                    IGameServer cached = gameServerManager.getCached(server);
+
+                    if (cached == null) {
+                        player.sendMessage(prefix + "§cThere is no online GameServer with name '§e" + server + "§c'!");
+                        return;
+                    }
+                    String type = params[2];
+                    if (type.equalsIgnoreCase("worlds") || type.equalsIgnoreCase("entire")) {
+
+                        if (type.equalsIgnoreCase("worlds")) {
+                            if (cached.getTemplate().getTemplateType().equals(TemplateType.PROXY)) {
+                                player.sendMessage(prefix + "§cProxyGameServers don't have worlds, so its not compatibly with the 'worlds' mode, please use the 'entire' type!");
+                                return;
+                            }
+                            player.sendMessage(prefix + "Copying §b" + cached.getName() + "§7...");
+                            List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(cached.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
+                            for (IWrapper wrapper : wrappers) {
+                                wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.WORLD, cached.getName(), String.valueOf(cached.getSnowflake()), cached.getTemplate().getName()));
+                            }
+                        } else if (type.equalsIgnoreCase("entire")) {
+                            player.sendMessage(prefix + "Copying §b" + cached.getName() + "§7...");
+                            List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(cached.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
+                            for (IWrapper wrapper : wrappers) {
+                                wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.ENTIRE, cached.getName(), String.valueOf(cached.getSnowflake()), cached.getTemplate().getName()));
+                            }
+                        }
+                    } else {
+                        player.sendMessage(prefix + "§8» following command for copying a gameserver: §b" +
+                            "/cloud gameserver copy <gameserver> entire/worlds");
+                        player.sendMessage(prefix + "§7Explanation: \n" +
+                            prefix + "§bentire: §7" + "copies the entire GameServer to the template\n" +
+                            prefix + "§bworlds: §7" + "only copies the worlds of the GameServer to the template");
+                    }
+
                 } else {
                     sendHelp(player);
                 }
             } else {
-                sendHelp(player);
-            }
+                if (params.length >= 2 && (params[0].equalsIgnoreCase("execute") || params[0].equalsIgnoreCase("cmd"))) {
 
-            /*
-            if (params.length >= 5) {
-                if (params.length == 5) {
-                    if (params[1].equalsIgnoreCase("gameserver")) {
-                        if (params[2].equalsIgnoreCase("copy")) {
-                            String gameServerName = params[3];
-                            String type = params[4];
-                            if (!(type.equalsIgnoreCase("worlds") || type.equalsIgnoreCase("entire"))) {
-                                player.sendMessage(prefix + "Use following command for copying a gameserver: §b" +
-                                    "/cloud gameserver copy <gameserver> entire/worlds");
-                                player.sendMessage(prefix + "§7Explanation: \n" +
-                                    prefix + "§bentire: §7" + "copies the entire GameServer to the template\n" +
-                                    prefix + "§bworlds: §7" + "only copies the worlds of the GameServer to the template");
-                                return;
-                            }
-                            IGameServer gameServer = gameServerManager.getCached(gameServerName);
-                            if (gameServer == null) {
-                                player.sendMessage(prefix + "The gameserver » §b" + gameServerName + " §7isn't online!");
-                                return;
-                            }
-                            if (type.equalsIgnoreCase("worlds")) {
-                                if (gameServer.getTemplate().getTemplateType().equals(TemplateType.PROXY)) {
-                                    player.sendMessage(prefix + "A Proxy Server doesn't have worlds, so its not compatibly with the 'worlds' mode, please use the 'entire' type!");
-                                    return;
-                                }
-                                player.sendMessage(prefix + "Copying §b" + gameServer.getName() + "§7...");
-                                List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
-                                for (IWrapper wrapper : wrappers) {
-                                    wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.WORLD, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
-                                }
-                            } else if (type.equalsIgnoreCase("entire")) {
-                                player.sendMessage(prefix + "Copying §b" + gameServer.getName() + "§7...");
-                                List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
-                                for (IWrapper wrapper : wrappers) {
-                                    wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.ENTIRE, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
-                                }
-                            }
-                        } else if (params[2].equalsIgnoreCase("start")) {
-                            String templateName = params[3];
-                            String amountString = params[4];
+                    String server = params[1];
+                    IGameServer cached = gameServerManager.getCached(server);
 
-                            ITemplate template = templateService.getTemplate(templateName);
-
-                            if (template == null) {
-                                player.sendMessage(prefix + "The template » §b" + templateName + " §7doesn't exists!");
-                                return;
-                            }
-                            int amount;
-                            try {
-                                amount = Integer.parseInt(amountString);
-                            } catch (NumberFormatException exception) {
-                                player.sendMessage(prefix + "Please provide a real number (int)");
-                                return;
-                            }
-
-                            if (amount < 0) {
-                                player.sendMessage(prefix + "You cannot start " + amountString + " servers!");
-                                return;
-                            }
-                            int size = gameServerManager.getGameServersByTemplate(template).size();
-                            if ((size + amount) >= template.getMaxServerCount()) {
-                                player.sendMessage(prefix + "Cannot start the servers, the maximal servers online count of » §b" + template.getMaxServerCount()
-                                    + " §7was reached! (With new servers » §b" + (size + amount) + "§/)");
-                                return;
-                            }
-
-                            Optional<IWrapper> optionalWrapperClient = wrapperManager.getWrappers().stream().findAny();
-
-                            if (!optionalWrapperClient.isPresent()) {
-                                player.sendMessage(prefix + "No available Wrapper connected!");
-                                return;
-                            }
-
-                            IWrapper wrapperClient = optionalWrapperClient.get();
-
-                            for (int i = 0; i < amount; i++) {
-                                player.sendMessage(prefix + "Requesting start...");
-
-
-                                IGameServer iGameServer = IGameServer.create();
-                                iGameServer.setName(template.getName() + "-" + searchForAvailableID(template));
-                                iGameServer.applyTemplate(template); //Memory, motd, maxplayers
-                                iGameServer.newSnowflake();
-                                iGameServer.setStartedTime(System.currentTimeMillis());
-                                iGameServer.setPort(-1);
-                                iGameServer.setVisible(false);
-                                iGameServer.setStatus(GameServerStatus.PENDING);
-
-                                wrapperClient.startServer(iGameServer);
-                            }
-                            player.sendMessage(prefix + "§aSuccessfully requested start for » §b" + amount + " §7servers!");
-                        } else {
-                            player.sendMessage(prefix + "----[Cloud-Gameserver]----");
-                            player.sendMessage(prefix + "Use §3/cloud gameserver stop/shutdown <server> §7to shutdown a gameserver");
-                            player.sendMessage(prefix + "Use §3/cloud gameserver start <template> §7to start a new gameserver");
-                            player.sendMessage(prefix + "Use §3/cloud gameserver start <server> <amount> §7to start multiple new gameservers at once");
-                            player.sendMessage(prefix + "Use §3/cloud gameserver copy <server> worlds/entire §7to copy the temproy file of a server into its template");
-                            player.sendMessage(prefix + "Use §3/cloud gameserver info <server> §7to get information of a gameserver");
-                            player.sendMessage(prefix + "Use §3/cloud gameserver execute <server> <command> §7to execuet a command on a gameserver");
-                            player.sendMessage(prefix + "----[/Cloud-Gameserver]----");
-                        }
-                    } else {
-                        sendHelp(player);
-                    }
-                }
-                if (params[1].equalsIgnoreCase("gameserver")) {
-                    String gameserverName = params[3];
-                    IGameServer gameServer = gameServerManager.getCached(gameserverName);
-
-                    if (gameServer == null) {
-                        player.sendMessage(prefix + "The gameserver » §b" + gameserverName + " §7isn't online!");
+                    if (cached == null) {
+                        player.sendMessage(prefix + "§cThere is no online GameServer with name '§e" + server + "§c'!");
                         return;
                     }
 
                     StringBuilder content = new StringBuilder();
-                    for (int i = 4; i < params.length; i++) {
+                    for (int i = 2; i < params.length; i++) {
                         content.append(params[i]).append(" ");
                     }
                     content = new StringBuilder(content.substring(0, content.length() - 1));
                     player.sendMessage(prefix + "Processing...");
-                    gameServer.sendPacket(new GameServerExecuteCommandPacket(content.toString()));
-                    player.sendMessage(prefix + "§aSuccessfully executed command » §b" + content + " §7on server » §b" + gameServer.getName() + "§7!");
-                } else if (params[1].equalsIgnoreCase("player")) {
-                    String targetPlayerName = params[2];
-                    ICloudPlayer targetPlayer = cloudPlayerManager.getCached(targetPlayerName);
-                    if (targetPlayer == null) {
-                        player.sendMessage(prefix + "The player » §b" + targetPlayerName + " §7isn't online!");
-                        return;
-                    }
-                    if (!(params[3].equalsIgnoreCase("kick") || params[3].equalsIgnoreCase("send") || params[3].equalsIgnoreCase("message"))) {
-                        player.sendMessage(prefix + "----[Cloud-Player]----");
-                        player.sendMessage(prefix + "Use §3/cloud player <player> message <message...> §7to send a message to a player");
-                        player.sendMessage(prefix + "Use §3/cloud player <player> kick <message...> §7to kick a player with a message");
-                        player.sendMessage(prefix + "Use §3/cloud player <player> send <server> §7to send a player to a gameserver");
-                        player.sendMessage(prefix + "----[/Cloud-Player]----");
-                        return;
-                    }
-                    StringBuilder content = new StringBuilder();
-                    for (int i = 4; i < params.length; i++) {
-                        content.append(params[i]).append(" ");
-                    }
-                    content = new StringBuilder(content.substring(0, content.length() - 1));
-
-                    if (params[3].equalsIgnoreCase("kick")) {
-                        player.sendMessage(prefix + "Kicking...");
-                        targetPlayer.kick(content.toString());
-                        player.sendMessage(prefix + "§aSuccessfully §7kicked player » §b" + targetPlayer.getName() + " §7for » §b" + content + "§7!");
-                    } else if (params[3].equalsIgnoreCase("message")) {
-                        player.sendMessage(prefix + "Messaging...");
-                        targetPlayer.sendMessage("§7" + player.getName() + " -> you » " + content);
-                        player.sendMessage(prefix + "§aSuccessfully §7messaged player » §b" + targetPlayer.getName() + "! (message » §b" + content + "§7)");
-                    } else if (params[3].equalsIgnoreCase("send")) {
-                        IGameServer gameServer = gameServerManager.getCached(content.toString());
-                        if (gameServer == null) {
-                            player.sendMessage(prefix + "The gameserver » §b" + content + " §7isn't online!");
-                            return;
-                        }
-
-                        player.sendMessage("Sending...");
-                        targetPlayer.sendMessage(prefix + "Sending to » §b" + gameServer.getName() + " §7by » §b" + player.getName());
-                        targetPlayer.sendTo(gameServer);
-                        player.sendMessage(prefix + "§aSuccessfully §7sent player » §b" + targetPlayer.getName() + " §7to server » §b" + gameServer.getName() + "§7!");
-                    }
+                    cached.sendPacket(new GameServerExecuteCommandPacket(content.toString()));
+                    player.sendMessage(prefix + "§aSuccessfully executed command » §b" + content + " §7on server » §b" + cached.getName() + "§7!");
                 } else {
                     sendHelp(player);
                 }
-            } else {
-                sendHelp(player);
-            }*/
+            }
         } else {
             player.sendMessage(prefix + "§cYou don't have the required permission for that!");
         }
@@ -323,20 +247,15 @@ public class CloudCommand implements CommandListener {
 
     private void sendHelp(ICloudPlayer player) {
         player.sendMessage(prefix + "----[Cloud]----");
-        player.sendMessage(prefix + "Use §b/cloud stop/shutdown <server> §7to shutdown a gameserver");
-        player.sendMessage(prefix + "Use §b/cloud start <template> §7to start a new gameserver");
-        player.sendMessage(prefix + "Use §b/cloud start <server> <amount> §7to start multiple new gameservers at once");
-        player.sendMessage(prefix + "Use §b/cloud info <server> §7to get information of a gameserver");
-        player.sendMessage(prefix + "Use §b/cloud copy <server> worlds/entire §7to copy the temporary files of a server into its template");
-        player.sendMessage(prefix + "Use §b/cloud execute <server> <command> §7to execute a command on a gameserver");
-        //player.sendMessage(prefix + "Use §b/cloud player <player> message <message...> §7to send a message to a player");
-        //player.sendMessage(prefix + "Use §b/cloud player <player> kick <message...> §7to kick a player with a message");
-        //player.sendMessage(prefix + "Use §b/cloud player <player> send <server> §7to send a player to a gameserver");
+        player.sendMessage(prefix + "§8» §b/cloud stop/shutdown <server> §7Shuts down a gameserver");
+        player.sendMessage(prefix + "§8» §b/cloud reload/rl §7Reloads the cloud");
+        player.sendMessage(prefix + "§8» §b/cloud start <template> §7Starts a new gameserver");
+        player.sendMessage(prefix + "§8» §b/cloud start <server> <amount> §7Starts multiple new gameservers at once");
+        player.sendMessage(prefix + "§8» §b/cloud info (<server>) §7Gets information of a gameserver or of the whole cloud");
+        player.sendMessage(prefix + "§8» §b/cloud list <server/wrapper/template> §7Lists online values");
+        player.sendMessage(prefix + "§8» §b/cloud copy <server> worlds/entire §7Copies the temporary files of a server into its template");
+        player.sendMessage(prefix + "§8» §b/cloud execute <server> <command> §7Executes a command on a gameserver");
         player.sendMessage(prefix + "----[/Cloud]----");
-    }
-
-    private int searchForAvailableID(ITemplate template) throws ExecutionException, InterruptedException {
-        return gameServerManager.getCached(template).size() + 1;
     }
 
 }

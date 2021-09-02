@@ -10,6 +10,7 @@ import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class PropertyCachePacket extends Packet {
             buf.writeUUID(uuid);
             buf.writeInt(simpleProperties.size());
             for (IProperty simpleProperty : simpleProperties) {
-                buf.writeString(JsonData.GSON.toJson(simpleProperty));
+                buf.writeString(PoloHelper.GSON_INSTANCE.toJson(simpleProperty));
             }
         }
     }
@@ -61,7 +62,7 @@ public class PropertyCachePacket extends Packet {
             int properties = buf.readInt();
             List<IProperty> props = new ArrayList<>(properties);
             for (int i1 = 0; i1 < properties; i1++) {
-                props.add(JsonData.GSON.fromJson(buf.readString(), SimpleProperty.class));
+                props.add(PoloHelper.GSON_INSTANCE.fromJson(buf.readString(), SimpleProperty.class));
             }
             this.properties.put(uuid, props);
         }

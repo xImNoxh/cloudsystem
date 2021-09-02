@@ -63,7 +63,9 @@ import java.util.Optional;
         "Max_DE",
         "HttpMarco",
         "Lystx"
-    }
+    },
+    identifier = "@Alpha",
+    discord = "https://discord.gg/HyRnsdkUBA"
 )
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
@@ -310,7 +312,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * Gets an {@link APIVersion} instance of this api
      */
     public APIVersion getVersion() {
-        return getClass().getAnnotation(APIVersion.class);
+        return PoloCloudAPI.class.isAnnotationPresent(APIVersion.class) ? PoloCloudAPI.class.getAnnotation(APIVersion.class) : null;
     }
 
     /**

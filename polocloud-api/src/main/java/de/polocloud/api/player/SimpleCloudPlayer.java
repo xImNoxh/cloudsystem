@@ -11,7 +11,7 @@ import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacke
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.network.request.ResponseHandler;
+import de.polocloud.api.network.request.PacketMessenger;
 import de.polocloud.api.property.IProperty;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         } else {
             UUID requestId = UUID.randomUUID();
             PermissionCheckResponsePacket packet = new PermissionCheckResponsePacket(requestId, permission, this.uniqueId, false);
-            ResponseHandler.register(requestId, completableFuture);
+            PacketMessenger.register(requestId, completableFuture);
             getProxyServer().sendPacket(packet);
         }
         return completableFuture;

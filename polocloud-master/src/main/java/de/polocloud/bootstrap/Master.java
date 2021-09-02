@@ -68,7 +68,6 @@ public class Master extends PoloCloudAPI implements IStartable {
     private IPubSubManager pubSubManager;
     private SimpleNettyServer nettyServer;
     private boolean running = false;
-    private String currentVersion = "N/A";
 
     public Master() {
         super(PoloType.MASTER);
@@ -213,10 +212,9 @@ public class Master extends PoloCloudAPI implements IStartable {
 
     private void registerUncaughtExceptionListener() {
         JsonData jsonData = new JsonData(new File("launcher.json"));
-        this.currentVersion = jsonData.fallback("N/A").getString("version");
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             throwable.printStackTrace();
-            client.getExceptionReportService().reportException(throwable, "master", this.currentVersion);
+            client.getExceptionReportService().reportException(throwable, "master", getVersion().version());
         });
     }
 
@@ -274,6 +272,6 @@ public class Master extends PoloCloudAPI implements IStartable {
     }
 
     public String getCurrentVersion() {
-        return currentVersion;
+        return getVersion().version();
     }
 }

@@ -3,6 +3,7 @@ package de.polocloud.api.property.def;
 import com.google.gson.JsonElement;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.property.IProperty;
+import de.polocloud.api.util.PoloHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,13 +70,13 @@ public class SimpleProperty implements IProperty {
 
     @Override
     public void setValue(Object value) {
-        JsonElement jsonElement = JsonData.GSON.toJsonTree(value);
+        JsonElement jsonElement = PoloHelper.GSON_INSTANCE.toJsonTree(value);
         this.setJsonValue(jsonElement);
     }
 
     @Override
     public <T> T getValue(Class<T> typeClass) {
-        return JsonData.GSON.fromJson(this.value, typeClass);
+        return PoloHelper.GSON_INSTANCE.fromJson(this.value, typeClass);
     }
 
     @Override

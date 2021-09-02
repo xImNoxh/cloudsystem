@@ -1,6 +1,7 @@
 package de.polocloud.api.config;
 
 import com.google.gson.*;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -11,15 +12,6 @@ import java.util.*;
 
 
 public class JsonData {
-
-    /**
-     * Gson constant to (de-)serialize Objects
-     */
-    public static final Gson GSON = (new GsonBuilder())
-            .serializeNulls()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create();
 
     /**
      * The file of this document
@@ -187,7 +179,7 @@ public class JsonData {
                 } else if (value instanceof Character) {
                     this.jsonObject.addProperty(key, (Character) value);
                 } else {
-                    this.jsonObject.add(key, GSON.toJsonTree(value));
+                    this.jsonObject.add(key, PoloHelper.GSON_INSTANCE.toJsonTree(value));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -208,7 +200,7 @@ public class JsonData {
         if (value == null) {
             return this;
         }
-        this.jsonObject = GSON.toJsonTree(value).getAsJsonObject();
+        this.jsonObject = PoloHelper.GSON_INSTANCE.toJsonTree(value).getAsJsonObject();
         return this;
     }
 
@@ -533,7 +525,7 @@ public class JsonData {
             return null;
         }
 
-        return GSON.fromJson(this.jsonObject.get(key), tClass);
+        return PoloHelper.GSON_INSTANCE.fromJson(this.jsonObject.get(key), tClass);
     }
 
     /**
@@ -561,7 +553,7 @@ public class JsonData {
         if (jsonObject == null) {
             return null;
         }
-        return GSON.fromJson(jsonObject, tClass);
+        return PoloHelper.GSON_INSTANCE.fromJson(jsonObject, tClass);
     }
 
 
@@ -602,7 +594,7 @@ public class JsonData {
         if (!this.has(key)) {
             return this.fallbackValue != null ? (T) this.fallbackValue : null;
         }
-        return GSON.fromJson(this.getJsonObject(key), type);
+        return PoloHelper.GSON_INSTANCE.fromJson(this.getJsonObject(key), type);
     }
 
     /**
@@ -619,7 +611,7 @@ public class JsonData {
         List<T> tList = new ArrayList<>();
         JsonArray array = this.getJsonArray(key);
         for (JsonElement jsonElement : array) {
-            tList.add(GSON.fromJson(jsonElement, tClass));
+            tList.add(PoloHelper.GSON_INSTANCE.fromJson(jsonElement, tClass));
         }
         return tList;
     }
@@ -641,7 +633,7 @@ public class JsonData {
         List<T> tList = new ArrayList<>();
         JsonArray array = this.getJsonArray(key);
         for (JsonElement jsonElement : array) {
-            tList.add(GSON.fromJson(jsonElement, wrapperObjectClass));
+            tList.add(PoloHelper.GSON_INSTANCE.fromJson(jsonElement, wrapperObjectClass));
         }
         return tList;
     }
@@ -676,7 +668,7 @@ public class JsonData {
      */
     public void save(OutputStream outputStream) {
         try (PrintWriter w = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), true)) {
-            w.print(GSON.toJson(this.jsonObject));
+            w.print(PoloHelper.GSON_INSTANCE.toJson(this.jsonObject));
             w.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -707,7 +699,7 @@ public class JsonData {
 
     @Override
     public String toString() {
-        return GSON.toJson(this.jsonObject);
+        return PoloHelper.GSON_INSTANCE.toJson(this.jsonObject);
     }
 
 }

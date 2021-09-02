@@ -87,11 +87,18 @@ public class SimpleProtocol implements IProtocol {
     }
 
     @Override
+    public void unregisterPacketHandler(IPacketHandler<?> packetHandler) {
+        List<IPacketHandler<? extends Packet>> list = packetHandlers.containsKey(packetHandler.getPacketClass()) ? packetHandlers.get(packetHandler.getPacketClass()) : new ArrayList<>();
+        list.remove(packetHandler);
+        packetHandlers.put(packetHandler.getPacketClass(), list);
+    }
+
+    @Override
     public void firePacketHandlers(ChannelHandlerContext ctx, Packet packet) {
         if (packetHandlers.containsKey(packet.getClass())) {
 
             List<IPacketHandler<? extends Packet>> iPacketHandlers = packetHandlers.get(packet.getClass());
-            for (IPacketHandler iPacketHandler : iPacketHandlers) {
+            for (IPacketHandler iPacketHandler : new ArrayList<>(iPacketHandlers)) {
                 iPacketHandler.handlePacket(ctx, packet);
             }
         }
