@@ -17,8 +17,6 @@ public class Test {
 
         WrappedObject<UUID> wrappedObject = new WrappedObject<>(UUID.randomUUID());
 
-
-        System.out.println(wrappedObject.unwrap(UUID.class));
-
+        System.out.println(wrappedObject.unwrap());
     }
 }

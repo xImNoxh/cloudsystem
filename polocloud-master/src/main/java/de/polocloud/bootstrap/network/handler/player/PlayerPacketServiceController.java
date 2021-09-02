@@ -8,9 +8,7 @@ import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.api.cloudplayer.APIRequestCloudPlayerPacket;
 import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecutePacket;
 
-import de.polocloud.api.network.packets.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.bootstrap.config.MasterConfig;
@@ -23,18 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public abstract class PlayerPacketServiceController {
-
-    public void executeCommand(ICloudPlayerManager cloudPlayerManager, ICommandRunner command, UUID uuid, String[] args) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String arg : args) {
-            stringBuilder.append(arg).append(" ");
-        }
-        PoloCloudAPI.getInstance().getCommandManager().runCommand(stringBuilder.toString(), cloudPlayerManager.getCached(uuid));
-    }
 
     public List<ICloudPlayer> getICloudPlayerByPacketResponse(ICloudPlayerManager manager, APIRequestCloudPlayerPacket.Action action, String value)
         throws ExecutionException, InterruptedException {
@@ -62,9 +50,6 @@ public abstract class PlayerPacketServiceController {
 
     }
 
-    public List<ICommandRunner> getPossibleCommand(String[] args) {
-        return getCachedCommands().stream().filter(key -> isCommandMatch(key.getCommand().name(), key.getCommand().aliases(), args[0])).collect(Collectors.toList());
-    }
 
     private List<ICommandRunner> getCachedCommands() {
         return PoloCloudAPI.getInstance().getCommandManager().getCommands();
@@ -72,10 +57,6 @@ public abstract class PlayerPacketServiceController {
 
     private boolean isCommandMatch(String key, String[] keys, String input) {
         return key.equalsIgnoreCase(input) || Arrays.stream(keys).anyMatch(it -> it.equalsIgnoreCase(input));
-    }
-
-    public void executeICloudPlayerCommand(GameServerCloudCommandExecutePacket packet, BiConsumer<List<ICommandRunner>, String[]> handling) {
-        handling.accept(getPossibleCommand(packet.getCommand().split(" ")), packet.getCommand().split(" "));
     }
 
     public APIResponseCloudPlayerPacket.Type getCloudPlayerTypeByPacketResponse(APIRequestCloudPlayerPacket.Action action) {
@@ -105,8 +86,4 @@ public abstract class PlayerPacketServiceController {
             PoloLogger.print(LogLevel.INFO, "Player " + ConsoleColors.CYAN + cloudPlayer.getName() + ConsoleColors.GRAY + " is now disconnected!");
     }
 
-    public void sendMasterPlayerRequestJoinResponsePacket(ChannelHandlerContext ctx, UUID uuid, String serviceName, long snowflake) {
-        ctx.writeAndFlush(new MasterPlayerRequestJoinResponsePacket(uuid, serviceName, snowflake));
-    }
-    
 }

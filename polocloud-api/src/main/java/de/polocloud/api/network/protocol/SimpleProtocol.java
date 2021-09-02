@@ -24,7 +24,6 @@ public class SimpleProtocol implements IProtocol {
     @Named(value = "setting_protocol_threadSize")
     private int threadSize = 8;
 
-
     /**
      * All registered {@link IPacketHandler}s
      */

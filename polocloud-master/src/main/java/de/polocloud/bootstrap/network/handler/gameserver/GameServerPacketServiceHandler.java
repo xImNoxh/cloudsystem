@@ -86,7 +86,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
 
         new SimplePacketHandler<>(MasterStopServerPacket.class, packet -> {
 
-
             IGameServer gameServer = packet.getGameServer();
             IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());
             if (gameServer != null) {

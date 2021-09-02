@@ -11,6 +11,8 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.messaging.IMessageChannel;
+import de.polocloud.api.messaging.IMessageManager;
 import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.other.PingPacket;
@@ -23,7 +25,9 @@ import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.WrappedObject;
 import de.polocloud.api.util.system.ressources.IResourceConverter;
 import de.polocloud.api.util.system.ressources.IResourceProvider;
 import de.polocloud.api.wrapper.IWrapperManager;
@@ -32,6 +36,7 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -68,7 +73,6 @@ public class CloudCommand implements CommandListener {
 
         if (player.hasPermission("cloud.use")) {
 
-
             if (params.length == 1) {
                 if (params[0].equalsIgnoreCase("info")) {
                     APIVersion version = PoloCloudAPI.getInstance().getVersion();
@@ -99,8 +103,8 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage(prefix + "§7Used memory §8: §3" + resourceConverter.convertLongToSize(resourceProvider.getSystemUsedMemory()));
                     player.sendMessage(prefix + "§7Free memory §8: §3" + resourceConverter.convertLongToSize(resourceProvider.getSystemFreeMemory()));
                     player.sendMessage(prefix + "§7Physical Memory §8: §3" + resourceConverter.convertLongToSize(resourceProvider.getSystemPhysicalMemory()));
-                    player.sendMessage(prefix + "§7System CPU §8: §3" + resourceProvider.getSystemCpuLoad() + "%");
-                    player.sendMessage(prefix + "§7Process CPU §8: §3" + resourceProvider.getProcessCpuLoad() + "%");
+                    player.sendMessage(prefix + "§7System CPU §8: §3" + resourceConverter.roundDouble(resourceProvider.getSystemCpuLoad()) + "%");
+                    player.sendMessage(prefix + "§7Process CPU §8: §3" + resourceConverter.roundDouble(resourceProvider.getProcessCpuLoad()) + "%");
                     player.sendMessage(prefix + "§7Virutal Cores §8: §3" + resourceProvider.getSystemProcessors());
                     player.sendMessage("§8");
 

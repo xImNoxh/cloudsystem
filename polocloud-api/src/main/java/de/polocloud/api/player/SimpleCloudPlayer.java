@@ -4,6 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
 import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
 import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
@@ -14,6 +15,7 @@ import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.request.PacketMessenger;
 import de.polocloud.api.property.IProperty;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -87,13 +89,28 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
-    public void sendToFallback() {
-        IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(this);
+    public void sendToFallbackExcept(String... except) {
+        IGameServer fallback = getFallbackRecursive(except);
         if (fallback == null) {
-            kick("§cThe server you were on went down, but no fallback server was found!");
+            this.kick("§cThe server you were on went down, but no fallback server was found!");
             return;
         }
+        System.out.println("Fallback TO -> " + fallback.getName());
         this.sendTo(fallback);
+    }
+
+    private IGameServer getFallbackRecursive(String... except) {
+
+        IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(this);
+        if (fallback != null && Arrays.asList(except).contains(fallback.getName())) {
+            return getFallbackRecursive(except);
+        }
+        return fallback;
+    }
+
+    @Override
+    public void sendToFallback() {
+        this.sendToFallbackExcept();
     }
 
     @Override

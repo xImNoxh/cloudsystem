@@ -7,8 +7,8 @@ import de.polocloud.api.network.packets.api.cloudplayer.APIRequestCloudPlayerPac
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
-import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecutePacket;
 
+import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
@@ -36,11 +36,6 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
     private MasterPubSubManager pubSubManager;
 
     public PlayerPacketHandler() {
-
-        new SimplePacketHandler<>(GameServerCloudCommandExecutePacket.class, packet ->
-            executeICloudPlayerCommand(packet, (cloudCommands, strings) -> getPossibleCommand(strings).forEach(it ->
-                executeCommand(playerManager, it, packet.getUuid(), strings))));
-
         new SimplePacketHandler<APIRequestCloudPlayerPacket>(APIRequestCloudPlayerPacket.class, (ctx, packet) ->
             sendICloudPlayerAPIResponse(playerManager, ctx, packet));
 
@@ -51,6 +46,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
         new SimplePacketHandler<>(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(ProxyTablistUpdatePacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(MasterPlayerSendToServerPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
+        new SimplePacketHandler<>(GameServerExecuteCommandPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
 
 
         //TODO CALL SWITCH EVENT PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));

@@ -231,7 +231,7 @@ public class GameServerCommand implements CommandListener {
                 }
 
                 StringBuilder command = new StringBuilder();
-                for (int i = 3; i < args.length; i++) {
+                for (int i = 2; i < args.length; i++) {
                     command.append(args[i]).append(" ");
                 }
                 command = new StringBuilder(command.substring(0, command.length() - 1));

@@ -79,6 +79,12 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor 
     void sendToFallback();
 
     /**
+     * Sends this player to a fallback
+     * Except servers
+     */
+    void sendToFallbackExcept(String... except);
+
+    /**
      * Gets a list of all {@link IProperty} this player has
      *
      * @return list of properties

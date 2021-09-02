@@ -53,20 +53,12 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler
     public void handle(ServerKickEvent event) {
-        SimpleCloudPlayer cloudPlayer = (SimpleCloudPlayer) PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
-        if (BaseComponent.toPlainText(event.getKickReasonComponent()).equalsIgnoreCase("Server closed")) {
-            event.setCancelled(true);
-
-            IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(cloudPlayer);
-            if (fallback == null || ProxyServer.getInstance().getServerInfo(fallback.getName()) == null) {
-                TextComponent textComponent = new TextComponent("§8[§bCloudPlugin§8] §cCouldn't find a suitable fallback to connect you to!");
-                event.getPlayer().disconnect(textComponent);
-                return;
-            }
-            event.setCancelled(false);
-            event.setCancelServer(ProxyServer.getInstance().getServerInfo(fallback.getName()));
-
+        ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
+        if (cloudPlayer == null) {
+            event.getPlayer().disconnect("§8[§bCloudPlugin§8] §cSome internal Cache-Error occured!");
+            return;
         }
+        cloudPlayer.sendToFallback();
     }
 
     @EventHandler

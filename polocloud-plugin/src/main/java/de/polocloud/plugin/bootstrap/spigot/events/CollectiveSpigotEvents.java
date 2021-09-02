@@ -1,8 +1,6 @@
 package de.polocloud.plugin.bootstrap.spigot.events;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.network.packets.gameserver.GameServerCloudCommandExecutePacket;
-import de.polocloud.api.network.packets.gameserver.GameServerControlPlayerPacket;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -55,7 +53,6 @@ public class CollectiveSpigotEvents implements Listener {
             return;
         }
 
-        networkClient.sendPacket(new GameServerControlPlayerPacket(player.getUniqueId()));
     }
 
     @EventHandler
@@ -64,7 +61,6 @@ public class CollectiveSpigotEvents implements Listener {
         try {
             if (PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getMessage(), PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName()))) {
                 event.setCancelled(true);
-                networkClient.sendPacket(new GameServerCloudCommandExecutePacket(event.getPlayer().getUniqueId(), event.getMessage().substring(1)));
             } else {
                 event.setCancelled(false);
             }
