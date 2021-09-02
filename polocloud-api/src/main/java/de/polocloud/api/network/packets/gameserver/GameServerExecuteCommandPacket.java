@@ -10,22 +10,27 @@ import java.io.IOException;
 public class GameServerExecuteCommandPacket extends Packet {
 
     private String command;
+    private String server;
 
-    public GameServerExecuteCommandPacket() {}
-
-    public GameServerExecuteCommandPacket(String command) {
+    public GameServerExecuteCommandPacket(String command, String server) {
         this.command = command;
+        this.server = server;
     }
-
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
         buf.writeString(command);
+        buf.writeString(server);
     }
 
     @Override
     public void read(IPacketBuffer buf) throws IOException {
         command = buf.readString();
+        server = buf.readString();
+    }
+
+    public String getServer() {
+        return server;
     }
 
     public String getCommand() {

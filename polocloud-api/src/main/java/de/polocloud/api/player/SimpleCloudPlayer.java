@@ -6,6 +6,7 @@ import de.polocloud.api.bridge.PoloPluginBungeeBridge;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
 import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
@@ -14,14 +15,18 @@ import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.request.PacketMessenger;
 import de.polocloud.api.property.IProperty;
+import de.polocloud.api.template.base.ITemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class SimpleCloudPlayer implements ICloudPlayer {
 
@@ -95,13 +100,20 @@ public class SimpleCloudPlayer implements ICloudPlayer {
             this.kick("§cThe server you were on went down, but no fallback server was found!");
             return;
         }
-        System.out.println("Fallback TO -> " + fallback.getName());
         this.sendTo(fallback);
     }
 
     private IGameServer getFallbackRecursive(String... except) {
 
-        IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(this);
+        List<IFallback> fallbacks = PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks();
+        if (fallbacks.size() == 1) {
+            return null;
+        }
+        IFallback fb = fallbacks.get(ThreadLocalRandom.current().nextInt(fallbacks.size()));
+        ITemplate iTemplate = PoloCloudAPI.getInstance().getTemplateManager().getTemplate(fb.getTemplateName());
+        List<IGameServer> gameServers = PoloCloudAPI.getInstance().getGameServerManager().getCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.RUNNING)).collect(Collectors.toList());
+        IGameServer fallback = gameServers.get(ThreadLocalRandom.current().nextInt(gameServers.size()));
+
         if (fallback != null && Arrays.asList(except).contains(fallback.getName())) {
             return getFallbackRecursive(except);
         }

@@ -48,7 +48,6 @@ public class BungeeProperties extends ServiceProperties {
             "    pvp.md-5.net: pvp",
             "  ping_passthrough: false",
             "  priorities:",
-            "  - lobby",
             "  bind_local_address: true",
             "  host: 0.0.0.0:" + port,
             "  max_players: " + maxplayers,

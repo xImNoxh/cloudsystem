@@ -53,7 +53,11 @@ public class NetworkPluginRegister {
 
         new SimplePacketRegister<MasterPlayerKickPacket>(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().kickPlayer(packet.getUuid(), packet.getMessage()));
 
-        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().executeCommand(packet.getCommand()));
+        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> {
+            if (PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null && PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName().equalsIgnoreCase(packet.getServer())) {
+                PoloCloudAPI.getInstance().getPoloBridge().executeCommand(packet.getCommand());
+            }
+        });
 
         new SimplePacketRegister<APIResponseCloudPlayerPacket>(APIResponseCloudPlayerPacket.class, packet -> {
             UUID requestId = packet.getRequestId();

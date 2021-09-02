@@ -236,7 +236,7 @@ public class GameServerCommand implements CommandListener {
                 }
                 command = new StringBuilder(command.substring(0, command.length() - 1));
                 PoloLogger.print(LogLevel.INFO, "Processing...");
-                gameServer.sendPacket(new GameServerExecuteCommandPacket(command.toString()));
+                gameServer.sendPacket(new GameServerExecuteCommandPacket(command.toString(), gameServer.getName()));
                 PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully executed command » " + ConsoleColors.LIGHT_BLUE + command + ConsoleColors.GRAY + " on server » " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "!");
 
             }

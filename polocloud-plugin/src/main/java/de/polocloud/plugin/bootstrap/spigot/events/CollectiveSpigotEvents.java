@@ -1,6 +1,10 @@
 package de.polocloud.plugin.bootstrap.spigot.events;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.player.SimpleCloudPlayer;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
@@ -53,6 +57,15 @@ public class CollectiveSpigotEvents implements Listener {
             return;
         }
 
+        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
+        if (thisService != null) {
+            ICloudPlayerManager playerManager = PoloCloudAPI.getInstance().getCloudPlayerManager();
+            ICloudPlayer cached = playerManager.getCached(player.getName());
+            if (cached != null) {
+                ((SimpleCloudPlayer)cached).setMinecraftServer(thisService.getName());
+                cached.update();
+            }
+        }
     }
 
     @EventHandler

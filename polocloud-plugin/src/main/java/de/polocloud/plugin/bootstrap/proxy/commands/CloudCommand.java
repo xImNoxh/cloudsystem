@@ -238,7 +238,7 @@ public class CloudCommand implements CommandListener {
                     }
                     content = new StringBuilder(content.substring(0, content.length() - 1));
                     player.sendMessage(prefix + "Processing...");
-                    cached.sendPacket(new GameServerExecuteCommandPacket(content.toString()));
+                    PoloCloudAPI.getInstance().sendPacket(new GameServerExecuteCommandPacket(content.toString(), cached.getName()));
                     player.sendMessage(prefix + "§aSuccessfully executed command » §b" + content + " §7on server » §b" + cached.getName() + "§7!");
                 } else {
                     sendHelp(player);
