@@ -54,13 +54,6 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor 
     void sendTabList(String header, String footer);
 
     /**
-     * Checks if this player has a given permission
-     *
-     * @param permission the permission
-     */
-    Future<Boolean> hasPermissions(String permission);
-
-    /**
      * Updates this player all over the network
      */
     void update();

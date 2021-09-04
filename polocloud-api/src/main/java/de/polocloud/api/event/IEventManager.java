@@ -1,6 +1,6 @@
 package de.polocloud.api.event;
 
-import de.polocloud.api.event.base.IEvent;
+import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.IEventHandler;
 
@@ -28,14 +28,14 @@ public interface IEventManager {
      * @param handler the handler
      * @param eventClass the event class
      */
-    <E extends IEvent> void registerHandler(Class<E> eventClass, IEventHandler<E> handler);
+    <E extends CloudEvent> void registerHandler(Class<E> eventClass, IEventHandler<E> handler);
 
     /**
      * Unregisters an {@link IEventHandler}
      *
      * @param handlerClass the handler class
      */
-    <E extends IEvent> void unregisterHandler(Class<E> eventClass, Class<? extends IEventHandler<E>> handlerClass);
+    <E extends CloudEvent> void unregisterHandler(Class<E> eventClass, Class<? extends IEventHandler<E>> handlerClass);
 
     /**
      * Calls an Event with the driver
@@ -48,7 +48,7 @@ public interface IEventManager {
      *
      * @param event the event to call
      */
-    boolean fireEvent(IEvent event);
+    void fireEvent(CloudEvent event);
 
     /**
      * Calls an event and fires the consumer after its called
@@ -57,5 +57,5 @@ public interface IEventManager {
      * @param callback the callback
      * @param <E> the generic
      */
-    <E extends IEvent> void fireEvent(E event, Consumer<E> callback);
+    <E extends CloudEvent> void fireEvent(E event, Consumer<E> callback);
 }

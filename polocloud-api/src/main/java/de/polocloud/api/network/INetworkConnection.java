@@ -5,21 +5,12 @@ import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
-import de.polocloud.api.network.request.IRequestManager;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.net.InetSocketAddress;
 
 public interface INetworkConnection extends IStartable, ITerminatable, IPacketSender {
-
-    /**
-     * The {@link IRequestManager} instance to manage all {@link de.polocloud.api.network.request.base.future.PoloFuture}s
-     * for API-Requests and responses
-     *
-     * @return the manager instance
-     */
-    IRequestManager getRequestManager();
 
     /**
      * The {@link IProtocol} instance of this connection

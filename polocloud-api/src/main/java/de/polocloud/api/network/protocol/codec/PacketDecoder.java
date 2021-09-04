@@ -1,5 +1,6 @@
 package de.polocloud.api.network.protocol.codec;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.buffer.SimplePacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -32,6 +33,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
         }
 
         packet.setSnowflake(snowflake);
+        packet.setConnection(PoloCloudAPI.getInstance() == null ? null : PoloCloudAPI.getInstance().getConnection());
 
         try {
             packet.read(buf);

@@ -7,16 +7,15 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.messaging.IMessageChannel;
-import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.packets.api.other.CacheRequestPacket;
-import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.CacheRequestPacket;
+import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.base.response.def.Response;
+import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
-import de.polocloud.api.network.request.base.component.PoloComponent;
-import de.polocloud.api.network.request.base.future.PoloFuture;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
@@ -28,6 +27,7 @@ import de.polocloud.plugin.protocol.property.GameServerProperty;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class CloudPlugin extends PoloCloudAPI {
 
@@ -102,13 +102,26 @@ public class CloudPlugin extends PoloCloudAPI {
         this.networkClient.connect(bootstrap.getPort(), nettyClient -> {
             System.out.println("[CloudPlugin] " + getName() + " successfully connected to CloudSystem! (" + nettyClient.getConnectedAddress() + ")");
 
-            PoloFuture<String> query = PoloComponent.request(String.class, "polo::api::service::request::register").query();
-            String response = query.timeOut(80L, "The Handshake-Request seemed to timed out!").pullValue();
+            IResponse handshake =
+                PacketMessenger
+                    .newInstance()
+                    .blocking()
+                    .timeOutAfter(TimeUnit.SECONDS, 4L)
+                    .target(PoloType.MASTER)
+                    .orElse(new Response("handshake", false))
+                    .send("server-handshake", new JsonData("name", getName()));
 
-            if (!query.isSuccess()) {
-                System.out.println("[CloudPlugin] Couldn't get Handshake-Response within 80 ticks...");
+            boolean hs = handshake.get("handshake").getAsBoolean();
+
+            if (!hs) {
+                System.out.println("=====================");
+                System.out.println("[CloudPlugin] Couldn't get Authentication-Response within 4 Seconds...");
+                System.out.println("[CloudPlugin] This does not have to be bad! Something bad could have happened while reading or writing the HandShake-Request!");
+                System.out.println("[CloudPlugin] But if things start to not work and errors occur, then this is the reason why most of the time!");
+                System.out.println("[CloudPlugin] You should report this error anyways because it should not appear");
+                System.out.println("=====================");
             } else {
-                System.out.println("[CloudPlugin] " + response);
+                System.out.println("[CloudPlugin] Authenticated this Server!");
             }
         });
     }

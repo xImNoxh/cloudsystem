@@ -5,7 +5,6 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
-import de.polocloud.api.network.request.base.future.PoloFuture;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.ex.NoWrapperFoundException;
@@ -29,17 +28,6 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     @Override
     public void setCached(List<IGameServer> cachedObjects) {
         this.cachedObjects = cachedObjects;
-    }
-
-    //TODO
-    @Override
-    public PoloFuture<IGameServer> get(String name) {
-        return null;
-    }
-    //TODO
-    @Override
-    public PoloFuture<IGameServer> get(long snowflake) {
-        return null;
     }
 
     @Override

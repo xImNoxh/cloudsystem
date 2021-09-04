@@ -2,9 +2,14 @@ package de.polocloud.api.template;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleTemplate implements ITemplate {
 
@@ -95,6 +100,11 @@ public class SimpleTemplate implements ITemplate {
 
         PoloCloudAPI.getInstance().getPubSubManager().publish("polo:event:templateMaintenanceUpdate", name);
         PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerMaintenanceUpdateEvent(this));
+    }
+
+    @Override
+    public List<IGameServer> getServers() {
+        return PoloCloudAPI.getInstance().getGameServerManager().stream().filter(gameServer -> gameServer.getTemplate() != null && gameServer.getTemplate().getName().equalsIgnoreCase(this.name)).collect(Collectors.toList());
     }
 
     @Override

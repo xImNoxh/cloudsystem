@@ -21,12 +21,11 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
-import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
-import de.polocloud.api.network.packets.api.other.PropertyCachePacket;
+import de.polocloud.api.network.packets.api.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.PropertyCachePacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.server.SimpleNettyServer;
-import de.polocloud.api.property.IProperty;
-import de.polocloud.api.property.def.SimpleCachedPropertyManager;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
@@ -49,7 +48,6 @@ import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class Master extends PoloCloudAPI implements IStartable {
 
@@ -195,7 +193,11 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.running = false;
         boolean terminate = this.nettyServer.terminate();
 
-        this.moduleService.shutdown(() -> {
+        for (ICloudPlayer cloudPlayer : cloudPlayerManager) {
+            cloudPlayer.kick("§cThe Network got shut down!");
+        }
+
+        moduleService.shutdown(() -> {
             for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
                 gameServer.terminate();
             }
@@ -207,6 +209,7 @@ public class Master extends PoloCloudAPI implements IStartable {
                 System.exit(0);
             }, 40L));
         });
+
         return terminate;
     }
 

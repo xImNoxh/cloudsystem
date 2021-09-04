@@ -15,7 +15,6 @@ public class ForwardingPacket extends Packet {
     private Packet packet;
 
     public ForwardingPacket() {
-        this(PoloType.WRAPPER, "none", null);
     }
 
     public ForwardingPacket(PoloType type, String receiver, Packet packet) {

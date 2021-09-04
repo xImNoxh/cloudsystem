@@ -152,9 +152,11 @@ public class ModuleService implements IModuleHolder {
      * Disables all modules
      */
     public void shutdown(Runnable runnable) {
+
         if (this.modules.isEmpty()) {
             runnable.run();
         }
+
         int count = this.modules.size();
         for (CloudModule driverModule : this.modules) {
 

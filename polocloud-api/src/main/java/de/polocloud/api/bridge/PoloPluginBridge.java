@@ -16,6 +16,14 @@ public interface PoloPluginBridge {
     boolean hasPermission(UUID uniqueId, String permission);
 
     /**
+     * Checks if a player with a given {@link UUID} is online
+     *
+     * @param uniqueId the uuid of the player
+     * @return if online
+     */
+    boolean isPlayerOnline(UUID uniqueId);
+
+    /**
      * Sends a message to a player with a given {@link UUID}
      *
      * @param uniqueId the uuid

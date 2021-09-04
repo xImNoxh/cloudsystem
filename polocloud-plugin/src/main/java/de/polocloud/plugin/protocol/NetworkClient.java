@@ -12,7 +12,6 @@ import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
-import de.polocloud.api.network.request.IRequestManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
@@ -101,10 +100,6 @@ public class NetworkClient implements INetworkConnection, IEventHandler<ChannelA
         this.client.sendPacket(packet);
     }
 
-    @Override
-    public IRequestManager getRequestManager() {
-        return this.client.getRequestManager();
-    }
 
     @Override
     public IProtocol getProtocol() {

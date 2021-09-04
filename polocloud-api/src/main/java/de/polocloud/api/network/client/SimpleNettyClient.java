@@ -12,8 +12,7 @@ import de.polocloud.api.network.protocol.codec.PacketEncoder;
 import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthDeserializer;
 import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthSerializer;
 import de.polocloud.api.network.protocol.packet.handler.*;
-import de.polocloud.api.network.request.SimpleRequestManager;
-import de.polocloud.api.network.request.IRequestManager;
+
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.PoloHelper;
 import io.netty.bootstrap.Bootstrap;
@@ -43,7 +42,6 @@ public class SimpleNettyClient implements INettyClient{
 
     private ChannelFuture channelFuture;
     private Channel channel;
-    private final IRequestManager requestManager = new SimpleRequestManager(this);
     private ChannelHandlerContext ctx;
 
     public SimpleNettyClient() {
@@ -134,11 +132,6 @@ public class SimpleNettyClient implements INettyClient{
     @Override
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
-    }
-
-    @Override
-    public IRequestManager getRequestManager() {
-        return this.requestManager;
     }
 
     @Override

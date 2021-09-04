@@ -19,11 +19,6 @@ import java.util.Map;
 
 public class SimpleProtocol implements IProtocol {
 
-
-    @Inject
-    @Named(value = "setting_protocol_threadSize")
-    private int threadSize = 8;
-
     /**
      * All registered {@link IPacketHandler}s
      */
@@ -40,7 +35,7 @@ public class SimpleProtocol implements IProtocol {
                 switch (obj.getType()) {
                     case WRAPPER:
                         if (PoloCloudAPI.getInstance().getType() == PoloType.WRAPPER) {
-                            PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, forwardingPacket);
+                            PoloCloudAPI.getInstance().receivePacket(forwardingPacket);
                             return;
                         }
                         IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
@@ -49,7 +44,7 @@ public class SimpleProtocol implements IProtocol {
                         break;
                     case MASTER:
                         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-                            PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, forwardingPacket);
+                            PoloCloudAPI.getInstance().receivePacket(forwardingPacket);
                             return;
                         } else {
                             PoloCloudAPI.getInstance().sendPacket(obj);
@@ -59,7 +54,7 @@ public class SimpleProtocol implements IProtocol {
                     case PLUGIN_PROXY:
                     case GENERAL_GAMESERVER:
                         if (PoloCloudAPI.getInstance().getType().isPlugin()) {
-                            PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, forwardingPacket);
+                            PoloCloudAPI.getInstance().receivePacket(forwardingPacket);
                             return;
                         }
                         IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();

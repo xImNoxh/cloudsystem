@@ -14,6 +14,7 @@ import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -163,15 +164,23 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public IWrapper getWrapper() {
-        for (String wrapperName : getTemplate().getWrapperNames()) {
-            IWrapper get = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(wrapperName);
-            if (get != null) {
-                return get;
-            }
+        for (IWrapper allWrapper : getAllWrappers()) {
+            return allWrapper;
         }
         return null;
     }
 
+    @Override
+    public IWrapper[] getAllWrappers() {
+        List<IWrapper> wrappers = new ArrayList<>();
+        for (String wrapperName : getTemplate().getWrapperNames()) {
+            IWrapper get = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(wrapperName);
+            if (get != null) {
+                wrappers.add(get);
+            }
+        }
+        return wrappers.toArray(new IWrapper[0]);
+    }
 
     @Override
     public void setName(String name) {

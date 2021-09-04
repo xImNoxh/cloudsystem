@@ -13,6 +13,7 @@ import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePack
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperRequestShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.LinkedList;
@@ -46,11 +47,12 @@ public class SimpleWrapper implements IWrapper {
 
     @Override
     public void sendPacket(Packet packet) {
+        packet = new ForwardingPacket(PoloType.WRAPPER, this.name, packet);
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
             PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, packet);
             return;
         }
-        PoloCloudAPI.getInstance().getConnection().sendPacket(new ForwardingPacket(PoloType.WRAPPER, this.name, packet));
+        PoloCloudAPI.getInstance().getConnection().sendPacket(packet);
     }
 
     @Override
@@ -99,7 +101,6 @@ public class SimpleWrapper implements IWrapper {
         }
 
         PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
-        PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName()));
         PoloCloudAPI.getInstance().getPortManager().removePort(gameServer.getPort());
 
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {

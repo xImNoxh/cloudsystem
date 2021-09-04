@@ -20,6 +20,12 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
     @Override
     public synchronized void onLoad() {
         this.bridge = new PoloPluginBridge() {
+
+            @Override
+            public boolean isPlayerOnline(UUID uniqueId) {
+                return Bukkit.getPlayer(uniqueId) != null;
+            }
+
             @Override
             public boolean hasPermission(UUID uniqueId, String permission) {
                 Player player = Bukkit.getPlayer(uniqueId);

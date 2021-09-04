@@ -1,5 +1,6 @@
 package de.polocloud.api.template;
 
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.loading.ITemplateLoader;
 import de.polocloud.api.template.loading.ITemplateSaver;
@@ -34,6 +35,14 @@ public interface ITemplateManager {
     void setCachedObjects(List<ITemplate> templates);
 
     /**
+     * Copies an {@link IGameServer} to its template
+     *
+     * @param gameServer the server
+     * @param type the type
+     */
+    void copyServer(IGameServer gameServer, Type type);
+
+    /**
      * Gets an {@link ITemplate} by its name
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
@@ -53,5 +62,11 @@ public interface ITemplateManager {
      * Reloads all templates and refreshes the cache
      */
     void reloadTemplates();
+
+
+    enum Type {
+        WORLD,
+        ENTIRE
+    }
 
 }

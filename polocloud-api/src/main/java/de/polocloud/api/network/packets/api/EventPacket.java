@@ -1,7 +1,7 @@
 package de.polocloud.api.network.packets.api;
 
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.event.base.IEvent;
+import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -15,7 +15,7 @@ public class EventPacket extends Packet {
     /**
      * The cloud event
      */
-    private IEvent event;
+    private CloudEvent event;
 
     /**
      * Who should not receive the event
@@ -32,7 +32,7 @@ public class EventPacket extends Packet {
      */
     private boolean async;
 
-    public EventPacket(IEvent event, String except, PoloType[] ignoredTypes, boolean async) {
+    public EventPacket(CloudEvent event, String except, PoloType[] ignoredTypes, boolean async) {
         this.event = event;
         this.except = except;
         this.ignoredTypes = ignoredTypes;
@@ -41,6 +41,7 @@ public class EventPacket extends Packet {
 
     @Override
     public void read(IPacketBuffer buffer) throws IOException {
+
         try {
             this.async = buffer.readBoolean();
             this.except = buffer.readString();
@@ -51,18 +52,13 @@ public class EventPacket extends Packet {
                 this.ignoredTypes[i] = buffer.readEnum();
             }
 
+
             String cl = buffer.readString();
 
             Class<?> eventClass = Class.forName(cl);
+            event = (CloudEvent) buffer.readCustom(eventClass);
+            event.setNettyFired(true);
 
-            try {
-                this.event = (IEvent) eventClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                this.event = (IEvent) PoloHelper.getInstance(eventClass);
-            }
-            if (this.event != null) {
-                this.event.read(buffer);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,11 +79,11 @@ public class EventPacket extends Packet {
 
         //The event in buffer
         buffer.writeString(event.getClass().getName());
-        event.write(buffer);
+        buffer.writeCustom(event);
 
     }
 
-    public IEvent getEvent() {
+    public CloudEvent getEvent() {
         return event;
     }
 

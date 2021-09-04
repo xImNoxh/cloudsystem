@@ -1,7 +1,5 @@
 package de.polocloud.api.player;
 
-import de.polocloud.api.network.request.base.future.PoloFuture;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,18 +19,6 @@ public class SimpleCachedCloudPlayerManager implements ICloudPlayerManager {
     @Override
     public void setCached(List<ICloudPlayer> cachedObjects) {
         this.cachedObjects = cachedObjects;
-    }
-
-    //TODO
-    @Override
-    public PoloFuture<ICloudPlayer> get(String name) {
-        return null;
-    }
-
-    //TODO
-    @Override
-    public PoloFuture<ICloudPlayer> get(long snowflake) {
-        return null;
     }
 
     @Override

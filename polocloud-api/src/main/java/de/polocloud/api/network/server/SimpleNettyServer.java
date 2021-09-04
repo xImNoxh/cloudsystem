@@ -16,8 +16,7 @@ import de.polocloud.api.network.protocol.codec.PacketEncoder;
 import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthDeserializer;
 import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthSerializer;
 import de.polocloud.api.network.protocol.packet.handler.*;
-import de.polocloud.api.network.request.SimpleRequestManager;
-import de.polocloud.api.network.request.IRequestManager;
+
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.map.UniqueMap;
 import de.polocloud.api.wrapper.base.IWrapper;
@@ -55,11 +54,6 @@ public class SimpleNettyServer implements INettyServer, IListener {
     private Channel channel;
 
     /**
-     * The request manager
-     */
-    private final IRequestManager requestManager;
-
-    /**
      * All connected clients
      */
     private final ChannelGroup connectedClients;
@@ -70,7 +64,6 @@ public class SimpleNettyServer implements INettyServer, IListener {
 
     public SimpleNettyServer() {
         this.connectedClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-        this.requestManager = new SimpleRequestManager(this);
         this.connectedInfos = new UniqueMap<>();
 
         PoloCloudAPI.getInstance().getEventManager().registerListener(this);
@@ -121,10 +114,8 @@ public class SimpleNettyServer implements INettyServer, IListener {
     @Override
     public void sendPacket(Packet packet, Channel... channels) {
         for (Channel connectedClient : channels) {
-            if (!connectedClient.isOpen() || !connectedClient.isWritable() || !connectedClient.isActive() || !connectedClient.isRegistered()) {
-                System.out.println("[NettyServer] Couldn't send Packet " + packet.getClass().getSimpleName() + " to Channel with ID " + connectedClient.id().asLongText() + " because Channel is not opened or writable!");
-                System.out.println("[NettyServer] Unregistering Channel...");
-                this.connectedClients.remove(connectedClient);
+            if (!connectedClient.isOpen() || !connectedClient.isWritable()) {
+                Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet, channels), () -> connectedClient.isOpen() && connectedClient.isWritable());
                 return;
             }
             connectedClient.writeAndFlush(packet).addListener((ChannelFutureListener) channelFuture -> {
@@ -156,11 +147,6 @@ public class SimpleNettyServer implements INettyServer, IListener {
     @Override //TODO
     public UniqueMap<PoloType, INettyClient> getClientsWithType() {
         return connectedInfos;
-    }
-
-    @Override
-    public IRequestManager getRequestManager() {
-        return this.requestManager;
     }
 
     @Override

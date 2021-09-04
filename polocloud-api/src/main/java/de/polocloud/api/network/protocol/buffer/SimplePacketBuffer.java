@@ -168,7 +168,9 @@ public class SimplePacketBuffer implements IPacketBuffer {
     @Override
     public <T extends Packet> T readPacket() throws IOException {
         int id = this.readInt();
-        return (T) PacketFactory.createPacket(id);
+        T packet = (T) PacketFactory.createPacket(id);
+        packet.read(this);
+        return packet;
     }
 
     @Override

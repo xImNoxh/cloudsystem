@@ -36,7 +36,7 @@ public class PoloHelper {
     /**
      * The date format to format dates with Day-Month-Year and hour:minute:second (28.08.2021 - 23:08:53)
      */
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy - hh:mm:ss");
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss");
 
     /**
      * The console prefix

@@ -27,6 +27,12 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public synchronized void onLoad() {
         this.bridge = new PoloPluginBungeeBridge() {
+
+            @Override
+            public boolean isPlayerOnline(UUID uniqueId) {
+                return ProxyServer.getInstance().getPlayer(uniqueId) != null;
+            }
+
             @Override
             public void connect(UUID uniqueId, String server) {
 

@@ -4,27 +4,26 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
 import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
-import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.network.request.PacketMessenger;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
+import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
+import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
+import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -60,21 +59,6 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         }
         ProxyTablistUpdatePacket packet = new ProxyTablistUpdatePacket(this.uniqueId, header, footer);
         PoloCloudAPI.getInstance().sendPacket(packet);
-    }
-
-    @Override
-    public Future<Boolean> hasPermissions(String permission) {
-        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
-
-        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
-            completableFuture.complete(PoloCloudAPI.getInstance().getPoloBridge().hasPermission(this.uniqueId, permission));
-        } else {
-            UUID requestId = UUID.randomUUID();
-            PermissionCheckResponsePacket packet = new PermissionCheckResponsePacket(requestId, permission, this.uniqueId, false);
-            PacketMessenger.register(requestId, completableFuture);
-            getProxyServer().sendPacket(packet);
-        }
-        return completableFuture;
     }
 
     @Override
@@ -152,11 +136,15 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public boolean hasPermission(String permission) {
-        try {
-            return hasPermissions(permission).get();
-        } catch (InterruptedException | ExecutionException e) {
-            return false;
+
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
+            return PoloCloudAPI.getInstance().getPoloBridge().hasPermission(this.uniqueId, permission);
+        } else {
+
+            IResponse response = PacketMessenger.newInstance().blocking().orElse(new Response(new JsonData("has", false), ResponseState.FAILED)).timeOutAfter(TimeUnit.SECONDS, 1).send("player-permission-check", new JsonData("uniqueId", this.uniqueId));
+            return response.get("has").getAsBoolean();
         }
+
     }
 
     @Override

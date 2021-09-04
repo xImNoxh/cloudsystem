@@ -1,13 +1,14 @@
 package de.polocloud.api.pool;
 
-import de.polocloud.api.network.request.base.future.PoloFuture;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
 
@@ -72,26 +73,6 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
     }
 
     /**
-     * Gets an object synced from the cloud
-     * via packet and response
-     * (This might take some time to process)
-     *
-     * @param name the name
-     * @return response or null if timed out
-     */
-    PoloFuture<V> get(String name);
-
-    /**
-     * Gets an object synced from the cloud
-     * via packet and response
-     * (This might take some time to process)
-     *
-     * @param snowflake the snowflake
-     * @return response or null if timed out
-     */
-    PoloFuture<V> get(long snowflake);
-
-    /**
      * Loads an {@link Optional} for the object
      *
      * @param name the name of object
@@ -109,6 +90,23 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
      */
     default Optional<V> getOptional(long snowflake) {
         return this.getAllCached().stream().filter(v -> v.getSnowflake() == snowflake).findFirst();
+    }
+
+    default Stream<V> stream() {
+        return getAllCached().stream();
+    }
+
+    default void untilEmpty(Consumer<V> consumer, Runnable finishTask) {
+        int count = this.getAllCached().size();
+        if (count <= 0) {
+            finishTask.run();
+        }
+        for (V v : this) {
+            consumer.accept(v);
+            if (count-- <= 0) {
+                finishTask.run();
+            }
+        }
     }
 
     @NotNull

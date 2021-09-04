@@ -13,7 +13,7 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
-import de.polocloud.api.network.packets.api.other.CacheRequestPacket;
+import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.pubsub.IPubSubManager;

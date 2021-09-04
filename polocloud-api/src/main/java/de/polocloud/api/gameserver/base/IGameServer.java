@@ -87,6 +87,13 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, S
     IWrapper getWrapper();
 
     /**
+     * Gets all {@link IWrapper} for this {@link IGameServer}
+     *
+     * @return wrapper list
+     */
+    IWrapper[] getAllWrappers();
+
+    /**
      * All {@link ICloudPlayer}s that are on this game server
      * currently online in a {@link List}
      */

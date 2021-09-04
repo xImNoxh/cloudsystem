@@ -1,16 +1,12 @@
 package de.polocloud.plugin.bootstrap.proxy.register;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.network.packets.api.EventPacket;
-import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
-import de.polocloud.api.network.packets.gameserver.permissions.PermissionCheckResponsePacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
-import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -24,7 +20,6 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -63,26 +58,6 @@ public class ProxyPacketRegister {
             }
         });
 
-        new SimplePacketRegister<EventPacket>(EventPacket.class, eventPacket -> {
-
-            Runnable runnable = () -> {
-                if (Arrays.asList(eventPacket.getIgnoredTypes()).contains(PoloCloudAPI.getInstance().getType())) {
-                    return;
-                }
-                if (!eventPacket.getExcept().equalsIgnoreCase("null") && eventPacket.getExcept().equalsIgnoreCase("cloud")) {
-                    return;
-                }
-
-                PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
-            };
-
-            if (eventPacket.isAsync()) {
-                Scheduler.runtimeScheduler().async().schedule(runnable);
-            } else {
-                runnable.run();
-            }
-        });
-
         new SimplePacketRegister<MasterPlayerSendMessagePacket>(MasterPlayerSendMessagePacket.class, packet -> {
             UUID uuid = packet.getUuid();
             if (ProxyServer.getInstance().getPlayer(uuid) != null)
@@ -95,12 +70,6 @@ public class ProxyPacketRegister {
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
             if (player != null)
                 player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
-        });
-
-        new SimplePacketRegister<PermissionCheckResponsePacket>(PermissionCheckResponsePacket.class, packet -> {
-            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getPlayer());
-            if (player != null) packet.setResponse(player.hasPermission(packet.getPermission()));
-            networkClient.sendPacket(packet);
         });
 
     }

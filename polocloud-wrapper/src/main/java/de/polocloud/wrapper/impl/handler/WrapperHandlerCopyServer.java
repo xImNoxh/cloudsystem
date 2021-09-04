@@ -1,12 +1,13 @@
 package de.polocloud.wrapper.impl.handler;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyPacket;
-import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyResponsePacket;
+import de.polocloud.api.network.packets.gameserver.GameServerCopyPacket;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.wrapper.Wrapper;
+import de.polocloud.api.template.ITemplateManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -20,30 +21,36 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
-        APIRequestGameServerCopyPacket packet = (APIRequestGameServerCopyPacket) obj;
-        File tmpServerFolder = new File("tmp/" + packet.getGameservername() + "#" + packet.getSnowflakeID() + "/");
-        if (!tmpServerFolder.exists()) {
-            Wrapper.getInstance().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "The folder of the tmp Server doesn't exists!"));
+        GameServerCopyPacket packet = (GameServerCopyPacket) obj;
+        IGameServer gameServer = packet.getGameServer();
+
+        if (gameServer == null) {
+            PoloCloudAPI.getInstance().messageCloud("§cTried copying a §enulled GameServer §cinto its template!");
             return;
         }
 
-        File targetTemplateFolder = new File("templates/" + packet.getTemplate() + "/");
+        File tmpServerFolder = new File("tmp/" + gameServer.getName() + "#" + gameServer.getSnowflake() + "/");
+        if (!tmpServerFolder.exists()) {
+            PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! The folder of the tmp Server doesn't exists!");
+            return;
+        }
+
+        File targetTemplateFolder = new File("templates/" + gameServer.getTemplate().getName() + "/");
         if (!targetTemplateFolder.exists()) {
-            Wrapper.getInstance().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "The folder of the template doesn't exists!"));
+            PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! The folder of the template doesn't exists!");
             return;
         }
 
         Thread copyThread = new Thread(() -> {
-            if (packet.getCopyType().equals(APIRequestGameServerCopyPacket.Type.WORLD)) {
+            if (packet.getCopyType().equals(ITemplateManager.Type.WORLD)) {
                 try {
                     FileUtils.copyDirectory(new File(tmpServerFolder.getPath() + "/world/"), new File(targetTemplateFolder.getPath() + "/world/"));
                     FileUtils.copyDirectory(new File(tmpServerFolder.getPath() + "/world_nether/"), new File(targetTemplateFolder.getPath() + "/world_nether/"));
                     FileUtils.copyDirectory(new File(tmpServerFolder.getPath() + "/world_the_end/"), new File(targetTemplateFolder.getPath() + "/world_the_end/"));
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    Wrapper.getInstance().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "Unexpected error while copying files occurred!"));
-                    PoloLogger.print(LogLevel.ERROR, "Unexpected error while copying files for gameserver" + packet.getGameservername() + "!\n" +
-                        "Please report this error.");
+                    PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! An Unexpected error while copying files occurred! Have a look at the Wrapper-Console!");
+                    PoloLogger.print(LogLevel.ERROR, "Unexpected error while copying files for gameserver" + gameServer.getName() + "!\n" + "Please report this error.");
+                    PoloCloudAPI.getInstance().reportException(e);
                     return;
                 }
             } else {
@@ -61,22 +68,21 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    Wrapper.getInstance().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "Unexpected error while copying files occurred!"));
-                    PoloLogger.print(LogLevel.ERROR, "Unexpected error while copying files for gameserver" + packet.getGameservername() + "!\n" +
-                        "Please report this error.");
+                    PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! Unexpected error while copying files occurred!");
+                    PoloLogger.print(LogLevel.ERROR, "Unexpected error while copying files for gameserver" + gameServer.getName() + "!\n" + "Please report this error.");
+                    PoloCloudAPI.getInstance().reportException(e);
                     return;
                 }
             }
-            Wrapper.getInstance().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), false, ""));
+            PoloCloudAPI.getInstance().messageCloud("§aSuccessfully §7copied §b" + gameServer.getName() + " §7into its template!");
         });
         copyThread.start();
 
         long started = System.currentTimeMillis();
         while (copyThread.isAlive()) {
             if ((System.currentTimeMillis() - started) > 25000) {
-                Wrapper.getInstance().sendPacket(new APIRequestGameServerCopyResponsePacket(packet.getGameservername(), true, "Thread timeout after 25 seconds no response"));
-                PoloLogger.print(LogLevel.ERROR, "Thread timeout after 25 seconds, while coping files for gameserver " + packet.getGameservername() + "! Stopping...");
+                PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! Thread timeout after 25 seconds no response");
+                PoloLogger.print(LogLevel.ERROR, "Thread timeout after 25 seconds, while coping files for gameserver " + gameServer.getName() + "! Stopping...");
                 copyThread.stop();
             }
         }
@@ -84,6 +90,6 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
 
     @Override
     public Class<? extends Packet> getPacketClass() {
-        return APIRequestGameServerCopyPacket.class;
+        return GameServerCopyPacket.class;
     }
 }

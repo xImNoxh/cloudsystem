@@ -1,32 +1,32 @@
 package de.polocloud.plugin.protocol.register;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.base.SimpleGameServer;
+import de.polocloud.api.config.JsonData;
+import de.polocloud.api.event.SimpleCachedEventManager;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.port.IPortManager;
 import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
-import de.polocloud.api.network.packets.api.cloudplayer.APIResponseCloudPlayerPacket;
-import de.polocloud.api.network.packets.api.gameserver.APIResponseGameServerPacket;
-import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
-import de.polocloud.api.network.packets.api.other.MasterCache;
-import de.polocloud.api.network.packets.api.other.PropertyCachePacket;
-import de.polocloud.api.network.packets.api.template.APIResponseTemplatePacket;
+import de.polocloud.api.network.packets.api.EventPacket;
+import de.polocloud.api.network.packets.api.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.MasterCache;
+import de.polocloud.api.network.packets.api.PropertyCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerShutdownPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
-import de.polocloud.api.network.request.PacketMessenger;
-import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
+import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
+import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
-import de.polocloud.api.template.base.ITemplate;
 
+import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class NetworkPluginRegister {
 
@@ -59,40 +59,47 @@ public class NetworkPluginRegister {
             }
         });
 
-        new SimplePacketRegister<APIResponseCloudPlayerPacket>(APIResponseCloudPlayerPacket.class, packet -> {
-            UUID requestId = packet.getRequestId();
-            List<ICloudPlayer> response = packet.getResponse();
-            CompletableFuture<Object> completableFuture = PacketMessenger.getCompletableFuture(requestId, true);
-            if (packet.getType() == APIResponseCloudPlayerPacket.Type.SINGLE) {
-                completableFuture.complete(response.get(0));
-            } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.LIST) {
-                completableFuture.complete(response);
-            } else if (packet.getType() == APIResponseCloudPlayerPacket.Type.BOOLEAN) {
-                completableFuture.complete(!response.isEmpty());
+        new SimplePacketRegister<GameServerUpdatePacket>(GameServerUpdatePacket.class, packet -> {
+            PoloCloudAPI.getInstance().getGameServerManager().updateObject(packet.getGameServer());
+        });
+
+
+        new SimplePacketRegister<EventPacket>(EventPacket.class, eventPacket -> {
+
+            Runnable runnable = () -> {
+                if (Arrays.asList(eventPacket.getIgnoredTypes()).contains(PoloCloudAPI.getInstance().getType())) {
+                    return;
+                }
+                IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
+                if (thisService != null && eventPacket.getExcept().equalsIgnoreCase(thisService.getName())) {
+                    return;
+                }
+
+                PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
+            };
+
+            if (eventPacket.isAsync()) {
+                Scheduler.runtimeScheduler().async().schedule(runnable);
+            } else {
+                runnable.run();
             }
         });
 
-        new SimplePacketRegister<APIResponseGameServerPacket>(APIResponseGameServerPacket.class, (ctx, packet) -> {
-            UUID requestId = packet.getRequestId();
-            List<IGameServer> tmp = packet.getResponse();
-            List<IGameServer> response = new ArrayList<>();
-            CompletableFuture<Object> completableFuture = PacketMessenger.getCompletableFuture(requestId, true);
 
-            for (IGameServer gameserver : tmp) {
+        PacketMessenger.registerHandler(request -> {
+            if (request.getKey().equalsIgnoreCase("player-permission-check")) {
+                JsonData data = request.getData();
+                UUID uniqueId = UUID.fromString(data.getString("uniqueId"));
+                String permission = data.getString("permission");
 
-                response.add(new SimpleGameServer(gameserver.getName(), gameserver.getMotd(), gameserver.getServiceVisibility(),
-                    gameserver.getStatus(), gameserver.getSnowflake(), gameserver.getPing(), gameserver.getStartTime(),
-                    gameserver.getTotalMemory(), gameserver.getPort(), gameserver.getMaxPlayers(), gameserver.getTemplate().getName()));
+                if (!PoloCloudAPI.getInstance().getPoloBridge().isPlayerOnline(uniqueId)) {
+                    request.respond(ResponseState.NULL);
+                    return;
+                }
+
+                request.respond(new Response(new JsonData("has", PoloCloudAPI.getInstance().getPoloBridge().hasPermission(uniqueId, permission)), ResponseState.SUCCESS));
             }
-            completableFuture.complete((packet.getType() == APIResponseGameServerPacket.Type.SINGLE ? response.get(0) : response));
         });
-
-        new SimplePacketRegister<APIResponseTemplatePacket>(APIResponseTemplatePacket.class, packet -> {
-            List<ITemplate> response = new ArrayList<>(packet.getResponse());
-            PacketMessenger.getCompletableFuture(packet.getRequestId(), true).complete(
-                packet.getType() == APIResponseTemplatePacket.Type.SINGLE ? response.get(0) : response);
-        });
-
 
     }
 }

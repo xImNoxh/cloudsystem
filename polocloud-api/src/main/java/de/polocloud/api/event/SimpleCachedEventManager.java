@@ -6,11 +6,12 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.ICancellable;
-import de.polocloud.api.event.base.IEvent;
+import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.handling.EventMethod;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.IEventHandler;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.api.EventPacket;
 import de.polocloud.api.scheduler.Scheduler;
 
@@ -26,7 +27,7 @@ public class SimpleCachedEventManager implements IEventManager {
      * All cached registered classes
      */
     private final Map<IListener, List<EventMethod<EventHandler>>> registeredClasses;
-    private final Map<Class<? extends IEvent>, List<IEventHandler<?>>> eventHandlers;
+    private final Map<Class<? extends CloudEvent>, List<IEventHandler<?>>> eventHandlers;
 
     public SimpleCachedEventManager() {
         this.registeredClasses = new ConcurrentHashMap<>();
@@ -63,7 +64,7 @@ public class SimpleCachedEventManager implements IEventManager {
     }
 
     @Override
-    public <E extends IEvent> void registerHandler(Class<E> eventClass, IEventHandler<E> handler) {
+    public <E extends CloudEvent> void registerHandler(Class<E> eventClass, IEventHandler<E> handler) {
         List<IEventHandler<?>> iEventHandlers = eventHandlers.get(eventClass);
         if (iEventHandlers == null) {
             iEventHandlers = new LinkedList<>();
@@ -73,7 +74,7 @@ public class SimpleCachedEventManager implements IEventManager {
     }
 
     @Override
-    public <E extends IEvent> void unregisterHandler(Class<E> eventClass, Class<? extends IEventHandler<E>> handlerClass) {
+    public <E extends CloudEvent> void unregisterHandler(Class<E> eventClass, Class<? extends IEventHandler<E>> handlerClass) {
 
 
         for (List<IEventHandler<?>> value : this.eventHandlers.values()) {
@@ -92,14 +93,16 @@ public class SimpleCachedEventManager implements IEventManager {
     }
 
     @Override
-    public <E extends IEvent> void fireEvent(E event, Consumer<E> callback) {
+    public <E extends CloudEvent> void fireEvent(E event, Consumer<E> callback) {
         this.fireEvent(event);
         callback.accept(event);
     }
 
 
+
     @Override
-    public boolean fireEvent(IEvent event) {
+    public void fireEvent(CloudEvent event) {
+
 
         EventData eventData = event.getClass().getAnnotation(EventData.class);
 
@@ -107,7 +110,12 @@ public class SimpleCachedEventManager implements IEventManager {
         PoloType[] ignoredTypes = eventData != null ? eventData.ignoreTypes() : new PoloType[0];
         boolean async = eventData != null && eventData.async();
 
-        if (nettyFire) {
+
+        IGameServer thisService = PoloCloudAPI
+            .getInstance()
+            .getGameServerManager()
+            .getThisService();
+        if (nettyFire && !event.isNettyFired()) {
             if (PoloCloudAPI.getInstance().getType().isPlugin()) {
                 if (PoloCloudAPI.getInstance().getConnection() != null) {
                     PoloCloudAPI
@@ -115,11 +123,7 @@ public class SimpleCachedEventManager implements IEventManager {
                         .getConnection()
                         .sendPacket(new EventPacket(
                             event,
-                            PoloCloudAPI
-                                .getInstance()
-                                .getGameServerManager()
-                                .getThisService()
-                                .getName(),
+                            thisService == null ? "null" : thisService.getName(),
                             ignoredTypes,
                             async
                         ));
@@ -136,7 +140,7 @@ public class SimpleCachedEventManager implements IEventManager {
             }
         }
 
-        for (Class<? extends IEvent> aClass : this.eventHandlers.keySet()) {
+        for (Class<? extends CloudEvent> aClass : this.eventHandlers.keySet()) {
             if (event.getClass().equals(aClass)) {
                 for (IEventHandler iEventHandler : this.eventHandlers.get(aClass)) {
                     if (async) {
@@ -169,10 +173,10 @@ public class SimpleCachedEventManager implements IEventManager {
                     }
                 }
             });
-            return event instanceof ICancellable && ((ICancellable) event).isCancelled();
+            if (event instanceof ICancellable) {
+                ((ICancellable) event).isCancelled();
+            }
         } catch (Exception e) {
-            return false;
         }
     }
-
 }

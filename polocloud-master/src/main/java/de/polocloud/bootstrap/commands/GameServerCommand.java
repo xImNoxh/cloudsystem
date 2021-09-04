@@ -10,7 +10,6 @@ import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.network.packets.api.gameserver.APIRequestGameServerCopyPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
@@ -205,16 +204,12 @@ public class GameServerCommand implements CommandListener {
                         return;
                     }
                     PoloLogger.print(LogLevel.INFO, "Copying " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "...");
-                    List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
-                    for (IWrapper wrapper : wrappers) {
-                        wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.WORLD, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
-                    }
+                    templateService.copyServer(gameServer, ITemplateManager.Type.WORLD);
+
                 } else if (type.equalsIgnoreCase("entire")) {
                     PoloLogger.print(LogLevel.INFO, "Copying " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "...");
-                    List<IWrapper> wrappers = wrapperManager.getWrappers().stream().filter(wrapperClient -> Arrays.asList(gameServer.getTemplate().getWrapperNames()).contains(wrapperClient.getName())).collect(Collectors.toList());
-                    for (IWrapper wrapper : wrappers) {
-                        wrapper.sendPacket(new APIRequestGameServerCopyPacket(APIRequestGameServerCopyPacket.Type.ENTIRE, gameServer.getName(), String.valueOf(gameServer.getSnowflake()), gameServer.getTemplate().getName()));
-                    }
+                    templateService.copyServer(gameServer, ITemplateManager.Type.ENTIRE);
+
                 } else {
                     PoloLogger.print(LogLevel.INFO, "Use following command: " + ConsoleColors.LIGHT_BLUE +
                         "gameserver copy <gameserver> entire/worlds");

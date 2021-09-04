@@ -10,25 +10,11 @@ import java.io.IOException;
 @EventData(nettyFire = true)
 public class CloudGameServerStatusChangeEvent extends GameServerEvent {
 
-    private GameServerStatus status;
+    private final GameServerStatus status;
 
     public CloudGameServerStatusChangeEvent(IGameServer gameServer, GameServerStatus status) {
         super(gameServer);
         this.status = status;
-    }
-
-    @Override
-    public void read(IPacketBuffer buf) throws IOException {
-        super.read(buf);
-
-        status = buf.readEnum();
-    }
-
-    @Override
-    public void write(IPacketBuffer buf) throws IOException {
-        super.write(buf);
-
-        buf.writeEnum(status);
     }
 
     public GameServerStatus getStatus() {

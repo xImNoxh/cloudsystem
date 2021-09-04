@@ -23,5 +23,6 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
         buf.writeLong(packet.getSnowflake()); //The packet snowflake
 
         packet.write(buf);
+
     }
 }

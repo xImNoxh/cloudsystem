@@ -26,6 +26,15 @@ public abstract class SimplePacket extends Packet {
 
                     String cl = sub.getString("typeClass");
 
+                    if (cl.equalsIgnoreCase("nulled")) {
+                        try {
+                            Field declaredField = aClass.getDeclaredField(name);
+                            declaredField.setAccessible(true);
+                            declaredField.set(this, null);
+                        } catch (NoSuchFieldException ignored) {  }
+                        continue;
+                    }
+
                     if (cl.equalsIgnoreCase("int")) {
                         cl = "java.lang.Integer";
                     } else if (cl.equalsIgnoreCase("boolean")) {
@@ -99,7 +108,11 @@ public abstract class SimplePacket extends Packet {
                             }
                         } else {
                             try {
-                                sub.append("typeClass", annotation.value() == Class.class ? o.getClass().getName() : annotation.value().getName());
+                                if (o == null) {
+                                    sub.append("typeClass", "nulled");
+                                } else {
+                                    sub.append("typeClass", annotation.value() == Class.class ? o.getClass().getName() : annotation.value().getName());
+                                }
                             } catch (Exception e) {
                                 //Ignoring
                             }

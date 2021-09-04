@@ -1,9 +1,12 @@
 package de.polocloud.api.template;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.packets.gameserver.GameServerCopyPacket;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.loading.ITemplateLoader;
 import de.polocloud.api.template.loading.ITemplateSaver;
+import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +22,18 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
         this.templates = new ArrayList<>();
     }
 
-
     @Override
     public void loadTemplates(TemplateStorage storage) {
         this.templateLoader = PoloCloudAPI.getInstance().getGuice().getInstance(storage.getTemplateLoader());
         this.templateSaver = PoloCloudAPI.getInstance().getGuice().getInstance(storage.getTemplateServer());
         this.reloadTemplates();
+    }
+
+    @Override
+    public void copyServer(IGameServer gameServer, Type type) {
+        for (IWrapper wrapper : gameServer.getAllWrappers()) {
+            wrapper.sendPacket(new GameServerCopyPacket(type, gameServer));
+        }
     }
 
     @Override

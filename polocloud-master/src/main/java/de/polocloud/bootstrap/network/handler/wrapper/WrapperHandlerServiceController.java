@@ -43,10 +43,6 @@ public abstract class WrapperHandlerServiceController {
             : "Master authentication §cdenied§7!");
     }
 
-    public long getCurrentMillis() {
-        return System.currentTimeMillis();
-    }
-
     public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, IWrapper> response, ChannelHandlerContext ctx) {
         response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new SimpleMasterWrapper(packet.getName(), ctx));
     }

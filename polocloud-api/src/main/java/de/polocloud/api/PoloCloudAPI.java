@@ -30,7 +30,7 @@ import de.polocloud.api.module.IModuleHolder;
 import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.ITerminatable;
-import de.polocloud.api.network.packets.api.other.MasterCache;
+import de.polocloud.api.network.packets.api.MasterCache;
 import de.polocloud.api.network.packets.other.TextPacket;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
@@ -150,11 +150,16 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * @param message the message to send
      */
     public void messageCloud(String message) {
-        if (type.isPlugin()) {
+        if (type != PoloType.MASTER) {
             sendPacket(new TextPacket(message));
         } else {
             PoloLogger.print(LogLevel.INFO, message);
         }
+    }
+
+    public void reportException(Throwable throwable) {
+        throwable.printStackTrace();
+        //TODO
     }
 
     /**

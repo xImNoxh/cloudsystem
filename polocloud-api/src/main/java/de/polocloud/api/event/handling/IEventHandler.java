@@ -1,11 +1,11 @@
 package de.polocloud.api.event.handling;
 
-import de.polocloud.api.event.base.IEvent;
+import de.polocloud.api.event.base.CloudEvent;
 
-public interface IEventHandler<E extends IEvent> {
+public interface IEventHandler<E extends CloudEvent> {
 
     /**
-     * Handles the given {@link IEvent}
+     * Handles the given {@link CloudEvent}
      *
      * @param event the event to handle
      */

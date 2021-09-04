@@ -1,8 +1,8 @@
 package de.polocloud.wrapper.impl.handler;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.network.packets.api.other.GlobalCachePacket;
-import de.polocloud.api.network.packets.api.other.MasterCache;
+import de.polocloud.api.network.packets.api.GlobalCachePacket;
+import de.polocloud.api.network.packets.api.MasterCache;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import io.netty.channel.ChannelHandlerContext;
