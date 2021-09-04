@@ -10,6 +10,5 @@ public class ExampleListener implements IListener {
     @EventHandler
     public void handle(CloudPlayerJoinNetworkEvent event) {
         ICloudPlayer player = event.getPlayer();
-
     }
 }

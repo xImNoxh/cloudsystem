@@ -1,20 +1,19 @@
 package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
 
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.SimpleCloudPlayer;
-import de.polocloud.api.property.IProperty;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
 import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -115,6 +114,7 @@ public class CollectiveProxyEvents implements Listener {
             Scheduler.runtimeScheduler().schedule(() -> {
                 cloudPlayer.setMinecraftServer(serverInfo.getName());
                 cloudPlayer.update();
+                PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), null));
             }, () -> PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(proxiedPlayer.getName()) != null);
 
         } else {
@@ -122,8 +122,10 @@ public class CollectiveProxyEvents implements Listener {
 
             //Setting new info for the player
             ServerInfo target = event.getTarget();
+            IGameServer from = cloudPlayer.getMinecraftServer();
             cloudPlayer.setMinecraftServer(target.getName());
             cloudPlayer.update();
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), from));
         }
     }
 

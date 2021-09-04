@@ -1,10 +1,7 @@
 package de.polocloud.bootstrap.logger;
 
-
-import com.google.gson.JsonObject;
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.util.PoloHelper;
 import de.polocloud.logger.log.LogService;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.Logger;
@@ -42,7 +39,7 @@ public class LogBootstrapService {
             "                                                \n");
         PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
         PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + version.version() + ConsoleColors.GRAY + " (" + version.identifier() + ") | ©opyright by PoloCloud.");
-        PoloLogger.print(LogLevel.INFO, "Problems or questions? Our Discord » " + ConsoleColors.LIGHT_BLUE + version.discord());
+        PoloLogger.print(LogLevel.INFO, "Problems or quAestions? Our Discord » " + ConsoleColors.LIGHT_BLUE + version.discord());
         Logger.newLine();
     }
 }
