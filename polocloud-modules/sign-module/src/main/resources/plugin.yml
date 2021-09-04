@@ -1,0 +1,11 @@
+name: PoloCloudSings
+version: 1.0
+authors:
+    - PoloCloud
+    - iPommes
+main: de.polocloud.signs.bootstraps.PluginBootstrap
+
+depend:
+    - PoloCloud-Plugin
+commands:
+    cloudsigns:

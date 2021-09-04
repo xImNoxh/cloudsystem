@@ -175,4 +175,48 @@ public class SimpleCachedEventManager implements IEventManager {
         }
     }
 
+    @Override
+    public boolean fireEventLocally(IEvent event){
+        EventData eventData = event.getClass().getAnnotation(EventData.class);
+
+        boolean async = eventData != null && eventData.async();
+        for (Class<? extends IEvent> aClass : this.eventHandlers.keySet()) {
+            if (event.getClass().equals(aClass)) {
+                for (IEventHandler iEventHandler : this.eventHandlers.get(aClass)) {
+                    if (async) {
+                        Scheduler.runtimeScheduler().async().schedule(() -> iEventHandler.handleEvent(event));
+                    } else {
+                        iEventHandler.handleEvent(event);
+                    }
+                }
+            }
+        }
+        try {
+            registeredClasses.forEach((object, methodList) -> {
+                for (EventMethod<EventHandler> em : methodList) {
+                    if (em.getaClass().equals(event.getClass())) {
+                        if (async) {
+                            Scheduler.runtimeScheduler().async().schedule(() -> {
+                                try {
+                                    em.getMethod().invoke(em.getListener(), event);
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        } else {
+                            try {
+                                em.getMethod().invoke(em.getListener(), event);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            });
+            return event instanceof ICancellable && ((ICancellable) event).isCancelled();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

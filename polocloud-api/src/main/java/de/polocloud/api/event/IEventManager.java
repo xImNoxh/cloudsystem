@@ -51,6 +51,14 @@ public interface IEventManager {
     boolean fireEvent(IEvent event);
 
     /**
+     * Calls the Event locally in the PoloCloudAPI instance, and not sends
+     * it over netty.
+     * Is used for firing a event in the Spigot or Proxy Plugin
+     * @param event the event to call
+     */
+    boolean fireEventLocally(IEvent event);
+
+    /**
      * Calls an event and fires the consumer after its called
      *
      * @param event the event

@@ -47,7 +47,6 @@ public abstract class PlayerPacketServiceController {
     public void callDisconnectEvent(MasterPubSubManager pubSubManager, ICloudPlayer cloudPlayer) {
         pubSubManager.publish("polo:event:playerQuit", cloudPlayer.getUUID().toString());
         PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerDisconnectEvent(cloudPlayer));
-
     }
 
 

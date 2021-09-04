@@ -2,10 +2,10 @@ package de.polocloud.api.gameserver.base;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
-import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.network.protocol.packet.base.other.ForwardingPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
@@ -154,6 +154,7 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setStatus(GameServerStatus status) {
         gameServerStatus = status;
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(this, status));
     }
 
     @Override

@@ -69,11 +69,11 @@ public class ProxyPacketRegister {
                 if (Arrays.asList(eventPacket.getIgnoredTypes()).contains(PoloCloudAPI.getInstance().getType())) {
                     return;
                 }
-                if (!eventPacket.getExcept().equalsIgnoreCase("null") && eventPacket.getExcept().equalsIgnoreCase("cloud")) {
+
+                if(eventPacket.getExcept().equalsIgnoreCase("null")){
                     return;
                 }
-
-                PoloCloudAPI.getInstance().getEventManager().fireEvent(eventPacket.getEvent());
+                PoloCloudAPI.getInstance().getEventManager().fireEventLocally(eventPacket.getEvent());
             };
 
             if (eventPacket.isAsync()) {
