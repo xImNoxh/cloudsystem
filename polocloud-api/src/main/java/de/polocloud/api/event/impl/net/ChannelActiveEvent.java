@@ -7,13 +7,14 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
 
-@EventData
+@EventData(nettyFire = false)
 public class ChannelActiveEvent extends CloudEvent {
 
     private final ChannelHandlerContext chx;
 
     public ChannelActiveEvent(ChannelHandlerContext chx) {
         this.chx = chx;
+        setNettyFired(true);
     }
 
     public ChannelHandlerContext getChx() {

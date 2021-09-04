@@ -15,6 +15,7 @@ public class NettyExceptionEvent extends CloudEvent {
 
     public NettyExceptionEvent(Throwable throwable) {
         this.throwable = throwable;
+        setNettyFired(true);
     }
 
     public boolean isShouldThrow() {

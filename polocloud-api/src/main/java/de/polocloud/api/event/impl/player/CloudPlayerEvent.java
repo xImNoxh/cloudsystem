@@ -1,5 +1,6 @@
 package de.polocloud.api.event.impl.player;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
@@ -11,13 +12,13 @@ import java.io.IOException;
 @EventData(nettyFire = true)
 public abstract class CloudPlayerEvent extends CloudEvent {
 
-    private SimpleCloudPlayer player;
+    private String player;
 
     protected CloudPlayerEvent(ICloudPlayer player) {
-        this.player = (SimpleCloudPlayer) player;
+        this.player = player.getName();
     }
 
     public ICloudPlayer getPlayer() {
-        return player;
+        return PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(player);
     }
 }

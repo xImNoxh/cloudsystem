@@ -98,8 +98,7 @@ public class SimpleTemplate implements ITemplate {
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
 
-        PoloCloudAPI.getInstance().getPubSubManager().publish("polo:event:templateMaintenanceUpdate", name);
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerMaintenanceUpdateEvent(this));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerMaintenanceUpdateEvent(this, maintenance));
     }
 
     @Override

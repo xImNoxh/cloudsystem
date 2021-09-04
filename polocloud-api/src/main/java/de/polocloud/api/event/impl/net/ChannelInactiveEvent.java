@@ -14,6 +14,7 @@ public class ChannelInactiveEvent extends CloudEvent {
 
     public ChannelInactiveEvent(ChannelHandlerContext chx) {
         this.chx = chx;
+        setNettyFired(true);
     }
 
     public ChannelHandlerContext getChx() {
