@@ -107,7 +107,7 @@ public class SimpleNettyClient implements INettyClient{
 
     @Override
     public boolean terminate() {
-        return channel.close().isSuccess();
+        return channel == null || channel.close().isSuccess();
     }
 
     @Override
