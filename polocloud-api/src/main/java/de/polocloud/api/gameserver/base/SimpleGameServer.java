@@ -2,7 +2,9 @@ package de.polocloud.api.gameserver.base;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.event.impl.server.CloudGameServerPropertyUpdateEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.event.impl.server.CloudGameServerUpdateEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
@@ -134,9 +136,15 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void insertProperty(Consumer<IProperty> consumer) {
-        IProperty property = new SimpleProperty();
+        SimpleProperty property = new SimpleProperty();
         consumer.accept(property);
-        this.properties.add(property);
+
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerPropertyUpdateEvent(this, property), event -> {
+            if (!event.isCancelled()) {
+                this.properties.add(event.getProperty());
+            }
+        });
+
     }
 
     @Override
@@ -361,8 +369,12 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void update() {
-        this.updateInternally();
-        PoloCloudAPI.getInstance().sendPacket(new GameServerUpdatePacket(this));
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerUpdateEvent(this), cloudGameServerUpdateEvent -> {
+            if (!cloudGameServerUpdateEvent.isCancelled()) {
+                this.updateInternally();
+                PoloCloudAPI.getInstance().sendPacket(new GameServerUpdatePacket(this));
+            }
+        });
     }
 
     @Override
