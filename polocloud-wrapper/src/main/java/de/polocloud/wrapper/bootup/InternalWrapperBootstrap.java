@@ -125,20 +125,11 @@ public class InternalWrapperBootstrap {
      */
     public void checkAndDeleteTmpFolder() {
         File tmpFile = FileConstants.WRAPPER_DYNAMIC_SERVERS;
-        if (tmpFile.exists()) {
+        if (!tmpFile.exists()) {
             try {
-                FileUtils.forceDelete(tmpFile);
-            } catch (IOException exception) {
-                exception.printStackTrace();
-                PoloLogger.print(LogLevel.ERROR, "Unexpected error while deleting tmp Folder! Cloud may react abnormal!\n" +
-                    "Please report this error.");
-            }
-        }
-        File tempFilesDir = FileConstants.TEMP_FILES;
-        if (tempFilesDir.exists()) {
-            try {
-                FileUtils.forceDelete(tempFilesDir);
-            } catch (IOException ignored) {
+                tmpFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
