@@ -4,6 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.WrappedObject;
+import de.polocloud.signs.bootstraps.PluginBootstrap;
 import de.polocloud.signs.protocol.enumeration.RequestType;
 import de.polocloud.signs.sign.base.IGameServerSign;
 import de.polocloud.signs.manager.IGameServerSignManager;
@@ -53,15 +54,16 @@ public class SignsPluginService implements ISignService {
     @Override
     public void loadSigns() {
         Scheduler.runtimeScheduler().schedule(() ->{
-            for (SignLocation location : this.currentGlobalConfig.getLocations()) {
-                if(gameServerSignManager.getLoadedSigns().stream().noneMatch(sign -> sign.getSignLocation().equals(location))){
-                    gameServerSignManager.getLoadedSigns().add(signInitializer.loadSign(location));
-                }
-            }
+            //for (SignLocation location : this.currentGlobalConfig.getLocations()) {
+                //if(gameServerSignManager.getLoadedSigns().stream().noneMatch(sign -> sign.getSignLocation().equals(location))){
+                    //gameServerSignManager.getLoadedSigns().add(signInitializer.loadSign(location));
+                //}
+            //}
 
-            for (IGameServerSign loadedSign : gameServerSignManager.getLoadedSigns()) {
-                loadedSign.setGameServer(null);
-            }
+//            for (IGameServerSign loadedSign : PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getLoadedSigns()) {
+//                loadedSign.setGameServer(null);
+//            }
+
 
             signInitializer.initSigns();
         }, () -> this.currentGlobalConfig != null);

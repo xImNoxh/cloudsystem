@@ -12,7 +12,6 @@ import java.io.IOException;
 @EventData(nettyFire = true)
 public class CloudPlayerSwitchServerEvent extends CloudPlayerEvent {
 
-
     private String to;
     private String from;
 

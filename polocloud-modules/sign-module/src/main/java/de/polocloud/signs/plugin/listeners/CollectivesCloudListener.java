@@ -18,7 +18,10 @@ public class CollectivesCloudListener implements IListener {
     @EventHandler
     public void handleChange(CloudGameServerStatusChangeEvent event) {
         if(event.getStatus().equals(GameServerStatus.RUNNING)){
-            PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getFreeGameServerSign(event.getGameServer()), event.getGameServer());
+            System.out.println("new start " + event.getGameServer().getName());
+            if(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getSignByGameServer(event.getGameServer()) == null){
+                PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getFreeGameServerSign(event.getGameServer()), event.getGameServer());
+            }
         }else if(event.getStatus().equals(GameServerStatus.STOPPING)){
             PluginBootstrap.getInstance().getSignService().getGameServerSignManager().setSignToStopped(event.getGameServer());
         }
@@ -27,10 +30,16 @@ public class CollectivesCloudListener implements IListener {
     @EventHandler
     public void handle(CloudPlayerSwitchServerEvent event) {
         if(event.getTo() != null){
+            System.out.println("update to: " + event.getFrom().getName());
             PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getTo());
+        }else{
+            System.out.println("null");
         }
         if(event.getFrom() != null){
+            System.out.println("update from: " + event.getFrom().getName());
             PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getFrom());
+        }else{
+            System.out.println("null");
         }
     }
 
@@ -45,7 +54,9 @@ public class CollectivesCloudListener implements IListener {
 
     @EventHandler
     public void handle(CloudPlayerDisconnectEvent event) {
-        PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getPlayer().getMinecraftServer());
+        if(event.getPlayer().getMinecraftServer() != null){
+            PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getPlayer().getMinecraftServer());
+        }
     }
 
 }

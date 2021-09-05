@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 public class SimpleGameServerSignManager implements IGameServerSignManager {
 

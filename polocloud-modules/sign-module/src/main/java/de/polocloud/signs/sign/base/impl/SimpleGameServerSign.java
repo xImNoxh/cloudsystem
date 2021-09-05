@@ -98,13 +98,14 @@ public class SimpleGameServerSign implements IGameServerSign {
 
     @Override
     public void updateSignState() {
-        if(template.isMaintenance()){
-            this.signState = SignState.MAINTENANCE;
-            return;
-        }
 
         if (gameServer == null) {
             this.signState = SignState.LOADING;
+            return;
+        }
+
+        if(template.isMaintenance()){
+            this.signState = SignState.MAINTENANCE;
             return;
         }
 
