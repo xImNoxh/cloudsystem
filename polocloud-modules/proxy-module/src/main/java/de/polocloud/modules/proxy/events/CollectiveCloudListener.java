@@ -34,10 +34,6 @@ public class CollectiveCloudListener implements IListener {
                     break;
             }
         }
-
-        System.out.println(event.getGameServer() == null);
-        System.out.println(event.getGameServer().getTemplate() == null);
-        System.out.println(event.getGameServer().getTemplate().getTemplateType() == null);
         if(!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getStatus().equals(GameServerStatus.RUNNING))) return;
         ProxyModule.getProxyModule().sendMotd(event.getGameServer());
     }
