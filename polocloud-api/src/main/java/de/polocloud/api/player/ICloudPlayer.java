@@ -6,13 +6,14 @@ import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.IPropertyHolder;
 import de.polocloud.api.util.Snowflake;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor {
+public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor, IPropertyHolder {
 
     @Override
     default long getSnowflake() {
@@ -93,34 +94,5 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor 
      * Except servers
      */
     void sendToFallbackExcept(String... except);
-
-    /**
-     * Gets a list of all {@link IProperty} this player has
-     *
-     * @return list of properties
-     */
-    List<IProperty> getProperties();
-
-    /**
-     * Gets an {@link IProperty} by its name
-     *
-     * @param name the name
-     * @return property or null if not found
-     */
-    IProperty getProperty(String name);
-
-    /**
-     * Adds or overrides an {@link IProperty}
-     *
-     * @param consumer the consumer
-     */
-    void insertProperty(Consumer<IProperty> consumer);
-
-    /**
-     * Deletes an {@link IProperty} of this player
-     *
-     * @param name the name of the property
-     */
-    void deleteProperty(String name);
 
 }

@@ -8,6 +8,8 @@ import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.base.other.ForwardingPacket;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.util.Snowflake;
@@ -95,6 +97,11 @@ public class SimpleGameServer implements IGameServer {
      */
     private String host;
 
+    /**
+     * The properties
+     */
+    private List<IProperty> properties;
+
     public SimpleGameServer() {
     }
 
@@ -112,8 +119,30 @@ public class SimpleGameServer implements IGameServer {
         this.template = template;
         this.registered = false;
         this.host = "127.0.0.1";
+        this.properties = new ArrayList<>();
     }
 
+    @Override
+    public List<IProperty> getProperties() {
+        return this.properties;
+    }
+
+    @Override
+    public IProperty getProperty(String name) {
+        return this.properties.stream().filter(property -> property.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    @Override
+    public void insertProperty(Consumer<IProperty> consumer) {
+        IProperty property = new SimpleProperty();
+        consumer.accept(property);
+        this.properties.add(property);
+    }
+
+    @Override
+    public void deleteProperty(String name) {
+        this.properties.removeIf(property -> property.getName().equalsIgnoreCase(name));
+    }
 
     @Override
     public void setHost(String host) {
@@ -186,6 +215,11 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void setProperties(List<IProperty> properties) {
+        this.properties = properties;
     }
 
     @Override

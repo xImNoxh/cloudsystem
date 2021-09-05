@@ -20,6 +20,7 @@ import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
@@ -75,9 +76,9 @@ public class CloudCommand implements CommandListener {
                     IGameServer highest = gameServerManager.getAllCached().stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
                     IGameServer lowest = gameServerManager.getAllCached().stream().min(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
 
-                    player.sendMessage(prefix + "§7Online Players §8: §3" +  cloudPlayerManager.getAllCached().size());
-                    player.sendMessage(prefix + "§7Most Players §8: §3" +  (highest == null ? "N/A" : highest.getName() + " §8(§3" + highest.getOnlinePlayers() + "§8)"));
-                    player.sendMessage(prefix + "§7Fewest Players §8: §3" +  (lowest == null ? "N/A" : (lowest.getName().equalsIgnoreCase(highest == null ? "" : highest.getName()) ? "Same players" : lowest.getName() + " §8(§3" + lowest.getOnlinePlayers() + "§8)")));
+                    player.sendMessage(prefix + "§7Online Players §8: §3" + cloudPlayerManager.getAllCached().size());
+                    player.sendMessage(prefix + "§7Most Players §8: §3" + (highest == null ? "N/A" : highest.getName() + " §8(§3" + highest.getOnlinePlayers() + "§8)"));
+                    player.sendMessage(prefix + "§7Fewest Players §8: §3" + (lowest == null ? "N/A" : (lowest.getName().equalsIgnoreCase(highest == null ? "" : highest.getName()) ? "Same players" : lowest.getName() + " §8(§3" + lowest.getOnlinePlayers() + "§8)")));
 
                     player.sendMessage("§8");
                     player.sendMessage(prefix + "§7OS §8: §3" + resourceProvider.getSystem().getName());
@@ -107,6 +108,10 @@ public class CloudCommand implements CommandListener {
                         player.sendMessage(prefix + "§7#2 Ping (Server <-> Cloud) §8: §3" + (now - start) + "ms");
                     }
                     player.sendMessage("§8");
+
+                } else if (params[0].equalsIgnoreCase("debug") && player.getName().equalsIgnoreCase("Lystx")) {
+
+                    player.sendMessage(prefix + "§7Debug was §aexecuted§8!");
 
                 } else if (params[0].equalsIgnoreCase("end") || params[0].equalsIgnoreCase("exit")) {
 
@@ -205,6 +210,14 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage(prefix + "Visible » §b" + gameServer.getServiceVisibility());
                     player.sendMessage(prefix + "Started time » §b" + gameServer.getStartTime());
                     player.sendMessage(prefix + "Ping » §b" + gameServer.getPing() + "ms");
+                    if (gameServer.getProperties().isEmpty()) {
+                        player.sendMessage(prefix + "§7Properties » §cNone");
+                    } else {
+                        player.sendMessage(prefix + "§7Properties » §b" + gameServer.getProperties().size());
+                        for (IProperty property : gameServer.getProperties()) {
+                            player.sendMessage(prefix + "  §8> §b" + property.getName() + " §8: §3" + property.getJsonValue());
+                        }
+                    }
                     player.sendMessage(prefix + "----[/Information]----");
 
                 } else if (params[0].equalsIgnoreCase("stop") || params[0].equalsIgnoreCase("shutdown")) {

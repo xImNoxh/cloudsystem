@@ -15,11 +15,14 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.def.SimpleCloudPlayer;
 import de.polocloud.api.player.def.SimplePlayerConnection;
+import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.MinecraftProtocol;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
@@ -29,6 +32,8 @@ import io.netty.handler.codec.EncoderException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SimplePacketBuffer implements IPacketBuffer {
@@ -324,8 +329,16 @@ public class SimplePacketBuffer implements IPacketBuffer {
         boolean serviceVisibility = this.readBoolean();
         boolean registered = this.readBoolean();
 
+        //Properties
+        int size = this.readInt();
+        List<IProperty> properties = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            properties.add(PoloHelper.GSON_INSTANCE.fromJson(this.readString(), SimpleProperty.class));
+        }
+
         IGameServer gameServer = new SimpleGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, memory, port, maxPlayers, template);
         gameServer.setRegistered(registered);
+        gameServer.setProperties(properties);
         return gameServer;
     }
 
@@ -354,6 +367,11 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeBoolean(gameServer.getServiceVisibility());
         this.writeBoolean(gameServer.isRegistered());
 
+        //Properties
+        this.writeInt(gameServer.getProperties().size());
+        for (IProperty property : gameServer.getProperties()) {
+            this.writeString(PoloHelper.GSON_INSTANCE.toJson(property));
+        }
     }
 
     @Override

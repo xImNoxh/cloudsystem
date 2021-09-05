@@ -5,6 +5,8 @@ import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.pool.PoloObject;
+import de.polocloud.api.property.IProperty;
+import de.polocloud.api.property.IPropertyHolder;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, Serializable  {
+public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, IPropertyHolder {
 
     /**
      * Creates a new empty {@link IGameServer}
@@ -241,6 +243,13 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, S
     void setName(String name);
 
     /**
+     * Sets the {@link IProperty}s of this server
+     *
+     * @param properties the properties
+     */
+    void setProperties(List<IProperty> properties);
+
+    /**
      * Copies this gameserver 1:1 and accepts the consumer after
      * to modify the copied version and handle it
      *
@@ -254,4 +263,5 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, S
         this.setMaxPlayers(template.getMaxPlayers());
         this.setMemory(template.getMaxMemory());
     }
+
 }
