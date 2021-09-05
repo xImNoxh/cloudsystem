@@ -1,6 +1,7 @@
 package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
@@ -60,8 +61,13 @@ public class CollectiveProxyEvents implements Listener {
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
+
         if (PoloCloudAPI.getInstance().getGameServerManager().getThisService().getTemplate().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
-            event.getPlayer().disconnect(TextComponent.fromLegacyText(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getGroupMaintenanceMessage()));
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerLackMaintenanceEvent(PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(player.getUniqueId())), cloudPlayerLackMaintenanceEvent -> {
+                if(!cloudPlayerLackMaintenanceEvent.isCancelled()){
+                    event.getPlayer().disconnect(TextComponent.fromLegacyText(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getGroupMaintenanceMessage()));
+                }
+            });
             return;
         }
 

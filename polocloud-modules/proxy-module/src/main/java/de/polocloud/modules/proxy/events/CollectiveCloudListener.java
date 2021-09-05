@@ -3,6 +3,7 @@ package de.polocloud.modules.proxy.events;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
+import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -36,6 +37,11 @@ public class CollectiveCloudListener implements IListener {
         }
         if(!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getStatus().equals(GameServerStatus.RUNNING))) return;
         ProxyModule.getProxyModule().sendMotd(event.getGameServer());
+    }
+
+    @EventHandler
+    public void handle(CloudPlayerLackMaintenanceEvent event){
+        if(event.getPlayer().getName().equals("HttpMarco")) event.setCancelled(true);
     }
 
     @EventHandler

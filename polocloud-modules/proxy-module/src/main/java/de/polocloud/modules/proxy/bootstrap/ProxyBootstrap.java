@@ -13,7 +13,7 @@ import de.polocloud.modules.proxy.ProxyModule;
     version = "1.0",
     description = "This is a Proxy Module",
     authors = "HttpMarco",
-    copyTypes = ModuleCopyType.PROXIES,
+    copyTypes = ModuleCopyType.NONE,
     reloadable = true
 )
 public class ProxyBootstrap extends CloudModule {

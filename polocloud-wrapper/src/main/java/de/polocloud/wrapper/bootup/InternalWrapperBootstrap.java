@@ -126,11 +126,7 @@ public class InternalWrapperBootstrap {
     public void checkAndDeleteTmpFolder() {
         File tmpFile = FileConstants.WRAPPER_DYNAMIC_SERVERS;
         if (!tmpFile.exists()) {
-            try {
-                tmpFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            tmpFile.mkdirs();
         }
     }
 
