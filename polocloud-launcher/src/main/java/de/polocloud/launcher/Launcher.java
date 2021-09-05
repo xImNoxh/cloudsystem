@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.client.PoloCloudClient;
 import de.polocloud.client.PoloCloudUpdater;
-import de.polocloud.updater.UpdateClient;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -273,30 +272,4 @@ public class Launcher {
         }
 
     }
-
-    private static void checkForUpdatesNative(String currentVersion, boolean forceUpdate, Gson gson) {
-        String baseUrl = "http://37.114.60.129:8870";
-        String downloadUrl = baseUrl + "/updater/download/bootstrap";
-        String versionUrl = baseUrl + "/updater/version/bootstrap";
-        UpdateClient updateClient = new UpdateClient(downloadUrl, BOOTSTRAP_FILE, versionUrl, currentVersion);
-
-        System.out.println(PREFIX + "#Checking for bootstrap updates... (" + updateClient.getClientVersion() + ")");
-        if (updateClient.download(forceUpdate)) {
-            configObject.remove("version");
-            configObject.put("version", updateClient.getFetchedVersion());
-
-            try {
-                FileWriter writer = new FileWriter(configFile);
-                gson.toJson(configObject, writer);
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println(PREFIX + "#updated");
-        } else {
-            System.out.println(PREFIX + "#no update found!");
-        }
-    }
-
 }

@@ -18,18 +18,9 @@
     <module>polocloud-launcher</module>
     <module>polocloud-plugin</module>
     <module>polocloud-modules</module>
-    <module>polocloud-modules/permissions-module</module>
-    <module>polocloud-modules/sign-module</module>
-    <module>polocloud-modules/internalwrapper-module</module>
     <module>polocloud-database</module>
+      <module>polocloud-updater</module>
   </modules>
-
-  <repositories>
-    <repository>
-      <id>polocloud</id>
-      <url>https://polocloud.de:8443/repository/maven-snapshots/</url>
-    </repository>
-  </repositories>
 
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
