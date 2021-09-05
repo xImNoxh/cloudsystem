@@ -28,8 +28,8 @@ public class FileConstants {
     public static final File DATABASE_FOLDER = new File(GLOBAL_FOLDER, "db/");
     public static final File POLO_LOGS_FOLDER = new File(GLOBAL_FOLDER, "logs/");
     public static final File LAUNCHER_FILE = new File("launcher.json");
-    public static final File BOOTSTRAP_FILE = new File("bootstrap.json");
-    public static final File OLD_BOOTSTRAP_FILE = new File("old-bootstrap.json");
+    public static final File BOOTSTRAP_FILE = new File("bootstrap.jar");
+    public static final File OLD_BOOTSTRAP_FILE = new File("old-bootstrap.jar");
 
 
     //Master stuff
