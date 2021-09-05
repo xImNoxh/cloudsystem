@@ -15,6 +15,7 @@ import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
+import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.pubsub.IPubSubManager;
@@ -158,6 +159,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             }
 
         };
+    }
+
+    @Override
+    public void reportException(Throwable throwable) {
+        sendPacket(new MasterReportExceptionPacket(throwable));
     }
 
     @Override

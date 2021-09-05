@@ -186,6 +186,9 @@ public class ModuleService implements IModuleHolder {
 
     public void reload() {
         for (CloudModule driverModule : this.modules) {
+            if (!driverModule.info().reloadable()) {
+                continue;
+            }
             this.callTasks(driverModule, ModuleState.RELOADING);
         }
     }

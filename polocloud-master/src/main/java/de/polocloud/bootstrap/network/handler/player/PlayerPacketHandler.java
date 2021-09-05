@@ -40,7 +40,6 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
         new SimplePacketHandler<>(MasterPlayerSendToServerPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(GameServerExecuteCommandPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
 
-        //TODO CALL SWITCH EVENT PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, to));
         new SimplePacketHandler<>(CloudPlayerRegisterPacket.class, packet -> {
             this.callConnectEvent(MasterPubSubManager.getInstance(), packet.getCloudPlayer());
             this.sendConnectMessage(masterConfig, packet.getCloudPlayer());

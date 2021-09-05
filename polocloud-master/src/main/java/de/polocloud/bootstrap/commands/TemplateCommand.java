@@ -39,6 +39,7 @@ public class TemplateCommand implements CommandListener {
         if (params.length == 1) {
             if (params[0].equalsIgnoreCase("create")) {
                 new CreateTemplateSetup(templateService).sendSetup();
+                PoloCloudAPI.getInstance().reload();
             } else if (params[0].equalsIgnoreCase("versions")) {
                 PoloLogger.print(LogLevel.INFO, "Available Versions » ");
                 for (GameServerVersion value : GameServerVersion.values()) {
@@ -69,17 +70,11 @@ public class TemplateCommand implements CommandListener {
                     PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
                 } else {
                     PoloLogger.print(LogLevel.INFO, "----[Information]----");
-                    
                     PoloLogger.print(LogLevel.INFO, "Template name » " + template.getName());
-                    
                     PoloLogger.print(LogLevel.INFO, "Maximal services » " + template.getMaxServerCount());
-                    
                     PoloLogger.print(LogLevel.INFO, "Minimal services » " + template.getMinServerCount());
-                    
                     PoloLogger.print(LogLevel.INFO, "Template type » " + template.getTemplateType().name());
-                    
                     PoloLogger.print(LogLevel.INFO, "Template version » " + template.getVersion().getTitle());
-                    
                     PoloLogger.print(LogLevel.INFO, "----[/Information]----");
                 }
             } else {

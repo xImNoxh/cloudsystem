@@ -22,11 +22,6 @@ public class SimpleServerCreator extends ServerCreator {
             return false;
         }
 
-        if (template.isStatic()) {
-            //TODO CHECK
-           // return false;
-        }
-
         if (template.getMaxServerCount() <= serversByTemplate.size()) {
             return false;
         }

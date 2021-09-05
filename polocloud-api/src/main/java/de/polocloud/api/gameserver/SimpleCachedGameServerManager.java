@@ -1,6 +1,7 @@
 package de.polocloud.api.gameserver;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -132,7 +133,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     public IGameServer getThisService() {
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {
             try {
-                JsonData jsonData = new JsonData(new File("PoloCloud.json"));
+                JsonData jsonData = new JsonData(new File(FileConstants.CLOUD_JSON_NAME));
                 return this.getCached(jsonData.getString("GameServer-Name"));
             } catch (Exception e) {
                 e.printStackTrace();

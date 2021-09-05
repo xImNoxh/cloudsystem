@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CreateTemplateSetup extends StepAcceptor implements Setup {
 
-    private ITemplateManager templateService;
+    private final ITemplateManager templateService;
 
     public CreateTemplateSetup(ITemplateManager templateService) {
         this.templateService = templateService;
@@ -45,7 +45,7 @@ public class CreateTemplateSetup extends StepAcceptor implements Setup {
                 }
             })
             .addStep("What is name of the Wrapper(s) ?")
-            .addStep("Static ? (true/false)", isBoolean())
+            .addStep("Should this server be static ? (true/false)", isBoolean())
             .addStep("ServerCreateThreshold ? (0-100)%", isInteger());
 
 

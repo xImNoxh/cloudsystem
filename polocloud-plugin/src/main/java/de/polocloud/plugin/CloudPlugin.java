@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -11,6 +12,7 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
+import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
@@ -136,8 +138,7 @@ public class CloudPlugin extends PoloCloudAPI {
 
     public JsonData getJson() {
         try {
-            File parentFile = new File(NetworkClient.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getParentFile();
-            return new JsonData(new File(parentFile + "/PoloCloud.json"));
+            return new JsonData(new File(FileConstants.CLOUD_JSON_NAME));
         } catch (Exception e) {
             return null;
         }
@@ -155,6 +156,13 @@ public class CloudPlugin extends PoloCloudAPI {
         });
         return true;
     }
+
+
+    @Override
+    public void reportException(Throwable throwable) {
+        sendPacket(new MasterReportExceptionPacket(throwable));
+    }
+
 
     @Override
     public void updateCache() {

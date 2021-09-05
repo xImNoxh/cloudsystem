@@ -37,6 +37,12 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
     }
 
     @Override
+    public void addTemplate(ITemplate template) {
+        this.templates.add(template);
+        this.templateSaver.save(template);
+    }
+
+    @Override
     public void setCachedObjects(List<ITemplate> templates) {
         this.templates = templates;
     }

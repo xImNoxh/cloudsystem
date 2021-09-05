@@ -2,6 +2,7 @@ package de.polocloud.api.network.protocol.buffer;
 
 import com.google.common.base.Charsets;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.fallback.base.SimpleFallback;
@@ -38,11 +39,6 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.buf = byteBuf;
     }
 
-    @Override
-    public IPacketBuffer avoidNulls() {
-        //TODO
-        return this;
-    }
 
     @Override
     public ByteBuf getBase() {
@@ -129,7 +125,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         part.readBytes(bytes);
         part.release();
 
-        File tempDir = new File("tempFiles/");
+        File tempDir = FileConstants.WRAPPER_TEMP_FILES;
         if (!tempDir.exists()) {
             tempDir.mkdirs();
         }

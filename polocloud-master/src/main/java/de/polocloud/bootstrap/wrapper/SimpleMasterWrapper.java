@@ -18,6 +18,7 @@ import de.polocloud.api.logger.PoloLogger;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -94,6 +95,9 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
         }
         this.chx.writeAndFlush(packet).addListener((ChannelFutureListener) channelFuture -> {
             if (!channelFuture.isSuccess()) {
+                if (channelFuture.cause() instanceof IOException) {
+                     return;
+                }
                 System.out.println("[SimpleMasterWrapper@" + packet.getClass().getSimpleName() + "] Ran into error while processing Packet :");
                 channelFuture.cause().printStackTrace();
             }

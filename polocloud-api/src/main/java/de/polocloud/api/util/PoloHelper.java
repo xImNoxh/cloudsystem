@@ -68,6 +68,37 @@ public class PoloHelper {
         }
         return port;
     }
+    /**
+     * Gets a NMS Class for a name
+     *
+     * @param name the name
+     * @return class or null
+     */
+    public static Class<?> getNMSClass(String name, String version) {
+        try {
+            return Class.forName("net.minecraft.server." + version + "." + name);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Sends a packet to Bukkit player
+     *
+     * @param to the receiver
+     * @param packet the packet
+     */
+    public static void sendPacket(Object to, String version, Object packet) {
+        try {
+            Object playerHandle = to.getClass().getMethod("getHandle", new Class[0]).invoke(to);
+            Object playerConnection = playerHandle.getClass().getField("playerConnection").get(playerHandle);
+            playerConnection.getClass().getMethod("sendPacket", new Class[] { getNMSClass("Packet", version) }).invoke(playerConnection, packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Deletes a folder with content

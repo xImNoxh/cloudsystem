@@ -106,7 +106,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
         this.registerPackets();
 
-        this.loggerFactory = new SimplePoloLoggerFactory(new File("poloLogs/"));
+        this.loggerFactory = new SimplePoloLoggerFactory(FileConstants.POLO_LOGS_FOLDER);
         this.portManager = new SimpleCachedPortManager(25565, 30000); //Modified later
         this.eventManager = new SimpleCachedEventManager();
         this.commandManager = new SimpleCommandManager();
@@ -159,10 +159,15 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         }
     }
 
-    public void reportException(Throwable throwable) {
-        throwable.printStackTrace();
-        //TODO
-    }
+    /**
+     * Reports an Exception to the server and automatically
+     * prints it so you can see it locally and the admins
+     * on the server
+     *
+     * @param throwable the error
+     */
+    public abstract void reportException(Throwable throwable);
+
 
     /**
      * Sets the cache for this api instance

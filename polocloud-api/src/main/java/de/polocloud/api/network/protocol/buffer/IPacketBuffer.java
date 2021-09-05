@@ -14,8 +14,6 @@ import java.util.UUID;
 
 public interface IPacketBuffer {
 
-    IPacketBuffer avoidNulls();
-
     /**
      * The base {@link ByteBuf} instance of this buffer
      */

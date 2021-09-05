@@ -28,6 +28,13 @@ public interface ITemplateManager {
     void loadTemplates(TemplateStorage storage);
 
     /**
+     * Adds and saves a new {@link ITemplate}
+     *
+     * @param template the template
+     */
+    void addTemplate(ITemplate template);
+
+    /**
      * Sets the cached templates
      *
      * @param templates the templates

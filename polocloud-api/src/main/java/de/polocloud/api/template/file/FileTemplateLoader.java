@@ -2,6 +2,8 @@ package de.polocloud.api.template.file;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+import de.polocloud.api.config.FileConstants;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.loading.ITemplateLoader;
@@ -14,17 +16,14 @@ import java.util.*;
 public class FileTemplateLoader implements ITemplateLoader {
 
 
-    @Inject
-    private Gson gson;
-
     @Override
     public List<ITemplate> loadTemplates() {
 
-        File baseDir = new File("templates/");
+        File baseDir = FileConstants.MASTER_TEMPLATE_INFO;
 
         if (!baseDir.exists()) {
             baseDir.mkdir();
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>();
         }
 
         List<ITemplate> templates = new ArrayList<>();
@@ -42,10 +41,7 @@ public class FileTemplateLoader implements ITemplateLoader {
     }
 
     public ITemplate loadTemplate(File file) throws IOException {
-        FileReader reader = new FileReader(file);
-        ITemplate template = gson.fromJson(reader, SimpleTemplate.class);
-        reader.close();
-        return template;
+        return new JsonData(file).getAs(SimpleTemplate.class);
     }
 
 }

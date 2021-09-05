@@ -2,6 +2,7 @@ package de.polocloud.launcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.client.PoloCloudClient;
 import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.updater.UpdateClient;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
+
+import static de.polocloud.api.config.FileConstants.*;
 
 public class Launcher {
 
@@ -50,7 +53,7 @@ public class Launcher {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         //Loading the config
-        configFile = new File("launcher.json");
+        configFile = LAUNCHER_FILE;
         configObject = null;
         if (!configFile.exists()) {
             try {
@@ -83,7 +86,7 @@ public class Launcher {
 
 
         //Checking the current bootstrap.jar File
-        File bootstrapFile = new File("bootstrap.jar");
+        File bootstrapFile = BOOTSTRAP_FILE;
         if (!bootstrapFile.exists()) {
             forceUpdate = true;
         }
@@ -113,11 +116,11 @@ public class Launcher {
             //Launcher is trying to rescue the cloud with the old-bootstrap.jar backup file
 
             System.out.println("Jar couldn't be launched, going back to backup version");
-            File backup = new File("old-bootstrap.jar");
+            File backup = OLD_BOOTSTRAP_FILE;
 
             //Applying backup file
             if (backup.exists()) {
-                backup.renameTo(new File("bootstrap.jar"));
+                backup.renameTo(FileConstants.BOOTSTRAP_FILE);
                 System.out.println("Backup File existed, try to launch...");
                 try {
                     //Second launch try
@@ -156,13 +159,13 @@ public class Launcher {
 //            mainMethod.invoke(null, params);
 //
 //            System.out.println(PREFIX + "[Updater] Cleaning up...");
-//            new File("old-bootstrap.jar").delete();
+//            OLD_BOOTSTRAP_FILE.delete();
 //            System.out.println(PREFIX + "[Updater] Done!");
 //        } catch (ZipException exception){
 //            System.out.println("Jar couldn't be launched, going back to backup version");
-//            File backup = new File("old-bootstrap.jar");
+//            File backup = OLD_BOOTSTRAP_FILE;
 //            if(backup.exists()){
-//                backup.renameTo(new File("bootstrap.jar"));
+//                backup.renameTo(BOOTSTRAP_FILE);
 //                System.out.println("Backup File existed, try to launch...");
 //            }else{
 //                System.out.println("No backup version was found. Please contact the support!");
@@ -174,14 +177,14 @@ public class Launcher {
     }
 
     private static void launchBootstrap(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        File bootstrapFile = new File("bootstrap.jar");
+        File bootstrapFile = BOOTSTRAP_FILE;
 
         //Creating JarFile
         new JarFile(bootstrapFile);
 
         //JarFile is not corrupt, launcher can clean up backup Jars
         System.out.println(PREFIX + "[Updater] Cleaning up...");
-        new File("old-bootstrap.jar").delete();
+        OLD_BOOTSTRAP_FILE.delete();
         System.out.println(PREFIX + "[Updater] Done!");
 
         //Loading mainclass
@@ -201,13 +204,13 @@ public class Launcher {
     }
 
     private static void checkForUpdates(String currentVersion, boolean forceUpdate, Gson gson) {
-        File bootstrap = new File("bootstrap.jar");
+        File bootstrap = BOOTSTRAP_FILE;
         PoloCloudUpdater updater = new PoloCloudUpdater(devMode, currentVersion, "bootstrap", bootstrap);
 
         if (forceUpdate) {
             if (devMode) {
                 System.out.println(PREFIX + "[Updater] Downloading latest development builds...");
-                bootstrap.renameTo(new File("old-bootstrap.jar"));
+                bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
                 if (updater.download()) {
                     System.out.println(PREFIX + "[Updater] Successfully downloaded newest development build!");
                 } else {
@@ -215,7 +218,7 @@ public class Launcher {
                 }
             } else {
                 System.out.println(PREFIX + "[Updater] Force update activated. Downloading latest build...");
-                bootstrap.renameTo(new File("old-bootstrap.jar"));
+                bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
                 if (updater.download()) {
                     configObject.remove("version");
                     configObject.put("version", updater.getFetchedVersion());
@@ -235,7 +238,7 @@ public class Launcher {
             }
         } else if (devMode) {
             System.out.println(PREFIX + "[Updater] Downloading latest development builds...");
-            bootstrap.renameTo(new File("old-bootstrap.jar"));
+            bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
             if (updater.download()) {
                 System.out.println(PREFIX + "[Updater] Successfully downloaded newest development build!");
             } else {
@@ -246,7 +249,7 @@ public class Launcher {
             if (updater.check()) {
                 System.out.println(PREFIX + "[Updater] Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");
                 System.out.println(PREFIX + "[Updater] downloading...");
-                bootstrap.renameTo(new File("old-bootstrap.jar"));
+                bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
                 if (updater.download()) {
                     configObject.remove("version");
                     configObject.put("version", updater.getFetchedVersion());
@@ -275,7 +278,7 @@ public class Launcher {
         String baseUrl = "http://37.114.60.129:8870";
         String downloadUrl = baseUrl + "/updater/download/bootstrap";
         String versionUrl = baseUrl + "/updater/version/bootstrap";
-        UpdateClient updateClient = new UpdateClient(downloadUrl, new File("bootstrap.jar"), versionUrl, currentVersion);
+        UpdateClient updateClient = new UpdateClient(downloadUrl, BOOTSTRAP_FILE, versionUrl, currentVersion);
 
         System.out.println(PREFIX + "#Checking for bootstrap updates... (" + updateClient.getClientVersion() + ")");
         if (updateClient.download(forceUpdate)) {

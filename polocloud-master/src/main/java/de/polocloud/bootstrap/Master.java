@@ -1,7 +1,9 @@
 package de.polocloud.bootstrap;
 
+import com.google.common.base.Throwables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.SimpleConsoleExecutor;
@@ -29,7 +31,11 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.TemplateStorage;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.api.config.master.MasterConfig;
@@ -47,7 +53,10 @@ import de.polocloud.client.PoloCloudClient;
 import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 
 public class Master extends PoloCloudAPI implements IStartable {
 
@@ -111,6 +120,7 @@ public class Master extends PoloCloudAPI implements IStartable {
 
             //Server-Runner thread starting
             new Thread(getGuice().getInstance(ServerCreatorRunner.class)).start();
+
         };
 
     }
@@ -126,17 +136,11 @@ public class Master extends PoloCloudAPI implements IStartable {
 
     private MasterConfig loadConfig() {
 
-        File configFile = new File("config.json");
+        File configFile = FileConstants.MASTER_CONFIG_FILE;
         MasterConfig masterConfig = simpleConfigLoader.load(MasterConfig.class, configFile);
 
         //Sorting the Fallbacks after the FallbackPriority, to make it faster
-        if (!masterConfig.getProperties().getFallbacks().isEmpty()) {
-            masterConfig.getProperties().getFallbacks().sort(Comparator.comparingInt(SimpleFallback::getPriority));
-        } else {
-            PoloLogger.print(LogLevel.WARNING, "No fallbacks are registered in config.json! The Cloud don't find any fallbacks, so you can't join!");
-            PoloLogger.print(LogLevel.INFO, "Adding a default Lobby fallback!");
-            masterConfig.getProperties().getFallbacks().add(new SimpleFallback("Lobby", "", true, 1));
-        }
+        masterConfig.getProperties().getFallbacks().sort(Comparator.comparingInt(SimpleFallback::getPriority));
         for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbacks()) {
             PoloCloudAPI.getInstance().getFallbackManager().registerFallback(fallbackProperty);
         }
@@ -170,7 +174,19 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.moduleService.load();
 
         } else {
-            PoloLogger.print(LogLevel.INFO, "No Templates found to be loaded!");
+            PoloLogger.print(LogLevel.ERROR, "§cNo Templates found to be loaded! Creating default Lobby-Template and Proxy-Template...");
+
+            ITemplate proxy = new SimpleTemplate("Proxy", false, 5, 1, TemplateType.PROXY, GameServerVersion.PROXY, 50, 512, false, "A PoloCloud Proxy", 100, new String[]{"Wrapper-1"});
+            ITemplate lobby = new SimpleTemplate("Lobby", false, 5, 1, TemplateType.MINECRAFT, GameServerVersion.SPIGOT_1_8_8, 25, 512, false, "A PoloCloud Lobby", 100, new String[]{"Wrapper-1"});
+
+            templateManager.addTemplate(proxy);
+            templateManager.addTemplate(lobby);
+            templateManager.reloadTemplates();
+            PoloLogger.print(LogLevel.ERROR, "§7Created §b" + proxy.getName() + " §7as §eProxy-Template §7and §3" + lobby.getName() + " §7as §6Lobby-Template§7!");
+            PoloLogger.print(LogLevel.INFO, "§7Registering new created §bLobby-Template §7as §3Fallback§7!");
+
+            masterConfig.getProperties().getFallbacks().add(new SimpleFallback(lobby.getName(), "", true, 1));
+            masterConfig.update();
         }
 
         PoloLogger.print(LogLevel.INFO, "The master is §asuccessfully §7started.");
@@ -193,9 +209,9 @@ public class Master extends PoloCloudAPI implements IStartable {
     @Override
     public boolean terminate() {
         this.running = false;
-        boolean terminate = this.nettyServer.terminate();
+        boolean terminate = this.nettyServer != null && this.nettyServer.terminate();
 
-        for (ICloudPlayer cloudPlayer : cloudPlayerManager) {
+        for (ICloudPlayer cloudPlayer : (cloudPlayerManager == null ? new ArrayList<ICloudPlayer>() : cloudPlayerManager)) {
             cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
         }
 
@@ -215,12 +231,24 @@ public class Master extends PoloCloudAPI implements IStartable {
         return terminate;
     }
 
+    @Override
+    public void reportException(Throwable throwable) {
+        String logException = Throwables.getStackTraceAsString(throwable);
+
+        PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cUnhandled §eException §coccurred while running §eProcess§c!");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cThis was §enot §cintended to §ehappen.");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cPlease §ereport §cthis at §e" + PoloCloudAPI.class.getAnnotation(APIVersion.class).discord());
+        PoloLogger.getInstance().log(LogLevel.ERROR, "");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cSTACKTRACE");
+        PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
+        PoloLogger.getInstance().noPrefix().log(LogLevel.ERROR,  "§e" + logException);
+
+        client.getExceptionReportService().reportException(throwable, "master", getVersion().version());
+    }
+
     private void registerUncaughtExceptionListener() {
-        JsonData jsonData = new JsonData(new File("launcher.json"));
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            throwable.printStackTrace();
-            client.getExceptionReportService().reportException(throwable, "master", getVersion().version());
-        });
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> reportException(throwable));
     }
 
     @Override

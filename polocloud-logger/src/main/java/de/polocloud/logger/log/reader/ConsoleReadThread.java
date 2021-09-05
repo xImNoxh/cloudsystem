@@ -29,7 +29,7 @@ public class ConsoleReadThread extends Thread {
             try {
                 this.consoleReader.setPrompt("");
                 this.consoleReader.resetPromptLine("", "", 0);
-                while ((line = this.consoleReader.readLine(PoloLogger.getInstance() == null ? "" : (PoloLogger.getInstance().getPrefix() == null ? "" : PoloLogger.getInstance().getPrefix()))) != null && !line.trim().isEmpty()) {
+                while ((line = this.consoleReader.readLine((PoloCloudAPI.getInstance() == null ? "" : PoloLogger.getInstance() == null ? "" : (PoloLogger.getInstance().getPrefix() == null ? "" : PoloLogger.getInstance().getPrefix())))) != null && !line.trim().isEmpty()) {
                     this.consoleReader.setPrompt("");
 
                     if (PoloCloudAPI.getInstance() != null) {

@@ -17,31 +17,25 @@ public interface PoloLogger extends PoloObject<PoloLogger> {
      * @param message the message
      */
     static void print(LogLevel level, String message) {
-        if (getInstance() == null) {
+        if (PoloCloudAPI.getInstance() == null) {
             System.out.println(message);
             return;
         }
         getInstance().log(level, message);
     }
 
+    static void newLine() {
+        print(LogLevel.INFO, "");
+    }
+
     /**
      * Gets the default Logger instance
      */
     static PoloLogger getInstance() {
-        if (PoloCloudAPI.getInstance() == null) {
-            return null;
-        }
-
-        String defaultLogger = "cloud-" + PoloCloudAPI.getInstance().getType().name().toLowerCase();
-
+        String defaultLogger = "cloud" + PoloCloudAPI.getInstance().getType().getName();
         PoloLoggerFactory loggerFactory = PoloCloudAPI.getInstance().getLoggerFactory();
-        PoloLogger logger = loggerFactory.getLogger(defaultLogger);
+        return loggerFactory.getLoggerOrCreate(defaultLogger);
 
-        if (logger == null) {
-            return loggerFactory.createLogger(defaultLogger);
-        } else {
-            return logger;
-        }
     }
 
     /**

@@ -2,6 +2,7 @@ package de.polocloud.api.template.file;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.loading.ITemplateSaver;
 
@@ -15,7 +16,7 @@ public class FileTemplateSaver implements ITemplateSaver {
     private Gson gson;
 
     public void save(ITemplate template) {
-        File templateFile = new File("templates/" + template.getName() + ".json");
+        File templateFile = new File(FileConstants.MASTER_TEMPLATE_INFO ,template.getName() + ".json");
 
         if (!templateFile.exists()) {
             try {

@@ -35,7 +35,6 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         super.channelActive(ctx);
         this.networkConnection.setCtx((this.channelHandlerContext = ctx));
 
-        //TODO in Spigot not called
         PoloCloudAPI.getInstance().getEventManager().fireEvent(new ChannelActiveEvent(ctx));
     }
 

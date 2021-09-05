@@ -22,7 +22,7 @@ public class MeCommand implements CommandListener {
     public void execute(CommandExecutor sender, String[] fullArgs, String... params) {
         APIVersion version = PoloCloudAPI.getInstance().getVersion();
 
-        Logger.logPrefixLess("\n" +
+        PoloLogger.print(LogLevel.INFO, "\n" +
             "  _____      _        _____ _                 _ \n" +
             " |  __ \\    | |      / ____| |               | |\n" +
             " | |__) |__ | | ___ | |    | | ___  _   _  __| |\n" +
@@ -33,7 +33,7 @@ public class MeCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
         PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + version.version() + ConsoleColors.GRAY + " (" + version.identifier() + ") | ©opyright by PoloCloud.");
 
-        Logger.newLine();
+        PoloLogger.newLine();
         PoloLogger.print(LogLevel.INFO, "§7Connected wrappers » §3" + PoloCloudAPI.getInstance().getWrapperManager().getWrappers().size());
         PoloLogger.print(LogLevel.INFO, "§7Loaded commands » §3" + PoloCloudAPI.getInstance().getCommandManager().getCommands().size());
         PoloLogger.print(LogLevel.INFO, "§7Loaded templates » §3" + PoloCloudAPI.getInstance().getTemplateManager().getTemplates().size());
@@ -44,13 +44,13 @@ public class MeCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "§7Running gameservers » §3" + PoloCloudAPI.getInstance().getGameServerManager().getAllCached().size());
         PoloLogger.print(LogLevel.INFO, "§7Running threads » §3" + Thread.activeCount());
 
-        Logger.newLine();
+        PoloLogger.newLine();
         PoloLogger.print(LogLevel.INFO, "§7System CPU load » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().roundDouble(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getProcessCpuLoad()) + "%");
         PoloLogger.print(LogLevel.INFO, "§7Process CPU Load » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().roundDouble(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getProcessCpuLoad()) + "%");
         PoloLogger.print(LogLevel.INFO, "§7System memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemPhysicalMemory()));
         PoloLogger.print(LogLevel.INFO, "§7Used memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemUsedMemory()));
         PoloLogger.print(LogLevel.INFO, "§7Available memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemFreeMemory()));
-        Logger.newLine();
+        PoloLogger.newLine();
 
         PoloLogger.print(LogLevel.INFO, "§7Checking your version...");
         new Thread(() -> {

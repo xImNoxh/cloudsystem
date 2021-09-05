@@ -50,13 +50,13 @@ public class Messages {
     public Messages() {
         this.prefix = "§bPoloCloud §7» ";
 
-        this.groupMaintenanceMessage = "§7This §b§lgroup §7is in maintenance§8...";
-        this.proxyMaintenanceMessage = "§7This §b§lnetwork §7is in maintenance§8...";
+        this.groupMaintenanceMessage = "§7This §bgroup §7is in maintenance§8...";
+        this.proxyMaintenanceMessage = "§7This §bnetwork §7is in maintenance§8...";
 
         this.networkIsFull = "%prefix% §7The network is §cfull§8...";
         this.serviceIsFull = "%prefix% §7The service is §cfull§8...";
 
-        this.noFallbackServer = "%prefix% §cCouldn't find a suitable fallback to connect you to!";
+        this.noFallbackServer = "%prefix% §cCould not find a suitable fallback to connect you to!";
         this.kickedAndNoFallbackServer = "%prefix% §cThe server you were on went down, but no fallback server was found!";
         this.onlyProxyJoin = "%prefix% §cYou can only join on a Proxy§8.";
         this.networkShutdown = "%prefix% §cThe network shut down!";

@@ -1,6 +1,7 @@
 package de.polocloud.wrapper.impl.handler;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -29,13 +30,13 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
             return;
         }
 
-        File tmpServerFolder = new File("tmp/" + gameServer.getName() + "#" + gameServer.getSnowflake() + "/");
+        File tmpServerFolder = new File(FileConstants.WRAPPER_DYNAMIC_SERVERS, gameServer.getName() + "#" + gameServer.getSnowflake() + "/");
         if (!tmpServerFolder.exists()) {
             PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! The folder of the tmp Server doesn't exists!");
             return;
         }
 
-        File targetTemplateFolder = new File("templates/" + gameServer.getTemplate().getName() + "/");
+        File targetTemplateFolder = new File(FileConstants.WRAPPER_TEMPLATES,gameServer.getTemplate().getName() + "/");
         if (!targetTemplateFolder.exists()) {
             PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! The folder of the template doesn't exists!");
             return;
@@ -59,7 +60,7 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
                     for (File file : d) {
                         if(!file.isDirectory()){
                             String rawPath = file.getPath().replace(tmpServerFolder.getPath(), "");
-                            if (rawPath.contains("PoloCloud.json") || (!rawPath.contains("/plugins/") && rawPath.contains(".jar")) || rawPath.contains("PoloCloud-API.jar") || rawPath.contains("proxy.log.0")) {
+                            if (rawPath.contains(FileConstants.CLOUD_JSON_NAME) || (!rawPath.contains("/plugins/") && rawPath.contains(".jar")) || rawPath.contains(FileConstants.CLOUD_API_NAME) || rawPath.contains("proxy.log.0")) {
                                 continue;
                             }
                             File tar = new File(targetTemplateFolder.getPath() + rawPath);

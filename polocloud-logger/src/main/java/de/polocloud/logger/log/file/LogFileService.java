@@ -1,5 +1,6 @@
 package de.polocloud.logger.log.file;
 
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.util.PoloHelper;
 
 import java.io.File;
@@ -25,29 +26,29 @@ public class LogFileService {
     }
 
     public void createLogDirectory() {
-        new File("log").mkdirs();
+        FileConstants.LOGGER_FOLDER.mkdirs();
     }
 
     public void createCurrentLatestLog() {
         try {
-            new File("log/latest.log").createNewFile();
+            getLatestLog().createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void removeLatestLog() {
-        File file = new File("log/latest.log");
+        File file = getLatestLog();
         if (file.exists()) file.delete();
     }
 
     public File getLatestLog() {
-        return new File("log/latest.log");
+        return new File(FileConstants.LOGGER_FOLDER, FileConstants.LOGGER_LATEST_NAME);
     }
 
     public File getCurrentDayLog() {
-        new File("log/" + PoloHelper.getSimpleDate()).mkdirs();
-        File file = new File("log/" + PoloHelper.getSimpleDate() + "/services.log");
+        new File(FileConstants.LOGGER_FOLDER, PoloHelper.getSimpleDate() + "/").mkdirs();
+        File file = new File(PoloHelper.getSimpleDate() + "/services.log");
         if (!file.exists()) {
             try {
                 file.createNewFile();

@@ -14,12 +14,6 @@ import java.util.Arrays;
 
 public class LogBootstrapService {
 
-    private LogService logService;
-
-    public LogBootstrapService() {
-        this.logService = new LogService();
-    }
-
     /**
      * Prints out the PoloCloud Header on Wrapper or Master startup
      */
@@ -29,7 +23,7 @@ public class LogBootstrapService {
 
         APIVersion version = PoloCloudAPI.class.getAnnotation(APIVersion.class);
 
-        Logger.logPrefixLess("\n" +
+        PoloLogger.print(LogLevel.INFO, "\n" +
             "  _____      _        _____ _                 _ \n" +
             " |  __ \\    | |      / ____| |               | |\n" +
             " | |__) |__ | | ___ | |    | | ___  _   _  __| |\n" +
@@ -39,7 +33,7 @@ public class LogBootstrapService {
             "                                                \n");
         PoloLogger.print(LogLevel.INFO, "#This cloud was developed by " + ConsoleColors.LIGHT_BLUE + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
         PoloLogger.print(LogLevel.INFO, ConsoleColors.GRAY + "#Version of cloud - " + ConsoleColors.LIGHT_BLUE + version.version() + ConsoleColors.GRAY + " (" + version.identifier() + ") | ©opyright by PoloCloud.");
-        PoloLogger.print(LogLevel.INFO, "Problems or quAestions? Our Discord » " + ConsoleColors.LIGHT_BLUE + version.discord());
-        Logger.newLine();
+        PoloLogger.print(LogLevel.INFO, "Problems or questions? Our Discord » " + ConsoleColors.LIGHT_BLUE + version.discord());
+        PoloLogger.print(LogLevel.INFO, "");
     }
 }

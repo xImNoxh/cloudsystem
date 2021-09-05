@@ -96,7 +96,7 @@ public class InternalWrapperBootstrap {
                 PoloLogger.print(LogLevel.DEBUG, "downloading...");
                 if (updater.download()) {
                     wrapper.getConfig().setApiVersion(updater.getFetchedVersion());
-                    new SimpleConfigSaver().save(wrapper.getConfig(), new File("config.json"));
+                    new SimpleConfigSaver().save(wrapper.getConfig(), FileConstants.WRAPPER_CONFIG_FILE);
                     PoloLogger.print(LogLevel.DEBUG, "Successfully downloaded latest version! (" + updater.getFetchedVersion() + ")");
                 } else {
                     PoloLogger.print(LogLevel.DEBUG, "Couldn't download latest version!");
@@ -114,7 +114,7 @@ public class InternalWrapperBootstrap {
      * PoloCloud-Server
      */
     public void registerUncaughtExceptionListener(){
-        String currentVersion = new JsonData(new File("launcher.json")).fallback("N/A").getString("version");
+        String currentVersion = new JsonData(FileConstants.LAUNCHER_FILE).fallback("N/A").getString("version");
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> this.poloCloudClient.getExceptionReportService().reportException(throwable, "wrapper", currentVersion));
     }
 
@@ -134,7 +134,7 @@ public class InternalWrapperBootstrap {
                     "Please report this error.");
             }
         }
-        File tempFilesDir = new File("tempFiles/");
+        File tempFilesDir = FileConstants.WRAPPER_TEMP_FILES;
         if (tempFilesDir.exists()) {
             try {
                 FileUtils.forceDelete(tempFilesDir);
@@ -148,7 +148,7 @@ public class InternalWrapperBootstrap {
      */
     public WrapperConfig loadWrapperConfig() {
 
-        File configFile = new File("config.json");
+        File configFile = FileConstants.WRAPPER_CONFIG_FILE;
         IConfigLoader configLoader = new SimpleConfigLoader();
 
         WrapperConfig wrapperConfig = configLoader.load(WrapperConfig.class, configFile);

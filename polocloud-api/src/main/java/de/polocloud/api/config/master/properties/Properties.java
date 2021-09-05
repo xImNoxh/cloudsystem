@@ -26,6 +26,19 @@ public class Properties implements IConfig {
     private int maxSimultaneouslyStartingTemplates;
 
     /**
+     * If the proxy should be online mode
+     * (No online = cracked users)
+     */
+    private boolean proxyOnlineMode;
+
+    /**
+     * Also known as 'proxyProtocol'
+     * if ping requests should be forwarded
+     * to the host for information access
+     */
+    private boolean proxyPingForwarding;
+
+    /**
      * The port of the cloud server
      */
     private int port;
@@ -56,12 +69,33 @@ public class Properties implements IConfig {
         stringBuilder.append("@PoloCloud");
 
         this.wrapperKey = stringBuilder.toString();
-        this.logPlayerConnections = false;
+        this.fallbacks = new ArrayList<>();
+
         this.maxSimultaneouslyStartingTemplates = 2;
         this.port = 8869;
         this.defaultProxyStartPort = 25565;
         this.defaultServerStartPort = 3000;
-        this.fallbacks = new ArrayList<>();
+
+
+        this.logPlayerConnections = false;
+        this.proxyOnlineMode = true;
+        this.proxyPingForwarding = false;
+    }
+
+    public void setProxyOnlineMode(boolean proxyOnlineMode) {
+        this.proxyOnlineMode = proxyOnlineMode;
+    }
+
+    public boolean isProxyOnlineMode() {
+        return proxyOnlineMode;
+    }
+
+    public boolean isProxyPingForwarding() {
+        return proxyPingForwarding;
+    }
+
+    public void setProxyPingForwarding(boolean proxyPingForwarding) {
+        this.proxyPingForwarding = proxyPingForwarding;
     }
 
     public void setWrapperKey(String wrapperKey) {

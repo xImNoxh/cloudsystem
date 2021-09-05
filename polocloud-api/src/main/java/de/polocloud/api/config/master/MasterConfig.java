@@ -2,6 +2,7 @@ package de.polocloud.api.config.master;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.IConfig;
 import de.polocloud.api.config.master.messages.Messages;
 import de.polocloud.api.config.master.properties.Properties;
@@ -37,7 +38,7 @@ public class MasterConfig implements IConfig {
         PoloCloudAPI.getInstance().setMasterConfig(this);
 
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-            PoloCloudAPI.getInstance().getGuice().getInstance(IConfigSaver.class).save(this, new File("config.json"));
+            PoloCloudAPI.getInstance().getGuice().getInstance(IConfigSaver.class).save(this, FileConstants.MASTER_CONFIG_FILE);
             PoloCloudAPI.getInstance().reload();
         } else {
             PacketMessenger.newInstance().send(new MasterUpdateConfigPacket(this));

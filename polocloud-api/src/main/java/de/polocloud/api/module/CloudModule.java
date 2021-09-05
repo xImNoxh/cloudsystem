@@ -1,6 +1,7 @@
 package de.polocloud.api.module;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.guice.own.GuiceObject;
@@ -11,15 +12,13 @@ import java.io.File;
 
 public abstract class CloudModule extends GuiceObject {
 
-    @Inject
-    protected IConfigLoader configLoader;
-
-    @Inject
-    protected IConfigSaver configSaver;
-
     protected File dataDirectory;
 
     protected File moduleFile;
+
+    public CloudModule() {
+        this.dataDirectory = new File(FileConstants.MASTER_MODULES, info().name() + "/");
+    }
 
     /**
      * Registers all tasks for a {@link CloudModule}

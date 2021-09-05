@@ -95,6 +95,8 @@ public class SimplePoloLog implements PoloLog {
             printWriter.flush();
             printWriter.close();
         } else {
+            //TODO: NEEDED ?
+            /*
             BufferedReader reader = new BufferedReader(new FileReader(this.file));
 
             this.archived = true;
@@ -115,7 +117,7 @@ public class SimplePoloLog implements PoloLog {
             }
 
 
-            reader.close();
+            reader.close();*/
         }
     }
 
@@ -132,17 +134,21 @@ public class SimplePoloLog implements PoloLog {
 
     @Override
     public void log(LogLevel level, String line) {
-        line = MinecraftColor.translateColorCodes('§', line);
+
+        String lineToLog = line;
+
+        lineToLog = MinecraftColor.replaceColorCodes(lineToLog);
+        lineToLog = lineToLog.replaceAll("\u001B\\[[;\\d]*m", "");
 
         this.archived = false;
-        this.loggedLines.add(new Pair<>(line, level));
+        this.loggedLines.add(new Pair<>(lineToLog, level));
 
         if (this.saveNext) {
             this.saveNext = false;
 
             try {
                 Writer output = new BufferedWriter(new FileWriter(this.file, true));
-                output.write(line);
+                output.write(lineToLog);
                 output.write("\n");
                 output.flush();
                 output.close();
@@ -205,8 +211,7 @@ public class SimplePoloLog implements PoloLog {
 
             for (Pair<String, LogLevel> loggedLine : new ArrayList<>(loggedLines)) {
                 String s = loggedLine.getKey();
-                LogLevel level = loggedLine.getValue();
-                w.println(MinecraftColor.replaceColorCodes(level.format(this.parent, s)));
+                w.println(s);
             }
 
             w.flush();

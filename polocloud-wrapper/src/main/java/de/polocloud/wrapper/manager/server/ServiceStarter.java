@@ -79,7 +79,7 @@ public class ServiceStarter {
      */
     public void copyFiles() throws Exception {
 
-        File templateDirectory = FileConstants.getTemplateDirectory(template);
+        File templateDirectory = new File(FileConstants.WRAPPER_TEMPLATES, template.getName() + "/");
         File pluginsDirectory = new File(templateDirectory, "/plugins");
 
         if (!pluginsDirectory.exists()) {
@@ -120,18 +120,17 @@ public class ServiceStarter {
      */
     public void createProperties() throws Exception {
 
-        File serverIcon = new File(FileConstants.getTemplateDirectory(template), "server-icon.png");
+        File serverIcon = new File(new File(FileConstants.WRAPPER_TEMPLATES, template.getName() + "/"), "server-icon.png");
         if (serverIcon.exists()) {
             FileUtils.copyFile(serverIcon, new File(serverLocation, "server-icon.png"));
         }
 
         if (service.getTemplate().getTemplateType() == TemplateType.PROXY) {
 
-            //TODO CONFIG VALUES
-            boolean onlineMode = true;
-            boolean proxyProtocol = false;
+            boolean onlineMode = PoloCloudAPI.getInstance().getMasterConfig().getProperties().isProxyOnlineMode();
+            boolean proxyProtocol = PoloCloudAPI.getInstance().getMasterConfig().getProperties().isProxyPingForwarding();
 
-            new BungeeProperties(serverLocation, template.getMaxPlayers(), service.getPort(), template.getMotd());
+            new BungeeProperties(serverLocation, template.getMaxPlayers(), service.getPort(), template.getMotd(), proxyProtocol, onlineMode);
 
         } else {
             FileWriter eula = null;
@@ -166,7 +165,7 @@ public class ServiceStarter {
     public void createCloudFiles() throws Exception{
 
         //config
-        File poloCloudConfigFile = new File(serverLocation + "/PoloCloud.json");
+        File poloCloudConfigFile = new File(serverLocation + "/" + FileConstants.CLOUD_JSON_NAME);
 
         JsonData jsonData = new JsonData(poloCloudConfigFile);
 

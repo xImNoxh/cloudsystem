@@ -4,7 +4,7 @@ import java.io.File;
 
 public class BungeeProperties extends ServiceProperties {
 
-    public BungeeProperties(File directory, int maxplayers, int port, String motd) {
+    public BungeeProperties(File directory, int maxplayers, int port, String motd, boolean proxyProtocol, boolean onlineMode) {
         super(directory, "config.yml", port);
 
         setProperties(new String[]{
@@ -43,7 +43,7 @@ public class BungeeProperties extends ServiceProperties {
             "  motd: '" + motd + "'",
             "  tab_list: GLOBAL_PING",
             "  query_enabled: false",
-            "  proxy_protocol: false",
+            "  proxy_protocol: " + proxyProtocol,
             "  forced_hosts:",
             "    pvp.md-5.net: pvp",
             "  ping_passthrough: false",
@@ -53,7 +53,7 @@ public class BungeeProperties extends ServiceProperties {
             "  max_players: " + maxplayers,
             "  tab_size: 60",
             "  force_default_server: false",
-            "online_mode: true",
+            "online_mode: " + onlineMode,
             "servers:"
         });
         writeFile();
