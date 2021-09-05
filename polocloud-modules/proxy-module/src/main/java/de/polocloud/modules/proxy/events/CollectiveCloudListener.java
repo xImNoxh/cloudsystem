@@ -5,15 +5,41 @@ import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.modules.proxy.ProxyModule;
+import de.polocloud.modules.proxy.config.ProxyConfig;
 
 public class CollectiveCloudListener implements IListener {
 
+    private ProxyConfig proxyConfig;
+
+    public CollectiveCloudListener() {
+        proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
+    }
+
     @EventHandler
     public void handle(CloudGameServerStatusChangeEvent event) {
-        if(!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getGameServer().getStatus().equals(GameServerStatus.RUNNING))) return;
+
+        if(proxyConfig.getNotifyConfig().isUse()) {
+            switch (event.getStatus()) {
+                case STARTING:
+                    sendNotifyMessage(proxyConfig.getNotifyConfig().getStartingMessage(), event.getGameServer());
+                    break;
+                case RUNNING:
+                    sendNotifyMessage(proxyConfig.getNotifyConfig().getStartedMessage(), event.getGameServer());
+                    break;
+                case STOPPING:
+                    sendNotifyMessage(proxyConfig.getNotifyConfig().getStoppedMessage(), event.getGameServer());
+                    break;
+            }
+        }
+
+        System.out.println(event.getGameServer() == null);
+        System.out.println(event.getGameServer().getTemplate() == null);
+        System.out.println(event.getGameServer().getTemplate().getTemplateType() == null);
+        if(!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getStatus().equals(GameServerStatus.RUNNING))) return;
         ProxyModule.getProxyModule().sendMotd(event.getGameServer());
     }
 
@@ -22,6 +48,10 @@ public class CollectiveCloudListener implements IListener {
         PoloCloudAPI.getInstance().getGameServerManager().getCached(event.getTemplate()).forEach(it -> ProxyModule.getProxyModule().sendMotd(it));
     }
 
+    public void sendNotifyMessage(String message, IGameServer gameServer){
+        String finalMessage = message.replaceAll("%service%", gameServer.getName());
+        PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().forEach(it -> it.sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + finalMessage));
+    }
 
 
 
