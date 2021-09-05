@@ -1,9 +1,9 @@
 package de.polocloud.api.gameserver.base;
 
+import com.google.gson.annotations.Expose;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.impl.server.CloudGameServerPropertyUpdateEvent;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerUpdateEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -13,7 +13,8 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.Exclude;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
@@ -92,6 +93,7 @@ public class SimpleGameServer implements IGameServer {
     /**
      * The netty context
      */
+    @Exclude
     private ChannelHandlerContext channelHandlerContext;
 
     /**
@@ -192,7 +194,6 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setStatus(GameServerStatus status) {
         gameServerStatus = status;
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(this, status));
     }
 
     @Override

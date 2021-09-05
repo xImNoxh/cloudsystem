@@ -1,7 +1,7 @@
 package de.polocloud.api.config;
 
 import com.google.gson.*;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.*;
 import java.lang.reflect.Type;

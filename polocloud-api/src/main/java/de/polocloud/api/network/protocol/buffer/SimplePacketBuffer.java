@@ -22,12 +22,13 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.MinecraftProtocol;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,7 +123,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
 
     @Override
-    public File readFile() throws IOException {
+    public File readFile(File dest) throws IOException {
         String name = readString();
         int size = readInt();
         ByteBuf part = buf.readBytes(size);
@@ -130,11 +131,11 @@ public class SimplePacketBuffer implements IPacketBuffer {
         part.readBytes(bytes);
         part.release();
 
-        File tempDir = FileConstants.WRAPPER_TEMP_FILES;
-        if (!tempDir.exists()) {
-            tempDir.mkdirs();
+        if (!dest.exists()) {
+            dest.mkdirs();
         }
-        return Files.write(new File(tempDir.getPath() + "/" + name).toPath(), bytes).toFile();
+
+        return Files.write(new File(dest.getPath() + "/" + name).toPath(), bytes).toFile();
     }
 
     @Override
@@ -368,9 +369,11 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeBoolean(gameServer.isRegistered());
 
         //Properties
-        this.writeInt(gameServer.getProperties().size());
-        for (IProperty property : gameServer.getProperties()) {
-            this.writeString(PoloHelper.GSON_INSTANCE.toJson(property));
+        this.writeInt(gameServer.getProperties() == null ? 0 : gameServer.getProperties().size());
+        if (gameServer.getProperties() != null) {
+            for (IProperty property : gameServer.getProperties()) {
+                this.writeString(PoloHelper.GSON_INSTANCE.toJson(property));
+            }
         }
     }
 

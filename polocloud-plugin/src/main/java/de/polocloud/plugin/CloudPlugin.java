@@ -84,7 +84,6 @@ public class CloudPlugin extends PoloCloudAPI {
                         System.out.println("[CloudPlugin] Recognized this GameServer as '" + thisService.getName() + "' (" + thisService.getTemplate().getTemplateType().getDisplayName() + ") !");
 
                         bootstrap.registerListeners();
-                        thisService.setStatus(GameServerStatus.RUNNING);
                         thisService.updateInternally();
 
                         networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(thisService.getName(), thisService.getSnowflake()));

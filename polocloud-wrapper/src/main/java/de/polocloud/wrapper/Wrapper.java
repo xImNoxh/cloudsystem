@@ -7,6 +7,7 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.helper.LogLevel;
@@ -22,7 +23,7 @@ import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.wrapper.bootup.InternalWrapperBootstrap;
 import de.polocloud.wrapper.impl.commands.HelpCommand;
@@ -199,6 +200,9 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     @Override
     public boolean terminate() {
         boolean terminate = this.nettyClient.terminate();
+
+        PoloHelper.deleteFolder(FileConstants.MASTER_MODULES);
+        PoloHelper.deleteFolder(FileConstants.WRAPPER_DYNAMIC_SERVERS);
 
         for (IScreen screen : screenManager.getScreens()) {
             Process process = screen.getProcess();

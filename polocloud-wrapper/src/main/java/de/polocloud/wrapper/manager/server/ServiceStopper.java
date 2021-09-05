@@ -6,7 +6,7 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.IScreenManager;

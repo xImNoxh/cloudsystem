@@ -115,7 +115,6 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
         IGameServer cached = this.getCached(object.getName());
         if (cached == null) {
             this.registerGameServer(object);
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(object, object.getStatus()));
             return;
         }
         if (!cached.getStatus().equals(object.getStatus())) {

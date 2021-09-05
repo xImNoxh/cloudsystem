@@ -1,6 +1,5 @@
 package de.polocloud.internalwrapper.bootstrap;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
@@ -8,8 +7,6 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.api.module.CloudModule;
-import de.polocloud.internalwrapper.InternalWrapper;
 import de.polocloud.internalwrapper.utils.config.WrapperConfig;
 import org.apache.commons.io.FileUtils;
 
@@ -37,7 +34,7 @@ public class InternalWrapperBootstrap {
                     "Please report this error.");
             }
         }
-        File tempFilesDir = FileConstants.WRAPPER_TEMP_FILES;
+        File tempFilesDir = FileConstants.TEMP_FILES;
         if (tempFilesDir.exists()) {
             try {
                 FileUtils.forceDelete(tempFilesDir);

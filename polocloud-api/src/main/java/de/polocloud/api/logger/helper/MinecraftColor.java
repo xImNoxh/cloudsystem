@@ -38,6 +38,10 @@ public enum MinecraftColor {
         return code;
     }
 
+    public String getColor() {
+        return "§" + c;
+    }
+
     /**
      * Formats a String with Minecraft-Color-Codes and replaces them with
      * the correct {@link MinecraftColor}

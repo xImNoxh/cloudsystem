@@ -1,12 +1,10 @@
-package de.polocloud.api.util;
+package de.polocloud.api.util.gson;
 
 import com.google.gson.*;
 import de.polocloud.api.common.ExceptionRunnable;
 import de.polocloud.api.common.ExceptionSupplier;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.logger.helper.MinecraftColor;
-import de.polocloud.api.module.info.ModuleInfo;
 import io.netty.channel.ChannelFutureListener;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -31,7 +29,7 @@ public class PoloHelper {
     /**
      * The {@link Gson} instance to only instantiate once and do not waste resources
      */
-    public static final Gson GSON_INSTANCE = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+    public static final Gson GSON_INSTANCE = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).serializeNulls().setPrettyPrinting().create();
 
     /**
      * The date format to format dates with Day-Month-Year and hour:minute:second (28.08.2021 - 23:08:53)

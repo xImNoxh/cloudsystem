@@ -8,7 +8,7 @@ import de.polocloud.api.player.ICloudPlayer;
 @EventData(nettyFire = true)
 public abstract class CloudPlayerEvent extends CloudEvent {
 
-    private String player;
+    private final String player;
 
     protected CloudPlayerEvent(ICloudPlayer player) {
         this.player = player.getName();

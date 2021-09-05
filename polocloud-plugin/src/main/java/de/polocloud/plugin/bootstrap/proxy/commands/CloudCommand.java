@@ -1,6 +1,5 @@
 package de.polocloud.plugin.bootstrap.proxy.commands;
 
-import com.google.inject.Inject;
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Command;
@@ -24,8 +23,7 @@ import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.PoloHelper;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.system.ressources.IResourceConverter;
 import de.polocloud.api.util.system.ressources.IResourceProvider;
 import de.polocloud.api.wrapper.IWrapperManager;

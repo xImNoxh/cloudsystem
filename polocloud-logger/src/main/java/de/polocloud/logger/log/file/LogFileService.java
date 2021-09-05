@@ -1,7 +1,7 @@
 package de.polocloud.logger.log.file;
 
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.File;
 import java.io.IOException;

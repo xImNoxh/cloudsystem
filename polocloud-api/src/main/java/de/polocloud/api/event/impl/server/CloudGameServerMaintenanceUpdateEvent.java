@@ -12,8 +12,8 @@ import java.io.IOException;
 @EventData(nettyFire = true)
 public class CloudGameServerMaintenanceUpdateEvent extends CloudEvent {
 
-    private String template;
-    private boolean maintenance;
+    private final String template;
+    private final boolean maintenance;
 
 
     public CloudGameServerMaintenanceUpdateEvent(ITemplate template, boolean maintenance) {

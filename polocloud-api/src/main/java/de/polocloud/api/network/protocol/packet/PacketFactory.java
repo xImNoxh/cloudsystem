@@ -1,7 +1,7 @@
 package de.polocloud.api.network.protocol.packet;
 
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.util.Map;
 import java.util.TreeMap;

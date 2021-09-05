@@ -1,5 +1,6 @@
 package de.polocloud.api.network.packets.wrapper;
 
+import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -45,10 +46,10 @@ public class WrapperTransferModulesPacket extends Packet {
                 enums[i1] = buf.readEnum();
             }
 
-            File file = buf.readFile();
-
+            File file = buf.readFile(FileConstants.MASTER_MODULES);
             modulesWithInfo.put(file, enums);
         }
+
 
     }
 

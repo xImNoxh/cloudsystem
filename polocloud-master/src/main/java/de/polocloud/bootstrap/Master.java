@@ -9,7 +9,6 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
@@ -36,7 +35,7 @@ import de.polocloud.api.template.TemplateStorage;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
@@ -53,10 +52,7 @@ import de.polocloud.client.PoloCloudClient;
 import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 
 public class Master extends PoloCloudAPI implements IStartable {
 

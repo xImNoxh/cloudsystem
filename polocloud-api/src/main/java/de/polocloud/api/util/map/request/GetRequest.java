@@ -1,6 +1,6 @@
 package de.polocloud.api.util.map.request;
 
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.map.MapEntry;
 import de.polocloud.api.util.map.UniqueMap;
 import javassist.NotFoundException;

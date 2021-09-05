@@ -10,15 +10,15 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import java.io.IOException;
 
 @EventData(nettyFire = true)
-public class GameServerEvent extends CloudEvent {
+public abstract class GameServerEvent extends CloudEvent {
 
-    private final String gameServer;
+    private final SimpleGameServer gameServer;
 
     public GameServerEvent(IGameServer gameServer) {
-        this.gameServer = gameServer.getName();
+        this.gameServer = (SimpleGameServer) gameServer;
     }
 
     public IGameServer getGameServer() {
-        return PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer);
+        return this.gameServer;
     }
 }

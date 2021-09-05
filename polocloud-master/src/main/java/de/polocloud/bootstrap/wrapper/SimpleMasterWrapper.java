@@ -11,7 +11,7 @@ import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePack
 import de.polocloud.api.network.packets.wrapper.WrapperRequestShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.logger.PoloLogger;

@@ -134,7 +134,7 @@ public class InternalWrapperBootstrap {
                     "Please report this error.");
             }
         }
-        File tempFilesDir = FileConstants.WRAPPER_TEMP_FILES;
+        File tempFilesDir = FileConstants.TEMP_FILES;
         if (tempFilesDir.exists()) {
             try {
                 FileUtils.forceDelete(tempFilesDir);

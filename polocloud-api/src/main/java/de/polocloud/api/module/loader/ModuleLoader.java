@@ -4,15 +4,13 @@ import com.google.gson.JsonObject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.module.info.ModuleInfo;
 import de.polocloud.api.module.info.ModuleState;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.File;
 import java.net.URLClassLoader;

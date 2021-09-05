@@ -1,9 +1,8 @@
 package de.polocloud.api.property.def;
 
 import com.google.gson.JsonElement;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.property.IProperty;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.util.ArrayList;
 import java.util.List;

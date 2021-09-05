@@ -7,7 +7,7 @@ import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.scheduler.base.SimpleScheduler;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.Snowflake;
 
 public class PoloAPIGuiceModule extends AbstractModule {

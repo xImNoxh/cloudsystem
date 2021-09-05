@@ -1,5 +1,7 @@
 package de.polocloud.api.util;
 
+import de.polocloud.api.util.gson.PoloHelper;
+
 public class WrappedObject<T> {
 
     /**

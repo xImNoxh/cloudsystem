@@ -1,7 +1,7 @@
 package de.polocloud.api.pool;
 
 import de.polocloud.api.common.INamable;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;

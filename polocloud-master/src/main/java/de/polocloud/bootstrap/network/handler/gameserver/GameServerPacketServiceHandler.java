@@ -103,7 +103,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             ((SimpleGameServer) server).setChannelHandlerContext(ctx);
             server.setPort(packet.getPort());
             server.setRegistered(true);
-            server.setStatus(GameServerStatus.RUNNING);
             server.setVisible(true);
             server.update();
 

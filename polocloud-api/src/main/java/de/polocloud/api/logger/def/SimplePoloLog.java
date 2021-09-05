@@ -7,7 +7,7 @@ import de.polocloud.api.logger.helper.LogHandler;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
 import de.polocloud.api.util.Cancellable;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.Snowflake;
 
 import java.io.*;

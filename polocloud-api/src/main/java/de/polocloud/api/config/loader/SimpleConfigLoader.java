@@ -2,7 +2,7 @@ package de.polocloud.api.config.loader;
 
 import de.polocloud.api.config.IConfig;
 import de.polocloud.api.config.saver.IConfigSaver;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.File;
 import java.io.FileReader;

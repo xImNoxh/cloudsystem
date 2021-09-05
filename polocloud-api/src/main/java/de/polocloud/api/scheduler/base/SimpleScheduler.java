@@ -34,7 +34,7 @@ public class SimpleScheduler implements Scheduler {
 
 	public SimpleScheduler() {
         instance = this;
-		this.tasks = new LinkedList<>();
+		this.tasks = new ArrayList<>();
 		this.timer = new Timer();
 	}
 

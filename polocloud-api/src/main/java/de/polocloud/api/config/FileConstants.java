@@ -21,10 +21,10 @@ public class FileConstants {
     public static final File WRAPPER_STORAGE = new File("storage/");
     public static final File WRAPPER_STORAGE_VERSIONS = new File(WRAPPER_STORAGE, "version/");
     public static final File WRAPPER_CONFIG_FILE = new File("config.json");
-    public static final File WRAPPER_TEMP_FILES = new File("tempFiles/");
 
     //Global stuff
     public static final File GLOBAL_FOLDER = new File("global/");
+    public static final File TEMP_FILES = new File(GLOBAL_FOLDER, "tempFiles/");
     public static final File DATABASE_FOLDER = new File(GLOBAL_FOLDER, "db/");
     public static final File POLO_LOGS_FOLDER = new File(GLOBAL_FOLDER, "logs/");
     public static final File LAUNCHER_FILE = new File("launcher.json");

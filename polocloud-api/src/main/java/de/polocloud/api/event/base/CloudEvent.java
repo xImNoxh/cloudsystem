@@ -8,7 +8,6 @@ public abstract class CloudEvent {
      */
     private boolean nettyFired;
 
-
     public boolean isNettyFired() {
         return nettyFired;
     }

@@ -3,7 +3,7 @@ package de.polocloud.api.player.def;
 
 import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.util.MinecraftProtocol;
-import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.gson.PoloHelper;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;

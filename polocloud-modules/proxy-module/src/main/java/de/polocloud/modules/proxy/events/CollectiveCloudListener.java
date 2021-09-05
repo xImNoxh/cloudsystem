@@ -13,7 +13,7 @@ import de.polocloud.modules.proxy.config.ProxyConfig;
 
 public class CollectiveCloudListener implements IListener {
 
-    private ProxyConfig proxyConfig;
+    private final ProxyConfig proxyConfig;
 
     public CollectiveCloudListener() {
         proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
@@ -21,8 +21,7 @@ public class CollectiveCloudListener implements IListener {
 
     @EventHandler
     public void handle(CloudGameServerStatusChangeEvent event) {
-
-        if(proxyConfig.getNotifyConfig().isUse()) {
+        if (proxyConfig.getNotifyConfig().isUse()) {
             switch (event.getStatus()) {
                 case STARTING:
                     sendNotifyMessage(proxyConfig.getNotifyConfig().getStartingMessage(), event.getGameServer());

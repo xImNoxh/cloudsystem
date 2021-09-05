@@ -117,7 +117,7 @@ public interface IPacketBuffer {
     /**
      * Reads a {@link File} from this buffer
      */
-    File readFile() throws IOException;
+    File readFile(File dest) throws IOException;
 
     /**
      * Reads a {@link int[]} array from this buffer
