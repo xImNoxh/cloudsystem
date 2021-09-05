@@ -1,37 +1,33 @@
-package de.polocloud.example;
+package example;
 
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.module.info.ModuleInfo;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.info.ModuleTask;
-import de.polocloud.example.config.ExampleConfig;
+import example.config.ExampleConfig;
 
 @ModuleInfo(
-    main = PermissionModule.class,
-    name = "Permissions",
+    main = ExampleModule.class,
+    name = "Example",
     version = "1.0",
     authors = "HttpMarco",
     copyTypes = ModuleCopyType.ALL
 )
-public class PermissionModule extends CloudModule {
+public class ExampleModule extends CloudModule {
 
     private ExampleConfig config;
 
-    private static PermissionModule instance;
+    private static ExampleModule instance;
 
-    public PermissionModule() {
+    public ExampleModule() {
         instance = this;
     }
 
     @ModuleTask(id = 1, state = ModuleState.LOADING)
     public void loadModule() {
-
-
-
         //System.out.println("Loading Example module...");
        // this.config = configLoader.load(ExampleConfig.class, new ExampleConfig(true, "yourS", UUID.randomUUID()), new File(this.dataDirectory, "config.json"), this.configSaver);
-
     }
 
     @ModuleTask(id = 2, state = ModuleState.STARTING)
@@ -50,7 +46,7 @@ public class PermissionModule extends CloudModule {
         return config;
     }
 
-    public static PermissionModule getInstance() {
+    public static ExampleModule getInstance() {
         return instance;
     }
 }

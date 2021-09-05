@@ -1,4 +1,4 @@
-package de.polocloud.example.command;
+package example.command;
 
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;

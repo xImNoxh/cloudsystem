@@ -1,4 +1,4 @@
-package de.polocloud.example.config;
+package example.config;
 
 import de.polocloud.api.config.IConfig;
 

@@ -1,4 +1,4 @@
-package de.polocloud.example.listener;
+package example.listener;
 
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
