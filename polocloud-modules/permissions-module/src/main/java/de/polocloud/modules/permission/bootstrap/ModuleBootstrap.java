@@ -18,14 +18,14 @@ import de.polocloud.modules.permission.PermissionModule;
 )
 public class ModuleBootstrap extends CloudModule {
 
-    private final PermissionModule permissionModule;
+    private PermissionModule permissionModule;
 
     public ModuleBootstrap() {
-        this.permissionModule = new PermissionModule();
     }
 
     @ModuleTask(id = 1, state = ModuleState.LOADING)
     public void onLoad() {
+        this.permissionModule = new PermissionModule(this);
         this.permissionModule.load();
     }
 

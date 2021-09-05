@@ -28,13 +28,17 @@ public class DocumentDatabase {
     /**
      * The directory of this database
      */
-    private final File directory;
+    protected File directory;
 
-    public DocumentDatabase(String name) {
+    public DocumentDatabase(String name, File directory) {
         this.name = name;
         this.cache = new HashMap<>();
-        this.directory = new File(FileConstants.DATABASE_FOLDER, name + "/");
+        this.directory = directory;
         this.loadCache();
+    }
+
+    public DocumentDatabase(String name) {
+        this(name, new File(FileConstants.DATABASE_FOLDER, name + "/"));
     }
 
     /**

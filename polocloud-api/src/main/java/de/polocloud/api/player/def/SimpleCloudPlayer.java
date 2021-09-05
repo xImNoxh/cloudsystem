@@ -115,7 +115,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     @Override
     public void sendToFallbackExcept(String... except) {
-        IGameServer fallback = getFallbackRecursive(except);
+        IGameServer fallback = getFallbackRecursive(0, except);
         if (fallback == null) {
             this.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getKickedAndNoFallbackServer());
             return;
@@ -123,8 +123,10 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         this.sendTo(fallback);
     }
 
-    private IGameServer getFallbackRecursive(String... except) {
-
+    private IGameServer getFallbackRecursive(int tries, String... except) {
+        if (tries++ == 10) {
+            return null;
+        }
         List<IFallback> fallbacks = PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks();
         if (fallbacks.size() == 1) {
             return null;
@@ -135,7 +137,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         IGameServer fallback = gameServers.get(ThreadLocalRandom.current().nextInt(gameServers.size()));
 
         if (fallback != null && Arrays.asList(except).contains(fallback.getName())) {
-            return getFallbackRecursive(except);
+            return getFallbackRecursive(tries, except);
         }
         return fallback;
     }

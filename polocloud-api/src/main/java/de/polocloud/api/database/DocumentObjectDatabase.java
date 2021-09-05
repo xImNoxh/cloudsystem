@@ -3,15 +3,21 @@ package de.polocloud.api.database;
 
 import de.polocloud.api.config.JsonData;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DocumentObjectDatabase<V> extends DocumentDatabase {
+public class DocumentObjectDatabase<V> extends DocumentDatabase implements IDatabase<V> {
 
     private final Class<V> vClass;
 
     public DocumentObjectDatabase(String name, Class<V> vClass) {
         super(name);
+        this.vClass = vClass;
+    }
+
+    public DocumentObjectDatabase(String name, File directory, Class<V> vClass) {
+        super(name, directory);
         this.vClass = vClass;
     }
 
@@ -27,6 +33,12 @@ public class DocumentObjectDatabase<V> extends DocumentDatabase {
         document.append("object", object);
 
         this.insert(document, key);
+    }
+
+    @Override
+    public IDatabase<V> directory(File dir) {
+        this.directory = dir;
+        return this;
     }
 
     /**

@@ -1,8 +1,14 @@
 package de.polocloud.modules.permission.api;
 
+import de.polocloud.api.guice.own.Guice;
+
 import java.util.List;
 
-public interface IPermissionPool {
+public interface PermissionPool {
+
+    static PermissionPool getInstance() {
+        return Guice.getInstance(PermissionPool.class);
+    }
 
     /**
      * Gets a list of all {@link IPermissionGroup}
