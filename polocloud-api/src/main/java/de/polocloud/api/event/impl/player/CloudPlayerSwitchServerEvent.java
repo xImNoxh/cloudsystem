@@ -18,8 +18,8 @@ public class CloudPlayerSwitchServerEvent extends CloudPlayerEvent {
 
     public CloudPlayerSwitchServerEvent(ICloudPlayer player, IGameServer to, IGameServer from) {
         super(player);
-        this.to = to.getName();
-        this.from = from.getName();
+        this.to = to == null ? "Null" : to.getName();
+        this.from = from == null ? "Null" : from.getName();
     }
 
     public IGameServer getTo() {

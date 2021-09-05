@@ -8,7 +8,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 
@@ -26,7 +26,7 @@ public class FallbackSearchService {
     }
 
     public List<IGameServer> searchForTemplate(ICloudPlayer cloudPlayer, boolean hubCommand) {
-        for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbackProperties()) {
+        for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbacks()) {
             if ((cloudPlayer == null && !fallbackProperty.getFallbackPermission().equals(""))) {
                 continue;
             }
@@ -70,6 +70,6 @@ public class FallbackSearchService {
     }
 
     public boolean isOnFallback(ICloudPlayer iCloudPlayer) {
-        return this.masterConfig.getProperties().getFallbackProperties().stream().filter(fallbackProperty -> fallbackProperty.getTemplateName().toLowerCase(Locale.ROOT).equals(iCloudPlayer.getMinecraftServer().getTemplate().getName().toLowerCase(Locale.ROOT))).findFirst().orElse(null) != null;
+        return this.masterConfig.getProperties().getFallbacks().stream().filter(fallbackProperty -> fallbackProperty.getTemplateName().toLowerCase(Locale.ROOT).equals(iCloudPlayer.getMinecraftServer().getTemplate().getName().toLowerCase(Locale.ROOT))).findFirst().orElse(null) != null;
     }
 }

@@ -1,6 +1,7 @@
 package de.polocloud.api.network.packets.api;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.protocol.IProtocolObject;
@@ -21,6 +22,7 @@ public class MasterCache implements IProtocolObject {
     private List<ITemplate> templates;
     private List<IWrapper> wrappers;
     private List<IFallback> fallbacks;
+    private MasterConfig masterConfig;
 
     public MasterCache() {
     }
@@ -31,16 +33,21 @@ public class MasterCache implements IProtocolObject {
             cloudAPI.getCloudPlayerManager() == null ? new LinkedList<>() : cloudAPI.getCloudPlayerManager().getAllCached(),
             cloudAPI.getTemplateManager() == null ? new LinkedList<>() : cloudAPI.getTemplateManager().getTemplates(),
             cloudAPI.getWrapperManager() == null ? new LinkedList<>() : cloudAPI.getWrapperManager().getWrappers(),
-            cloudAPI.getFallbackManager() == null ? new LinkedList<>() : cloudAPI.getFallbackManager().getAvailableFallbacks()
-        );
+            cloudAPI.getFallbackManager() == null ? new LinkedList<>() : cloudAPI.getFallbackManager().getAvailableFallbacks(),
+            cloudAPI.getMasterConfig());
     }
 
-    public MasterCache(List<IGameServer> gameServers, List<ICloudPlayer> cloudPlayers, List<ITemplate> templates, List<IWrapper> wrappers, List<IFallback> fallbacks) {
+    public MasterCache(List<IGameServer> gameServers, List<ICloudPlayer> cloudPlayers, List<ITemplate> templates, List<IWrapper> wrappers, List<IFallback> fallbacks, MasterConfig masterConfig) {
         this.gameServers = gameServers;
         this.cloudPlayers = cloudPlayers;
         this.templates = templates;
         this.wrappers = wrappers;
         this.fallbacks = fallbacks;
+        this.masterConfig = masterConfig;
+    }
+
+    public MasterConfig getMasterConfig() {
+        return masterConfig;
     }
 
     //To avoid concurrentmodificationexception

@@ -7,6 +7,7 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;
@@ -64,6 +65,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
      */
     private final IPubSubManager pubSubManager;
 
+    /**
+     * The master config
+     */
+    private MasterConfig masterConfig;
+
     private ModuleCopyService moduleCopyService;
 
     public Wrapper(boolean devMode) {
@@ -100,6 +106,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public void start() {
+        if (config.getLoginKey().equalsIgnoreCase("default")) {
+
+            PoloLogger.print(LogLevel.ERROR, "§cPlease put the §eWrapperKey §cof the Master into the §econfig.json§c!");
+            terminate();
+        }
         PoloLogger.print(LogLevel.INFO, "Trying to start the wrapper...");
 
         new Thread(() -> this.nettyClient.start(nettyClient -> {

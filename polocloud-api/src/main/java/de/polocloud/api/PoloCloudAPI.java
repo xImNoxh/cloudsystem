@@ -9,6 +9,7 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.event.IEventManager;
@@ -32,13 +33,15 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.packets.api.MasterCache;
 import de.polocloud.api.network.packets.other.TextPacket;
+import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.placeholder.IPlaceHolderManager;
 import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
 import de.polocloud.api.player.ICloudPlayerManager;
-import de.polocloud.api.player.SimpleCachedCloudPlayerManager;
+import de.polocloud.api.player.def.SimpleCachedCloudPlayerManager;
 import de.polocloud.api.property.IPropertyManager;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.pubsub.IPubSubManager;
@@ -51,10 +54,12 @@ import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.util.system.SystemManager;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
+import io.netty.channel.ChannelHandlerContext;
 import org.reflections.Reflections;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @APIVersion(
     version = "alpha-1.0",
@@ -69,10 +74,9 @@ import java.util.Optional;
 )
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
-    /**
-     * The instance of the cloud api
-     */
+    //The instance for this api
     private static PoloCloudAPI instance;
+
     //All manager instances
     protected final ICommandManager commandManager;
     protected final IPlaceHolderManager placeHolderManager;
@@ -86,17 +90,14 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final IMessageManager messageManager;
     protected final IModuleHolder moduleHolder;
     protected final IPropertyManager propertyManager;
+    protected final IPortManager portManager;
     protected final SystemManager systemManager;
 
     //The bridge instance
     protected PoloPluginBridge poloBridge;
 
-    /**
-     * The port cache for finding new ports
-     */
-    protected final IPortManager portManager;
-    //Other fields
     private final PoloType type;
+    protected MasterConfig masterConfig;
 
     protected PoloCloudAPI(PoloType type) {
         instance = this;
@@ -119,6 +120,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.moduleHolder = new ModuleService(FileConstants.MASTER_MODULES);
         this.propertyManager = new SimpleCachedPropertyManager();
         this.systemManager = new SystemManager();
+        this.masterConfig = new MasterConfig();
 
         Guice.bind(Scheduler.class).toInstance(new SimpleScheduler());
         Guice.bind(Snowflake.class).toInstance(new Snowflake());
@@ -174,6 +176,17 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.templateManager.setCachedObjects(cache.getTemplates());
         this.wrapperManager.setCachedObjects(cache.getWrappers());
         this.fallbackManager.setAvailableFallbacks(cache.getFallbacks());
+        this.masterConfig = cache.getMasterConfig();
+    }
+
+    /**
+     * Gets the {@link MasterConfig} to get Messages
+     * or properties of it in general
+     *
+     * @return config instance
+     */
+    public MasterConfig getMasterConfig() {
+        return this.masterConfig;
     }
 
     /**
@@ -245,6 +258,30 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.getConnection().sendPacket(packet);
     }
 
+    /**
+     * Registers an {@link IPacketHandler} for a given Packet
+     * in this {@link IProtocol}-Instance
+     *
+     * @param packetHandler the handler to register
+     */
+    public void registerPacketHandler(IPacketHandler<? extends Packet> packetHandler) {
+        getConnection().getProtocol().registerPacketHandler(packetHandler);
+    }
+
+    public <T extends Packet> void registerSimplePacketHandler(Class<T> packetClass, Consumer<T> handler) {
+        this.registerPacketHandler(new IPacketHandler<T>() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, T packet) {
+                handler.accept(packet);
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return packetClass;
+            }
+        });
+    }
+
     public PoloType getType() {
         return type;
     }
@@ -311,6 +348,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public void setPoloBridge(PoloPluginBridge minecraftBridge) {
         this.poloBridge = minecraftBridge;
+    }
+
+    public void setMasterConfig(MasterConfig masterConfig) {
+        this.masterConfig = masterConfig;
     }
 
     /**

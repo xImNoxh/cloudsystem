@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
@@ -20,6 +21,21 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
     @Override
     public synchronized void onLoad() {
         this.bridge = new PoloPluginBridge() {
+
+            @Override
+            public long getPing(UUID uniqueId) {
+                Player player = Bukkit.getPlayer(uniqueId);
+                if (player == null) {
+                    return -1;
+                }
+                try {
+                    Object entityPlayer = player.getClass().getMethod("getHandle").invoke(player);
+                    return (int) entityPlayer.getClass().getField("ping").get(entityPlayer);
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+                return -1;
+            }
 
             @Override
             public boolean isPlayerOnline(UUID uniqueId) {
@@ -122,7 +138,6 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
     public void registerListeners() {
         new CollectiveSpigotEvents(this);
     }
-
 
     @Override
     public PoloPluginBridge getBridge() {

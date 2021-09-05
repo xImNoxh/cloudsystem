@@ -4,6 +4,8 @@ import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.player.extras.IPlayerSettings;
+import de.polocloud.api.player.def.SimplePlayerSettings;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.proxy.events.CollectiveProxyEvents;
@@ -27,6 +29,39 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public synchronized void onLoad() {
         this.bridge = new PoloPluginBungeeBridge() {
+
+            @Override
+            public long getPing(UUID uniqueId) {
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uniqueId);
+                if (player == null) {
+                    return -1;
+                }
+                return player.getPing();
+            }
+
+            @Override
+            public IPlayerSettings getSettings(UUID uniqueId) {
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uniqueId);
+
+                if (player == null) {
+                    return null;
+                }
+
+                return new SimplePlayerSettings(
+                    player.getLocale(),
+                    player.hasChatColors(),
+                    player.getViewDistance(),
+                    player.getSkinParts().hasHat(),
+                    player.getSkinParts().hasJacket(),
+                    player.getSkinParts().hasRightSleeve(),
+                    player.getSkinParts().hasLeftSleeve(),
+                    player.getSkinParts().hasRightPants(),
+                    player.getSkinParts().hasLeftPants(),
+                    player.getSkinParts().hasCape(),
+                    IPlayerSettings.ChatMode.valueOf(player.getChatMode().name()),
+                    IPlayerSettings.MainHand.valueOf(player.getMainHand().name())
+                );
+            }
 
             @Override
             public boolean isPlayerOnline(UUID uniqueId) {

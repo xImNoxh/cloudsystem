@@ -4,32 +4,28 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.util.AutoRegistry;
 
-import java.io.File;
 import java.io.IOException;
 
 @AutoRegistry
-public class FileTransferPacket extends Packet {
+public class RequestPassOnPacket extends Packet {
 
-    private File file;
+    private String key;
 
-    public FileTransferPacket(File file) {
-        this.file = file;
-    }
-
-    public FileTransferPacket() {
+    public RequestPassOnPacket(String key) {
+        this.key = key;
     }
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
-        buf.writeFile(file);
+        buf.writeString(key);
     }
 
     @Override
     public void read(IPacketBuffer buf) throws IOException {
-        this.file = buf.readFile();
+        key = buf.readString();
     }
 
-    public File getFile() {
-        return file;
+    public String getKey() {
+        return key;
     }
 }

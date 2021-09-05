@@ -9,7 +9,7 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 
 public class MasterGuiceModule extends AbstractModule {

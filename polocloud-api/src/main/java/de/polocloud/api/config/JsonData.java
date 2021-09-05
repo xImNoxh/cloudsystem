@@ -272,6 +272,20 @@ public class JsonData {
     }
 
     /**
+     * Gets a {@link UUID} stored under a given key
+     *
+     * @param key the key where its stored
+     * @return the object or (null if no fallbackValue is defined or the fallbackValue)
+     */
+    public UUID getUniqueId(String key) {
+        if (!this.jsonObject.has(key) || this.jsonObject.get(key).isJsonNull() && this.fallbackValue != null) {
+            this.append(key, this.fallbackValue);
+            return this.fallbackValue != null && this.fallbackValue instanceof UUID ? (UUID) this.fallbackValue : null;
+        }
+        return UUID.fromString(this.jsonObject.get(key).getAsString());
+    }
+
+    /**
      * Gets a {@link Integer} stored under a given key
      *
      * @param key the key where its stored

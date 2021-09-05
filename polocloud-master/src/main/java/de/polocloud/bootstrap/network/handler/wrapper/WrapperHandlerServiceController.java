@@ -11,7 +11,7 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.wrapper.SimpleMasterWrapper;
-import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;

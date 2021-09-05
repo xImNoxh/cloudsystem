@@ -1,4 +1,4 @@
-package de.polocloud.api.player;
+package de.polocloud.api.player.def;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.bridge.PoloPluginBridge;
@@ -16,7 +16,12 @@ import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
+import de.polocloud.api.network.protocol.packet.base.response.base.IResponseElement;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
+import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.player.def.SimplePlayerSettings;
+import de.polocloud.api.player.extras.IPlayerConnection;
+import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 
@@ -31,13 +36,15 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     private final String name;
     private final UUID uniqueId;
+    private final IPlayerConnection connection;
 
     private String minecraftServer;
     private String proxyServer;
 
-    public SimpleCloudPlayer(String name, UUID uniqueId) {
+    public SimpleCloudPlayer(String name, UUID uniqueId, IPlayerConnection connection) {
         this.name = name;
         this.uniqueId = uniqueId;
+        this.connection = connection;
     }
 
     @Override
@@ -62,6 +69,35 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
+    public IPlayerConnection getConnection() {
+        return connection;
+    }
+
+    @Override
+    public long getPing() {
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
+            return PoloCloudAPI.getInstance().getPoloBridge().getPing(this.uniqueId);
+        }
+        IResponseElement element = PacketMessenger.newInstance().blocking().timeOutAfter(TimeUnit.SECONDS, 1L).orElse(new Response(ResponseState.TIMED_OUT)).send("player-ping", new JsonData("uniqueId", this.uniqueId)).get("ping");
+        return element.isNull() ? -1L : element.getAsLong();
+    }
+
+    @Override
+    public IPlayerSettings getSettings() {
+        PoloPluginBridge poloBridge = PoloCloudAPI.getInstance().getPoloBridge();
+        if (poloBridge != null && poloBridge instanceof PoloPluginBungeeBridge) {
+            return ((PoloPluginBungeeBridge) poloBridge).getSettings(this.uniqueId);
+        } else {
+            IResponse response = PacketMessenger.newInstance().setUpPassOn().blocking().orElse(new Response(ResponseState.TIMED_OUT)).timeOutAfter(TimeUnit.SECONDS, 2L).send("player-settings", new JsonData("uniqueId", this.uniqueId));
+
+            if (response.isTimedOut() || response.getStatus() != ResponseState.SUCCESS) {
+                return null;
+            }
+            return response.get("settings").getAsCustom(SimplePlayerSettings.class);
+        }
+    }
+
+    @Override
     public void update() {
         PoloCloudAPI.getInstance().getCloudPlayerManager().updateObject(this);
         PoloCloudAPI.getInstance().sendPacket(new CloudPlayerUpdatePacket(this));
@@ -81,7 +117,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     public void sendToFallbackExcept(String... except) {
         IGameServer fallback = getFallbackRecursive(except);
         if (fallback == null) {
-            this.kick("§cThe server you were on went down, but no fallback server was found!");
+            this.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getKickedAndNoFallbackServer());
             return;
         }
         this.sendTo(fallback);

@@ -15,8 +15,8 @@ public class WrapperConfig implements IConfig {
         this.apiVersion = "-1";
         this.wrapperName = "Wrapper-1";
         this.masterAddress = "127.0.0.1:8869";
-        this.loginKey = "--Polo--";
-        this.logServerOutput = true;
+        this.loginKey = "default";
+        this.logServerOutput = false;
     }
 
     public boolean isLogServerOutput() {

@@ -15,7 +15,6 @@ import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
-import de.polocloud.plugin.protocol.register.NetworkPluginRegister;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 

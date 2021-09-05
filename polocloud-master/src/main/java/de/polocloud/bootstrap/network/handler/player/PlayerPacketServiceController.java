@@ -6,7 +6,7 @@ import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.logger.helper.LogLevel;
 
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;

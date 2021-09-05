@@ -11,10 +11,18 @@ import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacke
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
+import de.polocloud.api.network.packets.other.RequestPassOnPacket;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
+import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
+import de.polocloud.api.network.protocol.packet.base.response.base.ResponseFutureListener;
+import de.polocloud.api.network.protocol.packet.base.response.def.Request;
+import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
+
+import java.util.function.Consumer;
 
 public class PlayerPacketHandler extends PlayerPacketServiceController {
 
@@ -49,6 +57,20 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
             Master.getInstance().getCloudPlayerManager().unregisterPlayer(packet.getCloudPlayer());
             Master.getInstance().updateCache();
             
+        });
+
+        new SimplePacketHandler<>(RequestPassOnPacket.class, packet -> {
+            String key = packet.getKey();
+
+            PacketMessenger.registerHandler(new Consumer<Request>() {
+                @Override
+                public void accept(Request request) {
+                    if (request.getKey().equalsIgnoreCase(key)) {
+                        PacketMessenger.newInstance().blocking().addListener(request::respond).send(request);
+                        PacketMessenger.unregisterHandler(this);
+                    }
+                }
+            });
         });
 
         new SimplePacketHandler<>(CloudPlayerUpdatePacket.class, packet -> {

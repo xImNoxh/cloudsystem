@@ -5,6 +5,7 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocolObject;
+import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.util.Snowflake;
@@ -60,9 +61,9 @@ public abstract class Packet implements IProtocolObject {
      *
      * @param response the response to send
      */
-    public void respond(Response response) {
-        response.setSnowflake(this.snowflake);
-        PoloCloudAPI.getInstance().sendPacket(response);
+    public void respond(IResponse response) {
+        ((Response)response).setSnowflake(this.snowflake);
+        PoloCloudAPI.getInstance().sendPacket((Packet) response);
     }
 
     public void respond(ResponseState state) {

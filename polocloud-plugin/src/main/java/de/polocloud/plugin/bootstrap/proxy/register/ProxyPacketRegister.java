@@ -1,46 +1,34 @@
 package de.polocloud.plugin.bootstrap.proxy.register;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.bridge.PoloPluginBungeeBridge;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
-import de.polocloud.api.network.packets.master.MasterPlayerRequestJoinResponsePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
+import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
+import de.polocloud.api.network.protocol.packet.base.response.def.Response;
+import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.plugin.CloudPlugin;
-import de.polocloud.plugin.protocol.NetworkClient;
-import de.polocloud.plugin.protocol.property.GameServerProperty;
-import de.polocloud.plugin.protocol.register.SimplePacketRegister;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class ProxyPacketRegister {
 
     public ProxyPacketRegister(Plugin plugin) {
 
-        NetworkClient networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
-        GameServerProperty property = CloudPlugin.getCloudPluginInstance().getGameServerProperty();
-
-        new SimplePacketRegister<MasterPlayerRequestJoinResponsePacket>(MasterPlayerRequestJoinResponsePacket.class, packet -> {
-            LoginEvent loginEvent = property.getGameServerLoginEvents().remove(packet.getUuid());
-            if (packet.getSnowflake() == -1) {
-                loginEvent.setCancelled(true);
-                loginEvent.setCancelReason(new TextComponent("§cNo fallback server found!"));
-            } else
-                property.getGameServerLoginServers().put(loginEvent.getConnection().getUniqueId(), packet.getServiceName());
-            loginEvent.completeIntent(plugin);
-        });
-
-        new SimplePacketRegister<>(GlobalCachePacket.class, (Consumer<GlobalCachePacket>) globalCachePacket -> {
+        //Cache updating handler
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GlobalCachePacket.class, globalCachePacket -> {
 
             for (IGameServer gameServer : globalCachePacket.getMasterCache().getGameServers()) {
                 if (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY) {
@@ -50,7 +38,8 @@ public class ProxyPacketRegister {
             }
         });
 
-        new SimplePacketRegister<MasterPlayerSendToServerPacket>(MasterPlayerSendToServerPacket.class, packet -> {
+        //Connecting to server handler
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(MasterPlayerSendToServerPacket.class, packet -> {
             UUID uuid = packet.getUuid();
             if (ProxyServer.getInstance().getPlayer(uuid) != null) {
                 ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(packet.getTargetServer());
@@ -58,18 +47,44 @@ public class ProxyPacketRegister {
             }
         });
 
-        new SimplePacketRegister<MasterPlayerSendMessagePacket>(MasterPlayerSendMessagePacket.class, packet -> {
+        //Messaging handler
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(MasterPlayerSendMessagePacket.class, packet -> {
             UUID uuid = packet.getUuid();
-            if (ProxyServer.getInstance().getPlayer(uuid) != null)
-                ProxyServer.getInstance().getPlayer(uuid).sendMessage(TextComponent.fromLegacyText(packet.getMessage()));
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+            if (player != null) {
+                player.sendMessage(TextComponent.fromLegacyText(packet.getMessage()));
+            }
         });
 
-        new SimplePacketRegister<GameServerUnregisterPacket>(GameServerUnregisterPacket.class, packet -> ProxyServer.getInstance().getServers().remove(packet.getName()));
+        PacketMessenger.registerHandler(request -> {
+            if (request.getKey().equalsIgnoreCase("player-settings")) {
 
-        new SimplePacketRegister<ProxyTablistUpdatePacket>(ProxyTablistUpdatePacket.class, packet -> {
+                JsonData data = request.getData();
+                UUID uniqueId = UUID.fromString(data.getString("uniqueId"));
+
+                IPlayerSettings settings = ((PoloPluginBungeeBridge) PoloCloudAPI.getInstance().getPoloBridge()).getSettings(uniqueId);
+
+                if (settings == null) {
+                    request.respond(ResponseState.NULL);
+                } else {
+                    request.respond(new Response(new JsonData("settings", settings), ResponseState.SUCCESS));
+                }
+
+            }
+        });
+
+        //Unregister server handler
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUnregisterPacket.class , packet -> {
+            ProxyServer.getInstance().getServers().remove(packet.getName());
+        });
+
+        //Update tab handler
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(ProxyTablistUpdatePacket.class, packet -> {
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
-            if (player != null)
-                player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
+            if (player == null) {
+                return;
+            }
+            player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
         });
 
     }

@@ -11,7 +11,7 @@ public class StopCommand implements CommandListener {
 
     @Command(name = "stop", aliases = "exit", description = "Stops the wrapper")
     public void execute(CommandExecutor executor, String[] args) {
-        PoloLogger.print(LogLevel.INFO, "stopping...");
+        PoloLogger.print(LogLevel.INFO, "§cShutting down §e" + Wrapper.getInstance().getConfig().getWrapperName() + "§c...");
         Wrapper.getInstance().terminate();
     }
 }

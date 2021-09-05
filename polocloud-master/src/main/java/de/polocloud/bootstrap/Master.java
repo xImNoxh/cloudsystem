@@ -32,7 +32,7 @@ import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.TemplateStorage;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
-import de.polocloud.bootstrap.config.MasterConfig;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.fallback.FallbackSearchService;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
@@ -61,7 +61,7 @@ public class Master extends PoloCloudAPI implements IStartable {
     private FallbackSearchService fallbackSearchService;
     private ModuleService moduleService;
     private final PortService portService;
-    private final MasterConfig masterConfig;
+    private MasterConfig masterConfig;
     private final PoloCloudClient client;
     private IPubSubManager pubSubManager;
     private SimpleNettyServer nettyServer;
@@ -130,14 +130,14 @@ public class Master extends PoloCloudAPI implements IStartable {
         MasterConfig masterConfig = simpleConfigLoader.load(MasterConfig.class, configFile);
 
         //Sorting the Fallbacks after the FallbackPriority, to make it faster
-        if (!masterConfig.getProperties().getFallbackProperties().isEmpty()) {
-            masterConfig.getProperties().getFallbackProperties().sort(Comparator.comparingInt(SimpleFallback::getPriority));
+        if (!masterConfig.getProperties().getFallbacks().isEmpty()) {
+            masterConfig.getProperties().getFallbacks().sort(Comparator.comparingInt(SimpleFallback::getPriority));
         } else {
             PoloLogger.print(LogLevel.WARNING, "No fallbacks are registered in config.json! The Cloud don't find any fallbacks, so you can't join!");
             PoloLogger.print(LogLevel.INFO, "Adding a default Lobby fallback!");
-            masterConfig.getProperties().getFallbackProperties().add(new SimpleFallback("Lobby", "", true, 1));
+            masterConfig.getProperties().getFallbacks().add(new SimpleFallback("Lobby", "", true, 1));
         }
-        for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbackProperties()) {
+        for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbacks()) {
             PoloCloudAPI.getInstance().getFallbackManager().registerFallback(fallbackProperty);
         }
         simpleConfigSaver.save(masterConfig, configFile);
@@ -178,8 +178,10 @@ public class Master extends PoloCloudAPI implements IStartable {
 
     @Override
     public void reload() {
-        this.updateCache();
+        this.masterConfig = loadConfig();
         this.moduleService.reload();
+
+        this.updateCache();
     }
 
     @Override
@@ -194,7 +196,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         boolean terminate = this.nettyServer.terminate();
 
         for (ICloudPlayer cloudPlayer : cloudPlayerManager) {
-            cloudPlayer.kick("§cThe Network got shut down!");
+            cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
         }
 
         moduleService.shutdown(() -> {

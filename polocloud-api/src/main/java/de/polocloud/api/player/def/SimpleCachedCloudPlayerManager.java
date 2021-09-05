@@ -1,4 +1,7 @@
-package de.polocloud.api.player;
+package de.polocloud.api.player.def;
+
+import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.player.ICloudPlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;

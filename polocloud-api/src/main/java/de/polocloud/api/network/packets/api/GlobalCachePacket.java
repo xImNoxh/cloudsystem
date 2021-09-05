@@ -1,6 +1,7 @@
 package de.polocloud.api.network.packets.api;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.port.IPortManager;
@@ -26,6 +27,7 @@ public class GlobalCachePacket extends Packet {
     private List<IWrapper> wrappers;
     private List<IFallback> fallbacks;
     private SimpleCachedPortManager portManager;
+    private MasterConfig masterConfig;
 
     public GlobalCachePacket() {
         MasterCache masterCache = new MasterCache(PoloCloudAPI.getInstance());
@@ -36,46 +38,17 @@ public class GlobalCachePacket extends Packet {
         this.wrappers = masterCache.getWrappers();
         this.fallbacks = masterCache.getFallbacks();
         this.portManager = (SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager();
+        this.masterConfig = PoloCloudAPI.getInstance().getMasterConfig();
 
-        this.clearDoubles();
     }
 
-
-    public void clearDoubles() {
-
-        List<IGameServer> checkedGameServers = new ArrayList<>();
-        List<ICloudPlayer> checkedCloudPlayers = new ArrayList<>();
-        List<IWrapper> checkedWrappers = new ArrayList<>();
-        List<ITemplate> checkedTemplates = new ArrayList<>();
-
-        for (IGameServer gameServer : this.gameServers) {
-            checkedGameServers.removeIf(gs -> gs.getName().equalsIgnoreCase(gameServer.getName()));
-            checkedGameServers.add(gameServer);
-        }
-
-        for (ICloudPlayer cloudPlayer : this.cloudPlayers) {
-            checkedCloudPlayers.removeIf(cp -> cp.getName().equalsIgnoreCase(cloudPlayer.getName()));
-            checkedCloudPlayers.add(cloudPlayer);
-        }
-
-        for (IWrapper wrapper : wrappers) {
-            checkedWrappers.removeIf(w -> w.getName().equalsIgnoreCase(wrapper.getName()));
-            checkedWrappers.add(wrapper);
-        }
-
-        for (ITemplate template : templates) {
-            checkedTemplates.removeIf(tp -> tp.getName().equalsIgnoreCase(template.getName()));
-            checkedTemplates.add(template);
-        }
-
-        this.gameServers = checkedGameServers;
-        this.cloudPlayers = checkedCloudPlayers;
-        this.templates = checkedTemplates;
-        this.wrappers = checkedWrappers;
-    }
 
     public MasterCache getMasterCache() {
-        return new MasterCache(this.gameServers, this.cloudPlayers, this.templates, this.wrappers, this.fallbacks);
+        return new MasterCache(this.gameServers, this.cloudPlayers, this.templates, this.wrappers, this.fallbacks, masterConfig);
+    }
+
+    public MasterConfig getMasterConfig() {
+        return masterConfig;
     }
 
     public IPortManager getPortManager() {
@@ -110,6 +83,7 @@ public class GlobalCachePacket extends Packet {
         }
 
         buf.writeString(PoloHelper.GSON_INSTANCE.toJson(this.portManager));
+        buf.writeString(PoloHelper.GSON_INSTANCE.toJson(this.masterConfig));
     }
 
     @Override
@@ -148,5 +122,8 @@ public class GlobalCachePacket extends Packet {
 
         String json = buf.readString();
         this.portManager = PoloHelper.GSON_INSTANCE.fromJson(json, SimpleCachedPortManager.class);
+
+        json = buf.readString();
+        this.masterConfig = PoloHelper.GSON_INSTANCE.fromJson(json, MasterConfig.class);
     }
 }

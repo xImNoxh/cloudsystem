@@ -66,6 +66,17 @@ public class PlayerCommand implements CommandListener, TabCompletable {
             PoloLogger.print(LogLevel.INFO, "§7UUID §7: §b" + cloudPlayer.getUUID());
             PoloLogger.print(LogLevel.INFO, "§7Proxy §7: §b" + (cloudPlayer.getProxyServer() == null ? "Logging in..." : cloudPlayer.getProxyServer().getName()));
             PoloLogger.print(LogLevel.INFO, "§7Server §7: §b" + (cloudPlayer.getMinecraftServer() == null ? "Logging in..." : cloudPlayer.getMinecraftServer().getName()));
+            PoloLogger.print(LogLevel.INFO, "§7Settings §7:");
+            PoloLogger.print(LogLevel.INFO, "  §8> §7Locale §7: §b" + cloudPlayer.getSettings().getLocale().getDisplayName());
+            PoloLogger.print(LogLevel.INFO, "  §8> §7ChatMode §7: §b" + cloudPlayer.getSettings().getChatMode());
+            PoloLogger.print(LogLevel.INFO, "  §8> §7Main-Hand §7: §b" + cloudPlayer.getSettings().getMainHand());
+            PoloLogger.print(LogLevel.INFO, "  §8> §7RenderDistance §7: §b" + cloudPlayer.getSettings().getRenderDistance());
+            PoloLogger.print(LogLevel.INFO, "§7Connection §7:");
+            PoloLogger.print(LogLevel.INFO, "  §8> §7Ping §7: §b" + cloudPlayer.getPing() + "ms");
+            PoloLogger.print(LogLevel.INFO, "  §8> §7Version §7: §b" + cloudPlayer.getConnection().getVersion().getName() + " (Id: " + cloudPlayer.getConnection().getVersion().getProtocolId() + ")");
+            PoloLogger.print(LogLevel.INFO, "  §8> §7Address §7: §b" + cloudPlayer.getConnection().getAddress().getAddress().getHostAddress() + ":" + cloudPlayer.getConnection().getPort());
+            PoloLogger.print(LogLevel.INFO, "  §8> §7OnlineMode §7: §b" + cloudPlayer.getConnection().isOnlineMode());
+            PoloLogger.print(LogLevel.INFO, "  §8> §7Legacy §b" + cloudPlayer.getConnection().isLegacy());
             PoloLogger.print(LogLevel.INFO, "----[/Player]----");
 
         } else if (params.length >= 3) {

@@ -6,6 +6,7 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.client.INettyClient;
+import de.polocloud.api.network.packets.other.RequestPassOnPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.base.ResponseFutureListener;
@@ -55,6 +56,12 @@ public class PacketMessenger {
      * The timeout for the query
      */
     private int timeOut;
+
+    /**
+     * If pass on should automatically
+     * be enabled on the other instance side
+     */
+    private boolean passOn;
 
     public PacketMessenger() {
         this.target = new ArrayList<>();
@@ -109,6 +116,16 @@ public class PacketMessenger {
             }
         }
         return target(channels.toArray(new Channel[0]));
+    }
+
+    /**
+     * Enables pass on
+     *
+     * @return current instance
+     */
+    public PacketMessenger setUpPassOn() {
+        this.passOn = true;
+        return this;
     }
 
     /**
@@ -172,6 +189,9 @@ public class PacketMessenger {
      * @return response
      */
     public IResponse send(String key, JsonData data) {
+        if (passOn) {
+            PoloCloudAPI.getInstance().sendPacket(new RequestPassOnPacket(key));
+        }
         return send(new Request(key, data));
     }
 
@@ -252,7 +272,7 @@ public class PacketMessenger {
             PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new IPacketHandler<Request>() {
                 @Override
                 public void handlePacket(ChannelHandlerContext ctx, Request packet) {
-                    for (Consumer<Request> requestHandler : REQUEST_HANDLERS) {
+                    for (Consumer<Request> requestHandler : new ArrayList<>(REQUEST_HANDLERS)) {
                         requestHandler.accept(packet);
                     }
                 }
@@ -276,4 +296,12 @@ public class PacketMessenger {
         REQUEST_HANDLERS.add(requestHandler);
     }
 
+    /**
+     * Unregisters an existing handler
+     *
+     * @param requestHandler the handler
+     */
+    public static void unregisterHandler(Consumer<Request> requestHandler) {
+        REQUEST_HANDLERS.remove(requestHandler);
+    }
 }

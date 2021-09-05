@@ -7,11 +7,13 @@ import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
 
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.player.SimpleCloudPlayer;
+import de.polocloud.api.player.extras.IPlayerConnection;
+import de.polocloud.api.player.def.SimpleCloudPlayer;
+import de.polocloud.api.player.def.SimplePlayerConnection;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.util.MinecraftProtocol;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
-import de.polocloud.plugin.protocol.property.GameServerProperty;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -25,17 +27,10 @@ import net.md_5.bungee.event.EventHandler;
 
 public class CollectiveProxyEvents implements Listener {
 
-    private CloudPlugin cloudPlugin;
-    private Plugin plugin;
-
-    private final GameServerProperty property;
     private final NetworkClient networkClient;
 
     public CollectiveProxyEvents(Plugin plugin) {
-        this.plugin = plugin;
-        this.cloudPlugin = CloudPlugin.getCloudPluginInstance();
 
-        this.property = CloudPlugin.getCloudPluginInstance().getGameServerProperty();
         this.networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
 
         plugin.getProxy().getPluginManager().registerListener(plugin, this);
@@ -54,29 +49,42 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(ServerKickEvent event) {
         ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
         if (cloudPlayer == null) {
-            event.getPlayer().disconnect("§8[§bCloudPlugin§8] §cSome internal Cache-Error occured!");
+            event.getPlayer().disconnect(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "§cSome internal Cache-Error occured!");
             return;
         }
         cloudPlayer.sendToFallback();
     }
 
+
+
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
         if (PoloCloudAPI.getInstance().getGameServerManager().getThisService().getTemplate().isMaintenance() && !player.hasPermission("*") && !player.hasPermission("cloud.maintenance")) {
-            event.getPlayer().disconnect(TextComponent.fromLegacyText(property.getGameServerMaintenanceMessage()));
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getGroupMaintenanceMessage()));
             return;
         }
 
         if (ProxyServer.getInstance().getPlayers().size() - 1 >= PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMaxPlayers() && !player.hasPermission("*") && !player.hasPermission("cloud.fulljoin")) {
-            event.getPlayer().disconnect(TextComponent.fromLegacyText(property.getGameServerMaxPlayersMessage()));
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getServiceIsFull()));
         }
     }
 
     @EventHandler
     public void handle(LoginEvent event) {
         PendingConnection connection = event.getConnection();
-        SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(connection.getName(), connection.getUniqueId());
+
+        IPlayerConnection playerConnection = new SimplePlayerConnection(
+            connection.getUniqueId(),
+            connection.getName(),
+            connection.getAddress().getAddress().getHostAddress(),
+            connection.getAddress().getPort(),
+            MinecraftProtocol.valueOf(connection.getVersion()),
+            connection.isOnlineMode(),
+            connection.isLegacy()
+        );
+
+        SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(connection.getName(), connection.getUniqueId(), playerConnection);
 
         cloudPlayer.setProxyServer(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName());
         cloudPlayer.update();
@@ -100,7 +108,8 @@ public class CollectiveProxyEvents implements Listener {
 
             //No fallback was found
             if (fallback == null || ProxyServer.getInstance().getServerInfo(fallback.getName()) == null) {
-                proxiedPlayer.disconnect(TextComponent.fromLegacyText("§8[§bCloudPlugin§8] §cCouldn't find a suitable fallback to connect you to!"));
+
+                proxiedPlayer.disconnect(TextComponent.fromLegacyText(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNoFallbackServer()));
                 event.setCancelled(true);
                 return;
             }
@@ -120,8 +129,12 @@ public class CollectiveProxyEvents implements Listener {
         } else {
             //Player is switching servers
 
+            if (event.isCancelled() || event.getTarget().getName().equalsIgnoreCase(cloudPlayer.getMinecraftServer().getName())) {
+                return;
+            }
             //Setting new info for the player
             ServerInfo target = event.getTarget();
+
             IGameServer from = cloudPlayer.getMinecraftServer();
             cloudPlayer.setMinecraftServer(target.getName());
             cloudPlayer.update();
@@ -154,7 +167,7 @@ public class CollectiveProxyEvents implements Listener {
         ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
         if (cloudPlayer == null) {
             IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
-            PoloCloudAPI.getInstance().messageCloud(thisService.getName() + " tried to unregister '" + event.getPlayer().getName() + ":" + event.getPlayer().getUniqueId() + "' but it's ICloudPlayer was null!");
+            PoloCloudAPI.getInstance().messageCloud("§c" + thisService.getName() + " tried to unregister '§e" + event.getPlayer().getName() + ":" + event.getPlayer().getUniqueId() + "§c' but it's ICloudPlayer was null!");
             return;
         }
         PoloCloudAPI.getInstance().getCloudPlayerManager().unregisterPlayer(cloudPlayer);

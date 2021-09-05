@@ -36,6 +36,9 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
      * @param object the object to update
      */
     default void updateObject(V object) {
+        if (object == null) {
+            return;
+        }
         V cachedObject = this.getCached(object.getName());
         if (cachedObject != null) {
             int index = this.getAllCached().indexOf(cachedObject);

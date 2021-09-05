@@ -23,7 +23,6 @@ import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.proxy.commands.CloudCommand;
 import de.polocloud.plugin.protocol.NetworkClient;
-import de.polocloud.plugin.protocol.property.GameServerProperty;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.File;
@@ -35,8 +34,8 @@ public class CloudPlugin extends PoloCloudAPI {
     private final IBootstrap bootstrap;
 
     //Other fields
-    private final GameServerProperty gameServerProperty;
     private final NetworkClient networkClient;
+
     //Managers
     private final IPubSubManager pubSubManager;
 
@@ -45,7 +44,6 @@ public class CloudPlugin extends PoloCloudAPI {
         super(bootstrap.getBridge().getEnvironment());
 
         this.bootstrap = bootstrap;
-        this.gameServerProperty = new GameServerProperty();
         this.networkClient = new NetworkClient(bootstrap);
         this.pubSubManager = new SimplePubSubManager(networkClient);
 
@@ -169,10 +167,6 @@ public class CloudPlugin extends PoloCloudAPI {
 
     public IBootstrap getBootstrap() {
         return bootstrap;
-    }
-
-    public GameServerProperty getGameServerProperty() {
-        return gameServerProperty;
     }
 
     @Override

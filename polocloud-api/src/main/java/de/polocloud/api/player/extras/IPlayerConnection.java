@@ -1,4 +1,4 @@
-package de.polocloud.api.player;
+package de.polocloud.api.player.extras;
 
 import de.polocloud.api.util.MinecraftProtocol;
 

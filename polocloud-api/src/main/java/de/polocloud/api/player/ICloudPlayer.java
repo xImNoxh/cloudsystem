@@ -1,17 +1,15 @@
 package de.polocloud.api.player;
 
 import de.polocloud.api.command.executor.CommandExecutor;
-import de.polocloud.api.common.INamable;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.player.extras.IPlayerConnection;
+import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.util.Snowflake;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor {
@@ -37,6 +35,25 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor 
      * of this player
      */
     IGameServer getMinecraftServer();
+
+    /**
+     * THe {@link IPlayerConnection} of this player
+     *
+     * @return connection
+     */
+    IPlayerConnection getConnection();
+
+    /**
+     * THe {@link IPlayerSettings} of this player
+     *
+     * @return settings
+     */
+    IPlayerSettings getSettings();
+
+    /**
+     * The ping of the player to the network
+     */
+    long getPing();
 
     /**
      * Connects this player to a {@link IGameServer}

@@ -16,6 +16,14 @@ public interface PoloPluginBridge {
     boolean hasPermission(UUID uniqueId, String permission);
 
     /**
+     * Gets the ping of a player with a given {@link UUID}
+     *
+     * @param uniqueId the uuid
+     * @return ping as long
+     */
+    long getPing(UUID uniqueId);
+
+    /**
      * Checks if a player with a given {@link UUID} is online
      *
      * @param uniqueId the uuid of the player
@@ -90,4 +98,5 @@ public interface PoloPluginBridge {
      * Shuts down this bridge
      */
     void shutdown();
+
 }

@@ -2,7 +2,6 @@ package de.polocloud.wrapper.impl.handler;
 
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.api.network.packets.other.FileTransferPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperTransferModulesPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;

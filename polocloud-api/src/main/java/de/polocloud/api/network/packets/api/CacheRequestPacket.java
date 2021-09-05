@@ -6,7 +6,7 @@ import de.polocloud.api.network.protocol.packet.base.Packet;
 
 import java.io.IOException;
 
-@AutoRegistry//(id = 0x07)
+@AutoRegistry
 public class CacheRequestPacket extends Packet {
     @Override
     public void write(IPacketBuffer buf) throws IOException {

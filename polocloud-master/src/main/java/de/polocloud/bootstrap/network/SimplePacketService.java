@@ -2,10 +2,8 @@ package de.polocloud.bootstrap.network;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.network.handler.other.EventPacketHandler;
+import de.polocloud.bootstrap.network.handler.other.*;
 import de.polocloud.bootstrap.network.handler.gameserver.GameServerPacketServiceHandler;
-import de.polocloud.bootstrap.network.handler.other.ShutdownPacketHandler;
-import de.polocloud.bootstrap.network.handler.other.TextPacketHandler;
 import de.polocloud.bootstrap.network.handler.player.PlayerPacketHandler;
 import de.polocloud.bootstrap.network.handler.property.PropertyDeletePacketHandler;
 import de.polocloud.bootstrap.network.handler.property.PropertyInsertPacketHandler;
@@ -24,7 +22,9 @@ public class SimplePacketService {
 
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new EventPacketHandler());
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new TextPacketHandler());
+        PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new ConfigPacketHandler());
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new ShutdownPacketHandler());
+        PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new CacheUpdatePacketHandler());
 
         registerHandler();
 

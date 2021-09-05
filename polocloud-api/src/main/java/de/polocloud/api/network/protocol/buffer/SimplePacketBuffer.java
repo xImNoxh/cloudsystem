@@ -11,11 +11,14 @@ import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.player.SimpleCloudPlayer;
+import de.polocloud.api.player.extras.IPlayerConnection;
+import de.polocloud.api.player.def.SimpleCloudPlayer;
+import de.polocloud.api.player.def.SimplePlayerConnection;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.util.MinecraftProtocol;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
@@ -475,8 +478,17 @@ public class SimplePacketBuffer implements IPacketBuffer {
         String proxy = s1.trim().isEmpty() ? null : s1;
         String minecraft = s2.trim().isEmpty() ? null : s2;
 
+        //Connection
+        String host = this.readString();
+        int port = this.readInt();
+        int version = this.readInt();
+        boolean onlineMode = this.readBoolean();
+        boolean legacy = this.readBoolean();
+
+        IPlayerConnection connection = new SimplePlayerConnection(uuid, name, host, port, MinecraftProtocol.valueOf(version), onlineMode, legacy);
+
         //Creating player and setting values
-        SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(name, uuid);
+        SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(name, uuid, connection);
 
         cloudPlayer.setProxyServer(proxy);
         cloudPlayer.setMinecraftServer(minecraft);
@@ -494,5 +506,12 @@ public class SimplePacketBuffer implements IPacketBuffer {
         //Proxy and server
         this.writeString(cloudPlayer.getProxyServer() == null ? "" : cloudPlayer.getProxyServer().getName());
         this.writeString(cloudPlayer.getMinecraftServer() == null ? "" : cloudPlayer.getMinecraftServer().getName());
+
+        //Connection
+        this.writeString(cloudPlayer.getConnection().getHost());
+        this.writeInt(cloudPlayer.getConnection().getPort());
+        this.writeInt(cloudPlayer.getConnection().getVersion().getProtocolId());
+        this.writeBoolean(cloudPlayer.getConnection().isOnlineMode());
+        this.writeBoolean(cloudPlayer.getConnection().isLegacy());
     }
 }

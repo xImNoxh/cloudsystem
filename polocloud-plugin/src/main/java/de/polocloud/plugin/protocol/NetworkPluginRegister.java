@@ -1,6 +1,7 @@
-package de.polocloud.plugin.protocol.register;
+package de.polocloud.plugin.protocol;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.SimpleCachedEventManager;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -16,6 +17,7 @@ import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
+import de.polocloud.api.network.protocol.packet.base.response.def.Request;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
@@ -27,12 +29,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class NetworkPluginRegister {
 
     public NetworkPluginRegister(IBootstrap bootstrap) {
 
-        new SimplePacketRegister<GlobalCachePacket>(GlobalCachePacket.class, globalCachePacket -> {
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GlobalCachePacket.class, globalCachePacket -> {
             MasterCache masterCache = globalCachePacket.getMasterCache();
             PoloCloudAPI.getInstance().setCache(masterCache);
 
@@ -44,27 +47,40 @@ public class NetworkPluginRegister {
             ((SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager()).setProxyPortList(((SimpleCachedPortManager)portManager).getProxyPortList());
         });
 
-        new SimplePacketRegister<PropertyCachePacket>(PropertyCachePacket.class, propertyCachePacket -> {
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(PropertyCachePacket.class, propertyCachePacket -> {
             Map<UUID, List<IProperty>> properties = propertyCachePacket.getProperties();
             ((SimpleCachedPropertyManager)PoloCloudAPI.getInstance().getPropertyManager()).setProperties(properties);
         });
 
-        new SimplePacketRegister<GameServerShutdownPacket>(GameServerShutdownPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().shutdown());
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerShutdownPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().shutdown());
 
-        new SimplePacketRegister<MasterPlayerKickPacket>(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().kickPlayer(packet.getUuid(), packet.getMessage()));
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().kickPlayer(packet.getUuid(), packet.getMessage()));
 
-        new SimplePacketRegister<GameServerExecuteCommandPacket>(GameServerExecuteCommandPacket.class, packet -> {
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerExecuteCommandPacket.class, packet -> {
             if (PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null && PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName().equalsIgnoreCase(packet.getServer())) {
                 PoloCloudAPI.getInstance().getPoloBridge().executeCommand(packet.getCommand());
             }
         });
 
-        new SimplePacketRegister<GameServerUpdatePacket>(GameServerUpdatePacket.class, packet -> {
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUpdatePacket.class, packet -> {
             PoloCloudAPI.getInstance().getGameServerManager().updateObject(packet.getGameServer());
         });
 
+        PacketMessenger.registerHandler(request -> {
+            if (request.getKey().equalsIgnoreCase("player-ping")) {
+                JsonData data = request.getData();
+                UUID uniqueId = data.getUniqueId("uniqueId");
 
-        new SimplePacketRegister<EventPacket>(EventPacket.class, eventPacket -> {
+                PoloPluginBridge poloBridge = PoloCloudAPI.getInstance().getPoloBridge();
+                if (poloBridge.isPlayerOnline(uniqueId)) {
+                    request.respond(new Response(new JsonData("ping", poloBridge.getPing(uniqueId)), ResponseState.SUCCESS));
+                } else {
+                    request.respond(ResponseState.NULL);
+                }
+            }
+        });
+
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(EventPacket.class, eventPacket -> {
 
             Runnable runnable = () -> {
                 if (Arrays.asList(eventPacket.getIgnoredTypes()).contains(PoloCloudAPI.getInstance().getType())) {

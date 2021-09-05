@@ -32,25 +32,9 @@ import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class CloudCommand implements CommandListener {
-
-    private final String prefix = "§bPoloCloud §7" + "» ";
-
-    @Inject
-    private IGameServerManager gameServerManager;
-
-    @Inject
-    private ITemplateManager templateService;
-
-    @Inject
-    private Snowflake snowflake;
-
-    @Inject
-    private ICloudPlayerManager cloudPlayerManager;
 
     public CloudCommand() {
     }
@@ -66,6 +50,7 @@ public class CloudCommand implements CommandListener {
         ICloudPlayerManager cloudPlayerManager = PoloCloudAPI.getInstance().getCloudPlayerManager();
         IResourceConverter resourceConverter = PoloCloudAPI.getInstance().getSystemManager().getResourceConverter();
         IResourceProvider resourceProvider = PoloCloudAPI.getInstance().getSystemManager().getResourceProvider();
+        String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix();
 
         if (player.hasPermission("cloud.use")) {
 
@@ -125,6 +110,9 @@ public class CloudCommand implements CommandListener {
 
                 } else if (params[0].equalsIgnoreCase("end") || params[0].equalsIgnoreCase("exit")) {
 
+                    for (ICloudPlayer cloudPlayer : cloudPlayerManager) {
+                        cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
+                    }
                     player.sendMessage(prefix + "§7Requesting §cShut down§8...");
                     PoloCloudAPI.getInstance().sendPacket(new MasterShutdownPacket());
 
@@ -314,6 +302,8 @@ public class CloudCommand implements CommandListener {
     }
 
     private void sendHelp(ICloudPlayer player) {
+        String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix();
+
         player.sendMessage(prefix + "----[Cloud]----");
         player.sendMessage(prefix + "§8» §b/cloud stop/shutdown <server> §7Shuts down a gameserver");
         player.sendMessage(prefix + "§8» §b/cloud end/exit §7Shuts down the cloud");
