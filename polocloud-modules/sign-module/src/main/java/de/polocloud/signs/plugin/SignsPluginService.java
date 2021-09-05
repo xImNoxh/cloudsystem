@@ -59,6 +59,10 @@ public class SignsPluginService implements ISignService {
                 }
             }
 
+            for (IGameServerSign loadedSign : gameServerSignManager.getLoadedSigns()) {
+                loadedSign.setGameServer(null);
+            }
+
             signInitializer.initSigns();
         }, () -> this.currentGlobalConfig != null);
     }

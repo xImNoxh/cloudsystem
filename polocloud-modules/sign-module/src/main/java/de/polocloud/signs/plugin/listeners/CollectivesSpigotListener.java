@@ -5,23 +5,26 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.signs.bootstraps.PluginBootstrap;
 import de.polocloud.signs.sign.base.IGameServerSign;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class CollectivesSpigotListener implements Listener {
 
-    //@EventHandler
-    //public void handle(SignChangeEvent event) {
-    //Sign sign = (Sign) event.getBlock().getState();
-    //IGameServerSign gameSign = SignPluginBootstrap.getInstance().getSignService().getExecuteService().getServiceInspectExecute().getGameSignBySign(sign);
-    //if (gameSign == null) return;
-    //gameSign.reloadSign(sign);
-    //gameSign.updateSign();
-    //event.setCancelled(true);
-    //}
+    @EventHandler
+    public void handle(SignChangeEvent event){
+        Sign sign = (Sign) event.getBlock().getState();
+        IGameServerSign gameServerSign = PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getGameSignBySign(sign);
+        if(gameServerSign != null){
+            gameServerSign.reloadSign(sign);
+            gameServerSign.updateSign();
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void handle(PlayerInteractEvent event) {
