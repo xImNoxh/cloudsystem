@@ -6,7 +6,7 @@ import de.polocloud.api.network.protocol.packet.base.Packet;
 
 import java.io.IOException;
 
-@AutoRegistry//(id = 0x42)
+@AutoRegistry
 public class WrapperLoginPacket extends Packet {
 
     private String name;

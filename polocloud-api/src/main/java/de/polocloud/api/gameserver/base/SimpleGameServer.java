@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.impl.server.CloudGameServerPropertyUpdateEvent;
+import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerUpdateEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -49,6 +50,8 @@ public class SimpleGameServer implements IGameServer {
      * The status
      */
     private GameServerStatus gameServerStatus;
+
+    boolean statusChanged;
 
     /**
      * The snowflake id
@@ -194,6 +197,13 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setStatus(GameServerStatus status) {
         gameServerStatus = status;
+        statusChanged = true;
+        if (status == GameServerStatus.INVISIBLE) {
+            this.setVisible(false);
+        }
+        if (status == GameServerStatus.AVAILABLE) {
+            this.setVisible(true);
+        }
     }
 
     @Override
@@ -376,10 +386,15 @@ public class SimpleGameServer implements IGameServer {
                 PoloCloudAPI.getInstance().sendPacket(new GameServerUpdatePacket(this));
             }
         });
+
     }
 
     @Override
     public void updateInternally() {
+        if (statusChanged) {
+            statusChanged = false;
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(this, this.gameServerStatus));
+        }
         PoloCloudAPI.getInstance().getGameServerManager().updateObject(this);
     }
 }

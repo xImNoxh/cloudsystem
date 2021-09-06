@@ -49,7 +49,7 @@ public class FallbackSearchService {
             List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getCached(template);
 
             if(!gameServersByTemplate.isEmpty()){
-                gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer.getStatus() == GameServerStatus.RUNNING).collect(Collectors.toList());
+                gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer.getStatus() == GameServerStatus.AVAILABLE).collect(Collectors.toList());
                 if (cloudPlayer != null) {
                     gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer != cloudPlayer.getMinecraftServer()).collect(Collectors.toList());
                 }

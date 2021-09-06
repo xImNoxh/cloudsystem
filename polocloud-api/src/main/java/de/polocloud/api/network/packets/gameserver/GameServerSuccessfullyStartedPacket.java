@@ -11,26 +11,33 @@ public class GameServerSuccessfullyStartedPacket extends Packet {
 
     private String serverName;
     private long snowflake;
+    private int port;
 
     public GameServerSuccessfullyStartedPacket() {
     }
 
-    public GameServerSuccessfullyStartedPacket(String serverName, long snowflake) {
+    public GameServerSuccessfullyStartedPacket(String serverName, long snowflake, int port) {
         this.serverName = serverName;
         this.snowflake = snowflake;
+        this.port = port;
     }
 
     @Override
     public void write(IPacketBuffer buf) throws IOException {
         buf.writeString(serverName);
         buf.writeLong(snowflake);
-
+        buf.writeInt(port);
     }
 
     @Override
     public void read(IPacketBuffer buf) throws IOException {
         serverName = buf.readString();
         snowflake = buf.readLong();
+        port = buf.readInt();
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public String getServerName() {

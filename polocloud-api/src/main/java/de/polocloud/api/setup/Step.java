@@ -76,6 +76,14 @@ public class Step {
         return futureAnswer;
     }
 
+    public int getAnswerAsInt() {
+        return Integer.parseInt(getAnswer());
+    }
+
+    public boolean getAnswerAsBoolean() {
+        return Boolean.parseBoolean(getAnswer());
+    }
+
     public String getAnswer() {
         return answer;
     }

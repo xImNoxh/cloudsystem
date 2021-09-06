@@ -1,7 +1,7 @@
-package de.polocloud.modules.permission.api.impl;
+package de.polocloud.modules.permission.global.api.impl;
 
 import de.polocloud.api.logger.helper.MinecraftColor;
-import de.polocloud.modules.permission.api.IPermissionDisplay;
+import de.polocloud.modules.permission.global.api.IPermissionDisplay;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

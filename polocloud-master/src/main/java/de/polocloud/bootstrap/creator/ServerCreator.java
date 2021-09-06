@@ -37,7 +37,7 @@ public abstract class ServerCreator {
             long id = snowflake.nextId();
             String name = template.getName() + "-" + generateServerId(template);
 
-            IGameServer gameServer = new SimpleGameServer(name, template.getMotd(), true, GameServerStatus.PENDING, id, -1, System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getPortManager().getPort(template), template.getMaxPlayers(), template.getName());
+            IGameServer gameServer = new SimpleGameServer(name, template.getMotd(), true, GameServerStatus.STARTING, id, -1, System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getPortManager().getPort(template), template.getMaxPlayers(), template.getName());
 
             wrapper.startServer(gameServer);
         }, 5L);

@@ -1,8 +1,9 @@
-package de.polocloud.modules.permission.api.impl;
+package de.polocloud.modules.permission.global.api.impl;
 
-import de.polocloud.modules.permission.api.IPermission;
-import de.polocloud.modules.permission.api.IPermissionGroup;
-import de.polocloud.modules.permission.api.IPermissionUser;
+import de.polocloud.modules.permission.global.api.IPermission;
+import de.polocloud.modules.permission.global.api.IPermissionGroup;
+import de.polocloud.modules.permission.global.api.IPermissionUser;
+import de.polocloud.modules.permission.global.api.PermissionPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,7 +19,12 @@ public class SimplePermissionUser implements IPermissionUser {
 
     @Override
     public List<IPermissionGroup> getPermissionGroups() {
-        return null;
+        List<IPermissionGroup> list = new ArrayList<>();
+        for (String permissionGroup : this.permissionGroups) {
+            PermissionPool.getInstance().getAllCachedPermissionGroups().stream().filter(group -> group.getName().equalsIgnoreCase(permissionGroup)).findFirst().ifPresent(list::add);
+        }
+
+        return list;
     }
 
     @Override
@@ -28,12 +34,7 @@ public class SimplePermissionUser implements IPermissionUser {
 
     @Override
     public boolean hasPermission(String permission) {
-        boolean hasPermission = false;
-
-        //Not null go on checking
-        if (this.getExclusivePermissions().stream().anyMatch(iPermission -> iPermission.equals(permission)) || this.getExclusivePermissions().stream().anyMatch(iPermission -> iPermission.equals("*"))) {
-            hasPermission = true;
-        }
+        boolean hasPermission = this.getExclusivePermissions().stream().anyMatch(iPermission -> iPermission.equals(permission)) || this.getExclusivePermissions().stream().anyMatch(iPermission -> iPermission.equals("*"));
 
         //Safely iterating through permissionGroups
         for (IPermissionGroup permissionGroup : new LinkedList<>(getPermissionGroups())) {

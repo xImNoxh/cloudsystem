@@ -4,9 +4,24 @@ import java.io.Serializable;
 
 public enum GameServerStatus implements Serializable {
 
-    PENDING,
+    /**
+     * The server is being started
+     */
     STARTING,
-    RUNNING,
+
+    /**
+     * The server should not be seen
+     */
+    INVISIBLE,
+
+    /**
+     * The server is available to connect to
+     */
+    AVAILABLE,
+
+    /**
+     * The server is stopping
+     */
     STOPPING
 
 }

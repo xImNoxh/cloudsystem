@@ -17,7 +17,7 @@ public class CollectivesCloudListener implements IListener {
 
     @EventHandler
     public void handleChange(CloudGameServerStatusChangeEvent event) {
-        if(event.getStatus().equals(GameServerStatus.RUNNING)){
+        if(event.getStatus().equals(GameServerStatus.AVAILABLE)){
             System.out.println("new start " + event.getGameServer().getName());
             if(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getSignByGameServer(event.getGameServer()) == null){
                 PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getFreeGameServerSign(event.getGameServer()), event.getGameServer());
@@ -29,9 +29,9 @@ public class CollectivesCloudListener implements IListener {
 
     @EventHandler
     public void handle(CloudPlayerSwitchServerEvent event) {
-        if(event.getTo() != null){
+        if(event.getTarget() != null){
             System.out.println("update to: " + event.getFrom().getName());
-            PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getTo());
+            PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getTarget());
         }else{
             System.out.println("null");
         }

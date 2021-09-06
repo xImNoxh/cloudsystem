@@ -1,6 +1,7 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -17,27 +18,24 @@ import java.util.function.Consumer;
 
 public abstract class GameServerPacketController {
 
-    @Inject
-    private IGameServerManager gameServerManager;
-
     public void getRedirectPacketConnection(long snowflake, Packet packetData) {
-        IGameServer iGameServer = gameServerManager.getCached(snowflake);
+        IGameServer iGameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(snowflake);
         iGameServer.sendPacket(packetData);
     }
 
     public void getGameServerBySnowflake(Consumer<IGameServer> server, long snowflake) {
-        server.accept(gameServerManager.getCached(snowflake));
+        server.accept(PoloCloudAPI.getInstance().getGameServerManager().getCached(snowflake));
     }
 
     public void updateProxyServerList(IGameServer gameServer) {
         ITemplate template = gameServer.getTemplate();
         if (template.getTemplateType() == TemplateType.MINECRAFT) {
-            getGameServerByProxyType(iGameServers -> iGameServers.stream().filter(key -> key.getStatus() == GameServerStatus.RUNNING).forEach(it -> it.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake()))));
+            getGameServerByProxyType(iGameServers -> iGameServers.stream().filter(key -> key.getStatus() == GameServerStatus.AVAILABLE).forEach(it -> it.sendPacket(new MasterRequestServerListUpdatePacket(gameServer.getName(), "127.0.0.1", gameServer.getPort(), gameServer.getSnowflake()))));
         }
     }
 
     public void getGameServerByProxyType(Consumer<List<IGameServer>> iGameServerConsumer) {
-        iGameServerConsumer.accept(gameServerManager.getCached(TemplateType.PROXY));
+        iGameServerConsumer.accept(PoloCloudAPI.getInstance().getGameServerManager().getCached(TemplateType.PROXY));
     }
 
     public void sendServerStartLog(IGameServer server) {

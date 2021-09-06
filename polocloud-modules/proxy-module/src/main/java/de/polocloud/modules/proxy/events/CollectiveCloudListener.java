@@ -27,7 +27,7 @@ public class CollectiveCloudListener implements IListener {
                 case STARTING:
                     sendNotifyMessage(proxyConfig.getNotifyConfig().getStartingMessage(), event.getGameServer());
                     break;
-                case RUNNING:
+                case AVAILABLE:
                     sendNotifyMessage(proxyConfig.getNotifyConfig().getStartedMessage(), event.getGameServer());
                     break;
                 case STOPPING:
@@ -35,7 +35,7 @@ public class CollectiveCloudListener implements IListener {
                     break;
             }
         }
-        if(!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getStatus().equals(GameServerStatus.RUNNING))) return;
+        if(!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getStatus().equals(GameServerStatus.AVAILABLE))) return;
         ProxyModule.getProxyModule().sendMotd(event.getGameServer());
     }
 
@@ -48,7 +48,6 @@ public class CollectiveCloudListener implements IListener {
     public void handle(CloudGameServerMaintenanceUpdateEvent event){
         PoloCloudAPI.getInstance().getGameServerManager().getCached(event.getTemplate()).forEach(it -> ProxyModule.getProxyModule().sendMotd(it));
     }
-
     public void sendNotifyMessage(String message, IGameServer gameServer){
         String finalMessage = message.replaceAll("%service%", gameServer.getName());
         PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().forEach(it -> it.sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + finalMessage));

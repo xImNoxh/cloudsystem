@@ -1,4 +1,4 @@
-package de.polocloud.modules.permission.api;
+package de.polocloud.modules.permission.global.api;
 
 import de.polocloud.api.common.INamable;
 
@@ -19,7 +19,7 @@ public interface IPermissionGroup extends INamable {
     /**
      * All permissions of this group
      */
-    List<IPermission> getPermissions();
+    List<String> getPermissions();
 
     /**
      * The list of groups this group extends its

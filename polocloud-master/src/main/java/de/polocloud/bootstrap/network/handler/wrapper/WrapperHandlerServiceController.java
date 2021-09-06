@@ -23,13 +23,6 @@ import java.util.function.BiConsumer;
 
 public abstract class WrapperHandlerServiceController {
 
-    @Inject
-    private ITemplateManager tmpService;
-
-    @Inject
-    private MasterConfig masterConfig;
-
-
     protected final IWrapperManager wrapperManager;
 
     protected WrapperHandlerServiceController() {
@@ -44,7 +37,7 @@ public abstract class WrapperHandlerServiceController {
     }
 
     public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, IWrapper> response, ChannelHandlerContext ctx) {
-        response.accept(masterConfig.getProperties().getWrapperKey().equals(packet.getKey()), new SimpleMasterWrapper(packet.getName(), ctx));
+        response.accept(PoloCloudAPI.getInstance().getMasterConfig().getProperties().getWrapperKey().equals(packet.getKey()), new SimpleMasterWrapper(packet.getName(), ctx));
     }
 
     public void sendWrapperSuccessfully(IWrapper wrapper, WrapperLoginPacket packet) {

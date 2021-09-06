@@ -29,9 +29,7 @@ public class DocumentObjectDatabase<V> extends DocumentDatabase implements IData
      */
     public void insert(String key, V object) {
         JsonData document = new JsonData();
-        document.append(DocumentDatabase.NAME_KEY, key);
-        document.append("object", object);
-
+        document.append(object);
         this.insert(document, key);
     }
 
@@ -50,7 +48,7 @@ public class DocumentObjectDatabase<V> extends DocumentDatabase implements IData
         List<V> list = new LinkedList<>();
 
         for (JsonData document : this.getDocuments()) {
-            list.add(document.getObject("object", vClass));
+            list.add(document.getAs(vClass));
         }
         return list;
     }

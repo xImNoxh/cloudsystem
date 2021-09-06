@@ -55,6 +55,7 @@ import de.polocloud.api.util.system.SystemManager;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import io.netty.channel.ChannelHandlerContext;
+import jline.console.ConsoleReader;
 import org.reflections.Reflections;
 
 import java.io.File;
@@ -158,6 +159,11 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
             PoloLogger.print(LogLevel.INFO, message);
         }
     }
+
+    /**
+     * The {@link ConsoleReader} instance for console managing
+     */
+    public abstract ConsoleReader getConsoleReader();
 
     /**
      * Reports an Exception to the server and automatically

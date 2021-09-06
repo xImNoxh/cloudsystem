@@ -3,7 +3,6 @@ package de.polocloud.plugin.protocol;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.handling.IEventHandler;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
-import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.client.SimpleNettyClient;
@@ -11,8 +10,6 @@ import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
-import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import io.netty.channel.Channel;
@@ -124,10 +121,5 @@ public class NetworkClient implements INetworkConnection, IEventHandler<ChannelA
     public void handleEvent(ChannelActiveEvent event) {
         new NetworkPluginRegister(this.bootstrap);
         this.bootstrap.registerPacketListening();
-
-        Scheduler.runtimeScheduler().schedule(() -> {
-            IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
-            this.sendPacket(new GameServerRegisterPacket(thisService.getSnowflake(), port));
-        }, () -> PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null);
     }
 }

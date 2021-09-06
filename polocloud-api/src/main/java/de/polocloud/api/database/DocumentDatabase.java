@@ -11,11 +11,6 @@ import java.util.Map;
 public class DocumentDatabase {
 
     /**
-     * The unique id key for a document
-     */
-    public static final String NAME_KEY = "_db_id_key";
-
-    /**
      * The name of this database
      */
     private final String name;
@@ -93,11 +88,8 @@ public class DocumentDatabase {
      * @param document the document
      */
     public void insert(JsonData document, String name) {
-        document.append(NAME_KEY, name);
-        if (document.has(NAME_KEY)) {
-            this.cache.put(document.getString(NAME_KEY), document);
-            document.save(new File(this.directory, document.getString(NAME_KEY) + ".json"));
-        }
+        this.cache.put(name, document);
+        document.save(new File(this.directory, name + ".json"));
     }
 
     /**
@@ -111,17 +103,6 @@ public class DocumentDatabase {
             cache.remove(name);
         }
         document.delete();
-    }
-
-    /**
-     * Deletes a {@link JsonData}
-     *
-     * @param document the document
-     */
-    public void delete(JsonData document) {
-        if (document.has(NAME_KEY)) {
-            delete(document.getString(NAME_KEY));
-        }
     }
 
     /**

@@ -1,15 +1,12 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.RedirectPacket;
-import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
@@ -22,9 +19,6 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 
 public class GameServerPacketServiceHandler extends GameServerPacketController {
-
-    @Inject
-    public IGameServerManager gameServerManager;
 
     public GameServerPacketServiceHandler() {
 
@@ -77,10 +71,13 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             wrapper.stopServer(gameServer);
         });
 
-        new SimplePacketHandler<>(GameServerSuccessfullyStartedPacket.class, packet -> {
+        new SimplePacketHandler<GameServerSuccessfullyStartedPacket>(GameServerSuccessfullyStartedPacket.class, (ctx, packet) -> {
             IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(packet.getServerName());
 
-            gameServer.setStatus(GameServerStatus.RUNNING);
+            gameServer.setPort(packet.getPort());
+            ((SimpleGameServer) gameServer).setChannelHandlerContext(ctx);
+            gameServer.setRegistered(true);
+            gameServer.setStatus(GameServerStatus.AVAILABLE);
             gameServer.update();
 
             sendServerStartLog(gameServer);
@@ -93,20 +90,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             PoloCloudAPI.getInstance().getGameServerManager().updateObject(packet.getGameServer());
             packet.passOn();
         });
-
-        new SimplePacketHandler<GameServerRegisterPacket>(GameServerRegisterPacket.class, (ctx, packet) -> getGameServerBySnowflake(server -> {
-
-            if (server == null) {
-                return;
-            }
-
-            ((SimpleGameServer) server).setChannelHandlerContext(ctx);
-            server.setPort(packet.getPort());
-            server.setRegistered(true);
-            server.setVisible(true);
-            server.update();
-
-        }, packet.getSnowflake()));
 
     }
 }

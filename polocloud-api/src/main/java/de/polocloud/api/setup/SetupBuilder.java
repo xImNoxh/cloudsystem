@@ -68,7 +68,7 @@ public class SetupBuilder {
         PoloLogger.print(LogLevel.INFO, step.getQuestion());
 
         if (step.getFutureAnswer() != null) {
-            PoloLogger.print(LogLevel.INFO, "Possible Answers : " + String.join(", ", getStringFromObject(step.getFutureAnswer().findPossibleAnswers(this))));
+            PoloLogger.print(LogLevel.INFO, "Possible Answers : " + String.join(", ", getStringFromObject(step.getFutureAnswer())));
             return;
         }
 
@@ -100,17 +100,29 @@ public class SetupBuilder {
     public boolean isPossibleAnswer(Step step, String value) {
 
         if (step.getFutureAnswer() != null) {
-            String[] answers = getStringFromObject(step.getFutureAnswer().findPossibleAnswers(this));
+            String[] answers = getStringFromObject(step.getFutureAnswer());
             return Arrays.stream(answers).noneMatch(type -> type.equalsIgnoreCase(value));
         }
 
         return step.getDefaultAnswers().length > 0 && Arrays.stream(step.getDefaultAnswers()).noneMatch(type -> type.equalsIgnoreCase(value));
     }
 
-    public String[] getStringFromObject(Object[] args) {
+    public String[] getStringFromObject(FutureAnswer futureAnswer) {
+        Object[] args = futureAnswer.findPossibleAnswers(this);
         String[] content = new String[args.length];
         for (int i = 0; i < args.length; i++) {
-            content[i] = args[i].toString();
+            Object arg = args[i];
+            String s = futureAnswer.formatAnswer(arg);
+            if (s != null) {
+                content[i] = s;
+            } else {
+                if (Enum.class.isAssignableFrom(arg.getClass())) {
+                    Enum<?> e = (Enum<?>) arg;
+                    content[i] = e.name();
+                } else {
+                    content[i] = args[i].toString();
+                }
+            }
         }
         return content;
     }

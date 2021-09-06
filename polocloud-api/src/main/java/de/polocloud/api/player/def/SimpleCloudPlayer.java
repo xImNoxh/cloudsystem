@@ -19,7 +19,6 @@ import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponseElement;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.player.def.SimplePlayerSettings;
 import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.property.IProperty;
@@ -136,7 +135,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         }
         IFallback fb = fallbacks.get(ThreadLocalRandom.current().nextInt(fallbacks.size()));
         ITemplate iTemplate = PoloCloudAPI.getInstance().getTemplateManager().getTemplate(fb.getTemplateName());
-        List<IGameServer> gameServers = PoloCloudAPI.getInstance().getGameServerManager().getCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.RUNNING)).collect(Collectors.toList());
+        List<IGameServer> gameServers = PoloCloudAPI.getInstance().getGameServerManager().getCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.AVAILABLE)).collect(Collectors.toList());
         IGameServer fallback = gameServers.get(ThreadLocalRandom.current().nextInt(gameServers.size()));
 
         if (fallback != null && Arrays.asList(except).contains(fallback.getName())) {

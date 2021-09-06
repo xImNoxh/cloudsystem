@@ -1,39 +1,45 @@
 package de.polocloud.api.event.impl.player;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.base.EventData;
+import de.polocloud.api.event.base.ICancellable;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
-import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.player.ICloudPlayer;
 
-import java.io.IOException;
-
 @EventData(nettyFire = true)
-public class CloudPlayerSwitchServerEvent extends CloudPlayerEvent {
+public class CloudPlayerSwitchServerEvent extends CloudPlayerEvent implements ICancellable {
 
-    private String to;
-    private String from;
+    private SimpleGameServer target;
+    private final SimpleGameServer from;
+
+    private boolean cancelled;
 
     public CloudPlayerSwitchServerEvent(ICloudPlayer player, IGameServer to, IGameServer from) {
         super(player);
-        this.to = to == null ? "Null" : to.getName();
-        this.from = from == null ? "Null" : from.getName();
+        this.target = (SimpleGameServer) to;
+        this.from = (SimpleGameServer) from;
     }
 
-    public IGameServer getTo() {
-        return PoloCloudAPI.getInstance().getGameServerManager().getCached(to);
+    public IGameServer getTarget() {
+        return target;
     }
 
-    public void setTo(IGameServer to) {
-        this.to = to.getName();
+    public void setTarget(IGameServer to) {
+        this.target = (SimpleGameServer) to;
+        this.cancelled = true;
     }
 
     public IGameServer getFrom() {
-        return PoloCloudAPI.getInstance().getGameServerManager().getCached(from);
+        return from;
     }
 
-    public void setFrom(IGameServer from) {
-        this.from = from.getName();
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

@@ -85,7 +85,12 @@ public class SimpleScheduler implements Scheduler {
 			return null;
 		}
 		SimpleSchedulerFuture future = new SimpleSchedulerFuture(!async, task, generateTaskId(), multipleTimes);
-		this.tasks.add(future);
+		try {
+            this.tasks.add(future);
+        } catch (IndexOutOfBoundsException e) {
+		    this.tasks = new ArrayList<>();
+		    this.tasks.add(future);
+        }
 		return future;
 	}
 

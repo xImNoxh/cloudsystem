@@ -26,6 +26,7 @@ import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.proxy.commands.CloudCommand;
 import de.polocloud.plugin.protocol.NetworkClient;
 import io.netty.channel.ChannelHandlerContext;
+import jline.console.ConsoleReader;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +52,11 @@ public class CloudPlugin extends PoloCloudAPI {
 
         this.setPoloBridge(bootstrap.getBridge());
 
+    }
+
+    @Override
+    public ConsoleReader getConsoleReader() {
+        return null;
     }
 
     @Override
@@ -86,7 +92,7 @@ public class CloudPlugin extends PoloCloudAPI {
                         bootstrap.registerListeners();
                         thisService.updateInternally();
 
-                        networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(thisService.getName(), thisService.getSnowflake()));
+                        networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(thisService.getName(), thisService.getSnowflake(), bootstrap.getPort()));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

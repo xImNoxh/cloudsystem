@@ -40,13 +40,6 @@ public interface IDatabase<V> {
     void delete(String name);
 
     /**
-     * Deletes a {@link JsonData}
-     *
-     * @param document the document
-     */
-    void delete(JsonData document);
-
-    /**
      * Saves the cached values
      */
     void syncCache();

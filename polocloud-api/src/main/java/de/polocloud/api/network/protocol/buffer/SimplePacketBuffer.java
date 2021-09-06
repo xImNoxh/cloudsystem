@@ -210,6 +210,10 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     @Override
     public <T extends Enum<T>> T readEnum() throws IOException {
+        boolean nulled = this.readBoolean();
+        if (nulled) {
+            return null;
+        }
         Class<?> enumClass;
         try {
             String classString = this.readString();
@@ -224,8 +228,11 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     @Override
     public void writeEnum(Enum<?> val) throws IOException {
-        this.writeString(val.getDeclaringClass().getName());
-        this.writeVarInt(val.ordinal());
+        this.writeBoolean(val == null);
+        if (val != null) {
+            this.writeString(val.getDeclaringClass().getName());
+            this.writeVarInt(val.ordinal());
+        }
     }
 
     @Override

@@ -15,4 +15,7 @@ public abstract class CloudEvent {
     public void setNettyFired(boolean nettyFired) {
         this.nettyFired = nettyFired;
     }
+
+
+
 }

@@ -13,9 +13,10 @@ public class SimplePacketService {
 
     public SimplePacketService() {
 
-        PoloCloudAPI.getInstance().getGuice().getInstance(PlayerPacketHandler.class);
-        PoloCloudAPI.getInstance().getGuice().getInstance(GameServerPacketServiceHandler.class);
-        PoloCloudAPI.getInstance().getGuice().getInstance(WrapperPacketHandlerService.class);
+        new PlayerPacketHandler();
+        new GameServerPacketServiceHandler();
+
+        PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new WrapperPacketHandlerService());
 
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new PropertyDeletePacketHandler());
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new PropertyInsertPacketHandler());

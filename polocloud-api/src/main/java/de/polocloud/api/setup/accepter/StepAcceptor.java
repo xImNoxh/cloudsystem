@@ -15,6 +15,10 @@ public abstract class StepAcceptor {
         };
     }
 
+    public Predicate<String> isArray() {
+        return s -> s.contains(",");
+    }
+
     public Predicate<String> isBoolean() {
         return s -> s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
     }

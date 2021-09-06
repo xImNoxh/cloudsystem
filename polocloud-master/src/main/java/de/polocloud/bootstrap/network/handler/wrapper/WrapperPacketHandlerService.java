@@ -1,27 +1,43 @@
 package de.polocloud.bootstrap.network.handler.wrapper;
 
 import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.IGameServerManager;
+import de.polocloud.api.network.packets.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
+import io.netty.channel.ChannelHandlerContext;
 
-public class WrapperPacketHandlerService extends WrapperHandlerServiceController {
-
-    @Inject
-    private IGameServerManager gameServerManager;
+public class WrapperPacketHandlerService extends WrapperHandlerServiceController implements IPacketHandler<WrapperLoginPacket> {
 
     public WrapperPacketHandlerService() {
 
-        new SimplePacketHandler<WrapperLoginPacket>(WrapperLoginPacket.class, (ctx, packet) -> getLoginResponse(packet, (response, client) -> {
-            client.sendPacket(getMasterLoginResponsePacket(response));
+    }
+
+    @Override
+    public void handlePacket(ChannelHandlerContext ctx, WrapperLoginPacket packet) {
+        getLoginResponse(packet, (response, client) -> {
+            String name = packet.getName();
+            if (wrapperManager.getWrapper(name) != null) {
+                client.sendPacket(new MasterLoginResponsePacket(false, "§cThere is already a Wrapper with the name §e" + name + "§c!"));
+            } else {
+                client.sendPacket(getMasterLoginResponsePacket(response));
+            }
+
             if (!response) {
                 ctx.close();
                 return;
             }
 
             wrapperManager.registerWrapper(client);
-
             sendWrapperSuccessfully(client, packet);
-        }, ctx));
+        }, ctx);
+    }
+
+    @Override
+    public Class<? extends Packet> getPacketClass() {
+        return WrapperLoginPacket.class;
     }
 }

@@ -129,7 +129,12 @@ public class CollectiveProxyEvents implements Listener {
             Scheduler.runtimeScheduler().schedule(() -> {
                 cloudPlayer.setMinecraftServer(serverInfo.getName());
                 cloudPlayer.update();
-                PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), null));
+                PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), null), serverEvent -> {
+                    if (serverEvent.isCancelled()) {
+                        IGameServer target = serverEvent.getTarget();
+                        cloudPlayer.sendTo(target);
+                    }
+                });
             }, () -> PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(proxiedPlayer.getName()) != null);
 
         } else {
@@ -144,7 +149,12 @@ public class CollectiveProxyEvents implements Listener {
             IGameServer from = cloudPlayer.getMinecraftServer();
             cloudPlayer.setMinecraftServer(target.getName());
             cloudPlayer.update();
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), from));
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), from), serverEvent -> {
+                if (serverEvent.isCancelled()) {
+                    IGameServer t = serverEvent.getTarget();
+                    cloudPlayer.sendTo(t);
+                }
+            });
         }
     }
 

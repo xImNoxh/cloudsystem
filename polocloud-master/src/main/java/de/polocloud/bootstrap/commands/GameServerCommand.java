@@ -21,11 +21,8 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class GameServerCommand implements CommandListener {
 
@@ -64,7 +61,7 @@ public class GameServerCommand implements CommandListener {
                 if (gameServer == null) {
                     PoloLogger.print(LogLevel.WARNING, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
                 } else {
-                    if (gameServer.getStatus() == GameServerStatus.RUNNING) {
+                    if (gameServer.getStatus() == GameServerStatus.AVAILABLE) {
                         gameServer.stop();
                         PoloLogger.print(LogLevel.INFO, "Requesting §7'§b" + gameServer.getWrapper().getName() + "§7' to stop §3" + gameServer.getName() + "§7#§b" + gameServer.getSnowflake() + "§7..." );
                     } else {
@@ -99,7 +96,7 @@ public class GameServerCommand implements CommandListener {
                         template.getName() + "-" + searchForAvailableID(template),
                         template.getMotd(),
                         true,
-                        GameServerStatus.PENDING,
+                        GameServerStatus.STARTING,
                         snowflake.nextId(),
                         -1L,
                         System.currentTimeMillis(),
@@ -172,7 +169,7 @@ public class GameServerCommand implements CommandListener {
                             name,
                             template.getMotd(),
                             true,
-                            GameServerStatus.PENDING,
+                            GameServerStatus.STARTING,
                             snowflake.nextId(),
                             -1L,
                             System.currentTimeMillis(),
@@ -194,7 +191,7 @@ public class GameServerCommand implements CommandListener {
                     PoloLogger.print(LogLevel.WARNING, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't online!");
                     return;
                 }
-                if (!gameServer.getStatus().equals(GameServerStatus.RUNNING)) {
+                if (!gameServer.getStatus().equals(GameServerStatus.AVAILABLE)) {
                     PoloLogger.print(LogLevel.INFO, "The gameserver » " + ConsoleColors.LIGHT_BLUE + name + ConsoleColors.GRAY + " isn't completely stopped or started!");
                     return;
                 }

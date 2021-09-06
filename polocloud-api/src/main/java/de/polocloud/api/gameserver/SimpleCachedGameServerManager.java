@@ -61,7 +61,6 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
             iGameServer.setStartedTime(System.currentTimeMillis());
             iGameServer.setPort(PoloCloudAPI.getInstance().getPortManager().getPort(template));
             iGameServer.setVisible(false);
-            iGameServer.setStatus(GameServerStatus.PENDING);
 
             wrapperClient.startServer(iGameServer);
         }
@@ -99,10 +98,10 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
         if (gameServer == null) {
             return;
         }
-        IGameServer cachedObject = this.getCached(gameServer.getName());
 
-        cachedObjects.remove(cachedObject);
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(gameServer, GameServerStatus.STOPPING));
+        gameServer.setStatus(GameServerStatus.STOPPING);
+        gameServer.updateInternally();
+        cachedObjects.removeIf(gameServer1 -> gameServer1.getName().equalsIgnoreCase(gameServer.getName()));
 
         if (PoloCloudAPI.getInstance().getType().isCloud()) {
             PoloCloudAPI.getInstance().updateCache();
@@ -112,13 +111,12 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     @Override
     public void updateObject(IGameServer object) {
 
-        IGameServer cached = this.getCached(object.getName());
-        if (cached == null) {
+        IGameServer cachedGameServer = this.getCached(object.getName());
+
+        //Server is not cached yet.... registering
+        if (cachedGameServer == null) {
             this.registerGameServer(object);
             return;
-        }
-        if (!cached.getStatus().equals(object.getStatus())) {
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(object, object.getStatus()));
         }
 
         IGameServerManager.super.updateObject(object);
@@ -141,9 +139,4 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
         return null;
     }
 
-    @NotNull
-    @Override
-    public Iterator<IGameServer> iterator() {
-        return this.cachedObjects.iterator();
-    }
 }

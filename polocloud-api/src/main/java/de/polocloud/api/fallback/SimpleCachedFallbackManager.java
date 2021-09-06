@@ -71,7 +71,7 @@ public class SimpleCachedFallbackManager implements IFallbackManager {
         IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
 
         ITemplate iTemplate = PoloCloudAPI.getInstance().getTemplateManager().getTemplate(fallback.getTemplateName());
-        List<IGameServer> gameServers = gameServerManager.getCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.RUNNING)).collect(Collectors.toList());
+        List<IGameServer> gameServers = gameServerManager.getCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.AVAILABLE)).collect(Collectors.toList());
 
         return gameServers.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
     }

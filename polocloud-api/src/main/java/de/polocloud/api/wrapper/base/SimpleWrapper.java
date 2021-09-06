@@ -3,7 +3,6 @@ package de.polocloud.api.wrapper.base;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.network.packets.gameserver.GameServerRegisterPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.packets.master.MasterStopServerPacket;
@@ -13,7 +12,6 @@ import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePack
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperRequestShutdownPacket;
 import de.polocloud.api.player.ICloudPlayer;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.LinkedList;
@@ -83,7 +81,6 @@ public class SimpleWrapper implements IWrapper {
 
     @Override
     public void startServer(IGameServer gameServer) {
-        PoloCloudAPI.getInstance().sendPacket(new GameServerRegisterPacket(gameServer.getSnowflake(), gameServer.getPort()));
         PoloCloudAPI.getInstance().getGameServerManager().registerGameServer(gameServer);
 
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {

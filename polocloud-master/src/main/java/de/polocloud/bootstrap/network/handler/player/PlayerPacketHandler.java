@@ -1,6 +1,5 @@
 package de.polocloud.bootstrap.network.handler.player;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
@@ -26,12 +25,6 @@ import java.util.function.Consumer;
 
 public class PlayerPacketHandler extends PlayerPacketServiceController {
 
-    @Inject
-    public MasterConfig masterConfig;
-
-    @Inject
-    private MasterPubSubManager pubSubManager;
-
     public PlayerPacketHandler() {
 
         new SimplePacketHandler<>(MasterPlayerSendMessagePacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
@@ -42,7 +35,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
 
         new SimplePacketHandler<>(CloudPlayerRegisterPacket.class, packet -> {
             this.callConnectEvent(MasterPubSubManager.getInstance(), packet.getCloudPlayer());
-            this.sendConnectMessage(masterConfig, packet.getCloudPlayer());
+            this.sendConnectMessage(PoloCloudAPI.getInstance().getMasterConfig(), packet.getCloudPlayer());
             
             Master.getInstance().getCloudPlayerManager().registerPlayer(packet.getCloudPlayer());
             Master.getInstance().updateCache();
@@ -50,8 +43,8 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
 
         new SimplePacketHandler<>(CloudPlayerUnregisterPacket.class, packet -> {
 
-            this.sendDisconnectMessage(masterConfig, packet.getCloudPlayer());
-            this.callDisconnectEvent(pubSubManager, packet.getCloudPlayer());
+            this.sendDisconnectMessage(PoloCloudAPI.getInstance().getMasterConfig(), packet.getCloudPlayer());
+            this.callDisconnectEvent(MasterPubSubManager.getInstance(), packet.getCloudPlayer());
             
             Master.getInstance().getCloudPlayerManager().unregisterPlayer(packet.getCloudPlayer());
             Master.getInstance().updateCache();

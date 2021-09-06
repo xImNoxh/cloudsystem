@@ -24,6 +24,7 @@ import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.wrapper.bootup.InternalWrapperBootstrap;
 import de.polocloud.wrapper.impl.commands.HelpCommand;
@@ -36,6 +37,7 @@ import de.polocloud.wrapper.manager.module.ModuleCopyService;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 import de.polocloud.wrapper.manager.screen.IScreenManager;
+import jline.console.ConsoleReader;
 
 import java.net.InetSocketAddress;
 
@@ -99,6 +101,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         this.commandManager.registerCommand(new StopCommand());
         this.commandManager.registerCommand(new HelpCommand());
         this.commandManager.registerCommand(new ScreenCommand());
+    }
+
+    @Override
+    public ConsoleReader getConsoleReader() {
+        return Logger.getConsoleReader();
     }
 
     @Override

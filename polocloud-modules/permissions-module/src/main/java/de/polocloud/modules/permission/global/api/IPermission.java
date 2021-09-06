@@ -1,4 +1,4 @@
-package de.polocloud.modules.permission.api;
+package de.polocloud.modules.permission.global.api;
 
 public interface IPermission {
 

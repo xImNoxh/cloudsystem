@@ -11,7 +11,6 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -136,7 +135,7 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * Stops this server
      *
      * This should only be done if the {@link GameServerStatus} of this server
-     * is {@link GameServerStatus#RUNNING} otherwise you should use
+     * is {@link GameServerStatus#AVAILABLE} otherwise you should use
      * {@link IGameServer#terminate()} to terminate the process of this server
      */
     void stop();

@@ -1,6 +1,6 @@
-package de.polocloud.modules.permission.api.impl;
+package de.polocloud.modules.permission.global.api.impl;
 
-import de.polocloud.modules.permission.api.IPermission;
+import de.polocloud.modules.permission.global.api.IPermission;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,6 +16,10 @@ public class SimplePermission implements IPermission {
      * The time it expires
      */
     private final long expiringTime;
+
+    public SimplePermission(String permission) {
+        this(permission, -1L);
+    }
 
     @Override
     public boolean equals(String perms) {

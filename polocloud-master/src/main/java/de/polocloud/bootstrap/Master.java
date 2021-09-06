@@ -49,7 +49,9 @@ import de.polocloud.bootstrap.network.ports.PortService;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.client.PoloCloudClient;
+import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.types.ConsoleColors;
+import jline.console.ConsoleReader;
 
 import java.io.File;
 import java.util.*;
@@ -227,6 +229,11 @@ public class Master extends PoloCloudAPI implements IStartable {
         return terminate;
     }
 
+
+    @Override
+    public ConsoleReader getConsoleReader() {
+        return Logger.getConsoleReader();
+    }
     @Override
     public void reportException(Throwable throwable) {
         String logException = Throwables.getStackTraceAsString(throwable);

@@ -1,5 +1,8 @@
 package de.polocloud.api.config.master.messages;
 
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.player.ICloudPlayer;
+
 public class Messages {
 
     /**
@@ -73,6 +76,10 @@ public class Messages {
 
     public String getPrefix() {
         return prefix.replace("&", "§");
+    }
+
+    public String getPrefix(CommandExecutor executor) {
+        return executor instanceof ICloudPlayer ? getPrefix() : "";
     }
 
     public String getNetworkShutdown() {
