@@ -10,6 +10,8 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.messaging.IMessageListener;
+import de.polocloud.api.util.Task;
+import de.polocloud.modules.permission.cloudside.handler.ModuleCloudSideTaskHandler;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 import de.polocloud.modules.permission.global.api.impl.*;
@@ -32,6 +34,7 @@ public class PermissionModule {
     private final IDatabase<SimplePermissionGroup> groupDatabase;
 
     private final IMessageChannel<SimplePermissionPool> messageChannel;
+    private final IMessageChannel<Task> taskChannels;
 
     public PermissionModule(ModuleBootstrap bootstrap) {
         instance = this;
@@ -39,16 +42,25 @@ public class PermissionModule {
         this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);
 
         this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(SimplePermissionPool.class, "permission-module-cache-update");
-        this.messageChannel.registerListener((simplePermissionPool, startTime) -> Guice.bind(PermissionPool.class).toInstance(simplePermissionPool));
+        this.taskChannels = PoloCloudAPI.getInstance().getMessageManager().registerChannel(Task.class, "permission-module-tasks");
 
-        if (this.groupDatabase != null) {
+        this.messageChannel.registerListener((simplePermissionPool, startTime) -> {
+            Guice.bind(PermissionPool.class).toInstance(simplePermissionPool);
+            if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                reload();
+            }
+        });
+
+        this.taskChannels.registerListener(new ModuleCloudSideTaskHandler());
+
+        if (this.groupDatabase != null && this.userDatabase != null) {
             if (this.groupDatabase.getEntries().isEmpty()) {
 
-                IPermissionGroup playerGroup = new SimplePermissionGroup("Player", 0, Collections.singletonList("cloud.defaultpermission"), new SimplePermissionDisplay(MinecraftColor.GRAY, "§aPlayer §8▏§7", "§7", ""), new ArrayList<>());
-                IPermissionGroup adminGroup = new SimplePermissionGroup("Admin", 9999, Arrays.asList("cloud.use", "cloud.maintenance", "cloud.server.full.connect", "cloud.stop", "cloud.notify", "cloud.fulljoin"), new SimplePermissionDisplay(MinecraftColor.DARK_RED, "§4Admin §8▏§7", "§7", ""), Collections.singletonList("Player"));
+                SimplePermissionGroup playerGroup = new SimplePermissionGroup("Player", 0, true, Collections.singletonList("cloud.defaultpermission"), new SimplePermissionDisplay(MinecraftColor.GRAY, "§aPlayer §8▏§7", "§7", ""), new ArrayList<>());
+                SimplePermissionGroup adminGroup = new SimplePermissionGroup("Admin", 9999, false, Arrays.asList("*", "cloud.use", "cloud.maintenance", "cloud.server.full.connect", "cloud.stop", "cloud.notify", "cloud.fulljoin"), new SimplePermissionDisplay(MinecraftColor.DARK_RED, "§4Admin §8▏§7", "§7", ""), Collections.singletonList("Player"));
 
-                this.groupDatabase.insert(playerGroup.getName(), (SimplePermissionGroup) playerGroup);
-                this.groupDatabase.insert(adminGroup.getName(), (SimplePermissionGroup) adminGroup);
+                this.groupDatabase.insert(playerGroup.getName(), playerGroup);
+                this.groupDatabase.insert(adminGroup.getName(), adminGroup);
             }
             PoloLogger.print(LogLevel.INFO, "§7PermissionModule loaded §b" + this.userDatabase.getEntries().size() + " §3PermissionUsers §7and §3" + this.groupDatabase.getEntries().size() + " §3PermissionGroups§7!");
         }
@@ -62,6 +74,9 @@ public class PermissionModule {
         if (PoloCloudAPI.getInstance().getType() != PoloType.PLUGIN_SPIGOT) {
             PoloCloudAPI.getInstance().getCommandManager().registerCommand(new PermsCommand());
         }
+        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+            this.messageChannel.sendMessage((SimplePermissionPool) PermissionPool.getInstance());
+        }
     }
 
     /**
@@ -71,6 +86,9 @@ public class PermissionModule {
 
     }
 
+    /**
+     * Relodas this module
+     */
     public void reload() {
         this.messageChannel.sendMessage((SimplePermissionPool) PermissionPool.getInstance());
     }

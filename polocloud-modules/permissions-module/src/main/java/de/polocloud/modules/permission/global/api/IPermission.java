@@ -1,6 +1,6 @@
 package de.polocloud.modules.permission.global.api;
 
-public interface IPermission {
+public interface IPermission extends Expireable {
 
     /**
      * The String permission of this permission

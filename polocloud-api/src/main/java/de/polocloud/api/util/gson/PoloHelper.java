@@ -80,6 +80,27 @@ public class PoloHelper {
         }
     }
 
+    /**
+     * Gets a custom bukkit class
+     * @param name the name
+     * @return class or null
+     */
+    public static Class<?> getCustomClass(String name, String version) {
+        try {
+            return Class.forName(name.replace("%d%", version));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    /**
+     * Gets a craft bukkit class by name
+     *
+     * @param name the name
+     * @return class or null
+     */
+    public static Class<?> getCraftBukkitClass(String name, String version) {
+        return getCustomClass("org.bukkit.craftbukkit.%d%." + name, version);
+    }
 
     /**
      * Sends a packet to Bukkit player

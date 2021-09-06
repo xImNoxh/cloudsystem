@@ -48,7 +48,7 @@ public class PermissionGroupSetup extends StepAcceptor implements Setup {
                 String suffix = steps.get(4).getAnswer();
                 String chatFormat = steps.get(5).getAnswer();
 
-                IPermissionGroup group = new SimplePermissionGroup(name, id, new ArrayList<>(), new SimplePermissionDisplay(color, prefix, suffix, chatFormat), new ArrayList<>());
+                IPermissionGroup group = new SimplePermissionGroup(name, id, false, new ArrayList<>(), new SimplePermissionDisplay(color, prefix, suffix, chatFormat), new ArrayList<>());
 
                 PermissionPool.getInstance().createPermissionGroup(group);
                 PoloLogger.print(LogLevel.INFO, "§7You §asuccessfully §7created the group " + color.getColor() + group.getName() + "§7!");

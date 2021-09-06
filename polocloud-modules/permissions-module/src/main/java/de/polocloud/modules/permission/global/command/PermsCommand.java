@@ -43,6 +43,10 @@ public class PermsCommand implements CommandListener {
                     }
                     executor.sendMessage(prefix + "----[/PermissionGroups]----");
                 } else if (args[1].equalsIgnoreCase("create")) {
+                    if (executor instanceof ICloudPlayer) {
+                        executor.sendMessage(prefix + "§cThis can only be executed in the §eMaster-Console§c!");
+                        return;
+                    }
                     new PermissionGroupSetup().sendSetup();
                 } else {
                     sendHelp(executor, prefix);

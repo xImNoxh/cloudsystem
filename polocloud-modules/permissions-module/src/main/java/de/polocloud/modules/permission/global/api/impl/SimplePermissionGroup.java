@@ -15,6 +15,7 @@ public class SimplePermissionGroup implements IPermissionGroup {
 
     private final String name;
     private final int id;
+    private final boolean defaultGroup;
     private final List<String> permissions;
     private final SimplePermissionDisplay display;
     private final List<String> inheritances;
