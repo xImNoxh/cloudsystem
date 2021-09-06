@@ -8,8 +8,8 @@ public class ProxyMotdSettings {
     private ProxyMotd onlineMotd;
 
     public ProxyMotdSettings() {
-        this.maintenanceMotd = new ProxyMotd("maintence","polocloud");
-        this.onlineMotd = new ProxyMotd("online","polocloud");
+        this.maintenanceMotd = new ProxyMotd("maintence","polocloud", "§8» §cMaintenance");
+        this.onlineMotd = new ProxyMotd("online","polocloud", null);
     }
 
     public ProxyMotd getMaintenanceMotd() {
