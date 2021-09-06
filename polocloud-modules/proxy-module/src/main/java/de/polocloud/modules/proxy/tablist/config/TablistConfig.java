@@ -1,4 +1,4 @@
-package de.polocloud.modules.proxy.config.tablist;
+package de.polocloud.modules.proxy.tablist.config;
 
 public class TablistConfig {
 

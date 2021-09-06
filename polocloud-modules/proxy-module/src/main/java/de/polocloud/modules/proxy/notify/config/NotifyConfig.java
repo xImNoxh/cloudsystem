@@ -1,4 +1,4 @@
-package de.polocloud.modules.proxy.config.notify;
+package de.polocloud.modules.proxy.notify.config;
 
 public class NotifyConfig {
 
@@ -6,8 +6,7 @@ public class NotifyConfig {
     private String permission;
     private String startingMessage, startedMessage, stoppedMessage;
 
-    public NotifyConfig(boolean use, String permission, String startingMessage, String startedMessage, String stoppedMessage) {
-        this.use = use;
+    public NotifyConfig(String permission, String startingMessage, String startedMessage, String stoppedMessage) {
         this.permission = permission;
         this.startingMessage = startingMessage;
         this.startedMessage = startedMessage;

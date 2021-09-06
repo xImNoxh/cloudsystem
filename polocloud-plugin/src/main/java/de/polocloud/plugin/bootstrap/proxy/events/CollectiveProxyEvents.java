@@ -25,6 +25,7 @@ import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 public class CollectiveProxyEvents implements Listener {
 
@@ -37,7 +38,8 @@ public class CollectiveProxyEvents implements Listener {
         plugin.getProxy().getPluginManager().registerListener(plugin, this);
     }
 
-    @EventHandler
+
+    @EventHandler (priority = EventPriority.LOW)
     public void handle(ProxyPingEvent event) {
         ServerPing serverPing = event.getResponse();
         serverPing.getPlayers().setMax(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMaxPlayers());

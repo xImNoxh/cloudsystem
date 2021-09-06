@@ -1,4 +1,4 @@
-package de.polocloud.modules.proxy.config.motd;
+package de.polocloud.modules.proxy.motd.config;
 
 public class ProxyMotdSettings {
 
@@ -7,9 +7,9 @@ public class ProxyMotdSettings {
     private ProxyMotd maintenanceMotd;
     private ProxyMotd onlineMotd;
 
-    public ProxyMotdSettings() {
-        this.maintenanceMotd = new ProxyMotd("maintence","polocloud", "§8» §cMaintenance");
-        this.onlineMotd = new ProxyMotd("online","polocloud", null);
+    public ProxyMotdSettings(ProxyMotd maintenance, ProxyMotd onlineMotd) {
+        this.maintenanceMotd = maintenance;
+        this.onlineMotd = onlineMotd;
     }
 
     public ProxyMotd getMaintenanceMotd() {

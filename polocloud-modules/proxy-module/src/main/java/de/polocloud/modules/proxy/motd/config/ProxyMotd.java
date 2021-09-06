@@ -1,4 +1,4 @@
-package de.polocloud.modules.proxy.config.motd;
+package de.polocloud.modules.proxy.motd.config;
 
 public class ProxyMotd {
 
