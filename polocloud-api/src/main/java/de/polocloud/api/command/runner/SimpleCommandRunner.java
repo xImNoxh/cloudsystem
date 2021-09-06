@@ -167,7 +167,7 @@ public class SimpleCommandRunner implements ICommandRunner {
                 }
             }
             if (!hasPermission) {
-                source.sendMessage("You do not have the appropriate permissions to execute this command. Contact the server administrators if you believe that this is in error.");
+                source.sendMessage("§cYou do not have the appropriate permissions to execute this command. Contact the server administrators if you believe that this is in error.");
                 return;
             }
         }
@@ -180,7 +180,7 @@ public class SimpleCommandRunner implements ICommandRunner {
             }
         }
         if (!allowedType) {
-            source.sendMessage("The current CommandExecutor (" + source.getType().name() + ") is not allowed to execute this command!");
+            source.sendMessage("§cThe current CommandExecutor (§e" + source.getType().name() + "§c) is not allowed to execute this command!");
             return;
         }
 
@@ -193,7 +193,7 @@ public class SimpleCommandRunner implements ICommandRunner {
             if (!showUsage) {
                 return;
             }
-            source.sendMessage("Usage: " + this.getUsage());
+            source.sendMessage("§cUsage: " + this.getUsage());
             return;
         }
 

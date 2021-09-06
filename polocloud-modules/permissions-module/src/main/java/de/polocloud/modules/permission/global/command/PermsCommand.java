@@ -2,7 +2,10 @@ package de.polocloud.modules.permission.global.command;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Command;
+import de.polocloud.api.command.annotation.CommandExecutors;
+import de.polocloud.api.command.annotation.CommandPermission;
 import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
@@ -20,6 +23,8 @@ public class PermsCommand implements CommandListener {
         aliases = {"perms", "cloudperms", "poloperms"},
         description = "Manages the Permissions module"
     )
+    @CommandExecutors(ExecutorType.ALL)
+    @CommandPermission("cloud.use")
     public void execute(CommandExecutor executor, String[] fullArgs, String... args) {
         String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix(executor);
 
