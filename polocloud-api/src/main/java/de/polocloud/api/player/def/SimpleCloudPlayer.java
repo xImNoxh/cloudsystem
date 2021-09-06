@@ -124,9 +124,12 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     private IGameServer getFallbackRecursive(int tries, String... except) {
-        if (tries++ == 10) {
+        tries++;
+
+        if (tries >= 10) {
             return null;
         }
+
         List<IFallback> fallbacks = PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks();
         if (fallbacks.size() == 1) {
             return null;
