@@ -1,5 +1,6 @@
 package de.polocloud.modules.proxy;
 
+import com.google.common.collect.Lists;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
@@ -8,9 +9,11 @@ import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.modules.proxy.config.ProxyConfig;
 import de.polocloud.modules.proxy.config.motd.ProxyMotdSettings;
+import de.polocloud.modules.proxy.config.tablist.TablistConfig;
 import de.polocloud.modules.proxy.events.CollectiveCloudListener;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class ProxyModule {
 
@@ -34,7 +37,23 @@ public class ProxyModule {
 
     public void reload(){
         loadConfig();
+
         setupServices();
+        sendAllTablist();
+    }
+
+    public void sendAllTablist(){
+        TablistConfig tablistConfig = ProxyModule.getProxyModule().getProxyConfig().getTablistConfig();
+
+        String header = replaceTabComponent(tablistConfig.getHeader());
+        String footer = replaceTabComponent(tablistConfig.getFooter());
+
+        Lists.newArrayList(PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached()).forEach(it ->
+            it.sendTabList(
+                header.replaceAll("%SERVICE%", it.getMinecraftServer().getName())
+                .replaceAll("%MAX_PLAYERS%", String.valueOf(it.getProxyServer().getMaxPlayers())),
+                footer.replaceAll("%SERVICE%", it.getMinecraftServer().getName())
+                    .replaceAll("%MAX_PLAYERS%", String.valueOf(it.getProxyServer().getMaxPlayers()))));
     }
 
     public void loadConfig(){
@@ -51,6 +70,10 @@ public class ProxyModule {
 
     public void setupServices(){
         PoloCloudAPI.getInstance().getGameServerManager().getCached(TemplateType.PROXY).forEach(it -> sendMotd(it));
+    }
+
+    public String replaceTabComponent(String value){
+        return value.replaceAll("%ONLINE_PLAYERS%", String.valueOf(PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().size()));
     }
 
     public void sendMotd(IGameServer server){
