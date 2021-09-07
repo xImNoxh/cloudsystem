@@ -16,6 +16,11 @@ public class WhitelistService implements IProxyReload {
         this.instance = this;
 
         this.whitelistChannel = new WhitelistChannel();
+
+        this.whitelistChannel.getUpdateChannel().registerListener((whitelistPropertyWrappedObject, startTime) -> {
+            updateWhitelist();
+        });
+
     }
 
     public WhitelistChannel getWhitelistChannel() {
@@ -30,6 +35,8 @@ public class WhitelistService implements IProxyReload {
         this.whitelistChannel.getChannel().sendMessage((new WrappedObject<>(new WhitelistProperty(
             ProxyModule.getProxyModule().getProxyConfig().getWhitelist().getWhitelistPlayers()))));
     }
+
+
 
     @Override
     public void onReload() {
