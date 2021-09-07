@@ -147,7 +147,7 @@ public class PermsCommand implements CommandListener {
                         }
                         permissionGroup.removePermission(permission);
                         permissionGroup.update();
-                        executor.sendMessage(prefix + "§7Successfully added permission §b" + permission + " §7to group §3" + permissionGroup.getName() + "§8!");
+                        executor.sendMessage(prefix + "§7Successfully removed permission §b" + permission + " §7to group §3" + permissionGroup.getName() + "§8!");
                     } else {
                         executor.sendMessage(prefix + "§c" + slash + "perms group " + permissionGroup.getName() + " permission <add/remove> <permission>");
                     }
