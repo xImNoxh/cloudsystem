@@ -1,6 +1,8 @@
 package de.polocloud.modules.proxy.motd.events;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.modules.proxy.motd.MotdProxyService;
+import de.polocloud.modules.proxy.motd.properties.MotdVersionProperty;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -12,10 +14,18 @@ public class ProxyEvents implements Listener {
     @EventHandler (priority = EventPriority.HIGH)
     public void handle(ProxyPingEvent event){
 
-        if(MotdProxyService.getInstance().getProperty() == null) return;
+        MotdVersionProperty property = MotdProxyService.getInstance().getProperty();
+        if(property == null) return;
 
         ServerPing response = event.getResponse();
-        response.setVersion(new ServerPing.Protocol(MotdProxyService.getInstance().getProperty().getVersionInfo(), -1));
+
+        if(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getTemplate().isMaintenance()){
+            if(property.getMaintenanceVersionInfo() != null)
+            response.setVersion(new ServerPing.Protocol(property.getMaintenanceVersionInfo(), -1));
+        }else{
+            if(property.getVersionInfo() != null)
+            response.setVersion(new ServerPing.Protocol(property.getVersionInfo(), -1));
+        }
         event.setResponse(response);
     }
 

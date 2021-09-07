@@ -3,12 +3,14 @@ package de.polocloud.modules.proxy.motd;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.util.WrappedObject;
 import de.polocloud.modules.proxy.IProxyReload;
 import de.polocloud.modules.proxy.ProxyConfig;
 import de.polocloud.modules.proxy.ProxyModule;
 import de.polocloud.modules.proxy.motd.channel.MotdVersionChannel;
 import de.polocloud.modules.proxy.motd.config.ProxyMotdSettings;
 import de.polocloud.modules.proxy.motd.events.ServiceMotdEvents;
+import de.polocloud.modules.proxy.motd.properties.MotdVersionProperty;
 
 public class MotdService implements IProxyReload {
 
@@ -48,6 +50,7 @@ public class MotdService implements IProxyReload {
     @Override
     public void onReload() {
         sendAllProxiesMotd();
+        updateVersionTag();
     }
 
     public static MotdService getInstance() {
@@ -57,4 +60,12 @@ public class MotdService implements IProxyReload {
     public MotdVersionChannel getMotdVersionChannel() {
         return motdVersionChannel;
     }
+
+    public void updateVersionTag(){
+        MotdVersionProperty motdVersionProperty = new MotdVersionProperty(
+            proxyConfig.getProxyMotdSettings().getOnlineMotd().getVersionTag(),
+            proxyConfig.getProxyMotdSettings().getMaintenanceMotd().getVersionTag());
+        motdVersionChannel.getChannel().sendMessage(new WrappedObject<>(motdVersionProperty));
+    }
+
 }
