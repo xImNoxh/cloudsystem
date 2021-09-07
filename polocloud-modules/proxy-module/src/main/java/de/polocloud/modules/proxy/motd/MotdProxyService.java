@@ -15,7 +15,9 @@ public class MotdProxyService {
     public MotdProxyService() {
         instance = this;
         motdVersionChannel = new MotdVersionChannel();
-        motdVersionChannel.getChannel().registerListener((globalConfigClassWrappedObject, startTime) -> property = globalConfigClassWrappedObject.unwrap(MotdVersionProperty.class));
+        motdVersionChannel.getChannel().registerListener((globalConfigClassWrappedObject, startTime) -> {
+            property = globalConfigClassWrappedObject.unwrap(MotdVersionProperty.class);
+        });
         ProxyServer.getInstance().getPluginManager().registerListener(ProxyPluginBootstrap.getInstance(), new ProxyEvents());
     }
 

@@ -49,6 +49,7 @@ public class MotdService implements IProxyReload {
 
     @Override
     public void onReload() {
+        this.proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
         sendAllProxiesMotd();
         updateVersionTag();
     }

@@ -5,12 +5,14 @@ import de.polocloud.modules.proxy.motd.config.ProxyMotd;
 import de.polocloud.modules.proxy.motd.config.ProxyMotdSettings;
 import de.polocloud.modules.proxy.notify.config.NotifyConfig;
 import de.polocloud.modules.proxy.tablist.config.TablistConfig;
+import de.polocloud.modules.proxy.whitelist.config.Whitelist;
 
 public class ProxyConfig implements IConfig {
 
     private ProxyMotdSettings proxyMotdSettings;
     private NotifyConfig notifyConfig;
     private TablistConfig tablistConfig;
+    private Whitelist whitelist;
 
     public ProxyConfig() {
         this.proxyMotdSettings = new ProxyMotdSettings(
@@ -25,6 +27,12 @@ public class ProxyConfig implements IConfig {
 
         this.tablistConfig = new TablistConfig(" \n     §b§lPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o%ONLINE_PLAYERS%§8/§f%MAX_PLAYERS% " +
             "\n §7current server §8- §b%SERVICE% \n "," \n §7Join §b§nOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE \n ");
+
+        this.whitelist = new Whitelist();
+    }
+
+    public Whitelist getWhitelist() {
+        return whitelist;
     }
 
     public TablistConfig getTablistConfig() {
