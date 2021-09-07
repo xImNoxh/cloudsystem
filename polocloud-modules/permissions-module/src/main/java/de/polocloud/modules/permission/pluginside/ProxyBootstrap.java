@@ -52,8 +52,11 @@ public class ProxyBootstrap extends Plugin implements Listener {
             }
             if (permissionUser.getName().equalsIgnoreCase("name_needs_to_be_set")) {
                 ((SimplePermissionUser)permissionUser).setName(player.getName());
-                permissionUser.update();
             }
+            if (permissionUser.getUniqueId() == null) {
+                ((SimplePermissionUser)permissionUser).setUniqueId(player.getUniqueId());
+            }
+            permissionUser.update();
 
             event.setHasPermission(permissionUser.hasPermission(permission));
         } else {

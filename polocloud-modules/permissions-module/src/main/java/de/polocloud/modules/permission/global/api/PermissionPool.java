@@ -63,6 +63,14 @@ public interface PermissionPool {
     IPermissionUser getCachedPermissionUser(UUID uniqueId);
 
     /**
+     * Gets a cached {@link IPermissionUser} by its name
+     *
+     * @param name the name
+     * @return user
+     */
+    IPermissionUser getCachedPermissionUser(String name);
+
+    /**
      * Gets a list of all cached {@link IPermissionUser}s
      */
     List<IPermissionUser> getAllCachedPermissionUser();

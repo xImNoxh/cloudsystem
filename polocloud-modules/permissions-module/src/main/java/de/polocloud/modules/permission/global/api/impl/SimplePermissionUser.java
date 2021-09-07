@@ -1,5 +1,7 @@
 package de.polocloud.modules.permission.global.api.impl;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.Task;
 import de.polocloud.modules.permission.PermissionModule;
@@ -27,7 +29,6 @@ public class SimplePermissionUser implements IPermissionUser {
         for (String permissionGroup : this.permissionGroups.keySet()) {
             PermissionPool.getInstance().getAllCachedPermissionGroups().stream().filter(group -> group.getName().equalsIgnoreCase(permissionGroup)).findFirst().ifPresent(list::add);
         }
-
         return list;
     }
 
@@ -108,6 +109,9 @@ public class SimplePermissionUser implements IPermissionUser {
 
     @Override
     public void update() {
+        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+            PermissionModule.getInstance().getUserDatabase().insert(this.uniqueId.toString(), this);
+        }
         PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("update-user", new JsonData("user", this)));
     }
 }

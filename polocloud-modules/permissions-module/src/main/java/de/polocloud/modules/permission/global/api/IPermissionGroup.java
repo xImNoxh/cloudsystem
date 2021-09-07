@@ -31,4 +31,30 @@ public interface IPermissionGroup extends INamable, Expireable {
      * permissions from
      */
     List<IPermissionGroup> getInheritances();
+
+    /**
+     * Removes a permission from this group
+     *
+     * @param permission the permission
+     */
+    void removePermission(String permission);
+
+    /**
+     * Checks if this group has a permission
+     *
+     * @param permission the permission
+     */
+    boolean hasPermission(String permission);
+
+    /**
+     * Adds a permission to this group
+     *
+     * @param permission the permission
+     */
+    void addPermission(String permission);
+
+    /**
+     * Updates this group
+     */
+    void update();
 }

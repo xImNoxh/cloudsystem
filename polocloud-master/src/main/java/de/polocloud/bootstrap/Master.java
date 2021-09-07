@@ -137,6 +137,10 @@ public class Master extends PoloCloudAPI implements IStartable {
         File configFile = FileConstants.MASTER_CONFIG_FILE;
         MasterConfig masterConfig = simpleConfigLoader.load(MasterConfig.class, configFile);
 
+        //Registering default fallback
+        if (masterConfig.getProperties().getFallbacks().isEmpty()) {
+            masterConfig.getProperties().getFallbacks().add(new SimpleFallback("Lobby", "", true, 1));
+        }
         //Sorting the Fallbacks after the FallbackPriority, to make it faster
         masterConfig.getProperties().getFallbacks().sort(Comparator.comparingInt(SimpleFallback::getPriority));
         for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbacks()) {

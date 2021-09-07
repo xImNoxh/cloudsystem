@@ -13,7 +13,6 @@ public interface IPermissionUser extends INamable {
      */
     UUID getUniqueId();
 
-
     /**
      * Gets a list of all {@link IPermissionGroup}s this player has
      */

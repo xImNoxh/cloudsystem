@@ -13,8 +13,7 @@ import de.polocloud.modules.permission.PermissionModule;
     version = "1.0",
     description = "This manages the perms all over the network",
     authors = "Lystx",
-    copyTypes = ModuleCopyType.ALL,
-    reloadable = true
+    copyTypes = ModuleCopyType.ALL
 )
 public class ModuleBootstrap extends CloudModule {
 
