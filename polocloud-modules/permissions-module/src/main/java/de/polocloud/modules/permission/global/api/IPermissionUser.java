@@ -19,6 +19,13 @@ public interface IPermissionUser extends INamable {
     List<IPermissionGroup> getPermissionGroups();
 
     /**
+     * C
+     * @param permissionGroup
+     * @return
+     */
+    boolean hasPermissionGroup(IPermissionGroup permissionGroup);
+
+    /**
      * Gets a {@link Map} of all {@link IPermissionGroup}s that are expiring
      * at some point and will be put into a map with the date of expiration
      */

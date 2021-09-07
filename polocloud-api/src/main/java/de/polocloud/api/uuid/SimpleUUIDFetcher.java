@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.map.UniqueMap;
-import jdk.nashorn.api.scripting.URLReader;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -61,9 +60,7 @@ public class SimpleUUIDFetcher implements IUUIDFetcher {
                 return UUID.randomUUID();
             }
 
-
-            BufferedReader bufferedReader = new BufferedReader(new URLReader(url));
-
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder stringBuilder = new StringBuilder();
 
             String line;

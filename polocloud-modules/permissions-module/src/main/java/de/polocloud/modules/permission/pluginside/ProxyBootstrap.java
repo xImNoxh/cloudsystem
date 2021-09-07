@@ -1,8 +1,11 @@
 package de.polocloud.modules.permission.pluginside;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.JsonData;
+import de.polocloud.api.util.Task;
 import de.polocloud.modules.permission.PermissionModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
+import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 import de.polocloud.modules.permission.global.api.impl.SimplePermissionUser;
@@ -13,6 +16,10 @@ import net.md_5.bungee.api.event.PermissionCheckEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProxyBootstrap extends Plugin implements Listener {
 
@@ -47,8 +54,17 @@ public class ProxyBootstrap extends Plugin implements Listener {
 
             IPermissionUser permissionUser = PermissionPool.getInstance().getCachedPermissionUser(player.getUniqueId());
             if (permissionUser == null) {
-                PoloCloudAPI.getInstance().messageCloud("§e" + player.getName() + " §ccouldn't pass §ePermissionCheckEvent §cbecause its §eIPermissionUser §cwas null! This should never happen! Please report this error immediately!");
-                return;
+
+                Map<String, Long> groups = new HashMap<>();
+                for (IPermissionGroup permissionGroup : PermissionPool.getInstance().getAllCachedPermissionGroups()) {
+                    if (permissionGroup.isDefaultGroup()) {
+                        groups.put(permissionGroup.getName(), -1L);
+                    }
+                }
+                permissionUser = new SimplePermissionUser(player.getName(), player.getUniqueId(), groups, new ArrayList<>());
+                PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("create-user", new JsonData("user", permissionUser)));
+                PermissionPool.getInstance().getAllCachedPermissionUser().add(permissionUser);
+
             }
             if (permissionUser.getName().equalsIgnoreCase("name_needs_to_be_set")) {
                 ((SimplePermissionUser)permissionUser).setName(player.getName());

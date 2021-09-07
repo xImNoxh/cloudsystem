@@ -1,11 +1,15 @@
 package de.polocloud.modules.permission.pluginside;
 
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.util.Task;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.modules.permission.PermissionModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
+import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
+import de.polocloud.modules.permission.global.api.impl.SimplePermissionUser;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,10 +23,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SpigotBootstrap extends JavaPlugin implements Listener {
 
@@ -124,7 +125,16 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
 
             IPermissionUser cachedPermissionUser = PermissionPool.getInstance().getCachedPermissionUser(this.player.getUniqueId());
             if (cachedPermissionUser == null) {
-                return false;
+                Map<String, Long> groups = new HashMap<>();
+                for (IPermissionGroup permissionGroup : PermissionPool.getInstance().getAllCachedPermissionGroups()) {
+                    if (permissionGroup.isDefaultGroup()) {
+                        groups.put(permissionGroup.getName(), -1L);
+                    }
+                }
+                cachedPermissionUser = new SimplePermissionUser(player.getName(), player.getUniqueId(), groups, new ArrayList<>());
+                PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("create-user", new JsonData("user", cachedPermissionUser)));
+                PermissionPool.getInstance().getAllCachedPermissionUser().add(cachedPermissionUser);
+
             }
             return cachedPermissionUser.hasPermission(inName);
 
