@@ -33,6 +33,11 @@ public class SimplePermissionUser implements IPermissionUser {
     }
 
     @Override
+    public boolean hasPermissionGroup(IPermissionGroup permissionGroup) {
+        return false;
+    }
+
+    @Override
     public List<IPermission> getExclusivePermissions() {
         return new ArrayList<>(exclusivePermissions);
     }
