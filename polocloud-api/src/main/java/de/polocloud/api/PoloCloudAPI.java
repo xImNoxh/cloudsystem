@@ -52,6 +52,8 @@ import de.polocloud.api.template.SimpleCachedTemplateManager;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.util.system.SystemManager;
+import de.polocloud.api.uuid.IUUIDFetcher;
+import de.polocloud.api.uuid.SimpleUUIDFetcher;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -92,6 +94,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final IModuleHolder moduleHolder;
     protected final IPropertyManager propertyManager;
     protected final IPortManager portManager;
+    protected final IUUIDFetcher uuidFetcher;
     protected final SystemManager systemManager;
 
     //The bridge instance
@@ -121,6 +124,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.moduleHolder = new ModuleService(FileConstants.MASTER_MODULES);
         this.propertyManager = new SimpleCachedPropertyManager();
         this.systemManager = new SystemManager();
+        this.uuidFetcher = new SimpleUUIDFetcher(1);
         this.masterConfig = new MasterConfig();
 
         Guice.bind(Scheduler.class).toInstance(new SimpleScheduler());
@@ -307,6 +311,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public ICloudPlayerManager getCloudPlayerManager() {
         return cloudPlayerManager;
+    }
+
+    public IUUIDFetcher getUuidFetcher() {
+        return uuidFetcher;
     }
 
     public IPropertyManager getPropertyManager() {

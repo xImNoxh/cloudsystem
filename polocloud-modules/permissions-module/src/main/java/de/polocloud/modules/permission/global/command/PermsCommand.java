@@ -8,12 +8,15 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.modules.permission.global.api.IPermission;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 import de.polocloud.modules.permission.global.api.impl.SimplePermissionGroup;
 import de.polocloud.modules.permission.global.setup.PermissionGroupSetup;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,7 +91,7 @@ public class PermsCommand implements CommandListener {
                 }
             } else if (args[0].equalsIgnoreCase("user")) {
                 String name = args[1];
-                if (args[0].equalsIgnoreCase("info")) {
+                if (args[2].equalsIgnoreCase("info")) {
                     IPermissionUser permissionUser = permissionPool.getCachedPermissionUser(name);
                     if (permissionUser == null) {
                         executor.sendMessage(prefix + "§cThere is no registered PermissionUser with the name §e" + name + "§c!");
@@ -97,7 +100,16 @@ public class PermsCommand implements CommandListener {
 
                     executor.sendMessage(prefix + "----[PermissionUser]----");
                     executor.sendMessage(prefix + "§8» §7Name§8: §b" + permissionUser.getName());
-                    executor.sendMessage(prefix + "§8» §7Name§8: §b" + permissionUser.getName());
+                    executor.sendMessage(prefix + "§8» §7UUID§8: §b" + permissionUser.getUniqueId());
+                    executor.sendMessage(prefix + "§8» §7Groups§8:");
+                    permissionUser.getExpiringPermissionGroups().forEach((group, expiring) -> {
+                        executor.sendMessage(prefix + "  §8- §b" + group.getName() + " §7Expires: " + (expiring == -1 ? "§cNever" : PoloHelper.SIMPLE_DATE_FORMAT.format(new Date(expiring))));
+                    });
+                    executor.sendMessage(prefix + "§8» §7Exlusive Permissions§8:");
+                    for (IPermission permission : permissionUser.getExclusivePermissions()) {
+                        executor.sendMessage(prefix + "  §8- §b" + permission.getPermission() + " §7Expires: " + (permission.getExpiringTime() == -1 ? "§cNever" : PoloHelper.SIMPLE_DATE_FORMAT.format(new Date(permission.getExpiringTime()))));
+                    }
+
                     executor.sendMessage(prefix + "----[/PermissionUser]----");
                 } else {
                     sendHelp(executor, prefix);

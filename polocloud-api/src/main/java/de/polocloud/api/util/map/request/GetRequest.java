@@ -21,6 +21,14 @@ public class GetRequest<K, V> {
         return this.parent.getValues().get(position);
     }
 
+    public boolean containsKey(K key) {
+        return parent.iterable().stream().anyMatch(kvMapEntry -> kvMapEntry.getValue().equals(key));
+    }
+
+    public boolean containsValue(V value) {
+        return parent.iterable().stream().anyMatch(kvMapEntry -> kvMapEntry.getValue().equals(value));
+    }
+
     public V atKey(K key) {
         MapEntry<K, V> pair = this.parent.iterable().stream().filter(kvPair -> kvPair.getKey().equals(key)).findFirst().orElse(null);
         if (pair == null) {

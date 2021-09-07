@@ -10,6 +10,8 @@ import de.polocloud.api.scheduler.Scheduler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.nio.channels.ClosedChannelException;
+
 public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     private final INetworkConnection networkConnection;
@@ -22,7 +24,9 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-
+        if (cause instanceof ClosedChannelException) {
+            return;
+        }
         PoloCloudAPI.getInstance().getEventManager().fireEvent(new NettyExceptionEvent(cause), nettyExceptionEvent -> {
             if (nettyExceptionEvent.isShouldThrow()) {
                 cause.printStackTrace();
