@@ -2,6 +2,7 @@ package de.polocloud.modules.permission;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.database.DocumentObjectDatabase;
 import de.polocloud.api.database.IDatabase;
 import de.polocloud.api.guice.own.Guice;
@@ -9,10 +10,9 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
 import de.polocloud.api.messaging.IMessageChannel;
-import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.util.Task;
-import de.polocloud.modules.permission.cloudside.handler.ModuleCloudSideTaskHandler;
-import de.polocloud.modules.permission.global.api.IPermissionGroup;
+import de.polocloud.modules.permission.cloudside.ModuleCloudSideServerStartListener;
+import de.polocloud.modules.permission.global.handler.ModuleTaskHandler;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 import de.polocloud.modules.permission.global.api.impl.*;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
@@ -25,39 +25,47 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Getter
-public class PermissionModule {
+public class PoloCloudPermissionModule {
 
+    /**
+     * The instance
+     */
     @Getter
-    private static PermissionModule instance;
+    private static PoloCloudPermissionModule instance;
 
+    /**
+     * The database for all users
+     */
     private final IDatabase<SimplePermissionUser> userDatabase;
+
+    /**
+     * The database for all groups
+     */
     private final IDatabase<SimplePermissionGroup> groupDatabase;
 
-    private final IMessageChannel<SimplePermissionPool> messageChannel;
-    private final IMessageChannel<Task> taskChannels;
+    /**
+     * The message channel to transfer all tasks
+     */
+    private final IMessageChannel<Task> messageChannel;
 
-    public PermissionModule(ModuleBootstrap bootstrap) {
+    //All tasks and their names
+    public static final String TASK_NAME_UPDATE_POOL = "task-update-pool";
+    public static final String TASK_NAME_UPDATE_USER = "task-update-user";
+    public static final String TASK_NAME_UPDATE_GROUP = "task-update-group";
+
+    public PoloCloudPermissionModule(ModuleBootstrap bootstrap) {
         instance = this;
         this.userDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-users", new File(bootstrap.getDataDirectory(), "permission-users"), SimplePermissionUser.class);
         this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);
 
-        this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(SimplePermissionPool.class, "permission-module-cache-update");
-        this.taskChannels = PoloCloudAPI.getInstance().getMessageManager().registerChannel(Task.class, "permission-module-tasks");
-
-        this.messageChannel.registerListener((simplePermissionPool, startTime) -> {
-            Guice.bind(PermissionPool.class).toInstance(simplePermissionPool);
-            if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-                reload();
-            }
-        });
-
-        this.taskChannels.registerListener(new ModuleCloudSideTaskHandler());
+        this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(Task.class, "permission-module-tasks");
+        this.messageChannel.registerListener(new ModuleTaskHandler());
 
         if (this.groupDatabase != null && this.userDatabase != null) {
             if (this.groupDatabase.getEntries().isEmpty()) {
 
-                SimplePermissionGroup playerGroup = new SimplePermissionGroup("Player", 0, true, Collections.singletonList("cloud.defaultpermission"), new SimplePermissionDisplay(MinecraftColor.GRAY, "§aPlayer §8▏§7", "§7", ""), new ArrayList<>());
-                SimplePermissionGroup adminGroup = new SimplePermissionGroup("Admin", 9999, false, Arrays.asList("*", "cloud.use", "cloud.maintenance", "cloud.server.full.connect", "cloud.stop", "cloud.notify", "cloud.fulljoin"), new SimplePermissionDisplay(MinecraftColor.DARK_RED, "§4Admin §8▏§7", "§7", ""), Collections.singletonList("Player"));
+                SimplePermissionGroup playerGroup = new SimplePermissionGroup("Player", 0, true, Collections.singletonList("cloud.defaultpermission"), new SimplePermissionDisplay(MinecraftColor.GRAY, "§aPlayer §8▏ §7", "§7", ""), new ArrayList<>());
+                SimplePermissionGroup adminGroup = new SimplePermissionGroup("Admin", 9999, false, Arrays.asList("*", "cloud.use", "cloud.maintenance", "cloud.server.full.connect", "cloud.stop", "cloud.notify", "cloud.fulljoin"), new SimplePermissionDisplay(MinecraftColor.DARK_RED, "§4Admin §8▏ §7", "§7", ""), Collections.singletonList("Player"));
 
                 this.groupDatabase.insert(playerGroup.getName(), playerGroup);
                 this.groupDatabase.insert(adminGroup.getName(), adminGroup);
@@ -71,11 +79,12 @@ public class PermissionModule {
      * Loads this module
      */
     public void load() {
+
         if (PoloCloudAPI.getInstance().getType() != PoloType.PLUGIN_SPIGOT) {
             PoloCloudAPI.getInstance().getCommandManager().registerCommand(new PermsCommand());
         }
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-            this.messageChannel.sendMessage((SimplePermissionPool) PermissionPool.getInstance());
+            PoloCloudAPI.getInstance().getEventManager().registerListener(new ModuleCloudSideServerStartListener());
         }
     }
 
@@ -83,20 +92,18 @@ public class PermissionModule {
      * Enables this module
      */
     public void enable() {
-
     }
 
     /**
-     * Relodas this module
+     * Reloads this module
      */
     public void reload() {
-        this.messageChannel.sendMessage((SimplePermissionPool) PermissionPool.getInstance());
+        PermissionPool.getInstance().update();
     }
 
     /**
      * Shuts down this module
      */
     public void shutdown() {
-
     }
 }

@@ -4,7 +4,7 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.Task;
 import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.modules.permission.PermissionModule;
+import de.polocloud.modules.permission.PoloCloudPermissionModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -27,11 +27,11 @@ import java.util.*;
 
 public class SpigotBootstrap extends JavaPlugin implements Listener {
 
-    private PermissionModule permissionModule;
+    private PoloCloudPermissionModule permissionModule;
 
     @Override
     public void onLoad() {
-        permissionModule = new PermissionModule(new ModuleBootstrap());
+        permissionModule = new PoloCloudPermissionModule(new ModuleBootstrap());
         permissionModule.load();
     }
 
@@ -132,8 +132,7 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
                     }
                 }
                 cachedPermissionUser = new SimplePermissionUser(player.getName(), player.getUniqueId(), groups, new ArrayList<>());
-                PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("create-user", new JsonData("user", cachedPermissionUser)));
-                PermissionPool.getInstance().getAllCachedPermissionUser().add(cachedPermissionUser);
+                PermissionPool.getInstance().createPermissionUser(cachedPermissionUser);
 
             }
             return cachedPermissionUser.hasPermission(inName);

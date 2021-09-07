@@ -1,9 +1,8 @@
 package de.polocloud.modules.permission.pluginside;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.Task;
-import de.polocloud.modules.permission.PermissionModule;
+import de.polocloud.modules.permission.PoloCloudPermissionModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -13,6 +12,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PermissionCheckEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -23,11 +23,11 @@ import java.util.Map;
 
 public class ProxyBootstrap extends Plugin implements Listener {
 
-    private PermissionModule permissionModule;
+    private PoloCloudPermissionModule permissionModule;
 
     @Override
     public void onLoad() {
-        permissionModule = new PermissionModule(new ModuleBootstrap());
+        permissionModule = new PoloCloudPermissionModule(new ModuleBootstrap());
         permissionModule.load();
 
     }
@@ -43,6 +43,13 @@ public class ProxyBootstrap extends Plugin implements Listener {
         ProxyServer.getInstance().getPluginManager().registerListener(this, this);
     }
 
+    @EventHandler
+    public void handle(PostLoginEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        PermissionPool.getInstance().updatePermissions(player.getUniqueId(), perms -> {
+            //Ignoring just checking if all ranks and perms are still valid
+        });
+    }
 
     @EventHandler
     public void checkPerms(PermissionCheckEvent event) {
@@ -62,9 +69,7 @@ public class ProxyBootstrap extends Plugin implements Listener {
                     }
                 }
                 permissionUser = new SimplePermissionUser(player.getName(), player.getUniqueId(), groups, new ArrayList<>());
-                PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("create-user", new JsonData("user", permissionUser)));
-                PermissionPool.getInstance().getAllCachedPermissionUser().add(permissionUser);
-
+                PermissionPool.getInstance().createPermissionUser(permissionUser);
             }
             if (permissionUser.getName().equalsIgnoreCase("name_needs_to_be_set")) {
                 ((SimplePermissionUser)permissionUser).setName(player.getName());

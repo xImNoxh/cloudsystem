@@ -19,9 +19,8 @@ public interface IPermissionUser extends INamable {
     List<IPermissionGroup> getPermissionGroups();
 
     /**
-     * C
-     * @param permissionGroup
-     * @return
+     * Checks if this user has a given group
+     * @param permissionGroup the group to check
      */
     boolean hasPermissionGroup(IPermissionGroup permissionGroup);
 

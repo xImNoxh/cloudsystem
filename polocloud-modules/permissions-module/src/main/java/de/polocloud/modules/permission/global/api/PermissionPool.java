@@ -13,6 +13,27 @@ public interface PermissionPool {
     }
 
     /**
+     * Creates a new {@link IPermissionUser} for the database
+     *
+     * @param permissionUser the user
+     */
+    void createPermissionUser(IPermissionUser permissionUser);
+
+    /**
+     * Deletes an existing {@link IPermissionUser} from the database
+     *
+     * @param permissionUser the user
+     */
+    void deletePermissionUser(IPermissionUser permissionUser);
+
+    /**
+     * Updates an existing {@link IPermissionUser} in the database
+     *
+     * @param permissionUser the user
+     */
+    void updatePermissionUser(IPermissionUser permissionUser);
+
+    /**
      * Creates a new {@link IPermissionGroup}
      *
      * @param permissionGroup the group

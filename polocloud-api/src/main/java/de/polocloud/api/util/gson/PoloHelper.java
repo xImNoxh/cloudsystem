@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -148,7 +149,7 @@ public class PoloHelper {
     }
     public static ChannelFutureListener getChannelFutureListener(Class<?> instance) {
         return channelFuture -> {
-            if (!channelFuture.isSuccess()) {
+            if (!channelFuture.isSuccess() && !(channelFuture.cause() instanceof ClosedChannelException)) {
                 System.out.println("[" + instance.getName() + "]" + " ran into an error:");
                 channelFuture.cause().printStackTrace();
             }

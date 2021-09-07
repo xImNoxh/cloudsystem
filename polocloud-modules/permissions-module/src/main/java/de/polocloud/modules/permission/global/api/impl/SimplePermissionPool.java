@@ -4,17 +4,15 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.Task;
-import de.polocloud.modules.permission.PermissionModule;
+import de.polocloud.modules.permission.PoloCloudPermissionModule;
 import de.polocloud.modules.permission.global.api.IPermission;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class SimplePermissionPool implements PermissionPool {
 
@@ -30,9 +28,48 @@ public class SimplePermissionPool implements PermissionPool {
 
 
     @Override
+    public void createPermissionUser(IPermissionUser permissionUser) {
+
+        //Create in cache
+        if (this.getCachedPermissionUser(permissionUser.getUniqueId()) == null) {
+            this.permissionUsers.add((SimplePermissionUser) permissionUser);
+        }
+
+        if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
+
+            //Updating in database
+            PoloCloudPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
+        }
+    }
+
+    @Override
+    public void deletePermissionUser(IPermissionUser permissionUser) {
+        //Updating in cache
+        this.permissionUsers.removeIf(simplePermissionUser -> simplePermissionUser.getName().equalsIgnoreCase(permissionUser.getName()));
+        if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
+
+            //Updating in database
+            PoloCloudPermissionModule.getInstance().getUserDatabase().delete(permissionUser.getUniqueId().toString());
+        }
+    }
+
+    @Override
+    public void updatePermissionUser(IPermissionUser permissionUser) {
+        //Updating in cache
+        this.permissionUsers.removeIf(simplePermissionUser -> simplePermissionUser.getName().equalsIgnoreCase(permissionUser.getName()));
+        this.permissionUsers.add((SimplePermissionUser) permissionUser);
+
+        if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
+
+            //Updating in database
+            PoloCloudPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
+        }
+    }
+
+    @Override
     public void createPermissionGroup(IPermissionGroup permissionGroup) {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
-            PermissionModule.getInstance().getGroupDatabase().insert(permissionGroup.getName(), (SimplePermissionGroup) permissionGroup);
+            PoloCloudPermissionModule.getInstance().getGroupDatabase().insert(permissionGroup.getName(), (SimplePermissionGroup) permissionGroup);
             loadPoolFromCache();
             return;
         }
@@ -42,7 +79,7 @@ public class SimplePermissionPool implements PermissionPool {
     @Override
     public void deletePermissionGroup(IPermissionGroup permissionGroup) {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
-            PermissionModule.getInstance().getGroupDatabase().delete(permissionGroup.getName());
+            PoloCloudPermissionModule.getInstance().getGroupDatabase().delete(permissionGroup.getName());
             loadPoolFromCache();
             return;
         }
@@ -55,14 +92,14 @@ public class SimplePermissionPool implements PermissionPool {
             this.permissionGroups.clear();
             this.permissionUsers.clear();
 
-            this.permissionUsers.addAll(PermissionModule.getInstance().getUserDatabase().getEntries());
-            this.permissionGroups.addAll(PermissionModule.getInstance().getGroupDatabase().getEntries());
+            this.permissionUsers.addAll(PoloCloudPermissionModule.getInstance().getUserDatabase().getEntries());
+            this.permissionGroups.addAll(PoloCloudPermissionModule.getInstance().getGroupDatabase().getEntries());
         }
     }
 
     @Override
     public void update() {
-        PermissionModule.getInstance().getMessageChannel().sendMessage(this);
+        PoloCloudPermissionModule.getInstance().getMessageChannel().sendMessage(new Task(PoloCloudPermissionModule.TASK_NAME_UPDATE_POOL, new JsonData("pool", this)));
     }
 
     @Override
@@ -92,7 +129,7 @@ public class SimplePermissionPool implements PermissionPool {
 
         //If a rank has been removed (something changed) we have to update to make all changes sync over the network
         if (changedSomething.get()) {
-            this.update(); //Updating the whole pool
+            permissionUser.update();
         }
 
         List<String> permissions = new LinkedList<>();
