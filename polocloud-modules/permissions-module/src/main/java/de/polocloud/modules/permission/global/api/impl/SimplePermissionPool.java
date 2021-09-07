@@ -123,40 +123,12 @@ public class SimplePermissionPool implements PermissionPool {
 
     @Override
     public IPermissionUser getCachedPermissionUser(UUID uniqueId) {
-        return permissionUsers.stream().filter(user -> user.getUniqueId().equals(uniqueId)).findFirst().orElseGet(new Supplier<SimplePermissionUser>() {
-            @Override
-            public SimplePermissionUser get() {
-                Map<String, Long> groups = new HashMap<>();
-                for (IPermissionGroup permissionGroup : getAllCachedPermissionGroups()) {
-                    if (permissionGroup.isDefaultGroup()) {
-                        groups.put(permissionGroup.getName(), -1L);
-                    }
-                }
-                SimplePermissionUser simplePermissionUser1 = new SimplePermissionUser("name_needs_to_be_set", uniqueId, groups, new ArrayList<>());
-                permissionUsers.add(simplePermissionUser1);
-                PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("create-user", new JsonData("user", simplePermissionUser1)));
-                return simplePermissionUser1;
-            }
-        });
+        return permissionUsers.stream().filter(user -> user.getUniqueId().equals(uniqueId)).findFirst().orElse(null);
     }
 
     @Override
     public IPermissionUser getCachedPermissionUser(String name) {
-        return permissionUsers.stream().filter(user -> user.getName().equalsIgnoreCase(name)).findFirst().orElseGet(new Supplier<SimplePermissionUser>() {
-            @Override
-            public SimplePermissionUser get() {
-                Map<String, Long> groups = new HashMap<>();
-                for (IPermissionGroup permissionGroup : getAllCachedPermissionGroups()) {
-                    if (permissionGroup.isDefaultGroup()) {
-                        groups.put(permissionGroup.getName(), -1L);
-                    }
-                }
-                SimplePermissionUser simplePermissionUser1 = new SimplePermissionUser(name, null, groups, new ArrayList<>());
-                permissionUsers.add(simplePermissionUser1);
-                PermissionModule.getInstance().getTaskChannels().sendMessage(new Task("create-user", new JsonData("user", simplePermissionUser1)));
-                return simplePermissionUser1;
-            }
-        });
+        return permissionUsers.stream().filter(user -> user.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     @Override

@@ -18,6 +18,7 @@ import de.polocloud.modules.permission.global.setup.PermissionGroupSetup;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class PermsCommand implements CommandListener {
@@ -152,9 +153,59 @@ public class PermsCommand implements CommandListener {
                 } else {
                     sendHelp(executor, prefix);
                 }
+            } else if (args[0].equalsIgnoreCase("user")) {
+                String name = args[1];
+                IPermissionUser permissionUser = permissionPool.getCachedPermissionUser(name);
+                if (permissionUser == null) {
+                    executor.sendMessage(prefix + "§cThere is no registered PermissionUser with the name §e" + name + "§c!");
+                    return;
+                }
+                if (args[2].equalsIgnoreCase("group") && args[3].equalsIgnoreCase("remove")) {
+                    String group = args[4];
+                    IPermissionGroup permissionGroup = permissionPool.getCachedPermissionGroup(group);
+                    if (permissionGroup == null) {
+                        executor.sendMessage(prefix + "§cThere is no existing PermissionGroup with the name §e" + group + "§c!");
+                        return;
+                    }
+                    permissionUser.getPermissionGroups();
+                    permissionUser.removePermissionGroup(permissionGroup);
+                    permissionUser.update();
+                    executor.sendMessage(prefix + "§7Successfully removed §b" + permissionUser.getName() + " §7from group §3" + permissionGroup.getName() + "§8!");
+                } else {
+                    sendHelp(executor, prefix);
+                }
             } else {
                 sendHelp(executor, prefix);
             }
+        } else if (args.length == 7 && args[0].equalsIgnoreCase("user") && args[2].equalsIgnoreCase("group") && args[3].equalsIgnoreCase("add")) {
+            String name = args[1];
+            IPermissionUser permissionUser = permissionPool.getCachedPermissionUser(name);
+            if (permissionUser == null) {
+                executor.sendMessage(prefix + "§cThere is no registered PermissionUser with the name §e" + name + "§c!");
+                return;
+            }
+            String group = args[4];
+            IPermissionGroup permissionGroup = permissionPool.getCachedPermissionGroup(group);
+            if (permissionGroup == null) {
+                executor.sendMessage(prefix + "§cThere is no existing PermissionGroup with the name §e" + group + "§c!");
+                return;
+            }
+            TimeUnit timeUnit;
+            try {
+                timeUnit = TimeUnit.valueOf(args[6].toLowerCase().endsWith("s") ? args[6].toUpperCase() : args[6].toUpperCase() + "S");
+            } catch (IllegalArgumentException e) {
+                timeUnit = null;
+            }
+
+            try {
+                long duration = timeUnit == null ? -1L : (System.currentTimeMillis() + timeUnit.toMillis(Long.parseLong(args[5])));
+                permissionUser.addPermissionGroup(permissionGroup, duration);
+                permissionUser.update();
+                executor.sendMessage(prefix + "§7Successfully added §b" + permissionUser.getName() + " §7to group §3" + permissionGroup.getName() + " §8(§e" + args[5] + " " + timeUnit + "(S)" + "§8) §8!");
+            } catch (NumberFormatException e) {
+                executor.sendMessage(prefix + "§cPlease provide a valid §eDuration §clike §e1 DAY§c, §e1 HOUR§c, §e1 WEEK§c!");
+            }
+
         } else {
             sendHelp(executor, prefix);
         }
@@ -174,10 +225,11 @@ public class PermsCommand implements CommandListener {
         executor.sendMessage(prefix + "§8» §b" + slash + "perms group <Group> permission remove <Permission> §7Removes a permission from a group");
         executor.sendMessage("§8");
         executor.sendMessage(prefix + "§8» §b" + slash + "perms user <User> info §7Displays info about a user");
-        executor.sendMessage(prefix + "§8» §b" + slash + "perms user <User> group add <Group> <TimeSpan> §7Adds a user to a group for a given timespan");
+        executor.sendMessage(prefix + "§8» §b" + slash + "perms user <User> group add <Group> <Duration> <TimeUnit> §7Adds a user to a group for a given time");
         executor.sendMessage(prefix + "§8» §b" + slash + "perms user <User> group remove <Group> §7Removes a user from a group");
         executor.sendMessage(prefix + "§8» §b" + slash + "perms user <User> permission add <Permission> <TimeSpan> §7Adds a permission to a user for a given time");
         executor.sendMessage(prefix + "§8» §b" + slash + "perms user <User> permission remove <Permission> §7Removes a permission from a user");
         executor.sendMessage(prefix + "----[/Permissions]----");
+
     }
 }
