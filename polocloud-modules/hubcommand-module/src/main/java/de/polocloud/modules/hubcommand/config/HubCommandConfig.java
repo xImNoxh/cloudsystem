@@ -8,10 +8,10 @@ public class HubCommandConfig implements IConfig {
     private String successfullyConnected;
     private String noFallbackServerFound;
 
-    public HubCommandConfig(String alreadyConnectedAtFallback, String successfullyConnected, String noFallbackServerFound) {
-        this.alreadyConnectedAtFallback = alreadyConnectedAtFallback;
-        this.successfullyConnected = successfullyConnected;
-        this.noFallbackServerFound = noFallbackServerFound;
+    public HubCommandConfig() {
+        this.alreadyConnectedAtFallback = "already on a fallback";
+        this.successfullyConnected = "successfully connected to a fallback";
+        this.noFallbackServerFound = "No fallback server found...";
     }
 
     public String getAlreadyConnectedAtFallback() {

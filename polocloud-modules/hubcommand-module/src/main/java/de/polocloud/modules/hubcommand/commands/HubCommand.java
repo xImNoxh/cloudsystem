@@ -6,7 +6,9 @@ import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.modules.hubcommand.bootstrap.HubCommandProxyBootstrap;
 
 public class HubCommand implements CommandListener {
 
@@ -18,19 +20,25 @@ public class HubCommand implements CommandListener {
     @CommandExecutors(ExecutorType.PLAYER)
     public void execute(CommandExecutor executor, String[] fullArgs, String... args) {
 
+        if(HubCommandProxyBootstrap.getInstance().getHubCommandConfig() == null) return;
+
         ICloudPlayer cloudPlayer = (ICloudPlayer) executor;
         String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix();
 
         if(PoloCloudAPI.getInstance().getFallbackManager().isOnFallback(cloudPlayer)) {
-            cloudPlayer.sendMessage(prefix + "§7Du bist bereits auf einem fallback");
+            cloudPlayer.sendMessage(prefix + HubCommandProxyBootstrap.getInstance().getHubCommandConfig().getAlreadyConnectedAtFallback());
             return;
         }
-        if(PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().isEmpty()){
-            cloudPlayer.sendMessage(prefix + "§7Es konnte kein fallback gefunden werden...");
+
+        IGameServer fallback = PoloCloudAPI.getInstance().getFallbackManager().getFallback(cloudPlayer);
+
+        if(fallback == null){
+            cloudPlayer.sendMessage(prefix + HubCommandProxyBootstrap.getInstance().getHubCommandConfig().getNoFallbackServerFound());
             return;
         }
-        cloudPlayer.sendToFallback();
-        cloudPlayer.sendMessage("§7Du wirst auf einem fallback service verschoben§8.");
+
+        cloudPlayer.sendTo(fallback);
+        cloudPlayer.sendMessage(HubCommandProxyBootstrap.getInstance().getHubCommandConfig().getSuccessfullyConnected());
     }
 
 }

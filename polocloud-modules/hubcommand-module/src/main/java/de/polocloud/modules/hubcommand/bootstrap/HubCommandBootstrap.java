@@ -22,7 +22,7 @@ public class HubCommandBootstrap extends CloudModule {
 
     @ModuleTask(id = 1, state = ModuleState.LOADING)
     public void load() {
-        proxyModule = new HubCommandModule();
+        proxyModule = new HubCommandModule(this);
     }
 
     @ModuleTask(id = 2, state = ModuleState.STARTING)
@@ -32,7 +32,7 @@ public class HubCommandBootstrap extends CloudModule {
 
     @ModuleTask(id = 3, state = ModuleState.RELOADING)
     public void reload() {
-
+        proxyModule.reload();
     }
 
     @ModuleTask(id = 4, state = ModuleState.STOPPING)
