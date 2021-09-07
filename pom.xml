@@ -20,6 +20,7 @@
     <module>polocloud-modules</module>
     <module>polocloud-database</module>
     <module>polocloud-updater</module>
+      <module>polocloud-modules/hubcommand-module</module>
   </modules>
 
   <properties>
