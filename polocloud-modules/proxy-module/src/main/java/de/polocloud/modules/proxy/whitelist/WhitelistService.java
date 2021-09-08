@@ -1,6 +1,5 @@
 package de.polocloud.modules.proxy.whitelist;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.util.WrappedObject;
 import de.polocloud.modules.proxy.IProxyReload;
 import de.polocloud.modules.proxy.ProxyModule;
@@ -14,12 +13,7 @@ public class WhitelistService implements IProxyReload {
 
     public WhitelistService() {
         this.instance = this;
-
         this.whitelistChannel = new WhitelistChannel();
-
-        this.whitelistChannel.getUpdateChannel().registerListener((whitelistPropertyWrappedObject, startTime) -> {
-            updateWhitelist();
-        });
 
     }
 

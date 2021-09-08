@@ -5,10 +5,13 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.modules.proxy.motd.MotdService;
 import de.polocloud.modules.proxy.motd.config.ProxyMotdSettings;
+import de.polocloud.modules.proxy.notify.NotifyService;
 import de.polocloud.modules.proxy.tablist.config.TablistConfig;
 import de.polocloud.modules.proxy.whitelist.WhitelistService;
 
@@ -22,6 +25,7 @@ public class ProxyModule {
 
     private MotdService motdService;
     private WhitelistService whitelistService;
+    private NotifyService notifyService;
 
     private CloudModule module;
     private ProxyConfig proxyConfig;
@@ -40,11 +44,11 @@ public class ProxyModule {
     public void enable(){
         reloaded.add(this.motdService = new MotdService());
         reloaded.add(this.whitelistService = new WhitelistService());
+        reloaded.add(this.notifyService = new NotifyService());
     }
 
     public void reload(){
         loadConfig();
-
         reloaded.forEach(reload -> reload.onReload());
     }
 
@@ -54,6 +58,18 @@ public class ProxyModule {
 
     public void saveConfig(){
         new SimpleConfigSaver().save(proxyConfig, new File(module.getDataDirectory(), "config.yml"));
+    }
+
+    public MotdService getMotdService() {
+        return motdService;
+    }
+
+    public CloudModule getModule() {
+        return module;
+    }
+
+    public NotifyService getNotifyService() {
+        return notifyService;
     }
 
     public List<IProxyReload> getReloaded() {

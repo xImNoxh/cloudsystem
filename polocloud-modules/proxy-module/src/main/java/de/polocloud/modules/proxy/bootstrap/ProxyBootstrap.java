@@ -1,5 +1,7 @@
 package de.polocloud.modules.proxy.bootstrap;
 
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.module.info.ModuleInfo;
@@ -27,6 +29,7 @@ public class ProxyBootstrap extends CloudModule {
 
     @ModuleTask(id = 2, state = ModuleState.STARTING)
     public void enable() {
+        PoloLogger.print(LogLevel.ALL, "starting on proxy");
         proxyModule.enable();
     }
 
