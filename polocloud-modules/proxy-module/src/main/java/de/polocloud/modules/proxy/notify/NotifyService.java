@@ -2,8 +2,9 @@ package de.polocloud.modules.proxy.notify;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.modules.proxy.IProxyReload;
 import de.polocloud.modules.proxy.notify.events.CloudPlayerNotifyEvents;
-public class NotifyService {
+public class NotifyService implements IProxyReload {
 
     private static NotifyService instance;
 
@@ -22,4 +23,8 @@ public class NotifyService {
             it.sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + finalMessage));
     }
 
+    @Override
+    public void onReload() {
+
+    }
 }
