@@ -27,8 +27,14 @@ public class SignCommand implements CommandExecutor {
             return false;
         }
         Player player = (Player) sender;
-
         SignMessagesConfig messages = PluginBootstrap.getInstance().getSignService().getCurrentGlobalConfig().getSignMessages();
+
+        if(!player.hasPermission("cloud.signs.command.use")){
+            sender.sendMessage("§cYou have no permission for this command!");
+            return false;
+        }
+
+
 
         if(args.length == 1 && args[0].equals("remove")){
             Block block = player.getTargetBlock((Set<Material>) null, 5);
