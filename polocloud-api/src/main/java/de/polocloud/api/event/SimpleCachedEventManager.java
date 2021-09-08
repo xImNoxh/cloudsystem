@@ -1,6 +1,4 @@
-
 package de.polocloud.api.event;
-
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
@@ -102,8 +100,6 @@ public class SimpleCachedEventManager implements IEventManager {
 
     @Override
     public void fireEvent(CloudEvent event) {
-
-
         EventData eventData = event.getClass().getAnnotation(EventData.class);
 
         boolean nettyFire = eventData == null || eventData.nettyFire();
@@ -176,7 +172,7 @@ public class SimpleCachedEventManager implements IEventManager {
             if (event instanceof ICancellable) {
                 ((ICancellable) event).isCancelled();
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 }

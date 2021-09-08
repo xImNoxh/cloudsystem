@@ -9,3 +9,4 @@ depend:
     - PoloCloud-Plugin
 commands:
     cloudsigns:
+        description: Command for managing the Signs for the PoloCloud

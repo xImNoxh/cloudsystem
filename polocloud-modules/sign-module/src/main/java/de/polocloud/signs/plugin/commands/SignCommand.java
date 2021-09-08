@@ -15,6 +15,9 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 
+/**
+ * Command ("cloudsigns") for managing the signs
+ */
 public class SignCommand implements CommandExecutor {
 
     @Override

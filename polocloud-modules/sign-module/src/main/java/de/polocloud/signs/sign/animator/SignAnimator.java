@@ -15,12 +15,21 @@ import java.util.stream.Collectors;
 
 public class SignAnimator {
 
+    /**
+     * The PoloCloud-{@link SchedulerFuture} task for the PoloCloud-{@link Scheduler}
+     */
     private SchedulerFuture animateTask;
 
+    /**
+     * Starts the animator if the {@link de.polocloud.signs.protocol.GlobalConfigClass} isn't null
+     */
     public SignAnimator() {
         Scheduler.runtimeScheduler().async().schedule(this::startAnimation, () -> PluginBootstrap.getInstance().getSignService().getCurrentGlobalConfig() != null);
     }
 
+    /**
+     * Starts the animator
+     */
     public void startAnimation(){
         //Caching to animate SignStates
         HashMap<SignState, Integer> ticks = new HashMap<>();
@@ -65,9 +74,13 @@ public class SignAnimator {
         }, 0L, 15L);
     }
 
+    /**
+     * Stops the animation-{@link SchedulerFuture task} if it is running
+     */
     public void stopAnimation(){
         if(this.animateTask != null){
             this.animateTask.setCancelled(true);
+            this.animateTask = null;
         }
     }
 

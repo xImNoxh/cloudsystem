@@ -26,7 +26,7 @@ public class SimpleGameServerSign implements IGameServerSign {
     private Location location;
     private SignState signState = SignState.LOADING;
 
-    private Material defaultBlock;
+    private final Material defaultBlock;
 
     private String[] lastInput;
 

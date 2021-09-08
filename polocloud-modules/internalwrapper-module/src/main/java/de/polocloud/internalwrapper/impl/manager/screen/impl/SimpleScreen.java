@@ -112,7 +112,6 @@ public class SimpleScreen extends Thread implements IScreen {
                     if (screenManager.getScreen().getService().getName().equalsIgnoreCase(this.serviceName)) {
                         PoloLogger.print(LogLevel.INFO, formatLine(line));
                     }
-
                 }
             } catch (NoSuchElementException e) {
                 //No line was found in the reader.... ignoring
@@ -160,7 +159,6 @@ public class SimpleScreen extends Thread implements IScreen {
     public boolean isRunning() {
         return running;
     }
-
 
     @Override
     public String formatLine(String input) {

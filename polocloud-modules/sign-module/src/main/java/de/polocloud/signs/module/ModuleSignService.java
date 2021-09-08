@@ -49,7 +49,7 @@ public class ModuleSignService implements ISignService {
         saveConfig();
         updateCurrentGlobalConfig();
 
-        //Inits the channels and registers the Listeners
+        //Initializes the channels and registers the Listeners
         PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-transfer-channel");
         PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-request-channel");
         this.channel = PoloCloudAPI.getInstance().getMessageManager().getChannel("sign-transfer-channel");

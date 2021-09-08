@@ -8,6 +8,10 @@ import de.polocloud.signs.sign.location.SignLocation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class for transferring all Config values from
+ * PoloCloud-Module config to the Spigot/Bukkit servers
+ */
 public class GlobalConfigClass {
 
     private HashMap<SignState, Layout[]> signLayouts = new HashMap<>();

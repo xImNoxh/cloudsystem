@@ -19,18 +19,9 @@ public class ModuleBootstrap extends CloudModule {
         signService = new ModuleSignService(this);
     }
 
-    @ModuleTask(id = 2, state = ModuleState.STARTING)
-    public void enableModule() {
-    }
-
     @ModuleTask(id = 3, state = ModuleState.RELOADING)
     public void reloadModule() {
         this.signService.reloadSigns();
-    }
-
-    @ModuleTask(id = 4, state = ModuleState.STOPPING)
-    public void stopModule() {
-
     }
 
     public static ModuleBootstrap getInstance() {

@@ -4,7 +4,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.WrappedObject;
-import de.polocloud.signs.bootstraps.PluginBootstrap;
 import de.polocloud.signs.protocol.enumeration.RequestType;
 import de.polocloud.signs.sign.base.IGameServerSign;
 import de.polocloud.signs.manager.IGameServerSignManager;
@@ -36,7 +35,7 @@ public class SignsPluginService implements ISignService {
     public SignsPluginService() {
 
 
-        //Inits the channels and registers the Listeners
+        //Initializes the channels and registers the Listeners
         PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-transfer-channel");
         PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-request-channel");
         this.channel = PoloCloudAPI.getInstance().getMessageManager().getChannel("sign-transfer-channel");
@@ -45,7 +44,7 @@ public class SignsPluginService implements ISignService {
         this.gameServerSignManager = new SimpleGameServerSignManager();
         this.signInitializer = new SignInitializer();
         this.signAnimator = new SignAnimator();
-        new SignConverter();
+        SignConverter signConverter = new SignConverter();
 
         registerListeners();
         Scheduler.runtimeScheduler().async().schedule(this::requestUpdate, () -> PoloCloudAPI.getInstance().getConnection().ctx() != null);
@@ -53,20 +52,7 @@ public class SignsPluginService implements ISignService {
 
     @Override
     public void loadSigns() {
-        Scheduler.runtimeScheduler().schedule(() ->{
-            //for (SignLocation location : this.currentGlobalConfig.getLocations()) {
-                //if(gameServerSignManager.getLoadedSigns().stream().noneMatch(sign -> sign.getSignLocation().equals(location))){
-                    //gameServerSignManager.getLoadedSigns().add(signInitializer.loadSign(location));
-                //}
-            //}
-
-//            for (IGameServerSign loadedSign : PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getLoadedSigns()) {
-//                loadedSign.setGameServer(null);
-//            }
-
-
-            signInitializer.initSigns();
-        }, () -> this.currentGlobalConfig != null);
+        Scheduler.runtimeScheduler().schedule(() -> signInitializer.initSigns(), () -> this.currentGlobalConfig != null);
     }
 
     @Override

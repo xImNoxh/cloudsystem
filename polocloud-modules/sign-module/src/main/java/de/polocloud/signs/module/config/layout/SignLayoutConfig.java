@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class SignLayoutConfig implements IConfig {
 
-    private HashMap<SignState, Layout[]> signLayouts = new HashMap<>();
+    private final HashMap<SignState, Layout[]> signLayouts = new HashMap<>();
 
     public SignLayoutConfig() {
 
