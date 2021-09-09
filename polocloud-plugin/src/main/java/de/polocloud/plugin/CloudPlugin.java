@@ -156,9 +156,7 @@ public class CloudPlugin extends PoloCloudAPI {
     }
     @Override
     public boolean terminate() {
-        this.loggerFactory.shutdown(() -> {
-
-        });
+        this.loggerFactory.shutdown();
         return true;
     }
 

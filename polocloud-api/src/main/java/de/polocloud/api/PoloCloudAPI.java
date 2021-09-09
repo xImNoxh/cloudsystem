@@ -18,8 +18,7 @@ import de.polocloud.api.fallback.IFallbackManager;
 import de.polocloud.api.fallback.SimpleCachedFallbackManager;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
-import de.polocloud.api.gameserver.port.IPortManager;
-import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
+
 import de.polocloud.api.guice.own.Guice;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
@@ -93,7 +92,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final IMessageManager messageManager;
     protected final IModuleHolder moduleHolder;
     protected final IPropertyManager propertyManager;
-    protected final IPortManager portManager;
     protected final IUUIDFetcher uuidFetcher;
     protected final SystemManager systemManager;
 
@@ -111,7 +109,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.registerPackets();
 
         this.loggerFactory = new SimplePoloLoggerFactory(FileConstants.POLO_LOGS_FOLDER);
-        this.portManager = new SimpleCachedPortManager(25565, 30000); //Modified later
         this.eventManager = new SimpleCachedEventManager();
         this.commandManager = new SimpleCommandManager();
         this.placeHolderManager = new SimpleCachedPlaceHolderManager();
@@ -351,10 +348,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public IModuleHolder getModuleHolder() {
         return moduleHolder;
-    }
-
-    public IPortManager getPortManager() {
-        return portManager;
     }
 
     public SystemManager getSystemManager() {

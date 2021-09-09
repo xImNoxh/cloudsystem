@@ -1,6 +1,5 @@
 package de.polocloud.api.gameserver.base;
 
-import com.google.gson.annotations.Expose;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.impl.server.CloudGameServerPropertyUpdateEvent;
@@ -32,14 +31,14 @@ import java.util.stream.Collectors;
 public class SimpleGameServer implements IGameServer {
 
     /**
-     * The name of the server
-     */
-    private String name;
-
-    /**
      * The motd of the server
      */
     private String motd;
+
+    /**
+     * The id of this server
+     */
+    private int id;
 
     /**
      * The visibility state
@@ -57,11 +56,6 @@ public class SimpleGameServer implements IGameServer {
      * The snowflake id
      */
     private long snowflake;
-
-    /**
-     * The ping in ms
-     */
-    private long ping;
 
     /**
      * The startedTime in ms
@@ -112,13 +106,12 @@ public class SimpleGameServer implements IGameServer {
     public SimpleGameServer() {
     }
 
-    public SimpleGameServer(String name, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long ping, long startedTime, long memory, int port, int maxplayers, String template) {
-        this.name = name;
+    public SimpleGameServer(int id, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long startedTime, long memory, int port, int maxplayers, String template) {
+        this.id = id;
         this.motd = motd;
         this.serviceVisibility = serviceVisibility;
         this.gameServerStatus = gameServerStatus;
         this.snowflake = snowflake;
-        this.ping = ping;
         this.startedTime = startedTime;
         this.memory = memory;
         this.port = port;
@@ -139,6 +132,7 @@ public class SimpleGameServer implements IGameServer {
         return this.properties.stream().filter(property -> property.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
+
     @Override
     public void insertProperty(Consumer<IProperty> consumer) {
         SimpleProperty property = new SimpleProperty();
@@ -151,6 +145,13 @@ public class SimpleGameServer implements IGameServer {
         });
 
     }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+
 
     @Override
     public void deleteProperty(String name) {
@@ -186,7 +187,7 @@ public class SimpleGameServer implements IGameServer {
     }
     @Override
     public String getName() {
-        return name;
+        return template + "-" + id;
     }
 
     @Override
@@ -232,8 +233,8 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -283,7 +284,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public List<ICloudPlayer> getCloudPlayers() {
-        return PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().stream().filter(cloudPlayer -> cloudPlayer.getMinecraftServer() != null && cloudPlayer.getMinecraftServer().getName().equalsIgnoreCase(this.name) || cloudPlayer.getProxyServer() != null && cloudPlayer.getProxyServer().getName().equalsIgnoreCase(this.name)).collect(Collectors.toList());
+        return PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().stream().filter(cloudPlayer -> cloudPlayer.getMinecraftServer() != null && cloudPlayer.getMinecraftServer().getName().equalsIgnoreCase(this.getName()) || cloudPlayer.getProxyServer() != null && cloudPlayer.getProxyServer().getName().equalsIgnoreCase(this.getName())).collect(Collectors.toList());
     }
 
     @Override
@@ -306,32 +307,19 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public long getPing() {
-        return ping;
-    }
-
-    @Override
     public long getStartTime() {
         return startedTime;
     }
 
-    @Override
-    public void stop() {
-        IWrapper wrapper = getWrapper();
-        if (wrapper == null) {
-            return;
-        }
-        wrapper.stopServer(this);
-    }
 
     @Override
     public void terminate() {
-        stop();
+        PoloCloudAPI.getInstance().getGameServerManager().stopServer(this);
     }
 
     @Override
     public void receivePacket(Packet packet) {
-        sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.name, packet));
+        sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.getName(), packet));
     }
 
     @Override
@@ -340,7 +328,7 @@ public class SimpleGameServer implements IGameServer {
             this.channelHandlerContext.writeAndFlush(packet).addListener(PoloHelper.getChannelFutureListener(SimpleGameServer.class));
             return;
         }
-        PoloCloudAPI.getInstance().getConnection().sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.name, packet));
+        PoloCloudAPI.getInstance().getConnection().sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.getName(), packet));
     }
 
     @Override
@@ -395,6 +383,6 @@ public class SimpleGameServer implements IGameServer {
             statusChanged = false;
             PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(this, this.gameServerStatus));
         }
-        PoloCloudAPI.getInstance().getGameServerManager().updateObject(this);
+        PoloCloudAPI.getInstance().getGameServerManager().update(this);
     }
 }

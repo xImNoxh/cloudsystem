@@ -1,7 +1,6 @@
 package de.polocloud.api.network.protocol.packet.base;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocolObject;
@@ -25,7 +24,6 @@ public abstract class Packet implements IProtocolObject {
 
     protected INetworkConnection connection;
 
-
     public void setConnection(INetworkConnection connection) {
         this.connection = connection;
     }
@@ -40,20 +38,6 @@ public abstract class Packet implements IProtocolObject {
 
     public long getSnowflake() {
         return snowflake;
-    }
-
-    public void passOn() {
-        this.connection.sendPacket(this);
-    }
-
-    public void passOn(PoloType... types) {
-        if (types.length == 0) {
-            this.connection.sendPacket(this);
-            return;
-        }
-        for (PoloType type : types) {
-            this.connection.sendPacket(this, type);
-        }
     }
 
     /**
@@ -83,4 +67,5 @@ public abstract class Packet implements IProtocolObject {
     public void respond(String key, Object obj) {
         this.respond(new JsonData(key, obj));
     }
+
 }

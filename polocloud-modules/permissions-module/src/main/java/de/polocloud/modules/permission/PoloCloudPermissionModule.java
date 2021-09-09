@@ -70,7 +70,7 @@ public class PoloCloudPermissionModule {
                 this.groupDatabase.insert(playerGroup.getName(), playerGroup);
                 this.groupDatabase.insert(adminGroup.getName(), adminGroup);
             }
-            PoloLogger.print(LogLevel.INFO, "§7PermissionModule loaded §b" + this.userDatabase.getEntries().size() + " §3PermissionUsers §7and §3" + this.groupDatabase.getEntries().size() + " §3PermissionGroups§7!");
+            PoloLogger.getInstance().noDisplay().log(LogLevel.INFO, "§7PermissionModule loaded §b" + this.userDatabase.getEntries().size() + " §3PermissionUsers §7and §3" + this.groupDatabase.getEntries().size() + " §3PermissionGroups§7!");
         }
         Guice.bind(PermissionPool.class).toInstance(new SimplePermissionPool());
     }

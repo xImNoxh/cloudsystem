@@ -1,54 +1,58 @@
 package de.polocloud.api.config.master.messages;
 
 import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.network.protocol.IProtocolObject;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.player.ICloudPlayer;
 
-public class Messages {
+import java.io.IOException;
+
+public class Messages implements IProtocolObject {
 
     /**
      * The prefix for all messages
      */
-    private final String prefix;
+    private String prefix;
 
     /**
      * If the proxy is in maintenance
      */
-    private final String proxyMaintenanceMessage;
+    private String proxyMaintenanceMessage;
 
     /**
      * If a group is in maintenance
      */
-    private final String groupMaintenanceMessage;
+    private String groupMaintenanceMessage;
 
     /**
      * If the network is full
      */
-    private final String networkIsFull;
+    private String networkIsFull;
 
     /**
      * If a server is full
      */
-    private final String serviceIsFull;
+    private String serviceIsFull;
 
     /**
      * If no fallback was found
      */
-    private final String noFallbackServer;
+    private String noFallbackServer;
 
     /**
      * If the player got kicked and no fallback was found
      */
-    private final String kickedAndNoFallbackServer;
+    private String kickedAndNoFallbackServer;
 
     /**
      * If somebody is not joining via proxy
      */
-    private final String onlyProxyJoin;
+    private String onlyProxyJoin;
 
     /**
      * When network is shut down
      */
-    private final String networkShutdown;
+    private String networkShutdown;
 
     public Messages() {
         this.prefix = "§bPoloCloud §7» ";
@@ -108,5 +112,32 @@ public class Messages {
 
     public String getServiceIsFull() {
         return format(serviceIsFull);
+    }
+
+    @Override
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(prefix);
+        buf.writeString(proxyMaintenanceMessage);
+        buf.writeString(groupMaintenanceMessage);
+        buf.writeString(networkIsFull);
+        buf.writeString(serviceIsFull);
+        buf.writeString(noFallbackServer);
+        buf.writeString(kickedAndNoFallbackServer);
+        buf.writeString(onlyProxyJoin);
+        buf.writeString(networkShutdown);
+    }
+
+    @Override
+    public void read(IPacketBuffer buf) throws IOException {
+
+        this.prefix = buf.readString();
+        this.proxyMaintenanceMessage = buf.readString();
+        this.groupMaintenanceMessage = buf.readString();
+        this.networkIsFull = buf.readString();
+        this.serviceIsFull = buf.readString();
+        this.noFallbackServer = buf.readString();
+        this.kickedAndNoFallbackServer = buf.readString();
+        this.onlyProxyJoin = buf.readString();
+        this.networkShutdown = buf.readString();
     }
 }

@@ -46,7 +46,7 @@ public class FallbackSearchService {
                 PoloLogger.print(LogLevel.WARNING, "A fallback server in the config.json was a proxy server. A proxy server is not compatible as a fallback server!");
                 continue;
             }
-            List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getCached(template);
+            List<IGameServer> gameServersByTemplate = Master.getInstance().getGameServerManager().getAllCached(template);
 
             if(!gameServersByTemplate.isEmpty()){
                 gameServersByTemplate = gameServersByTemplate.stream().filter(iGameServer -> iGameServer.getStatus() == GameServerStatus.AVAILABLE).collect(Collectors.toList());

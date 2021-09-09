@@ -35,7 +35,7 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
      *
      * @param object the object to update
      */
-    default void updateObject(V object) {
+    default void update(V object) {
         if (object == null) {
             return;
         }
@@ -45,13 +45,37 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
             try {
                 getAllCached().set(index, object);
             } catch (Exception e) {
-                getAllCached().removeIf(v -> v.getName().equalsIgnoreCase(cachedObject.getName()));
-                getAllCached().add(object);
+                unregister(cachedObject);
+                register(object);
             }
         } else {
-            getAllCached().add(object);
+            register(object);
         }
     }
+
+    /**
+     * Registers an object in cache
+     *
+     * @param v the object
+     */
+    void register(V v);
+
+    /**
+     * Sets an object into a index in cache
+     *
+     * @param index the index
+     * @param v the object
+     */
+    default void register(int index, V v) {
+        getAllCached().set(index, v);
+    }
+
+    /**
+     * Unregisters an object in cache
+     *
+     * @param v the object
+     */
+    void unregister(V v);
 
     /**
      * Sets the current cached objects

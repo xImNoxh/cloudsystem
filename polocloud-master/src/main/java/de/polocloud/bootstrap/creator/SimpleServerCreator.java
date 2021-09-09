@@ -1,8 +1,7 @@
 package de.polocloud.bootstrap.creator;
 
-import com.google.inject.Inject;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
@@ -11,12 +10,9 @@ import java.util.List;
 
 public class SimpleServerCreator extends ServerCreator {
 
-    @Inject
-    private IGameServerManager gameServerManager;
-
     @Override
-    public boolean check(ITemplate template) {
-        List<IGameServer> serversByTemplate = gameServerManager.getCached(template);
+    public boolean needsNewServer(ITemplate template) {
+        List<IGameServer> serversByTemplate = PoloCloudAPI.getInstance().getGameServerManager().getAllCached(template);
 
         if (serversByTemplate == null) {
             return false;
@@ -46,7 +42,6 @@ public class SimpleServerCreator extends ServerCreator {
             PoloLogger.print(LogLevel.INFO, "Group " + template.getName() + " is " + percentage + "% full! " + "(" + template.getServerCreateThreshold() + "% required)");
             return true;
         }
-
         return false;
 
     }

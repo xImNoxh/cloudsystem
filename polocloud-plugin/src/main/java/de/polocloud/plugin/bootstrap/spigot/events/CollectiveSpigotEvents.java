@@ -2,10 +2,13 @@ package de.polocloud.plugin.bootstrap.spigot.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.ConsoleExecutor;
+import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.player.def.SimpleCloudPlayer;
+import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.spigot.impl.SpigotConsoleSender;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -25,8 +28,15 @@ public class CollectiveSpigotEvents implements Listener {
 
     @EventHandler
     public void handle(ServerListPingEvent event) {
-        event.setMaxPlayers(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMaxPlayers());
-        event.setMotd(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMotd());
+        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
+
+        if (thisService != null) {
+            event.setMaxPlayers(thisService.getMaxPlayers());
+            event.setMotd(thisService.getMotd());
+        } else {
+            event.setMaxPlayers(-1);
+            event.setMotd("No GameServer for '" + CloudPlugin.getCloudPluginInstance().getName() + "'");
+        }
     }
 
     @EventHandler
@@ -63,15 +73,15 @@ public class CollectiveSpigotEvents implements Listener {
             return;
         }
 
-        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
-        if (thisService != null) {
+        Scheduler.runtimeScheduler().schedule(() -> {
+            IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
             ICloudPlayerManager playerManager = PoloCloudAPI.getInstance().getCloudPlayerManager();
             ICloudPlayer cached = playerManager.getCached(player.getName());
             if (cached != null) {
                 ((SimpleCloudPlayer)cached).setMinecraftServer(thisService.getName());
                 cached.update();
             }
-        }
+        }, () -> PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null);
     }
 
     @EventHandler

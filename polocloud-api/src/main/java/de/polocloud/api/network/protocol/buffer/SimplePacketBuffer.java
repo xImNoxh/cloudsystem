@@ -2,13 +2,13 @@ package de.polocloud.api.network.protocol.buffer;
 
 import com.google.common.base.Charsets;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
@@ -28,7 +28,6 @@ import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -324,14 +323,14 @@ public class SimplePacketBuffer implements IPacketBuffer {
         String name = this.readString();
         long snowflake = this.readLong();
         int port = this.readInt();
+        int id = this.readInt();
 
         //Extra values
         String motd = this.readString();
         GameServerStatus status = this.readEnum();
 
-        //Memory and ping
+        //Memory
         long memory = this.readLong();
-        long ping = this.readLong();
         long startTime = this.readLong();
         int maxPlayers = this.readInt();
         boolean serviceVisibility = this.readBoolean();
@@ -344,7 +343,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
             properties.add(PoloHelper.GSON_INSTANCE.fromJson(this.readString(), SimpleProperty.class));
         }
 
-        IGameServer gameServer = new SimpleGameServer(name, motd, serviceVisibility, status, snowflake, ping, startTime, memory, port, maxPlayers, template);
+        IGameServer gameServer = new SimpleGameServer(id, motd, serviceVisibility, status, snowflake, startTime, memory, port, maxPlayers, template);
         gameServer.setRegistered(registered);
         gameServer.setProperties(properties);
         return gameServer;
@@ -360,14 +359,14 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeString(gameServer.getName());
         this.writeLong(gameServer.getSnowflake());
         this.writeInt(gameServer.getPort());
+        this.writeInt(gameServer.getId());
 
         //Extra values
         this.writeString(gameServer.getMotd());
         this.writeEnum(gameServer.getStatus());
 
-        //Memory and ping
+        //Memory
         this.writeLong(gameServer.getTotalMemory());
-        this.writeLong(gameServer.getPing());
 
         //Other values
         this.writeLong(gameServer.getStartTime());
@@ -466,6 +465,12 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     @Override
     public IFallback readFallback() throws IOException {
+        boolean nulled = this.readBoolean();
+
+        if (nulled) {
+            return null;
+        }
+
         String name = this.readString();
         String perm = this.readString();
 
@@ -477,6 +482,11 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     @Override
     public void writeFallback(IFallback fallback) throws IOException {
+
+        this.writeBoolean(fallback == null);
+        if (fallback == null) {
+            return;
+        }
 
         //Name and permission
         this.writeString(fallback.getTemplateName());
@@ -537,5 +547,35 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeInt(cloudPlayer.getConnection().getVersion().getProtocolId());
         this.writeBoolean(cloudPlayer.getConnection().isOnlineMode());
         this.writeBoolean(cloudPlayer.getConnection().isLegacy());
+    }
+
+    @Override
+    public <T extends IProtocolObject> T readProtocol() throws IOException {
+
+        String cls = this.readString();
+        try {
+            Class<? extends IProtocolObject> clazz = (Class<? extends IProtocolObject>) Class.forName(cls);
+
+            IProtocolObject protocolObject;
+            try {
+                protocolObject = clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                protocolObject = PoloHelper.getInstance(clazz);
+            }
+
+            if (protocolObject != null) {
+                protocolObject.read(this);
+                return (T) protocolObject;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void writeProtocol(IProtocolObject object) throws IOException {
+        this.writeString(object.getClass().getName());
+        object.write(this);
     }
 }

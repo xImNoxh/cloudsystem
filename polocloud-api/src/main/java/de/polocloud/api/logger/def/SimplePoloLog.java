@@ -210,6 +210,9 @@ public class SimplePoloLog implements PoloLog {
             }
 
             for (Pair<String, LogLevel> loggedLine : new ArrayList<>(loggedLines)) {
+                if (loggedLine == null) {
+                    continue;
+                }
                 String s = loggedLine.getKey();
                 w.println(s);
             }

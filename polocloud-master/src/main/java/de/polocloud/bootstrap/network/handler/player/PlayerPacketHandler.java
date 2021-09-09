@@ -12,12 +12,8 @@ import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.packets.other.RequestPassOnPacket;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
-import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
-import de.polocloud.api.network.protocol.packet.base.response.base.ResponseFutureListener;
 import de.polocloud.api.network.protocol.packet.base.response.def.Request;
-import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 
@@ -37,7 +33,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
             this.callConnectEvent(MasterPubSubManager.getInstance(), packet.getCloudPlayer());
             this.sendConnectMessage(PoloCloudAPI.getInstance().getMasterConfig(), packet.getCloudPlayer());
             
-            Master.getInstance().getCloudPlayerManager().registerPlayer(packet.getCloudPlayer());
+            Master.getInstance().getCloudPlayerManager().register(packet.getCloudPlayer());
             Master.getInstance().updateCache();
         });
 
@@ -46,7 +42,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
             this.sendDisconnectMessage(PoloCloudAPI.getInstance().getMasterConfig(), packet.getCloudPlayer());
             this.callDisconnectEvent(MasterPubSubManager.getInstance(), packet.getCloudPlayer());
             
-            Master.getInstance().getCloudPlayerManager().unregisterPlayer(packet.getCloudPlayer());
+            Master.getInstance().getCloudPlayerManager().unregister(packet.getCloudPlayer());
             Master.getInstance().updateCache();
             
         });
@@ -66,7 +62,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
         });
 
         new SimplePacketHandler<>(CloudPlayerUpdatePacket.class, packet -> {
-            Master.getInstance().getCloudPlayerManager().updateObject(packet.getCloudPlayer());
+            Master.getInstance().getCloudPlayerManager().update(packet.getCloudPlayer());
             Master.getInstance().updateCache();
         });
 

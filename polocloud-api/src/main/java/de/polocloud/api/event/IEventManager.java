@@ -2,6 +2,7 @@ package de.polocloud.api.event;
 
 import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.event.base.IListener;
+import de.polocloud.api.event.handling.EventPriority;
 import de.polocloud.api.event.handling.IEventHandler;
 
 import java.util.function.Consumer;
@@ -14,6 +15,16 @@ public interface IEventManager {
      * @param listener the listener
      */
     void registerListener(IListener listener);
+
+    /**
+     * Registers a directly handling method for a given {@link CloudEvent}
+     *
+     * @param eventClass the class of the event
+     * @param priority the priority
+     * @param handler the handler
+     * @param <E> the generic
+     */
+    <E extends CloudEvent> void registerEvent(Class<E> eventClass, EventPriority priority, Consumer<E> handler);
 
     /**
      * Unregisters a class

@@ -81,12 +81,12 @@ public class SimpleWrapper implements IWrapper {
 
     @Override
     public void startServer(IGameServer gameServer) {
-        PoloCloudAPI.getInstance().getGameServerManager().registerGameServer(gameServer);
+        PoloCloudAPI.getInstance().getGameServerManager().register(gameServer);
 
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {
             PoloCloudAPI.getInstance().sendPacket(new MasterStartServerPacket(gameServer, this));
         } else {
-            PoloCloudAPI.getInstance().sendPacket(new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort()));
+            PoloCloudAPI.getInstance().sendPacket(new MasterRequestServerStartPacket(gameServer));
         }
     }
 
@@ -98,7 +98,6 @@ public class SimpleWrapper implements IWrapper {
         }
 
         PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
-        PoloCloudAPI.getInstance().getPortManager().removePort(gameServer.getPort());
 
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {
             PoloCloudAPI.getInstance().sendPacket(new MasterStopServerPacket(gameServer, this));

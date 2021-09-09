@@ -1,10 +1,8 @@
 package de.polocloud.bootstrap.network.handler.gameserver;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.master.MasterRequestServerListUpdatePacket;
@@ -23,10 +21,6 @@ public abstract class GameServerPacketController {
         iGameServer.sendPacket(packetData);
     }
 
-    public void getGameServerBySnowflake(Consumer<IGameServer> server, long snowflake) {
-        server.accept(PoloCloudAPI.getInstance().getGameServerManager().getCached(snowflake));
-    }
-
     public void updateProxyServerList(IGameServer gameServer) {
         ITemplate template = gameServer.getTemplate();
         if (template.getTemplateType() == TemplateType.MINECRAFT) {
@@ -35,7 +29,7 @@ public abstract class GameServerPacketController {
     }
 
     public void getGameServerByProxyType(Consumer<List<IGameServer>> iGameServerConsumer) {
-        iGameServerConsumer.accept(PoloCloudAPI.getInstance().getGameServerManager().getCached(TemplateType.PROXY));
+        iGameServerConsumer.accept(PoloCloudAPI.getInstance().getGameServerManager().getAllCached(TemplateType.PROXY));
     }
 
     public void sendServerStartLog(IGameServer server) {

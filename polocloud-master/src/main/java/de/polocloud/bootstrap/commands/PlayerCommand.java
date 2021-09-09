@@ -31,7 +31,7 @@ public class PlayerCommand implements CommandListener, TabCompletable {
 
 
     @Command(name = "player", description = "Manage a CloudPlayer", aliases = "players")
-    public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(min = 2, message = {"----[Player]----", "Use §3player <player> message <message...> §7to send a message to a player", "Use §3player <player> kick <message...> §7to kick a player with a message", "Use §3player <player> send <server> §7to send a player to a gameserver", "----[Player]----"}) String... params) {
+    public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(min = 2, message = {"----[Player]----", "Use §3player <player> message <message...> §7to send a message to a player", "Use §3player <player> kick <message...> §7to kick a player with a message", "Use §3player <player> send <server> §7to send a player to a gameserver", "Use §3player <player> info §7to display info about a player", "----[Player]----"}) String... params) {
         if (params.length == 3 && params[1].equalsIgnoreCase("send")) {
             String player = params[0];
             String server = params[2];

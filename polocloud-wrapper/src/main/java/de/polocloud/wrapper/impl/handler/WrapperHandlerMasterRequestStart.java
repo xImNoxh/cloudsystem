@@ -1,7 +1,6 @@
 package de.polocloud.wrapper.impl.handler;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.alias.CloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.master.MasterRequestServerStartPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -20,16 +19,23 @@ public class WrapperHandlerMasterRequestStart implements IPacketHandler<Packet> 
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
 
         MasterRequestServerStartPacket packet = (MasterRequestServerStartPacket) obj;
-        this.tryStart(packet.getServerName(), packet.getPort());
+        IGameServer gameServer = packet.getGameServer();
+        String serverName = packet.getServerName();
+        int port = packet.getPort();
+
+        this.tryStart(serverName, port, gameServer);
     }
 
 
-    private void tryStart(String name, int port) {
+    private void tryStart(String name, int port, IGameServer fallbackIfNull) {
 
-        IGameServer cached = CloudAPI.getInstance().getGameServerManager().getCached(name);
+        IGameServer cached = PoloCloudAPI.getInstance().getGameServerManager().getCached(name);
+        if (cached == null) {
+            cached = fallbackIfNull;
+        }
         if (cached != null) {
             if (cached.getPort() == -1 && port == -1) {
-                cached.setPort(PoloCloudAPI.getInstance().getPortManager().getPort(cached.getTemplate()));
+                cached.setPort(PoloCloudAPI.getInstance().getGameServerManager().getFreePort(cached.getTemplate()));
             } else if (port != -1) {
                 cached.setPort(port);
             }
@@ -54,7 +60,7 @@ public class WrapperHandlerMasterRequestStart implements IPacketHandler<Packet> 
             PoloLogger.print(LogLevel.ERROR, "§cTried to start GameServer §e" + name + " §calthough it was not registered before!");
             PoloLogger.print(LogLevel.INFO, "§cRequesting Cache and trying again in §e1 second§c...");
             PoloCloudAPI.getInstance().updateCache();
-            Scheduler.runtimeScheduler().schedule(() -> this.tryStart(name, port), 20L);
+            Scheduler.runtimeScheduler().schedule(() -> this.tryStart(name, port, null), 20L);
         }
 
     }

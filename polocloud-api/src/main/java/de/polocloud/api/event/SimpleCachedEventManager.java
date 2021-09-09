@@ -8,6 +8,7 @@ import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.handling.EventMethod;
 import de.polocloud.api.event.base.IListener;
+import de.polocloud.api.event.handling.EventPriority;
 import de.polocloud.api.event.handling.IEventHandler;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.api.EventPacket;
@@ -51,6 +52,19 @@ public class SimpleCachedEventManager implements IEventManager {
         registeredClasses.put(listener, eventMethods);
     }
 
+
+    @Override
+    public <E extends CloudEvent> void registerEvent(Class<E> eventClass, EventPriority priority, Consumer<E> handler) {
+        IListener listener = new IListener() {
+
+            @EventHandler
+            public void handle(E event) {
+                handler.accept(event);
+            }
+        };
+
+        this.registerListener(listener);
+    }
 
     @Override
     public void unregisterListener(Class<? extends IListener> listenerClass) {
@@ -105,33 +119,42 @@ public class SimpleCachedEventManager implements IEventManager {
         boolean nettyFire = eventData == null || eventData.nettyFire();
         PoloType[] ignoredTypes = eventData != null ? eventData.ignoreTypes() : new PoloType[0];
         boolean async = eventData != null && eventData.async();
+        boolean fromCloudToServer = eventData != null && eventData.fromCloudToServers();
 
+        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
 
-        IGameServer thisService = PoloCloudAPI
-            .getInstance()
-            .getGameServerManager()
-            .getThisService();
-        if (nettyFire && !event.isNettyFired()) {
-            if (PoloCloudAPI.getInstance().getType().isPlugin()) {
-                if (PoloCloudAPI.getInstance().getConnection() != null) {
-                    PoloCloudAPI
-                        .getInstance()
-                        .getConnection()
-                        .sendPacket(new EventPacket(
-                            event,
-                            thisService == null ? "null" : thisService.getName(),
-                            ignoredTypes,
-                            async
-                        ));
-                }
-            } else {
-                if (PoloCloudAPI.getInstance().getConnection() != null) {
-                    PoloCloudAPI
-                        .getInstance()
-                        .getConnection()
-                        .sendPacket(
-                            new EventPacket(event, "cloud", ignoredTypes, async)
-                        );
+        if (nettyFire) {
+
+            boolean allow;
+
+            if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER && fromCloudToServer) {
+                allow = true;
+            } else if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER && !event.isNettyFired()) {
+                allow = true;
+            } else allow = !event.isNettyFired();
+
+            if (allow) {
+                if (PoloCloudAPI.getInstance().getType().isPlugin()) {
+                    if (PoloCloudAPI.getInstance().getConnection() != null) {
+                        PoloCloudAPI
+                            .getInstance()
+                            .getConnection()
+                            .sendPacket(new EventPacket(
+                                event,
+                                thisService == null ? "null" : thisService.getName(),
+                                ignoredTypes,
+                                async
+                            ));
+                    }
+                } else {
+                    if (PoloCloudAPI.getInstance().getConnection() != null) {
+                        PoloCloudAPI
+                            .getInstance()
+                            .getConnection()
+                            .sendPacket(
+                                new EventPacket(event, "cloud", ignoredTypes, async)
+                            );
+                    }
                 }
             }
         }

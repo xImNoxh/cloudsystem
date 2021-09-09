@@ -24,7 +24,6 @@ public class FileConstants {
 
     //Global stuff
     public static final File GLOBAL_FOLDER = new File("global/");
-    public static final File TEMP_FILES = new File(GLOBAL_FOLDER, "tempFiles/");
     public static final File DATABASE_FOLDER = new File(GLOBAL_FOLDER, "db/");
     public static final File POLO_LOGS_FOLDER = new File(GLOBAL_FOLDER, "logs/");
     public static final File LAUNCHER_FILE = new File("launcher.json");

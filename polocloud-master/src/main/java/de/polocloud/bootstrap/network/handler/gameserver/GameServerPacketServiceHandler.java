@@ -26,7 +26,8 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             String name = packet.getName();
             IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(name);
             if (gameServer != null) {
-                PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(gameServer);
+                PoloCloudAPI.getInstance().getGameServerManager().unregister(gameServer);
+                PoloCloudAPI.getInstance().updateCache();
                 PoloLogger.print(LogLevel.INFO, "Wrapper §3" + gameServer.getWrapper().getName() + " §7stopped " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §c" + gameServer.getName() + "§7#§4" + gameServer.getSnowflake() + "§7!");
             }
         });
@@ -65,10 +66,8 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             IGameServer gameServer = packet.getGameServer();
             IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(packet.getWrapper().getName());
             if (gameServer != null) {
-                PoloCloudAPI.getInstance().getGameServerManager().unregisterGameServer(gameServer);
-                PoloLogger.print(LogLevel.INFO, "Wrapper §3" + gameServer.getWrapper().getName() + " §7stopped " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §c" + gameServer.getName() + "§7#§4" + gameServer.getSnowflake() + "§7!");
+                wrapper.stopServer(gameServer);
             }
-            wrapper.stopServer(gameServer);
         });
 
         new SimplePacketHandler<GameServerSuccessfullyStartedPacket>(GameServerSuccessfullyStartedPacket.class, (ctx, packet) -> {
@@ -87,8 +86,8 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
         new SimplePacketHandler<RedirectPacket>(RedirectPacket.class, (ctx, packet) -> getRedirectPacketConnection(packet.getSnowflake(), packet.getPacket()));
 
         new SimplePacketHandler<GameServerUpdatePacket>(GameServerUpdatePacket.class, (ctx, packet) -> {
-            PoloCloudAPI.getInstance().getGameServerManager().updateObject(packet.getGameServer());
-            packet.passOn();
+            PoloCloudAPI.getInstance().getGameServerManager().update(packet.getGameServer());
+            PoloCloudAPI.getInstance().sendPacket(packet);
         });
 
     }

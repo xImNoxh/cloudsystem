@@ -97,7 +97,7 @@ public class CollectiveProxyEvents implements Listener {
         cloudPlayer.setProxyServer(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName());
         cloudPlayer.update();
 
-        PoloCloudAPI.getInstance().getCloudPlayerManager().registerPlayer(cloudPlayer);
+        PoloCloudAPI.getInstance().getCloudPlayerManager().register(cloudPlayer);
         PoloCloudAPI.getInstance().sendPacket(new CloudPlayerRegisterPacket(cloudPlayer));
 
         event.setCancelled(false);
@@ -142,6 +142,9 @@ public class CollectiveProxyEvents implements Listener {
         } else {
             //Player is switching servers
 
+            if (cloudPlayer == null || cloudPlayer.getMinecraftServer() == null) {
+                return;
+            }
             if (event.isCancelled() || event.getTarget().getName().equalsIgnoreCase(cloudPlayer.getMinecraftServer().getName())) {
                 return;
             }
@@ -188,7 +191,7 @@ public class CollectiveProxyEvents implements Listener {
             PoloCloudAPI.getInstance().messageCloud("§c" + thisService.getName() + " tried to unregister '§e" + event.getPlayer().getName() + ":" + event.getPlayer().getUniqueId() + "§c' but it's ICloudPlayer was null!");
             return;
         }
-        PoloCloudAPI.getInstance().getCloudPlayerManager().unregisterPlayer(cloudPlayer);
+        PoloCloudAPI.getInstance().getCloudPlayerManager().unregister(cloudPlayer);
         networkClient.sendPacket(new CloudPlayerUnregisterPacket(cloudPlayer));
     }
 

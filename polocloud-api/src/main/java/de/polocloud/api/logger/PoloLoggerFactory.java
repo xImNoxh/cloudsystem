@@ -66,7 +66,6 @@ public interface PoloLoggerFactory {
      * And runs the runnable if every logger is successfully
      * shut down and all logs were saved
      *
-     * @param finishRunnable the runnable
      */
-    void shutdown(Runnable finishRunnable);
+    void shutdown();
 }

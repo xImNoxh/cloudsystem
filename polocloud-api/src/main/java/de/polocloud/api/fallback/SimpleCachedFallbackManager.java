@@ -41,10 +41,6 @@ public class SimpleCachedFallbackManager implements IFallbackManager {
                     }
                 }
             }
-
-            //if (availableFallback.isForcedJoin() || availableFallback.getFallbackPermission() == null || availableFallback.getFallbackPermission().trim().isEmpty() || (cloudPlayer != null && cloudPlayer.hasPermission(availableFallback.getFallbackPermission()))) {
-              //  list.add(availableFallback);
-            //}
         }
         return list;
     }
@@ -71,7 +67,7 @@ public class SimpleCachedFallbackManager implements IFallbackManager {
         IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
 
         ITemplate iTemplate = PoloCloudAPI.getInstance().getTemplateManager().getTemplate(fallback.getTemplateName());
-        List<IGameServer> gameServers = gameServerManager.getCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.AVAILABLE)).collect(Collectors.toList());
+        List<IGameServer> gameServers = gameServerManager.getAllCached(iTemplate).stream().filter(gameServer -> gameServer.getStatus().equals(GameServerStatus.AVAILABLE)).collect(Collectors.toList());
 
         return gameServers.stream().max(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
     }

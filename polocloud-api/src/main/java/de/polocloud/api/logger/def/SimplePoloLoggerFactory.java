@@ -47,25 +47,23 @@ public class SimplePoloLoggerFactory implements PoloLoggerFactory {
     }
 
     @Override
-    public void shutdown(Runnable finishRunnable) {
-        if (this.loggers.isEmpty()) {
-            finishRunnable.run();
-        }
-        int size = this.loggers.size();
-        for (PoloLogger logger : new ArrayList<>(this.loggers)) {
+    public void shutdown() {
+        try {
+            for (PoloLogger logger : new ArrayList<>(this.loggers)) {
 
-            List<PoloLog> allLogs = logger.getAllLogs();
-            allLogs.add(logger.getCurrentLog()); //Adding current log
+                List<PoloLog> allLogs = logger.getAllLogs();
+                allLogs.add(logger.getCurrentLog()); //Adding current log
 
-            for (PoloLog allLog : new ArrayList<>(allLogs)) {
-                if (!allLog.isArchived()) {
-                    allLog.save();
-                    if ((size = (size - 1)) <= 0) {
-                        finishRunnable.run();
+                for (PoloLog allLog : new ArrayList<>(allLogs)) {
+                    if (!allLog.isArchived()) {
+                        allLog.save();
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override

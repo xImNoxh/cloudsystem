@@ -2,6 +2,7 @@ package de.polocloud.api.network.protocol.buffer;
 
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
@@ -298,4 +299,16 @@ public interface IPacketBuffer {
      */
     void writeFile(File f) throws IOException;
 
+    /**
+     * Writes a {@link IProtocolObject} object to this buffer
+     *
+     * @param object the object
+     * @throws IOException if something goes wrong
+     */
+    void writeProtocol(IProtocolObject object) throws IOException;
+
+    /**
+     * Reads an {@link IProtocolObject} from this buffer
+     */
+    <T extends IProtocolObject> T readProtocol() throws IOException;
 }

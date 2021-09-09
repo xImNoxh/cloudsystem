@@ -7,8 +7,6 @@ import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.modules.proxy.ProxyModule;
-import de.polocloud.modules.proxy.motd.MotdProxyService;
 import de.polocloud.modules.proxy.motd.MotdService;
 
 public class ServiceMotdEvents implements IListener {
@@ -23,7 +21,7 @@ public class ServiceMotdEvents implements IListener {
 
     @EventHandler
     public void handle(CloudGameServerMaintenanceUpdateEvent event){
-        PoloCloudAPI.getInstance().getGameServerManager().getCached(event.getTemplate()).forEach(it -> MotdService.getInstance().sendMotd(it));
+        PoloCloudAPI.getInstance().getGameServerManager().getAllCached(event.getTemplate()).forEach(it -> MotdService.getInstance().sendMotd(it));
     }
 
 }

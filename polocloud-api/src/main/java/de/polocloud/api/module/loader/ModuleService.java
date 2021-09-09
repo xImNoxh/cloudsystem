@@ -151,35 +151,21 @@ public class ModuleService implements IModuleHolder {
     /**
      * Disables all modules
      */
-    public void shutdown(Runnable runnable) {
+    public void shutdown() {
 
-        if (this.modules.isEmpty()) {
-            runnable.run();
-        }
-
-        int count = this.modules.size();
         for (CloudModule driverModule : this.modules) {
+
+            this.callTasks(driverModule, ModuleState.STOPPING);
 
             List<CommandListener> commandListeners = this.moduleCommands.get(driverModule.getClass());
             List<IListener> listeners = this.moduleListener.get(driverModule.getClass());
 
-            if (listeners != null) {
-                for (IListener listener : listeners) {
-                    PoloCloudAPI.getInstance().getEventManager().unregisterListener(listener.getClass());
-                }
+            for (IListener listener : (listeners == null ? new ArrayList<IListener>() : listeners)) {
+                PoloCloudAPI.getInstance().getEventManager().unregisterListener(listener.getClass());
             }
 
-            if (commandListeners != null) {
-                for (CommandListener commandListener : commandListeners) {
-                    PoloCloudAPI.getInstance().getCommandManager().unregisterCommand(commandListener.getClass());
-                }
-            }
-
-
-            this.callTasks(driverModule, ModuleState.STOPPING);
-            count--;
-            if (count <= 0) {
-                runnable.run();
+            for (CommandListener commandListener : (commandListeners == null ? new ArrayList<CommandListener>() : commandListeners)) {
+                PoloCloudAPI.getInstance().getCommandManager().unregisterCommand(commandListener.getClass());
             }
         }
     }

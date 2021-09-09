@@ -1,4 +1,4 @@
-    name: SpigotSidePermissionModule
+    name: PoloCloud-Permissions
     main: de.polocloud.modules.permission.pluginside.SpigotBootstrap
     version: 1.0
     depend:

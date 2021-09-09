@@ -60,8 +60,8 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage(prefix + "Thanks to §3" + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
                     player.sendMessage("§8");
                     player.sendMessage(prefix + "§7Global Servers §8: §3" + gameServerManager.getAllCached().size());
-                    player.sendMessage(prefix + "§7Spigot Servers §8: §3" + gameServerManager.getCached(TemplateType.MINECRAFT).size());
-                    player.sendMessage(prefix + "§7Proxy Servers §8: §3" + gameServerManager.getCached(TemplateType.PROXY).size());
+                    player.sendMessage(prefix + "§7Spigot Servers §8: §3" + gameServerManager.getAllCached(TemplateType.MINECRAFT).size());
+                    player.sendMessage(prefix + "§7Proxy Servers §8: §3" + gameServerManager.getAllCached(TemplateType.PROXY).size());
                     player.sendMessage(prefix + "§7Current Server §8: §3" + gameServerManager.getThisService().getName());
                     player.sendMessage("§8");
                     player.sendMessage(prefix + "§7Available Wrappers §8: §3" + wrapperManager.getWrappers().size());
@@ -207,7 +207,6 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage(prefix + "Status » §b" + gameServer.getStatus());
                     player.sendMessage(prefix + "Visible » §b" + gameServer.getServiceVisibility());
                     player.sendMessage(prefix + "Started time » §b" + gameServer.getStartTime());
-                    player.sendMessage(prefix + "Ping » §b" + gameServer.getPing() + "ms");
                     if (gameServer.getProperties().isEmpty()) {
                         player.sendMessage(prefix + "§7Properties » §cNone");
                     } else {
@@ -227,6 +226,8 @@ public class CloudCommand implements CommandListener {
                         player.sendMessage(prefix + "§cThere is no online GameServer with name '§e" + server + "§c'!");
                         return;
                     }
+
+                    cached.terminate();
 
                     gameServerManager.stopServer(cached);
                     player.sendMessage(prefix + "§7Trying to stop §c" + cached.getName() + "§8...");

@@ -28,9 +28,25 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
      */
-    default List<IGameServer> getCached(ITemplate template) {
+    default List<IGameServer> getAllCached(ITemplate template) {
         return this.getAllCached(iGameServer -> iGameServer.getTemplate().getName().equalsIgnoreCase(template.getName()));
     }
+
+    /**
+     * Gets a free port for a {@link ITemplate}
+     *
+     * @param template the template
+     * @return port as int
+     */
+    int getFreePort(ITemplate template);
+
+    /**
+     * Gets a free id for a {@link ITemplate}
+     *
+     * @param template the template
+     * @return id as int
+     */
+    int getFreeId(ITemplate template);
 
     /**
      * Gets a collection of all loaded {@link IGameServer}s
@@ -39,7 +55,7 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      * and returns a {@link CompletableFuture} to handle the response
      * async or sync
      */
-    default List<IGameServer> getCached(TemplateType type) {
+    default List<IGameServer> getAllCached(TemplateType type) {
         return getAllCached(iGameServer -> iGameServer.getTemplate().getTemplateType().equals(type));
     }
 
@@ -48,14 +64,14 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      *
      * @param gameServer the gameServer
      */
-    void registerGameServer(IGameServer gameServer);
+    void register(IGameServer gameServer);
 
     /**
      * Unregisters an {@link IGameServer} in cache
      *
      * @param gameServer the gameServer
      */
-    void unregisterGameServer(IGameServer gameServer);
+    void unregister(IGameServer gameServer);
 
     /**
      * Starts a new {@link IGameServer} from an {@link ITemplate}

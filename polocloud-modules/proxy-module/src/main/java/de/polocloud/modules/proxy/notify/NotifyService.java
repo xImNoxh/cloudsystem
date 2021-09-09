@@ -2,8 +2,12 @@ package de.polocloud.modules.proxy.notify;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.modules.proxy.IProxyReload;
 import de.polocloud.modules.proxy.notify.events.CloudPlayerNotifyEvents;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class NotifyService implements IProxyReload {
 
     private static NotifyService instance;
@@ -19,8 +23,11 @@ public class NotifyService implements IProxyReload {
 
     public void sendNotifyMessage(String message, IGameServer gameServer){
         String finalMessage = message.replaceAll("%service%", gameServer.getName());
-        PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().forEach(it ->
-            it.sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + finalMessage));
+
+        for (ICloudPlayer cloudPlayer : new CopyOnWriteArrayList<>(PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached())) {
+            cloudPlayer.sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + finalMessage);
+        }
+
     }
 
     @Override

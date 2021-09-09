@@ -1,4 +1,4 @@
-    name: ProxySidePermissionModule
+    name: PoloCloud-Permissions
     main: de.polocloud.modules.permission.pluginside.ProxyBootstrap
     version: 1.0
     depends:

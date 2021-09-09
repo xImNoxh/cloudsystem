@@ -4,8 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.port.IPortManager;
-import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
+
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -26,7 +25,6 @@ public class GlobalCachePacket extends Packet {
     private List<ITemplate> templates;
     private List<IWrapper> wrappers;
     private List<IFallback> fallbacks;
-    private SimpleCachedPortManager portManager;
     private MasterConfig masterConfig;
 
     public GlobalCachePacket() {
@@ -37,11 +35,8 @@ public class GlobalCachePacket extends Packet {
         this.templates = masterCache.getTemplates();
         this.wrappers = masterCache.getWrappers();
         this.fallbacks = masterCache.getFallbacks();
-        this.portManager = (SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager();
         this.masterConfig = PoloCloudAPI.getInstance().getMasterConfig();
-
     }
-
 
     public MasterCache getMasterCache() {
         return new MasterCache(this.gameServers, this.cloudPlayers, this.templates, this.wrappers, this.fallbacks, masterConfig);
@@ -49,10 +44,6 @@ public class GlobalCachePacket extends Packet {
 
     public MasterConfig getMasterConfig() {
         return masterConfig;
-    }
-
-    public IPortManager getPortManager() {
-        return portManager;
     }
 
     @Override
@@ -82,8 +73,9 @@ public class GlobalCachePacket extends Packet {
             buf.writeFallback(fallback);
         }
 
-        buf.writeString(PoloHelper.GSON_INSTANCE.toJson(this.portManager));
-        buf.writeString(PoloHelper.GSON_INSTANCE.toJson(this.masterConfig));
+        buf.writeProtocol(this.masterConfig);
+
+       // buf.writeString(PoloHelper.GSON_INSTANCE.toJson(this.masterConfig));
     }
 
     @Override
@@ -120,10 +112,7 @@ public class GlobalCachePacket extends Packet {
             fallbacks.add(buf.readFallback());
         }
 
-        String json = buf.readString();
-        this.portManager = PoloHelper.GSON_INSTANCE.fromJson(json, SimpleCachedPortManager.class);
-
-        json = buf.readString();
-        this.masterConfig = PoloHelper.GSON_INSTANCE.fromJson(json, MasterConfig.class);
+        this.masterConfig = buf.readProtocol();
+        //this.masterConfig = PoloHelper.GSON_INSTANCE.fromJson(buf.readString(), MasterConfig.class);
     }
 }

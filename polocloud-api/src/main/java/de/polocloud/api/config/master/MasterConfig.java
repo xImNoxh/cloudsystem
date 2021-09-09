@@ -8,19 +8,23 @@ import de.polocloud.api.config.master.messages.Messages;
 import de.polocloud.api.config.master.properties.Properties;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.network.packets.master.MasterUpdateConfigPacket;
+import de.polocloud.api.network.protocol.IProtocolObject;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 
-public class MasterConfig implements IConfig {
+import java.io.IOException;
+
+public class MasterConfig implements IConfig, IProtocolObject {
 
     /**
      * The config properties
      */
-    private final Properties properties;
+    private Properties properties;
 
     /**
      * The messages
      */
-    private final Messages messages;
+    private Messages messages;
 
     public MasterConfig() {
         this.messages = new Messages();
@@ -49,4 +53,15 @@ public class MasterConfig implements IConfig {
         return messages;
     }
 
+    @Override
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeProtocol(this.properties);
+        buf.writeProtocol(this.messages);
+    }
+
+    @Override
+    public void read(IPacketBuffer buf) throws IOException {
+        this.properties = buf.readProtocol();
+        this.messages = buf.readProtocol();
+    }
 }

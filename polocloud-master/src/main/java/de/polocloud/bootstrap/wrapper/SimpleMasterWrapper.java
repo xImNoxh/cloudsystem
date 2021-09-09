@@ -36,14 +36,16 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
 
     @Override
     public void startServer(IGameServer gameServer){
-        PoloCloudAPI.getInstance().getGameServerManager().registerGameServer(gameServer);
+
+        PoloCloudAPI.getInstance().getGameServerManager().register(gameServer);
+
         try {
             PoloLogger.print(LogLevel.INFO, "Requesting §3" + gameServer.getWrapper().getName() + " §7to start " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §b" + gameServer.getName() + "§7#§b" + gameServer.getSnowflake() + " §7on port §e" + gameServer.getPort() + "§7!");
 
             gameServer.setStatus(GameServerStatus.STARTING);
-            gameServer.update();
+            gameServer.updateInternally();
 
-            sendPacket(new MasterRequestServerStartPacket(gameServer.getName(), gameServer.getPort()));
+            sendPacket(new MasterRequestServerStartPacket(gameServer));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,7 +60,6 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
         }
 
         PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
-        PoloCloudAPI.getInstance().getPortManager().removePort(gameServer.getPort());
         sendPacket(new MasterRequestsServerTerminatePacket(gameServer));
     }
 
@@ -111,15 +112,19 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
 
     @Override
     public boolean terminate() {
-        int count = getServers().size();
-        for (IGameServer gameServer : getServers()) {
-            gameServer.terminate();
-            count--;
-            if (count <= 0) {
-                sendPacket(new WrapperRequestShutdownPacket());
-                return true;
+        try {
+            int count = getServers().size();
+            for (IGameServer gameServer : getServers()) {
+                gameServer.terminate();
+                count--;
+                if (count <= 0) {
+                    sendPacket(new WrapperRequestShutdownPacket());
+                    return true;
+                }
             }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 }

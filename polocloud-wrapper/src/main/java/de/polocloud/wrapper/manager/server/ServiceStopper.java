@@ -64,7 +64,6 @@ public class ServiceStopper {
                 consumer.accept(gameServer);
             }
             screenManager.unregisterScreen(gameServer.getName());
-            PoloCloudAPI.getInstance().getPortManager().removePort(gameServer.getPort());
         }, 5L);
     }
 }

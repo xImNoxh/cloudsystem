@@ -8,28 +8,14 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ICloudPlayerManager extends ObjectPool<ICloudPlayer> {
 
-    /**
-     * Registers an {@link ICloudPlayer} in cache
-     *
-     * @param cloudPlayer the cloudPlayer
-     */
-    void registerPlayer(ICloudPlayer cloudPlayer);
-
     @Override
-    default void updateObject(ICloudPlayer object) {
+    default void update(ICloudPlayer object) {
         if (this.getCached(object.getName()) == null) {
-            this.registerPlayer(object);
+            this.register(object);
             return;
         }
-        ObjectPool.super.updateObject(object);
+        ObjectPool.super.update(object);
     }
-
-    /**
-     * Unregisters an {@link ICloudPlayer} in cache
-     *
-     * @param cloudPlayer the cloudPlayer
-     */
-    void unregisterPlayer(ICloudPlayer cloudPlayer);
 
     /**
      * Gets an {@link ICloudPlayer} by its uuid

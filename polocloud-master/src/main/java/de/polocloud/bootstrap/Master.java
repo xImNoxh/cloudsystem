@@ -89,9 +89,6 @@ public class Master extends PoloCloudAPI implements IStartable {
 
         if (this.propertyManager.loadProperties()) {
 
-            this.portManager.setProxyPort(masterConfig.getProperties().getDefaultProxyStartPort());
-            this.portManager.setServerPort(masterConfig.getProperties().getDefaultServerStartPort());
-
             this.injector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateManager, this.cloudPlayerManager));
 
             this.templateManager.loadTemplates(TemplateStorage.FILE);
@@ -117,7 +114,7 @@ public class Master extends PoloCloudAPI implements IStartable {
 
 
             //Server-Runner thread starting
-            new Thread(getGuice().getInstance(ServerCreatorRunner.class)).start();
+            new Thread(new ServerCreatorRunner()).start();
 
         };
 
@@ -174,6 +171,9 @@ public class Master extends PoloCloudAPI implements IStartable {
             PoloLogger.print(LogLevel.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 2));
 
             this.moduleService.load();
+            if (!this.moduleService.getModules().isEmpty()) {
+                PoloLogger.print(LogLevel.INFO, "§8"); //Empty line for better design after module load
+            }
 
         } else {
             PoloLogger.print(LogLevel.ERROR, "§cNo Templates found to be loaded! Creating default Lobby-Template and Proxy-Template...");
@@ -213,23 +213,28 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.running = false;
         boolean terminate = this.nettyServer != null && this.nettyServer.terminate();
 
+        //Kicking all players
+        commandExecutor.sendMessage("§7Kicking §3" + (cloudPlayerManager == null ? "0" : cloudPlayerManager.getAllCached().size()) + " §7CloudPlayers...");
         for (ICloudPlayer cloudPlayer : (cloudPlayerManager == null ? new ArrayList<ICloudPlayer>() : cloudPlayerManager)) {
             cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
         }
 
-        moduleService.shutdown(() -> {
-            for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
-                gameServer.terminate();
-            }
+        //Stopping all servers
+        commandExecutor.sendMessage("§7Stopping §3" + gameServerManager.getAllCached().size() + " §7GameServers...");
+        for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
+            gameServer.terminate();
+        }
 
-            commandExecutor.sendMessage("§cShutting down in §e2 Seconds§c...");
-            loggerFactory.shutdown(() -> Scheduler.runtimeScheduler().schedule(() -> {
-                commandExecutor.sendMessage("§7All §bGameServers §7were §cstopped§7!");
-                commandExecutor.sendMessage("Shutting down Master...");
-                System.exit(0);
-            }, 40L));
-        });
+        //Shutting down all modules
+        commandExecutor.sendMessage("§7Disabling §3" + moduleService.getModules().size() + " §7Modules...");
+        moduleService.shutdown();
 
+        //Stopping process
+        Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
+
+        //Shutting down loggers
+        commandExecutor.sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
+        loggerFactory.shutdown();
         return terminate;
     }
 

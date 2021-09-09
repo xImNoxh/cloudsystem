@@ -65,7 +65,7 @@ public class InternalWrapperBootstrap {
         }
         PoloCloudUpdater updater = new PoloCloudUpdater(this.devMode, currentVersion, "api", apiJarFile);
 
-        if (forceUpdate){
+        if (forceUpdate) {
             if (this.devMode){
                 PoloLogger.print(LogLevel.DEBUG, "Downloading latest development build...");
                 if (updater.download()) {

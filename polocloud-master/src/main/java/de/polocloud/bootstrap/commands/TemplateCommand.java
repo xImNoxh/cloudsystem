@@ -2,9 +2,7 @@ package de.polocloud.bootstrap.commands;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Arguments;
-import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.annotation.Command;
-import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -47,10 +45,10 @@ public class TemplateCommand implements CommandListener {
                 PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
             } else {
                 PoloLogger.print(LogLevel.INFO, "Stopping template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "...");
-                List<IGameServer> gameServersInTemplate = gameServerManager.getCached(template);
+                List<IGameServer> gameServersInTemplate = gameServerManager.getAllCached(template);
                 int size = gameServersInTemplate.size();
                 for (IGameServer gameServer : gameServersInTemplate) {
-                    gameServer.stop();
+                    gameServer.terminate();
                 }
                 PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "stopped " + ConsoleColors.LIGHT_BLUE + size + ConsoleColors.GRAY + " servers of template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "!");
             }
@@ -88,7 +86,7 @@ public class TemplateCommand implements CommandListener {
                         template.setMaintenance(state);
                         templateService.getTemplateSaver().save(template);
 
-                        for (IGameServer gameServer : gameServerManager.getCached(template)) {
+                        for (IGameServer gameServer : gameServerManager.getAllCached(template)) {
                             gameServer.update();
                         }
 

@@ -7,6 +7,7 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @AutoRegistry//(id = 0x11)
 public class EventPacket extends Packet {
@@ -80,6 +81,16 @@ public class EventPacket extends Packet {
         buffer.writeString(event.getClass().getName());
         buffer.writeCustom(event);
 
+    }
+
+    @Override
+    public String toString() {
+        return "EventPacket{" +
+            "event=" + event +
+            ", except='" + except + '\'' +
+            ", ignoredTypes=" + Arrays.toString(ignoredTypes) +
+            ", async=" + async +
+            '}';
     }
 
     public CloudEvent getEvent() {

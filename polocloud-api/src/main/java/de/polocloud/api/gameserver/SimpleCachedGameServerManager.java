@@ -1,20 +1,21 @@
 package de.polocloud.api.gameserver;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.config.master.properties.Properties;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.ex.NoWrapperFoundException;
 import io.netty.channel.ChannelHandlerContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     @Override
     public void startServer(ITemplate template, int count) throws NoWrapperFoundException {
 
-        List<IGameServer> gameServersByTemplate = getCached(template);
+        List<IGameServer> gameServersByTemplate = getAllCached(template);
         for (int i = 0; i < count; i++) {
             Optional<IWrapper> optionalWrapperClient = PoloCloudAPI.getInstance().getWrapperManager().getWrappers().stream().findAny();
 
@@ -56,14 +57,41 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
 
             IGameServer iGameServer = IGameServer.create();
             iGameServer.applyTemplate(template); //Memory, motd, maxplayers
-            iGameServer.setName(template.getName() + "-" + (gameServersByTemplate.size() + (i + 1)));
+            iGameServer.setId((gameServersByTemplate.size() + (i + 1)));
             iGameServer.newSnowflake();
             iGameServer.setStartedTime(System.currentTimeMillis());
-            iGameServer.setPort(PoloCloudAPI.getInstance().getPortManager().getPort(template));
+            iGameServer.setPort(PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template));
             iGameServer.setVisible(false);
 
             wrapperClient.startServer(iGameServer);
         }
+    }
+
+    @Override
+    public int getFreePort(ITemplate template) {
+        Properties properties = PoloCloudAPI.getInstance().getMasterConfig().getProperties();
+        int port = template.getTemplateType() == TemplateType.PROXY ? properties.getDefaultProxyStartPort() : properties.getDefaultServerStartPort();
+
+        IGameServer gameServer = this.getAllCached(template.getTemplateType()).stream().max(Comparator.comparingInt(IGameServer::getPort)).orElse(null);
+
+        if (gameServer != null) {
+            port = (gameServer.getPort() + 1);
+        }
+
+        return port;
+    }
+
+    @Override
+    public int getFreeId(ITemplate template) {
+        int id = 1;
+
+        IGameServer gameServer = this.getAllCached(template.getTemplateType()).stream().max(Comparator.comparingInt(IGameServer::getId)).orElse(null);
+
+        if (gameServer != null) {
+            id = (gameServer.getId() + 1);
+        }
+
+        return id;
     }
 
     @Override
@@ -77,13 +105,13 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
 
     @Override
     public void stopServers(ITemplate template) throws NoWrapperFoundException{
-        for (IGameServer server : new ArrayList<>(getCached(template))) {
+        for (IGameServer server : new ArrayList<>(getAllCached(template))) {
             stopServer(server);
         }
     }
 
     @Override
-    public void registerGameServer(IGameServer gameServer) {
+    public void register(IGameServer gameServer) {
         if (this.getCached(gameServer.getName()) == null) {
             this.cachedObjects.add(gameServer);
 
@@ -94,13 +122,16 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     }
 
     @Override
-    public void unregisterGameServer(IGameServer gameServer) {
+    public void unregister(IGameServer gameServer) {
         if (gameServer == null) {
             return;
         }
 
-        gameServer.setStatus(GameServerStatus.STOPPING);
-        gameServer.updateInternally();
+        if (gameServer.getStatus() != GameServerStatus.STOPPING) {
+            gameServer.setStatus(GameServerStatus.STOPPING);
+            gameServer.updateInternally();
+        }
+
         cachedObjects.removeIf(gameServer1 -> gameServer1.getName().equalsIgnoreCase(gameServer.getName()));
 
         if (PoloCloudAPI.getInstance().getType().isCloud()) {
@@ -109,17 +140,17 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     }
 
     @Override
-    public void updateObject(IGameServer object) {
+    public void update(IGameServer object) {
 
         IGameServer cachedGameServer = this.getCached(object.getName());
 
         //Server is not cached yet.... registering
         if (cachedGameServer == null) {
-            this.registerGameServer(object);
+            this.register(object);
             return;
         }
 
-        IGameServerManager.super.updateObject(object);
+        IGameServerManager.super.update(object);
 
         if (PoloCloudAPI.getInstance().getType().isCloud()) {
             PoloCloudAPI.getInstance().updateCache();

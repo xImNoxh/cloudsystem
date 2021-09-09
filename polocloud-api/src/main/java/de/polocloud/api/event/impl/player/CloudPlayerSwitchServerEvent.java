@@ -6,7 +6,7 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.player.ICloudPlayer;
 
-@EventData(nettyFire = true)
+@EventData(nettyFire = true, fromCloudToServers = true)
 public class CloudPlayerSwitchServerEvent extends CloudPlayerEvent implements ICancellable {
 
     private SimpleGameServer target;

@@ -3,10 +3,8 @@ package de.polocloud.plugin.protocol;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.event.SimpleCachedEventManager;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.port.IPortManager;
-import de.polocloud.api.gameserver.port.SimpleCachedPortManager;
+
 import de.polocloud.api.network.packets.api.EventPacket;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.api.MasterCache;
@@ -17,7 +15,6 @@ import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
-import de.polocloud.api.network.protocol.packet.base.response.def.Request;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
@@ -29,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public class NetworkPluginRegister {
 
@@ -38,13 +34,6 @@ public class NetworkPluginRegister {
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GlobalCachePacket.class, globalCachePacket -> {
             MasterCache masterCache = globalCachePacket.getMasterCache();
             PoloCloudAPI.getInstance().setCache(masterCache);
-
-            IPortManager portManager = globalCachePacket.getPortManager();
-            PoloCloudAPI.getInstance().getPortManager().setProxyPort(((SimpleCachedPortManager)portManager).getProxyPort());
-            PoloCloudAPI.getInstance().getPortManager().setServerPort(((SimpleCachedPortManager)portManager).getServerPort());
-
-            ((SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager()).setPortList(((SimpleCachedPortManager)portManager).getPortList());
-            ((SimpleCachedPortManager) PoloCloudAPI.getInstance().getPortManager()).setProxyPortList(((SimpleCachedPortManager)portManager).getProxyPortList());
         });
 
         PoloCloudAPI.getInstance().registerSimplePacketHandler(PropertyCachePacket.class, propertyCachePacket -> {
@@ -63,7 +52,7 @@ public class NetworkPluginRegister {
         });
 
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUpdatePacket.class, packet -> {
-            PoloCloudAPI.getInstance().getGameServerManager().updateObject(packet.getGameServer());
+            PoloCloudAPI.getInstance().getGameServerManager().update(packet.getGameServer());
         });
 
         PacketMessenger.registerHandler(request -> {
@@ -83,9 +72,11 @@ public class NetworkPluginRegister {
         PoloCloudAPI.getInstance().registerSimplePacketHandler(EventPacket.class, eventPacket -> {
 
             Runnable runnable = () -> {
+
                 if (Arrays.asList(eventPacket.getIgnoredTypes()).contains(PoloCloudAPI.getInstance().getType())) {
                     return;
                 }
+
                 IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
                 if (thisService != null && eventPacket.getExcept().equalsIgnoreCase(thisService.getName())) {
                     return;

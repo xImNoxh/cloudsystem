@@ -7,7 +7,7 @@ import de.polocloud.api.player.ICloudPlayer;
 
 import java.io.IOException;
 
-@AutoRegistry//(id = 0x14)
+@AutoRegistry
 public class CloudPlayerRegisterPacket extends Packet {
 
     private ICloudPlayer cloudPlayer;

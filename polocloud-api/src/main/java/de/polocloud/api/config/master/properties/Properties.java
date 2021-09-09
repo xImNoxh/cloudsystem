@@ -2,13 +2,16 @@ package de.polocloud.api.config.master.properties;
 
 import de.polocloud.api.config.IConfig;
 import de.polocloud.api.fallback.base.SimpleFallback;
+import de.polocloud.api.network.protocol.IProtocolObject;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Properties implements IConfig {
+public class Properties implements IConfig, IProtocolObject {
 
     /**
      * The wrapper key to verify logins
@@ -152,5 +155,39 @@ public class Properties implements IConfig {
 
     public List<SimpleFallback> getFallbacks() {
         return fallbacks;
+    }
+
+    @Override
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(wrapperKey);
+        buf.writeBoolean(logPlayerConnections);
+        buf.writeInt(maxSimultaneouslyStartingTemplates);
+        buf.writeBoolean(proxyOnlineMode);
+        buf.writeBoolean(proxyPingForwarding);
+        buf.writeInt(port);
+        buf.writeInt(defaultProxyStartPort);
+        buf.writeInt(defaultServerStartPort);
+
+        buf.writeInt(fallbacks.size());
+        for (SimpleFallback fallback : fallbacks) {
+            buf.writeFallback(fallback);
+        }
+    }
+
+    @Override
+    public void read(IPacketBuffer buf) throws IOException {
+        wrapperKey = buf.readString();
+        logPlayerConnections = buf.readBoolean();
+        maxSimultaneouslyStartingTemplates = buf.readInt();
+        proxyOnlineMode = buf.readBoolean();
+        proxyPingForwarding = buf.readBoolean();
+        port = buf.readInt();
+        defaultProxyStartPort = buf.readInt();
+        defaultServerStartPort = buf.readInt();
+        int size = buf.readInt();
+        fallbacks = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            fallbacks.add((SimpleFallback) buf.readFallback());
+        }
     }
 }

@@ -2,6 +2,7 @@ package de.polocloud.launcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.polocloud.api.APIVersion;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.client.PoloCloudClient;
 import de.polocloud.client.PoloCloudUpdater;
@@ -59,7 +60,7 @@ public class Launcher {
                 configFile.createNewFile();
 
                 configObject = new HashMap<>();
-                configObject.put("version", "0.Alpha");
+                configObject.put("version", PoloCloudClient.class.getAnnotation(APIVersion.class) == null ? "N/A" : PoloCloudClient.class.getAnnotation(APIVersion.class).version());
                 configObject.put("forceUpdate", true);
 
                 FileWriter writer = new FileWriter(configFile);

@@ -218,7 +218,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             }
         }
 
-        this.loggerFactory.shutdown(() -> Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L));
+        this.loggerFactory.shutdown();
+        Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
         return terminate;
     }
 

@@ -118,11 +118,9 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     int getPort();
 
     /**
-     * Gets the ping of the server
-     *
-     * @return ping as long
+     * The id of this server (e.g. Lobby-1 <- "1" would be id)
      */
-    long getPing();
+    int getId();
 
     /**
      * Gets the time the server started at
@@ -130,15 +128,6 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * @return time as millis (long)
      */
     long getStartTime();
-
-    /**
-     * Stops this server
-     *
-     * This should only be done if the {@link GameServerStatus} of this server
-     * is {@link GameServerStatus#AVAILABLE} otherwise you should use
-     * {@link IGameServer#terminate()} to terminate the process of this server
-     */
-    void stop();
 
     /**
      * Terminates the process of this server
@@ -235,11 +224,11 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     void setTemplate(String template);
 
     /**
-     * Sets the name of this server
+     * Sets the id of this server
      *
-     * @param name the port
+     * @param id the id
      */
-    void setName(String name);
+    void setId(int id);
 
     /**
      * Sets the {@link IProperty}s of this server

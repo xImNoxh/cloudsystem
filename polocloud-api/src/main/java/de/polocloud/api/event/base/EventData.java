@@ -23,6 +23,12 @@ public @interface EventData {
     boolean async() default false;
 
     /**
+     * If this event (if received by cloud) should
+     * send the handled event back to all servers
+     */
+    boolean fromCloudToServers() default false;
+
+    /**
      * The ignored types that won't receive
      * this event if its netty fired
      */

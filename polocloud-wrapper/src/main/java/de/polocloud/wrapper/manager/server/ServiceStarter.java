@@ -235,6 +235,8 @@ public class ServiceStarter {
                     serviceStopper.stop(iGameServer -> {
                         PoloCloudAPI.getInstance().sendPacket(new WrapperServerStoppedPacket(iGameServer.getName(), iGameServer.getSnowflake()));
 
+                        Wrapper.getInstance().getScreenManager().unregisterScreen(iGameServer.getName());
+
                         //Check if removed from cache between stopping and accepting consumer
                         PoloLogger.print(LogLevel.INFO, "§7Server §3" + iGameServer.getName() + "§7#§3" + iGameServer.getSnowflake() + " §7was §cstopped§7!");
                     });
