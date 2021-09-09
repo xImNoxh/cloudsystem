@@ -53,11 +53,11 @@ public class ProxyModule {
     }
 
     public void loadConfig(){
-        proxyConfig = new SimpleConfigLoader().load(ProxyConfig.class, new File(module.getDataDirectory(), "config.yml"));
+        proxyConfig = new SimpleConfigLoader().load(ProxyConfig.class, new File(module.getDataDirectory(), "config.json"));
     }
 
     public void saveConfig(){
-        new SimpleConfigSaver().save(proxyConfig, new File(module.getDataDirectory(), "config.yml"));
+        new SimpleConfigSaver().save(proxyConfig, new File(module.getDataDirectory(), "config.json"));
     }
 
     public MotdService getMotdService() {

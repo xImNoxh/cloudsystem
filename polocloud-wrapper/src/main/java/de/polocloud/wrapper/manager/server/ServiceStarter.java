@@ -3,6 +3,7 @@ package de.polocloud.wrapper.manager.server;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.event.impl.other.GameServerPrepareFilesEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.ModuleCopyType;
@@ -113,6 +114,20 @@ public class ServiceStarter {
         }
 
         FileUtils.copyFile(FileConstants.WRAPPER_CLOUD_API, new File(serverLocation + "/plugins/" + FileConstants.CLOUD_API_NAME));
+
+        File serverIcon = new File(serverLocation, "server-icon.png");
+
+        if (service.getTemplate().getTemplateType() == TemplateType.PROXY && !serverIcon.exists()) {
+            try {
+                URL inputUrl = getClass().getResource("/server-icon.png");
+                FileUtils.copyURLToFile(inputUrl, serverIcon);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        //GameServerPrepareFilesEvent event = new GameServerPrepareFilesEvent(this.service, serverLocation);
+        //PoloCloudAPI.getInstance().getEventManager().fireEvent(event);
     }
 
     /**

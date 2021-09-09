@@ -9,7 +9,7 @@ import de.polocloud.modules.permission.PoloCloudPermissionModule;
 
 @ModuleInfo(
     main = ModuleBootstrap.class,
-    name = "PermissionsModule",
+    name = "PoloCloud-Permissions",
     version = "1.0",
     description = "This manages the perms all over the network",
     authors = "Lystx",

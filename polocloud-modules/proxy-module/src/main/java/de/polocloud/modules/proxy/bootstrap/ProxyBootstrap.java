@@ -11,7 +11,7 @@ import de.polocloud.modules.proxy.ProxyModule;
 
 @ModuleInfo(
     main = ProxyBootstrap.class,
-    name = "Proxy",
+    name = "PoloCloud-Proxy",
     version = "1.0",
     description = "This is a Proxy Module",
     authors = "HttpMarco",
