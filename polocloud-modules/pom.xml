@@ -20,6 +20,7 @@
     <module>permissions-module</module>
     <module>proxy-module</module>
     <module>example-module</module>
+    <module>npc-module</module>
   </modules>
 
   <properties>

@@ -34,8 +34,6 @@ public class SignCommand implements CommandExecutor {
             return false;
         }
 
-
-
         if(args.length == 1 && args[0].equals("remove")){
             Block block = player.getTargetBlock((Set<Material>) null, 5);
 

@@ -1,0 +1,9 @@
+name: CloudNPCs
+version: 1.0
+authors:
+    - PoloCloud
+    - iPommes
+main: de.polocloud.npcs.bootstraps.PluginBootstrap
+
+commands:
+    cloudnpcs:
