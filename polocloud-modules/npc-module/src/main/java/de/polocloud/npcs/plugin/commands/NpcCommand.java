@@ -93,6 +93,7 @@ public class NpcCommand implements CommandExecutor {
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
+                        player.sendMessage(prefix + "§aSuccessfully §7create a §bNPCEntity §7with the properties: §7Entitytype: §b" + entityName + ", §7Type: §btemplate");
                     }else{
                         sendHelp(player);
                     }
@@ -113,6 +114,7 @@ public class NpcCommand implements CommandExecutor {
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
+                        player.sendMessage(prefix + "§aSuccessfully §7create a §bNPCEntity §7with the properties: §7Entitytype: §b" + entityName + ", §7Type: §bgameserver");
                     }else{
                         sendHelp(player);
                     }
@@ -149,6 +151,7 @@ public class NpcCommand implements CommandExecutor {
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
+                        player.sendMessage(prefix + "§aSuccessfully §7create a §bNPC §7with the properties: §7Skin: §b" + skinName + ", §7Type: §btemplate, §7Item: §b" + itemName);
                     }else{
                         sendHelp(player);
                     }
@@ -167,10 +170,12 @@ public class NpcCommand implements CommandExecutor {
                             player.sendMessage(prefix + "§7The material §8» §b" + itemName + " §cdoesn't exist§7!");
                             return false;
                         }
+                        player.sendMessage(prefix + "§7Creating...");
                         ICloudNPC npc = new SimpleCloudNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), gameServer.getName(), skinName, itemName, "none", true, false, player.getLocation().getYaw(), player.getLocation().getPitch()));
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
+                        player.sendMessage(prefix + "§aSuccessfully §7create a §bNPC §7with the properties: §7Skin: §b" + skinName + ", §7Type: §bgameserver, §7Item: §b" + itemName);
                     }else{
                         sendHelp(player);
                     }
@@ -190,10 +195,15 @@ public class NpcCommand implements CommandExecutor {
         String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "[NPCs] ";
         player.sendMessage("§7----[§bCloudNPCs§7]----");
         player.sendMessage(prefix + "§7Use §b/cloudnpcs list §7to list all spawned NPCs");
+        player.sendMessage("");
         player.sendMessage(prefix + "§7Use §b/cloudnpcs remove §7to remove the NPC on you current location");
+        player.sendMessage("");
         player.sendMessage(prefix + "§7Use §b/cloudnpcs create gamserver <gameservername> entity <entitytype> §7to create a NPCEntity for a single gameserver");
+        player.sendMessage("");
         player.sendMessage(prefix + "§7Use §b/cloudnpcs create template <templatename> entity <entitytype> §7to create a NPCEntity for a template");
+        player.sendMessage("");
         player.sendMessage(prefix + "§7Use §b/cloudnpcs create gamserver <gameservername> npc <skinname or 'default'> <itemInHand or 'none'> §7to create a NPC for a single gameserver");
+        player.sendMessage("");
         player.sendMessage(prefix + "§7Use §b/cloudnpcs create template <templatename> npc <skinname or 'default'> <itemInHand or 'none'> §7to create a NPC for a template");
     }
 
