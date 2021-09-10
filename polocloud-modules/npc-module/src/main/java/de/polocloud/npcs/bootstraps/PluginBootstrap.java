@@ -1,5 +1,6 @@
 package de.polocloud.npcs.bootstraps;
 
+import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.plugin.PluginNPCService;
 import de.polocloud.npcs.plugin.commands.NpcCommand;
 import de.polocloud.npcs.plugin.listeners.CollectiveSpigotListener;
@@ -22,6 +23,9 @@ public class PluginBootstrap extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (ICloudNPC cloudNPC : npcService.getCloudNPCManager().getCloudNPCS()) {
+            cloudNPC.remove();
+        }
     }
 
     public static PluginBootstrap getInstance() {

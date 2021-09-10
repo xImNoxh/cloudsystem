@@ -18,7 +18,7 @@ public class SimpleCloudNPCManager implements ICloudNPCManager {
 
     @Override
     public ICloudNPC getNPCByLocation(Location location) {
-        return this.cloudNPCS.stream().filter(npc -> npc.getLocation().equals(location)).findFirst().orElse(null);
+        return this.cloudNPCS.stream().filter(npc -> npc.getNativeLocation().equals(location)).findFirst().orElse(null);
     }
 
     @Override

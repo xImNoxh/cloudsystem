@@ -9,6 +9,7 @@ import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.npc.interact.NPCInteractHandler;
 import net.jitse.npclib.api.events.NPCInteractEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -126,7 +127,7 @@ public class CollectiveSpigotListener implements Listener {
     public void handle(InventoryClickEvent event){
         assert event.getWhoClicked() instanceof Player;
         Player player = (Player) event.getWhoClicked();
-        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getName().contains("§eSelector") && event.getCurrentItem().hasItemMeta()){
+        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getName().contains("§eSelector") && !event.getCurrentItem().getType().equals(Material.AIR) && event.getCurrentItem().hasItemMeta()){
             event.setCancelled(true);
             String gameserverName = event.getCurrentItem().getItemMeta().getDisplayName().split(" ")[0];
             if(gameserverName != null){

@@ -5,8 +5,9 @@ public class CloudNPCMeta {
     private int x, y, z;
     private String world, templateOrGameServer, skinName, itemInHand, entityName;
     private boolean onlyGameServer, entity;
+    private float yaw, pitch;
 
-    public CloudNPCMeta(int x, int y, int z, String world, String templateOrGameServer, String skinName, String itemInHand, String entityName, boolean onlyGameServer, boolean entity) {
+    public CloudNPCMeta(int x, int y, int z, String world, String templateOrGameServer, String skinName, String itemInHand, String entityName, boolean onlyGameServer, boolean entity, float yaw, float pitch) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -17,6 +18,8 @@ public class CloudNPCMeta {
         this.entityName = entityName;
         this.onlyGameServer = onlyGameServer;
         this.entity = entity;
+        this.yaw = yaw;
+        this.pitch = pitch;
     }
 
     public int getX() {
@@ -97,5 +100,21 @@ public class CloudNPCMeta {
 
     public void setEntity(boolean entity) {
         this.entity = entity;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
     }
 }

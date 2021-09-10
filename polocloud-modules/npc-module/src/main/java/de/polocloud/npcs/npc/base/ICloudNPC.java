@@ -26,6 +26,8 @@ public interface ICloudNPC {
 
     Location getLocation();
 
+    Location getNativeLocation();
+
     NPC getNPC();
 
     Entity getEntity();

@@ -41,7 +41,8 @@ public class SimpleEntityNPC implements ICloudNPC {
     public SimpleEntityNPC(CloudNPCMeta meta) {
         this.meta = meta;
 
-        this.location = new Location(Bukkit.getWorld(meta.getWorld()), meta.getX(), meta.getY(), meta.getZ());
+        this.location = new Location(Bukkit.getWorld(meta.getWorld()), meta.getX(), meta.getY(), meta.getZ(), meta.getYaw(), meta.getPitch());
+
 
         this.entityType = EntityProvider.getEntityTypeByName(meta.getEntityName());
     }
@@ -141,6 +142,11 @@ public class SimpleEntityNPC implements ICloudNPC {
     @Override
     public Location getLocation() {
         return location;
+    }
+
+    @Override
+    public Location getNativeLocation() {
+        return new Location(this.location.getWorld(), this.location.getBlockX(), this.location.getBlockY(), this.location.getBlockZ());
     }
 
     @Override

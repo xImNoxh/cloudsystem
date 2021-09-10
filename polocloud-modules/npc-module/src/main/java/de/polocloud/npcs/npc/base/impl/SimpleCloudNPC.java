@@ -37,7 +37,7 @@ public class SimpleCloudNPC implements ICloudNPC {
     public SimpleCloudNPC(CloudNPCMeta metaData) {
         this.meta = metaData;
 
-        this.location = new Location(Bukkit.getWorld(metaData.getWorld()), metaData.getX(), metaData.getY(), metaData.getZ());
+        this.location = new Location(Bukkit.getWorld(metaData.getWorld()), metaData.getX(), metaData.getY(), metaData.getZ(), metaData.getYaw(), metaData.getPitch());
 
         if(!metaData.getItemInHand().equalsIgnoreCase("none")){
             itemInHand = new ItemStack(Material.getMaterial(metaData.getItemInHand().toUpperCase()));
@@ -142,6 +142,11 @@ public class SimpleCloudNPC implements ICloudNPC {
     @Override
     public Location getLocation() {
         return location;
+    }
+
+    @Override
+    public Location getNativeLocation() {
+        return new Location(this.location.getWorld(), this.location.getBlockX(), this.location.getBlockY(), this.location.getBlockZ());
     }
 
     @Override

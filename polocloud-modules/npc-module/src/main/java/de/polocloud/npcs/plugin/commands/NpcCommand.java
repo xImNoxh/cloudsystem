@@ -89,7 +89,7 @@ public class NpcCommand implements CommandExecutor {
                             player.sendMessage(prefix + "§7The entitytype §8» §b" + entityName + " §cdoesn't exist§7!");
                             return false;
                         }
-                        ICloudNPC npc = new SimpleEntityNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), template.getName(), "none", "none", entityName.toUpperCase(), false, true));
+                        ICloudNPC npc = new SimpleEntityNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), template.getName(), "none", "none", entityName.toUpperCase(), false, true, player.getLocation().getYaw(), player.getLocation().getPitch()));
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
@@ -109,7 +109,7 @@ public class NpcCommand implements CommandExecutor {
                             player.sendMessage(prefix + "§7The entitytype §8» §b" + entityName + " §cdoesn't exist§7!");
                             return false;
                         }
-                        ICloudNPC npc = new SimpleEntityNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), gameServer.getName(), "none", "none", entityName.toUpperCase(), true, true));
+                        ICloudNPC npc = new SimpleEntityNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), gameServer.getName(), "none", "none", entityName.toUpperCase(), true, true, player.getLocation().getYaw(), player.getLocation().getPitch()));
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
@@ -145,7 +145,7 @@ public class NpcCommand implements CommandExecutor {
                             player.sendMessage(prefix + "§7The material §8» §b" + itemName + " §cdoesn't exist§7!");
                             return false;
                         }
-                        ICloudNPC npc = new SimpleCloudNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), template.getName(), skinName, itemName, "none", false, false));
+                        ICloudNPC npc = new SimpleCloudNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), template.getName(), skinName, itemName, "none", false, false, player.getLocation().getYaw(), player.getLocation().getPitch()));
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
@@ -167,7 +167,7 @@ public class NpcCommand implements CommandExecutor {
                             player.sendMessage(prefix + "§7The material §8» §b" + itemName + " §cdoesn't exist§7!");
                             return false;
                         }
-                        ICloudNPC npc = new SimpleCloudNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), gameServer.getName(), skinName, itemName, "none", true, false));
+                        ICloudNPC npc = new SimpleCloudNPC(new CloudNPCMeta(roundLocation.getBlockX(), roundLocation.getBlockY(), roundLocation.getBlockZ(), roundLocation.getWorld().getName(), gameServer.getName(), skinName, itemName, "none", true, false, player.getLocation().getYaw(), player.getLocation().getPitch()));
                         npc.spawn();
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
