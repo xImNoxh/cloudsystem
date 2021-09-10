@@ -67,9 +67,8 @@ public class SimpleCloudNPC implements ICloudNPC {
 
 
         this.npc = PluginBootstrap.getInstance().getNpcService().getNpcLib().createNPC();
-        npc.setLocation(location);
+        npc.setLocation(location.add(0.5, 0, 0.5));
         npc.setItem(NPCSlot.MAINHAND, itemInHand == null ? new ItemStack(Material.AIR) : itemInHand);
-
 
 
         ArrayList<String> hologramLines = new ArrayList<>();

@@ -126,7 +126,7 @@ public class CollectiveSpigotListener implements Listener {
     public void handle(InventoryClickEvent event){
         assert event.getWhoClicked() instanceof Player;
         Player player = (Player) event.getWhoClicked();
-        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getName().contains("§eSelector")){
+        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getName().contains("§eSelector") && event.getCurrentItem().hasItemMeta()){
             event.setCancelled(true);
             String gameserverName = event.getCurrentItem().getItemMeta().getDisplayName().split(" ")[0];
             if(gameserverName != null){

@@ -66,7 +66,7 @@ public class NpcCommand implements CommandExecutor {
                     player.sendMessage(prefix + "§7You §cremoved §7the §bNPC §7on your location!");
                     break;
                 default:
-                    sendHelp();
+                    sendHelp(player);
                     break;
             }
         }else if(args.length == 5){
@@ -94,7 +94,7 @@ public class NpcCommand implements CommandExecutor {
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
                     }else{
-                        sendHelp();
+                        sendHelp(player);
                     }
                 }else if(args[1].equalsIgnoreCase("gameserver")){
                     String gameServerName = args[2];
@@ -114,13 +114,13 @@ public class NpcCommand implements CommandExecutor {
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
                     }else{
-                        sendHelp();
+                        sendHelp(player);
                     }
                 }else{
-                    sendHelp();
+                    sendHelp(player);
                 }
             }else{
-                sendHelp();
+                sendHelp(player);
             }
         }else if(args.length == 6){
             if(args[0].equals("create")){
@@ -150,7 +150,7 @@ public class NpcCommand implements CommandExecutor {
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
                     }else{
-                        sendHelp();
+                        sendHelp(player);
                     }
                 }else if(args[1].equalsIgnoreCase("gameserver")){
                     String gameServerName = args[2];
@@ -172,22 +172,29 @@ public class NpcCommand implements CommandExecutor {
                         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
                         PluginBootstrap.getInstance().getNpcService().updateNPCs();
                     }else{
-                        sendHelp();
+                        sendHelp(player);
                     }
                 }else{
-                    sendHelp();
+                    sendHelp(player);
                 }
             }else{
-                sendHelp();
+                sendHelp(player);
             }
         }else{
-            sendHelp();
+            sendHelp(player);
         }
         return false;
     }
 
-    private void sendHelp(){
-
+    private void sendHelp(Player player){
+        String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "[NPCs] ";
+        player.sendMessage("§7----[§bCloudNPCs§7]----");
+        player.sendMessage(prefix + "§7Use §b/cloudnpcs list §7to list all spawned NPCs");
+        player.sendMessage(prefix + "§7Use §b/cloudnpcs remove §7to remove the NPC on you current location");
+        player.sendMessage(prefix + "§7Use §b/cloudnpcs create gamserver <gameservername> entity <entitytype> §7to create a NPCEntity for a single gameserver");
+        player.sendMessage(prefix + "§7Use §b/cloudnpcs create template <templatename> entity <entitytype> §7to create a NPCEntity for a template");
+        player.sendMessage(prefix + "§7Use §b/cloudnpcs create gamserver <gameservername> npc <skinname or 'default'> <itemInHand or 'none'> §7to create a NPC for a single gameserver");
+        player.sendMessage(prefix + "§7Use §b/cloudnpcs create template <templatename> npc <skinname or 'default'> <itemInHand or 'none'> §7to create a NPC for a template");
     }
 
 }
