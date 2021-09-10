@@ -28,7 +28,6 @@ public class PluginNPCService implements INPCService {
 
     private NPCLib npcLib;
 
-    private NPCSkinFetcher npcSkinFetcher;
 
     private ICloudNPCManager cloudNPCManager;
 
@@ -44,7 +43,6 @@ public class PluginNPCService implements INPCService {
         NMSClassWrapper.loadClasses();
         npcLib = new NPCLib(PluginBootstrap.getInstance());
 
-        npcSkinFetcher = new NPCSkinFetcher();
 
         this.cloudNPCManager = new SimpleCloudNPCManager();
         this.initializer = new NPCInitializer();
@@ -73,7 +71,6 @@ public class PluginNPCService implements INPCService {
     @Override
     public void updateNPCs() {
         List<CloudNPCMeta> metas = this.cloudNPCManager.getCloudNPCS().stream().map(ICloudNPC::getCloudNPCMetaData).collect(Collectors.toList());
-        System.out.println(new ArrayList<>(metas).size());
         this.currentCache.setMetas(new ArrayList<>(metas));
         this.transferChannel.sendMessage(new WrappedObject<>(this.currentCache));
     }
@@ -94,10 +91,6 @@ public class PluginNPCService implements INPCService {
 
     public NPCLib getNpcLib() {
         return npcLib;
-    }
-
-    public NPCSkinFetcher getNpcSkinFetcher() {
-        return npcSkinFetcher;
     }
 
     public GlobalConfigClass getCurrentCache() {
