@@ -7,6 +7,8 @@ import de.polocloud.npcs.plugin.listeners.CollectiveSpigotListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
+
 public class PluginBootstrap extends JavaPlugin {
 
     private static PluginBootstrap instance;
@@ -19,6 +21,7 @@ public class PluginBootstrap extends JavaPlugin {
         npcService = new PluginNPCService();
         Bukkit.getPluginManager().registerEvents(new CollectiveSpigotListener(), this);
         getCommand("cloudnpcs").setExecutor(new NpcCommand());
+        getCommand("cloudnpcs").setAliases(Arrays.asList("npc", "npcs", "cloudnpcs"));
     }
 
     @Override

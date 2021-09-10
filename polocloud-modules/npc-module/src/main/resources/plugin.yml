@@ -7,3 +7,7 @@ main: de.polocloud.npcs.bootstraps.PluginBootstrap
 
 commands:
     cloudnpcs:
+        aliases:
+            - npc
+            - npcs
+            - cloudnpc
