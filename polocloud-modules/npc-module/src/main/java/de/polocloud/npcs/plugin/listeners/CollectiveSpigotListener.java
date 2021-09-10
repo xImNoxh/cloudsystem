@@ -9,6 +9,7 @@ import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.npc.interact.NPCInteractHandler;
 import net.jitse.npclib.api.events.NPCInteractEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -107,7 +108,7 @@ public class CollectiveSpigotListener implements Listener {
      */
     @EventHandler
     public void handle(NPCInteractEvent event){
-        ICloudNPC npc = PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getNPCByLocation(event.getNPC().getLocation());
+        ICloudNPC npc = PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getNPCByLocation(new Location(event.getNPC().getLocation().getWorld(), event.getNPC().getLocation().getBlockX(), event.getNPC().getLocation().getBlockY(), event.getNPC().getLocation().getBlockZ()));
         if (npc != null) {
             if(npc.getCloudNPCMetaData().isOnlyGameServer()){
                 NPCInteractHandler.handleConnect(event.getWhoClicked(), npc);
@@ -127,30 +128,32 @@ public class CollectiveSpigotListener implements Listener {
     public void handle(InventoryClickEvent event){
         assert event.getWhoClicked() instanceof Player;
         Player player = (Player) event.getWhoClicked();
-        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getName().contains("§eSelector") && !event.getCurrentItem().getType().equals(Material.AIR) && event.getCurrentItem().hasItemMeta()){
+        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getName().contains("§eSelector")){
             event.setCancelled(true);
-            String gameserverName = event.getCurrentItem().getItemMeta().getDisplayName().split(" ")[0];
-            if(gameserverName != null){
-                gameserverName = ChatColor.stripColor(gameserverName);
-                IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(gameserverName);
-                ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(player.getName());
-                if(gameServer.getTemplate().isMaintenance()){
-                    player.closeInventory();
-                    player.sendMessage("§7The gameserver §8» §b" + gameServer.getName() + " §7is currently in §emaintenance§7!");
-                }else if(cloudPlayer.getMinecraftServer().getSnowflake() == gameServer.getSnowflake()){
-                    player.closeInventory();
-                    player.sendMessage("§7You are already on the gameserver §8» §b" + gameServer.getName() + "§7!");
-                }else if(gameServer.getOnlinePlayers() >= gameServer.getTemplate().getMaxPlayers()){
-                    player.closeInventory();
-                    player.sendMessage("§7The gameserver §8» §b" + gameServer.getName() + " §7is full! (§b" + gameServer.getOnlinePlayers() + "§7/§b" + gameServer.getTemplate().getMaxPlayers() + "§7)");
-                }else if(gameServer.getStatus() != GameServerStatus.AVAILABLE){
-                    player.closeInventory();
-                    player.sendMessage("§7The gameserver §8» §b" + gameServer.getName() + " §7is not in the AVAILABLE state!");
-                }else{
-                    player.closeInventory();
-                    player.sendMessage("§7Sending...");
-                    cloudPlayer.sendTo(gameServer);
-                    player.sendMessage("§7You were sent to §8» §b" + gameServer.getName());
+            if(event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR) && event.getCurrentItem().hasItemMeta()){
+                String gameserverName = event.getCurrentItem().getItemMeta().getDisplayName().split(" ")[0];
+                if(gameserverName != null){
+                    gameserverName = ChatColor.stripColor(gameserverName);
+                    IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(gameserverName);
+                    ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(player.getName());
+                    if(gameServer.getTemplate().isMaintenance()){
+                        player.closeInventory();
+                        player.sendMessage("§7The gameserver §8» §b" + gameServer.getName() + " §7is currently in §emaintenance§7!");
+                    }else if(cloudPlayer.getMinecraftServer().getSnowflake() == gameServer.getSnowflake()){
+                        player.closeInventory();
+                        player.sendMessage("§7You are already on the gameserver §8» §b" + gameServer.getName() + "§7!");
+                    }else if(gameServer.getOnlinePlayers() >= gameServer.getTemplate().getMaxPlayers()){
+                        player.closeInventory();
+                        player.sendMessage("§7The gameserver §8» §b" + gameServer.getName() + " §7is full! (§b" + gameServer.getOnlinePlayers() + "§7/§b" + gameServer.getTemplate().getMaxPlayers() + "§7)");
+                    }else if(gameServer.getStatus() != GameServerStatus.AVAILABLE){
+                        player.closeInventory();
+                        player.sendMessage("§7The gameserver §8» §b" + gameServer.getName() + " §7is not in the AVAILABLE state!");
+                    }else{
+                        player.closeInventory();
+                        player.sendMessage("§7Sending...");
+                        cloudPlayer.sendTo(gameServer);
+                        player.sendMessage("§7You were sent to §8» §b" + gameServer.getName());
+                    }
                 }
             }
         }
