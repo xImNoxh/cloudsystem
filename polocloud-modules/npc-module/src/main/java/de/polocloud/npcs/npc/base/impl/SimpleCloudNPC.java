@@ -39,6 +39,7 @@ public class SimpleCloudNPC implements ICloudNPC {
 
         this.location = new Location(Bukkit.getWorld(metaData.getWorld()), metaData.getX(), metaData.getY(), metaData.getZ(), metaData.getYaw(), metaData.getPitch());
 
+
         if(!metaData.getItemInHand().equalsIgnoreCase("none")){
             itemInHand = new ItemStack(Material.getMaterial(metaData.getItemInHand().toUpperCase()));
         }else{
@@ -65,6 +66,12 @@ public class SimpleCloudNPC implements ICloudNPC {
             skinName = meta.getSkinName();
         }
 
+
+        Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () ->{
+            if(!this.location.getChunk().isLoaded()){
+                this.location.getChunk().load();
+            }
+        });
 
         this.npc = PluginBootstrap.getInstance().getNpcService().getNpcLib().createNPC();
         npc.setLocation(location.add(0.5, 0, 0.5));

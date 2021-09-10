@@ -44,6 +44,7 @@ public class SimpleEntityNPC implements ICloudNPC {
         this.location = new Location(Bukkit.getWorld(meta.getWorld()), meta.getX(), meta.getY(), meta.getZ(), meta.getYaw(), meta.getPitch());
 
 
+
         this.entityType = EntityProvider.getEntityTypeByName(meta.getEntityName());
     }
 
@@ -70,6 +71,9 @@ public class SimpleEntityNPC implements ICloudNPC {
             location.getWorld().setDifficulty(Difficulty.EASY);
         }
         Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () ->{
+            if(!this.location.getChunk().isLoaded()){
+                this.location.getChunk().load();
+            }
             this.entity = location.getWorld().spawnEntity(location.add(0.5, 0, 0.5), entityType);
             NMSEntity nmsEntity = new NMSEntity(entity);
             NMSNBTTag nmsNBTTag = new NMSNBTTag();
