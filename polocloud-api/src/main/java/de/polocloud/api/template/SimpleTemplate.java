@@ -104,17 +104,17 @@ public class SimpleTemplate implements ITemplate {
 
     @Override
     public void update() {
+        SimpleCachedTemplateManager templateManager = (SimpleCachedTemplateManager) PoloCloudAPI.getInstance().getTemplateManager();
+        templateManager.update(this);
+
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
 
             PoloCloudAPI.getInstance().getTemplateManager().getTemplateSaver().save(this);
-
             for (IGameServer gameServer : this.getServers()) {
                 gameServer.update();
             }
 
         } else {
-            SimpleCachedTemplateManager templateManager = (SimpleCachedTemplateManager) PoloCloudAPI.getInstance().getTemplateManager();
-            templateManager.update(this);
             PoloCloudAPI.getInstance().sendPacket(new TemplateUpdatePacket(this));
         }
     }
