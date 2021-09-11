@@ -13,7 +13,6 @@ public class HubCommandProxyBootstrap extends Plugin {
     private HubCommandConfig hubCommandConfig;
     private HubCommandMessageChannel hubCommandMessageChannel;
 
-
     @Override
     public void onEnable() {
         instance = this;
@@ -27,7 +26,6 @@ public class HubCommandProxyBootstrap extends Plugin {
     public static HubCommandProxyBootstrap getInstance() {
         return instance;
     }
-
 
     public HubCommandConfig getHubCommandConfig() {
         return hubCommandConfig;
