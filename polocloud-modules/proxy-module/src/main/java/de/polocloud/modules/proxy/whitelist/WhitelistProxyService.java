@@ -16,9 +16,7 @@ public class WhitelistProxyService {
 
         this.whitelistChannel = new WhitelistChannel();
 
-        whitelistChannel.getChannel().registerListener((globalConfigClassWrappedObject, startTime) -> {
-            whitelistProperty = globalConfigClassWrappedObject.unwrap(WhitelistProperty.class);
-        });
+        whitelistChannel.getChannel().registerListener((globalConfigClassWrappedObject, startTime) -> whitelistProperty = globalConfigClassWrappedObject.unwrap(WhitelistProperty.class));
 
         PoloCloudAPI.getInstance().getEventManager().registerListener(new WhitelistCollectiveEvents());
     }

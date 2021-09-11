@@ -84,7 +84,7 @@ public interface IPlayerSettings {
         /**
          * The right hand of the player
          */
-        RIGHT;
+        RIGHT
 
     }
 
@@ -103,6 +103,6 @@ public interface IPlayerSettings {
         /**
          * Chat is completely hidden
          */
-        HIDDEN;
+        HIDDEN
     }
 }

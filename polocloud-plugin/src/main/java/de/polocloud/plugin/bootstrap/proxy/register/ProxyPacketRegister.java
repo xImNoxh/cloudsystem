@@ -74,9 +74,7 @@ public class ProxyPacketRegister {
         });
 
         //Unregister server handler
-        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUnregisterPacket.class , packet -> {
-            ProxyServer.getInstance().getServers().remove(packet.getName());
-        });
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUnregisterPacket.class , packet -> ProxyServer.getInstance().getServers().remove(packet.getName()));
 
         //Update tab handler
         PoloCloudAPI.getInstance().registerSimplePacketHandler(ProxyTablistUpdatePacket.class, packet -> {

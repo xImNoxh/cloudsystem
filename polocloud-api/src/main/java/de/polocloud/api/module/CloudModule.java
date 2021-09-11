@@ -2,10 +2,7 @@ package de.polocloud.api.module;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.config.loader.IConfigLoader;
-import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.guice.own.GuiceObject;
-import de.polocloud.api.guice.own.Inject;
 import de.polocloud.api.module.info.ModuleInfo;
 
 import java.io.File;

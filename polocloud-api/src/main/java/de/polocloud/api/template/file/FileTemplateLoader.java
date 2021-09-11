@@ -1,7 +1,5 @@
 package de.polocloud.api.template.file;
 
-import com.google.gson.Gson;
-import com.google.inject.Inject;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.template.SimpleTemplate;
@@ -9,7 +7,6 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.loading.ITemplateLoader;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 

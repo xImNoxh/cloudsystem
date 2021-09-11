@@ -155,7 +155,7 @@ public abstract class SimplePacket extends Packet {
             // Add the super class
             Class<?> superClass = clazz.getSuperclass();
 
-            // Interfaces does not have java,lang.Object as superclass, they have null, so break the cycle and return
+            // Interface does not have java,lang.Object as superclass, they have null, so break the cycle and return
             if (superClass == null) {
                 break;
             }

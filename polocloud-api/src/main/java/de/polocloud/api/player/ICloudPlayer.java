@@ -5,13 +5,10 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.pool.PoloObject;
-import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.IPropertyHolder;
 import de.polocloud.api.util.Snowflake;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor, IPropertyHolder {
 

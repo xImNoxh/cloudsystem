@@ -79,7 +79,7 @@ public class ModuleHelper {
 
     /**
      * Loads the class loader
-     * @return the URLClassLoder from the loaded class
+     * @return the URLClassLoader from the loaded class
      */
     public URLClassLoader classLoader() {
         try {

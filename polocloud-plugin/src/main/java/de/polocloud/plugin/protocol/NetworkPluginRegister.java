@@ -51,9 +51,7 @@ public class NetworkPluginRegister {
             }
         });
 
-        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUpdatePacket.class, packet -> {
-            PoloCloudAPI.getInstance().getGameServerManager().update(packet.getGameServer());
-        });
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUpdatePacket.class, packet -> PoloCloudAPI.getInstance().getGameServerManager().update(packet.getGameServer()));
 
         PacketMessenger.registerHandler(request -> {
             if (request.getKey().equalsIgnoreCase("player-ping")) {

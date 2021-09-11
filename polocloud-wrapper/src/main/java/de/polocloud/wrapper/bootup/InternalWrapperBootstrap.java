@@ -12,10 +12,8 @@ import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.WrapperConfig;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public class InternalWrapperBootstrap {

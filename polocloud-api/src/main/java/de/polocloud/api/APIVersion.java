@@ -1,8 +1,5 @@
 package de.polocloud.api;
 
-import de.polocloud.api.module.CloudModule;
-import de.polocloud.api.module.ModuleCopyType;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -7,7 +7,6 @@ import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

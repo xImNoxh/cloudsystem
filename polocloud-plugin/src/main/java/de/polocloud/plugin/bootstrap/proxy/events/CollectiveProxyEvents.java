@@ -52,7 +52,7 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(ServerKickEvent event) {
         ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
         if (cloudPlayer == null) {
-            event.getPlayer().disconnect(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "§cSome internal Cache-Error occured!");
+            event.getPlayer().disconnect(TextComponent.fromLegacyText(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "§cSome internal Cache-Error occurred!"));
             return;
         }
         cloudPlayer.sendToFallback();

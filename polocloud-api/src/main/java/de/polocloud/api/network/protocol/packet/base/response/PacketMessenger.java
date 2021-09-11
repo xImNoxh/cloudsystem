@@ -20,9 +20,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -256,7 +253,7 @@ public class PacketMessenger {
 
     /**
      * All registered handlers to handle incoming {@link Request}
-     * So you don't have to create an extra packet for each request
+     * So you don't have to create an extra packet for each request,
      * but you can simply just send a {@link Request} with a key and data
      */
     private static final List<Consumer<Request>> REQUEST_HANDLERS;
@@ -267,23 +264,19 @@ public class PacketMessenger {
         REQUEST_HANDLERS = new ArrayList<>();
 
         //If the connection is set it will execute this task
-        Scheduler.runtimeScheduler().schedule(() -> {
-
-            PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new IPacketHandler<Request>() {
-                @Override
-                public void handlePacket(ChannelHandlerContext ctx, Request packet) {
-                    for (Consumer<Request> requestHandler : new ArrayList<>(REQUEST_HANDLERS)) {
-                        requestHandler.accept(packet);
-                    }
+        Scheduler.runtimeScheduler().schedule(() -> PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new IPacketHandler<Request>() {
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, Request packet) {
+                for (Consumer<Request> requestHandler : new ArrayList<>(REQUEST_HANDLERS)) {
+                    requestHandler.accept(packet);
                 }
+            }
 
-                @Override
-                public Class<? extends Packet> getPacketClass() {
-                    return Request.class;
-                }
-            });
-
-        }, () -> PoloCloudAPI.getInstance() != null && PoloCloudAPI.getInstance().getConnection() != null);
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return Request.class;
+            }
+        }), () -> PoloCloudAPI.getInstance() != null && PoloCloudAPI.getInstance().getConnection() != null);
     }
 
     /**

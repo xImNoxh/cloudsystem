@@ -36,7 +36,7 @@ public class UnsafeRequest<K, V> {
     }
 
     /**
-     * Creates a standard {@link Map} where no doubeld values
+     * Creates a standard {@link Map} where no doubled values
      * are allowed and only the provided filter decides which values are
      * getting accepted to be put into the map
      *

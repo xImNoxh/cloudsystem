@@ -1,18 +1,11 @@
 package de.polocloud.modules.proxy;
 
 import com.google.common.collect.Lists;
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
-import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.modules.proxy.motd.MotdService;
-import de.polocloud.modules.proxy.motd.config.ProxyMotdSettings;
 import de.polocloud.modules.proxy.notify.NotifyService;
-import de.polocloud.modules.proxy.tablist.config.TablistConfig;
 import de.polocloud.modules.proxy.whitelist.WhitelistService;
 
 import java.io.File;
@@ -49,7 +42,7 @@ public class ProxyModule {
 
     public void reload(){
         loadConfig();
-        reloaded.forEach(reload -> reload.onReload());
+        reloaded.forEach(IProxyReload::onReload);
     }
 
     public void loadConfig(){

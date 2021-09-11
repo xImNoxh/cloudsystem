@@ -10,8 +10,6 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.client.PoloCloudUpdater;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.logger.log.types.ConsoleColors;
 
 import java.util.Arrays;

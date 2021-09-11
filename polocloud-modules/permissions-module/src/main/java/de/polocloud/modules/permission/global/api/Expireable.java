@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public interface Expireable {
 
     /**
-     * Checks if this value has expired or if its still valid
+     * Checks if this value has expired or if It's still valid
      *
      * @param expirationDate the date when it should expire
      * @return boolean
@@ -18,8 +18,8 @@ public interface Expireable {
         }
         Date today = new Date();
         Date endDate = new Date(expirationDate);
-        long diffInMillies = endDate.getTime() - today.getTime();
-        long d =  TimeUnit.MILLISECONDS.convert(diffInMillies,TimeUnit.MILLISECONDS);
+        long diffInMillis = endDate.getTime() - today.getTime();
+        long d =  TimeUnit.MILLISECONDS.convert(diffInMillis,TimeUnit.MILLISECONDS);
         return (d >= 1);
     }
 }

@@ -2,14 +2,12 @@ package de.polocloud.bootstrap.logger;
 
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.logger.log.LogService;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.Logger;
 import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
-import java.io.FileReader;
 import java.util.Arrays;
 
 public class LogBootstrapService {

@@ -3,7 +3,6 @@ package de.polocloud.wrapper.manager.server;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.event.impl.other.GameServerPrepareFilesEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.ModuleCopyType;

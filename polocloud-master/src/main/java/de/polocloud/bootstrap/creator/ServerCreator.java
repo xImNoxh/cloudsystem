@@ -1,11 +1,8 @@
 package de.polocloud.bootstrap.creator;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
-import de.polocloud.api.gameserver.IGameServerManager;
 
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
@@ -14,7 +11,6 @@ import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 

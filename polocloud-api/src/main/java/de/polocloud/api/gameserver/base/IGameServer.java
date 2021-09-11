@@ -77,7 +77,7 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     boolean getServiceVisibility();
 
     /**
-     * The {@link ITemplate} of this server to get all infos
+     * The {@link ITemplate} of this server to get all information
      * about the parent-group of this server
      */
     ITemplate getTemplate();

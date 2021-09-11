@@ -63,7 +63,7 @@ public class Guice {
 
     /**
      * Gets an instance for a given class if registered
-     * If it's not registered an {@link IllegalStateException} will be thrown
+     * Is it's not registered an {@link IllegalStateException} will be thrown
      *
      * @param cls the class to get the instance of
      * @param <T> the generic

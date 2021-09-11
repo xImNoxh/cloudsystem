@@ -8,6 +8,8 @@ import de.polocloud.signs.plugin.listeners.CollectivesSpigotListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
+
 public class PluginBootstrap extends JavaPlugin {
 
     private static PluginBootstrap instance;
@@ -18,6 +20,7 @@ public class PluginBootstrap extends JavaPlugin {
         instance = this;
         signService = new SignsPluginService();
         getCommand("cloudsigns").setExecutor(new SignCommand());
+        getCommand("cloudsigns").setAliases(Arrays.asList("sign", "signs", "cloudsign"));
         Bukkit.getPluginManager().registerEvents(new CollectivesSpigotListener(), this);
         PoloCloudAPI.getInstance().getEventManager().registerListener(new CollectivesCloudListener());
     }

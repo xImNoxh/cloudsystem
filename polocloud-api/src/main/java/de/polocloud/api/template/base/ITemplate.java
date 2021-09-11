@@ -6,7 +6,6 @@ import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.Snowflake;
-import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.List;
 

@@ -2,7 +2,6 @@ package de.polocloud.plugin.bootstrap.spigot.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.ConsoleExecutor;
-import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;

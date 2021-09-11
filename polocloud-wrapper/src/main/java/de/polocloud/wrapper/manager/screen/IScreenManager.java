@@ -32,8 +32,8 @@ public interface IScreenManager {
 
     /**
      * Tries to get a {@link IScreen} from cache
-     * If its not cached its not on this instance
-     * and then a request will be send and awaits for response
+     * If it's not cached it's not on this instance
+     * and then a request will be sent and awaits for response
      * from the instance where the screen is running on
      *
      * @param name the name of the service

@@ -1,7 +1,5 @@
 package de.polocloud.api.config;
 
-import de.polocloud.api.template.base.ITemplate;
-
 import java.io.File;
 
 public class FileConstants {

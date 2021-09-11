@@ -1,6 +1,5 @@
 package de.polocloud.api.network.protocol;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.gameserver.IGameServerManager;
@@ -11,7 +10,6 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import io.netty.channel.ChannelHandlerContext;
 
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

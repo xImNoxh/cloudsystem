@@ -61,7 +61,7 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
     void register(V v);
 
     /**
-     * Sets an object into a index in cache
+     * Sets an object into an index in cache
      *
      * @param index the index
      * @param v the object

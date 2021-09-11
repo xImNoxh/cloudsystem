@@ -91,7 +91,7 @@ public class SimpleCachedScreenManager implements IScreenManager {
     }
 
     /**
-     * Gets a {@link IScreen} if its on this instance
+     * Gets a {@link IScreen} if it's on this instance
      * by just getting it from the hashmap cache
      *
      * @param name the name

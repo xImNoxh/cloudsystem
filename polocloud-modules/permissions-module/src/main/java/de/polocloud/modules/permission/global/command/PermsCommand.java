@@ -19,11 +19,10 @@ import de.polocloud.modules.permission.global.setup.PermissionGroupSetup;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class PermsCommand implements CommandListener {
 
-    //TODO: FIMISH COMMAND
+    //TODO: FINISH COMMAND
     @Command(
         name = "permissions",
         aliases = {"perms", "cloudperms", "poloperms"},
@@ -104,9 +103,7 @@ public class PermsCommand implements CommandListener {
                     executor.sendMessage(prefix + "§8» §7Name§8: §b" + permissionUser.getName());
                     executor.sendMessage(prefix + "§8» §7UUID§8: §b" + permissionUser.getUniqueId());
                     executor.sendMessage(prefix + "§8» §7Groups§8: " + (permissionUser.getPermissionGroups().isEmpty() ? "§cNone" : ""));
-                    permissionUser.getExpiringPermissionGroups().forEach((group, expiring) -> {
-                        executor.sendMessage(prefix + "  §8- §b" + group.getName() + " §7Expires: " + (expiring == -1 ? "§cNever" : PoloHelper.SIMPLE_DATE_FORMAT.format(new Date(expiring))));
-                    });
+                    permissionUser.getExpiringPermissionGroups().forEach((group, expiring) -> executor.sendMessage(prefix + "  §8- §b" + group.getName() + " §7Expires: " + (expiring == -1 ? "§cNever" : PoloHelper.SIMPLE_DATE_FORMAT.format(new Date(expiring)))));
                     executor.sendMessage(prefix + "§8» §7Exlusive Permissions§8:" + (permissionUser.getExclusivePermissions().isEmpty() ? "§cNone" : ""));
                     for (IPermission permission : permissionUser.getExclusivePermissions()) {
                         executor.sendMessage(prefix + "  §8- §b" + permission.getPermission() + " §7Expires: " + (permission.getExpiringTime() == -1 ? "§cNever" : PoloHelper.SIMPLE_DATE_FORMAT.format(new Date(permission.getExpiringTime()))));

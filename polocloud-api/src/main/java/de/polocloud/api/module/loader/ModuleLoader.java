@@ -37,7 +37,7 @@ public class ModuleLoader {
 
 
     /**
-     * Ignoring al files that don't end with ".jar" (folders etc)
+     * Ignoring al files that don't end with ".jar" (folders etc.)
      *
      * @return amount of modules
      */

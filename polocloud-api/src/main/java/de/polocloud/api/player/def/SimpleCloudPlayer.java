@@ -49,7 +49,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     @Override
     public void sendTo(IGameServer gameServer) {
         PoloPluginBridge poloBridge = PoloCloudAPI.getInstance().getPoloBridge();
-        if (poloBridge != null && poloBridge instanceof PoloPluginBungeeBridge) {
+        if (poloBridge instanceof PoloPluginBungeeBridge) {
             ((PoloPluginBungeeBridge)poloBridge).connect(this.uniqueId, gameServer.getName());
             return;
         }
@@ -84,7 +84,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     @Override
     public IPlayerSettings getSettings() {
         PoloPluginBridge poloBridge = PoloCloudAPI.getInstance().getPoloBridge();
-        if (poloBridge != null && poloBridge instanceof PoloPluginBungeeBridge) {
+        if (poloBridge instanceof PoloPluginBungeeBridge) {
             return ((PoloPluginBungeeBridge) poloBridge).getSettings(this.uniqueId);
         } else {
             IResponse response = PacketMessenger.newInstance().setUpPassOn().blocking().orElse(new Response(ResponseState.TIMED_OUT)).timeOutAfter(TimeUnit.SECONDS, 2L).send("player-settings", new JsonData("uniqueId", this.uniqueId));

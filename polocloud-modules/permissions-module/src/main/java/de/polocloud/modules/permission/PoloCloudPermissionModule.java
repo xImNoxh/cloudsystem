@@ -2,7 +2,6 @@ package de.polocloud.modules.permission;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.database.DocumentObjectDatabase;
 import de.polocloud.api.database.IDatabase;
 import de.polocloud.api.guice.own.Guice;

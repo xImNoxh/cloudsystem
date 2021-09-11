@@ -11,7 +11,7 @@ public interface PoloPluginBridge {
      *
      * @param uniqueId the uuid of the player
      * @param permission the permission
-     * @return if has permission
+     * @return if it has permission
      */
     boolean hasPermission(UUID uniqueId, String permission);
 

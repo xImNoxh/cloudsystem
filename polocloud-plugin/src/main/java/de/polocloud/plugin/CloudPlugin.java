@@ -6,7 +6,6 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;

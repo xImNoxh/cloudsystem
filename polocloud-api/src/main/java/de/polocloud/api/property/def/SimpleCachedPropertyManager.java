@@ -5,8 +5,6 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.common.PoloTypeUnsupportedActionException;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.property.PropertyDeletePacket;
 import de.polocloud.api.network.packets.property.PropertyInsertPacket;
 import de.polocloud.api.property.IProperty;

@@ -4,8 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.uuid.SimpleUUIDFetcher;
 import de.polocloud.npcs.bootstraps.PluginBootstrap;
 import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.npc.base.meta.CloudNPCMeta;
@@ -22,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class SimpleCloudNPC implements ICloudNPC {
 

@@ -5,8 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.properties.Property;
 import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.api.uuid.IUUIDFetcher;
-import de.polocloud.api.uuid.SimpleUUIDFetcher;
 
 import java.io.IOException;
 import java.net.URL;

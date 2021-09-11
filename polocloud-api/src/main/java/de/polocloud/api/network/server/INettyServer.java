@@ -8,7 +8,6 @@ import de.polocloud.api.util.map.UniqueMap;
 import io.netty.channel.Channel;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * This interface does not implement any other methods

@@ -28,7 +28,7 @@ public class MotdService implements IProxyReload {
     }
 
     public void sendAllProxiesMotd(){
-        PoloCloudAPI.getInstance().getGameServerManager().getAllCached(TemplateType.PROXY).forEach(it -> sendMotd(it));
+        PoloCloudAPI.getInstance().getGameServerManager().getAllCached(TemplateType.PROXY).forEach(this::sendMotd);
     }
 
     public void sendMotd(IGameServer server){

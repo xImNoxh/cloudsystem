@@ -1,13 +1,9 @@
 package de.polocloud.bootstrap.network.handler.wrapper;
 
-import com.google.inject.Inject;
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.network.packets.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
-import de.polocloud.bootstrap.network.SimplePacketHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperPacketHandlerService extends WrapperHandlerServiceController implements IPacketHandler<WrapperLoginPacket> {

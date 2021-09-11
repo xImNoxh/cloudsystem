@@ -59,7 +59,6 @@ import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
 import org.reflections.Reflections;
 
-import java.io.File;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -168,7 +167,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     /**
      * Reports an Exception to the server and automatically
-     * prints it so you can see it locally and the admins
+     * prints it, so you can see it locally and the admins
      * on the server
      *
      * @param throwable the error

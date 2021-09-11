@@ -6,7 +6,7 @@ bootstrap" and also the file name of the "api" and the "bootstrap"
 To create a new PoloCloud Client instance you need the IP and the port of the server, then you use:
 
 ```java
-  PoloCloudClient client=new PoloCloudClient(ip,port);
+  PoloCloudClient client = new PoloCloudClient(ip,port);
 ```
 
 To report an exception, you need the "throwable", the type ("master, wrapper, launcher") and the version of the cloud,

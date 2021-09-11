@@ -10,7 +10,6 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.io.IOException;

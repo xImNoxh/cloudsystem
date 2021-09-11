@@ -1,17 +1,14 @@
 package de.polocloud.bootstrap.network.handler.wrapper;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.packets.master.MasterLoginResponsePacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperTransferModulesPacket;
-import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.wrapper.SimpleMasterWrapper;
-import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;

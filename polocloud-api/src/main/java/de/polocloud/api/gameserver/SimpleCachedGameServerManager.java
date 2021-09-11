@@ -1,7 +1,6 @@
 package de.polocloud.api.gameserver;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.master.properties.Properties;

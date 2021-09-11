@@ -116,8 +116,7 @@ public class Master extends PoloCloudAPI implements IStartable {
             //Server-Runner thread starting
             new Thread(new ServerCreatorRunner()).start();
 
-        };
-
+        }
     }
 
     public static Master getInstance() {

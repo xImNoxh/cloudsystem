@@ -117,7 +117,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     public void start() {
         if (config.getLoginKey().equalsIgnoreCase("default")) {
 
-            PoloLogger.print(LogLevel.ERROR, "§cPlease put the §eWrapperKey §cof the Master into the §econfig.json§c!");
+            PoloLogger.print(LogLevel.ERROR, "§cPlease put the §eWrapperKey §cof the Master into the §7'config.json'§c!");
             terminate();
         }
         PoloLogger.print(LogLevel.INFO, "Trying to start the wrapper...");

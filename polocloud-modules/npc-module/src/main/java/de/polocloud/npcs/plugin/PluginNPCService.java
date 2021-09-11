@@ -11,14 +11,10 @@ import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.npc.base.meta.CloudNPCMeta;
 import de.polocloud.npcs.npc.entity.nms.wrapper.NMSClassWrapper;
 import de.polocloud.npcs.npc.initializer.NPCInitializer;
-import de.polocloud.npcs.npc.skin.NPCSkinFetcher;
 import de.polocloud.npcs.protocol.GlobalConfigClass;
 import de.polocloud.npcs.protocol.enumeration.RequestType;
 import de.polocloud.npcs.service.INPCService;
 import net.jitse.npclib.NPCLib;
-import net.jitse.npclib.api.NPC;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;

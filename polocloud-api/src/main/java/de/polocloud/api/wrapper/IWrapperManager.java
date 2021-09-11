@@ -13,7 +13,7 @@ public interface IWrapperManager {
     List<IWrapper> getWrappers();
 
     /**
-     * Sets the cached {@link IWrapper} obejcts
+     * Sets the cached {@link IWrapper} objects
      *
      * @param wrappers the cache
      */

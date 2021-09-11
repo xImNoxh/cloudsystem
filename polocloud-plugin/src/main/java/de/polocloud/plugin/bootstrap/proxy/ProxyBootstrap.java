@@ -97,7 +97,7 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
                 if (player == null) {
                     return;
                 }
-                player.sendMessage(message);
+                player.sendMessage(TextComponent.fromLegacyText(message));
             }
 
             @Override
@@ -112,7 +112,7 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
 
             @Override
             public void broadcast(String message) {
-                ProxyServer.getInstance().broadcast(message);
+                ProxyServer.getInstance().broadcast(TextComponent.fromLegacyText(message));
             }
 
             @Override
@@ -121,7 +121,7 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
                 if (player == null) {
                     return;
                 }
-                player.disconnect(reason);
+                player.disconnect(TextComponent.fromLegacyText(reason));
             }
 
             @Override

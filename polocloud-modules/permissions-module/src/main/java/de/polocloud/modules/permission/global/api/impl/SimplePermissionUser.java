@@ -79,10 +79,7 @@ public class SimplePermissionUser implements IPermissionUser {
         Map<IPermissionGroup, Long> map = new HashMap<>();
         for (String s : this.permissionGroups.keySet()) {
             Long expiringDate = this.permissionGroups.get(s);
-            IPermissionGroup permissionGroup = this.getPermissionGroups().stream().filter(permissionGroup1 -> permissionGroup1.getName().equalsIgnoreCase(s)).findFirst().orElse(null);
-            if (permissionGroup != null) {
-                map.put(permissionGroup, expiringDate);
-            }
+            this.getPermissionGroups().stream().filter(permissionGroup1 -> permissionGroup1.getName().equalsIgnoreCase(s)).findFirst().ifPresent(permissionGroup -> map.put(permissionGroup, expiringDate));
         }
         return map;
     }

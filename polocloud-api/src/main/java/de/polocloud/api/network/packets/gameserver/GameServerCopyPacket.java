@@ -6,10 +6,6 @@ import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
 import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.util.AutoRegistry;
-import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
-import de.polocloud.api.network.protocol.packet.base.Packet;
-
-import java.io.IOException;
 
 @AutoRegistry
 public class GameServerCopyPacket extends SimplePacket {

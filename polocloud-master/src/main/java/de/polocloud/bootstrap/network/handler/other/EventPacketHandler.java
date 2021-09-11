@@ -1,7 +1,6 @@
 package de.polocloud.bootstrap.network.handler.other;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.event.SimpleCachedEventManager;
 import de.polocloud.api.network.packets.api.EventPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;

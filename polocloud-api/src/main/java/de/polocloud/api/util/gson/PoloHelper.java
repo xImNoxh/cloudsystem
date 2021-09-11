@@ -1,19 +1,11 @@
 package de.polocloud.api.util.gson;
 
 import com.google.gson.*;
-import com.google.inject.Injector;
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.ExceptionRunnable;
 import de.polocloud.api.common.ExceptionSupplier;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.logger.helper.MinecraftColor;
-import de.polocloud.api.network.INetworkConnection;
-import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.pubsub.IPubSubManager;
-import de.polocloud.api.uuid.IUUIDFetcher;
 import io.netty.channel.ChannelFutureListener;
-import jline.console.ConsoleReader;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
