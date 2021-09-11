@@ -1,6 +1,7 @@
 package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -42,7 +43,20 @@ public class CollectiveProxyEvents implements Listener {
     @EventHandler (priority = EventPriority.LOW)
     public void handle(ProxyPingEvent event) {
         ServerPing serverPing = event.getResponse();
-        serverPing.getPlayers().setMax(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMaxPlayers());
+
+        MasterConfig masterConfig = PoloCloudAPI.getInstance().getMasterConfig();
+        IGameServer thisService = PoloCloudAPI.getInstance().getGameServerManager().getThisService();
+
+        int maxPlayers = thisService == null ? 0 : thisService.getMaxPlayers();
+        int onlinePlayers;
+
+        if (masterConfig != null && masterConfig.getProperties().isSyncProxyOnlinePlayers()) {
+            onlinePlayers = PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().size();
+        } else {
+            onlinePlayers = thisService == null ? 0 : thisService.getOnlinePlayers();
+        }
+
+        serverPing.setPlayers(new ServerPing.Players(maxPlayers, onlinePlayers, new ServerPing.PlayerInfo[0]));
         serverPing.setDescription(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMotd());
 
         event.setResponse(serverPing);

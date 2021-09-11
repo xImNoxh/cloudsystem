@@ -6,6 +6,7 @@ import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.modules.proxy.motd.MotdService;
 import de.polocloud.modules.proxy.notify.NotifyService;
+import de.polocloud.modules.proxy.tablist.TablistService;
 import de.polocloud.modules.proxy.whitelist.WhitelistService;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class ProxyModule {
     private MotdService motdService;
     private WhitelistService whitelistService;
     private NotifyService notifyService;
+    private TablistService tablistService;
 
     private CloudModule module;
     private ProxyConfig proxyConfig;
@@ -38,6 +40,7 @@ public class ProxyModule {
         reloaded.add(this.motdService = new MotdService());
         reloaded.add(this.whitelistService = new WhitelistService());
         reloaded.add(this.notifyService = new NotifyService());
+        reloaded.add(this.tablistService = new TablistService());
     }
 
     public void reload(){

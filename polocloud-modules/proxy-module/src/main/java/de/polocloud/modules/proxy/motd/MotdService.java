@@ -65,7 +65,11 @@ public class MotdService implements IProxyReload {
     public void updateVersionTag(){
         MotdVersionProperty motdVersionProperty = new MotdVersionProperty(
             proxyConfig.getProxyMotdSettings().getOnlineMotd().getVersionTag(),
-            proxyConfig.getProxyMotdSettings().getMaintenanceMotd().getVersionTag());
+            proxyConfig.getProxyMotdSettings().getMaintenanceMotd().getVersionTag(),
+
+            proxyConfig.getProxyMotdSettings().getOnlineMotd().getPlayerInfo(),
+            proxyConfig.getProxyMotdSettings().getMaintenanceMotd().getPlayerInfo()
+        );
         motdVersionChannel.getChannel().sendMessage(new WrappedObject<>(motdVersionProperty));
     }
 

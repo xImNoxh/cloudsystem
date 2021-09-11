@@ -42,6 +42,14 @@ public class Properties implements IConfig, IProtocolObject {
     private boolean proxyPingForwarding;
 
     /**
+     * Syncs the amount of online players (e.g. 100)
+     * To all proxies even if there are only 50 Players
+     * on 2 proxies both will display 100 players
+     * If its disabled they will display 50 each
+     */
+    private boolean syncProxyOnlinePlayers;
+
+    /**
      * The port of the cloud server
      */
     private int port;
@@ -66,7 +74,7 @@ public class Properties implements IConfig, IProtocolObject {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < ThreadLocalRandom.current().nextInt(5); i++) {
+        for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 5); i++) {
             stringBuilder.append(UUID.randomUUID()).append("#");
         }
         stringBuilder.append("@PoloCloud");
@@ -79,10 +87,10 @@ public class Properties implements IConfig, IProtocolObject {
         this.defaultProxyStartPort = 25565;
         this.defaultServerStartPort = 3000;
 
-
         this.logPlayerConnections = false;
         this.proxyOnlineMode = true;
         this.proxyPingForwarding = false;
+        this.syncProxyOnlinePlayers = true;
     }
 
     public void setProxyOnlineMode(boolean proxyOnlineMode) {
@@ -91,6 +99,14 @@ public class Properties implements IConfig, IProtocolObject {
 
     public boolean isProxyOnlineMode() {
         return proxyOnlineMode;
+    }
+
+    public boolean isSyncProxyOnlinePlayers() {
+        return syncProxyOnlinePlayers;
+    }
+
+    public void setSyncProxyOnlinePlayers(boolean syncProxyOnlinePlayers) {
+        this.syncProxyOnlinePlayers = syncProxyOnlinePlayers;
     }
 
     public boolean isProxyPingForwarding() {
@@ -164,6 +180,7 @@ public class Properties implements IConfig, IProtocolObject {
         buf.writeInt(maxSimultaneouslyStartingTemplates);
         buf.writeBoolean(proxyOnlineMode);
         buf.writeBoolean(proxyPingForwarding);
+        buf.writeBoolean(syncProxyOnlinePlayers);
         buf.writeInt(port);
         buf.writeInt(defaultProxyStartPort);
         buf.writeInt(defaultServerStartPort);
@@ -181,6 +198,7 @@ public class Properties implements IConfig, IProtocolObject {
         maxSimultaneouslyStartingTemplates = buf.readInt();
         proxyOnlineMode = buf.readBoolean();
         proxyPingForwarding = buf.readBoolean();
+        syncProxyOnlinePlayers = buf.readBoolean();
         port = buf.readInt();
         defaultProxyStartPort = buf.readInt();
         defaultServerStartPort = buf.readInt();

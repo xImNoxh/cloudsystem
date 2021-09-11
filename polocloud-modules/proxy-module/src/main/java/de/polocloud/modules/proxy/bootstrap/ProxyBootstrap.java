@@ -29,7 +29,6 @@ public class ProxyBootstrap extends CloudModule {
 
     @ModuleTask(id = 2, state = ModuleState.STARTING)
     public void enable() {
-        PoloLogger.print(LogLevel.ALL, "starting on proxy");
         proxyModule.enable();
     }
 
