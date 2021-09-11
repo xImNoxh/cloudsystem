@@ -11,7 +11,6 @@ public class CloudGameServerMaintenanceUpdateEvent extends CloudEvent {
     private final String template;
     private final boolean maintenance;
 
-
     public CloudGameServerMaintenanceUpdateEvent(ITemplate template, boolean maintenance) {
         this.template = template.getName();
         this.maintenance = maintenance;

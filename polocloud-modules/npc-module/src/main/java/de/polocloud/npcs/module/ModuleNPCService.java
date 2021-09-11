@@ -23,8 +23,8 @@ public class ModuleNPCService implements INPCService {
 
     private GlobalConfigClass currentCache;
 
-    private IMessageChannel<WrappedObject<GlobalConfigClass>> transferChannel;
-    private IMessageChannel<WrappedObject<RequestType>> requestChannel;
+    private IMessageChannel<GlobalConfigClass> transferChannel;
+    private IMessageChannel<RequestType> requestChannel;
 
     public ModuleNPCService(CloudModule module) {
         this.module = module;
@@ -32,8 +32,8 @@ public class ModuleNPCService implements INPCService {
         saveConfigs();
         setCurrentCache();
 
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "npc-transfer-channel");
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "npc-request-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(GlobalConfigClass.class, "npc-transfer-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(RequestType.class, "npc-request-channel");
         this.transferChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("npc-transfer-channel");
         this.requestChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("npc-request-channel");
         registerListeners();
@@ -54,7 +54,7 @@ public class ModuleNPCService implements INPCService {
 
     @Override
     public void updateNPCs() {
-        this.transferChannel.sendMessage(new WrappedObject<>(this.currentCache));
+        this.transferChannel.sendMessage(this.currentCache);
     }
 
     @Override

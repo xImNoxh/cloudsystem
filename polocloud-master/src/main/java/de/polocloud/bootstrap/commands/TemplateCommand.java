@@ -84,12 +84,7 @@ public class TemplateCommand implements CommandListener {
                         boolean state = Boolean.parseBoolean(params[4]);
 
                         template.setMaintenance(state);
-                        templateService.getTemplateSaver().save(template);
-
-                        for (IGameServer gameServer : gameServerManager.getAllCached(template)) {
-                            gameServer.update();
-                        }
-
+                        template.update();
                         PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maintenance state of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + state + ConsoleColors.GRAY + ")");
                     } else if (params[3].equalsIgnoreCase("maxplayers")) {
                         String amountString = params[4];
@@ -101,9 +96,8 @@ public class TemplateCommand implements CommandListener {
                             return;
                         }
 
-
                         template.setMaxPlayers(Integer.parseInt(params[4]));
-                        templateService.getTemplateSaver().save(template);
+                        template.update();
 
                         PoloCloudAPI.getInstance().updateCache();
                         PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully " + ConsoleColors.GRAY + "updated the maximal players of the template » " + ConsoleColors.LIGHT_BLUE + template.getName() + ConsoleColors.GRAY + "! (New state » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + ")");

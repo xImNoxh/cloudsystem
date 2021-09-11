@@ -36,6 +36,7 @@ import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.placeholder.IPlaceHolderManager;
 import de.polocloud.api.placeholder.SimpleCachedPlaceHolderManager;
@@ -94,6 +95,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final IUUIDFetcher uuidFetcher;
     protected final SystemManager systemManager;
 
+    //The config managers
+    protected final IConfigLoader configLoader;
+    protected final IConfigSaver configSaver;
+
     //The bridge instance
     protected PoloPluginBridge poloBridge;
 
@@ -122,6 +127,9 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.systemManager = new SystemManager();
         this.uuidFetcher = new SimpleUUIDFetcher(1);
         this.masterConfig = new MasterConfig();
+
+        this.configLoader = new SimpleConfigLoader();
+        this.configSaver = new SimpleConfigSaver();
 
         Guice.bind(Scheduler.class).toInstance(new SimpleScheduler());
         Guice.bind(Snowflake.class).toInstance(new Snowflake());
@@ -279,6 +287,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         getConnection().getProtocol().registerPacketHandler(packetHandler);
     }
 
+
     public <T extends Packet> void registerSimplePacketHandler(Class<T> packetClass, Consumer<T> handler) {
         this.registerPacketHandler(new IPacketHandler<T>() {
             @Override
@@ -363,6 +372,14 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     public void setMasterConfig(MasterConfig masterConfig) {
         this.masterConfig = masterConfig;
+    }
+
+    public IConfigLoader getConfigLoader() {
+        return configLoader;
+    }
+
+    public IConfigSaver getConfigSaver() {
+        return configSaver;
     }
 
     /**

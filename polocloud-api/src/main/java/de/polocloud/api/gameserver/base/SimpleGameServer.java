@@ -78,6 +78,11 @@ public class SimpleGameServer implements IGameServer {
     private int maxPlayers;
 
     /**
+     * The online players
+     */
+    private int onlinePlayers;
+
+    /**
      * The template (group)
      */
     private String template;
@@ -103,6 +108,10 @@ public class SimpleGameServer implements IGameServer {
      */
     private List<IProperty> properties;
 
+    private String versionString;
+
+    private String[] playerInfo;
+
     public SimpleGameServer() {
     }
 
@@ -120,6 +129,10 @@ public class SimpleGameServer implements IGameServer {
         this.registered = false;
         this.host = "127.0.0.1";
         this.properties = new ArrayList<>();
+        this.onlinePlayers = getCloudPlayers().size();
+
+        this.versionString = null;
+        this.playerInfo = new String[0];
     }
 
     @Override
@@ -298,7 +311,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public int getOnlinePlayers() {
-        return this.getCloudPlayers().size();
+        return onlinePlayers;
     }
 
     @Override
@@ -339,6 +352,24 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setMotd(String motd) {
         this.motd = motd;
+    }
+
+    @Override
+    public void setServerPing(String motd, int maxPlayers, int onlinePlayers, String versionString, String[] playerInfo) {
+        this.motd = motd;
+        this.maxPlayers = maxPlayers;
+        this.onlinePlayers = onlinePlayers;
+
+        this.versionString = versionString;
+        this.playerInfo = playerInfo;
+    }
+
+    public String[] getPlayerInfo() {
+        return playerInfo;
+    }
+
+    public String getVersionString() {
+        return versionString;
     }
 
     @Override

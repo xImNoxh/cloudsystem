@@ -108,7 +108,7 @@ public class CloudPlugin extends PoloCloudAPI {
 
             IResponse handshake =
                 PacketMessenger
-                    .newInstance()
+                    .create()
                     .blocking()
                     .timeOutAfter(TimeUnit.SECONDS, 4L)
                     .target(PoloType.MASTER)

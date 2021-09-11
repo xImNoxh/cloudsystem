@@ -27,7 +27,7 @@ public class SimpleCachedMessageManager implements IMessageManager {
                 if (messageChannel != null) {
                     for (IMessageListener listener : ((SimpleMessageChannel<?>) messageChannel).getListeners()) {
                         try {
-                            listener.handleMessage(packet.getProvidedObject(), packet.getStartTime());
+                            listener.handleMessage(packet.getWrappedObject(), packet.getStartTime());
                         } catch (Exception e) {
                             //Couldn't handle
                         }

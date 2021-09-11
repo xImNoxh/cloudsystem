@@ -29,8 +29,8 @@ public class PluginNPCService implements INPCService {
 
     private GlobalConfigClass currentCache;
 
-    private IMessageChannel<WrappedObject<GlobalConfigClass>> transferChannel;
-    private IMessageChannel<WrappedObject<RequestType>> requestChannel;
+    private IMessageChannel<GlobalConfigClass> transferChannel;
+    private IMessageChannel<RequestType> requestChannel;
 
     private NPCInitializer initializer;
 
@@ -43,8 +43,8 @@ public class PluginNPCService implements INPCService {
         this.cloudNPCManager = new SimpleCloudNPCManager();
         this.initializer = new NPCInitializer();
 
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "npc-transfer-channel");
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "npc-request-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(GlobalConfigClass.class, "npc-transfer-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(RequestType.class, "npc-request-channel");
         this.transferChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("npc-transfer-channel");
         this.requestChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("npc-request-channel");
 
@@ -68,7 +68,7 @@ public class PluginNPCService implements INPCService {
     public void updateNPCs() {
         List<CloudNPCMeta> metas = this.cloudNPCManager.getCloudNPCS().stream().map(ICloudNPC::getCloudNPCMetaData).collect(Collectors.toList());
         this.currentCache.setMetas(new ArrayList<>(metas));
-        this.transferChannel.sendMessage(new WrappedObject<>(this.currentCache));
+        this.transferChannel.sendMessage(this.currentCache);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class PluginNPCService implements INPCService {
 
     public void requestUpdate(){
         if (this.requestChannel != null) {
-            this.requestChannel.sendMessage(new WrappedObject<>(RequestType.ALL));
+            this.requestChannel.sendMessage(RequestType.ALL);
         }
     }
 

@@ -88,7 +88,7 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage(prefix + "§7Virtual Cores §8: §3" + resourceProvider.getSystemProcessors());
                     player.sendMessage("§8");
 
-                    IResponse response = PacketMessenger.newInstance().blocking().timeOutAfter(TimeUnit.SECONDS, 3L).orElse(new Response(new JsonData("time", -1L), ResponseState.TIMED_OUT)).send(new PingPacket(System.currentTimeMillis()));
+                    IResponse response = PacketMessenger.create().blocking().timeOutAfter(TimeUnit.SECONDS, 3L).orElse(new Response(new JsonData("time", -1L), ResponseState.TIMED_OUT)).send(new PingPacket(System.currentTimeMillis()));
 
                     if (response.get("start").isNull()) {
                         player.sendMessage(prefix + "§cCouldn't get §ePing-Information§c!");

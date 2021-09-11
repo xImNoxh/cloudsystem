@@ -1,13 +1,15 @@
 package de.polocloud.api.messaging;
 
+import de.polocloud.api.util.WrappedObject;
+
 public interface IMessageListener<T> {
 
     /**
      * Handles an incoming object message
      *
      * @param startTime the time it was sent
-     * @param t the received object
+     * @param wrappedObject the received wrapped Object
      * @throws Exception if something goes wrong
      */
-    void handleMessage(T t, long startTime) throws Exception;
+    void handleMessage(WrappedObject<T> wrappedObject, long startTime) throws Exception;
 }

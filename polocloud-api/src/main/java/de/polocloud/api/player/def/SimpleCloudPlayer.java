@@ -5,6 +5,7 @@ import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.event.impl.player.CloudPlayerPermissionCheckEvent;
 import de.polocloud.api.fallback.base.IFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
@@ -77,7 +78,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
             return PoloCloudAPI.getInstance().getPoloBridge().getPing(this.uniqueId);
         }
-        IResponseElement element = PacketMessenger.newInstance().blocking().timeOutAfter(TimeUnit.SECONDS, 1L).orElse(new Response(ResponseState.TIMED_OUT)).send("player-ping", new JsonData("uniqueId", this.uniqueId)).get("ping");
+        IResponseElement element = PacketMessenger.create().blocking().timeOutAfter(TimeUnit.SECONDS, 1L).orElse(new Response(ResponseState.TIMED_OUT)).send("player-ping", new JsonData("uniqueId", this.uniqueId)).get("ping");
         return element.isNull() ? -1L : element.getAsLong();
     }
 
@@ -87,7 +88,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         if (poloBridge instanceof PoloPluginBungeeBridge) {
             return ((PoloPluginBungeeBridge) poloBridge).getSettings(this.uniqueId);
         } else {
-            IResponse response = PacketMessenger.newInstance().setUpPassOn().blocking().orElse(new Response(ResponseState.TIMED_OUT)).timeOutAfter(TimeUnit.SECONDS, 2L).send("player-settings", new JsonData("uniqueId", this.uniqueId));
+            IResponse response = PacketMessenger.create().setUpPassOn().blocking().orElse(new Response(ResponseState.TIMED_OUT)).timeOutAfter(TimeUnit.SECONDS, 2L).send("player-settings", new JsonData("uniqueId", this.uniqueId));
 
             if (response.isTimedOut() || response.getStatus() != ResponseState.SUCCESS) {
                 return null;
@@ -178,9 +179,8 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         if (PoloCloudAPI.getInstance().getPoloBridge() != null) {
             return PoloCloudAPI.getInstance().getPoloBridge().hasPermission(this.uniqueId, permission);
         } else {
-
-            IResponse response = PacketMessenger.newInstance().blocking().orElse(new Response(new JsonData("has", false), ResponseState.FAILED)).timeOutAfter(TimeUnit.SECONDS, 1).send("player-permission-check", new JsonData("uniqueId", this.uniqueId));
-            return response.get("has").getAsBoolean();
+            CloudPlayerPermissionCheckEvent checkEvent = PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerPermissionCheckEvent(this, permission));
+            return checkEvent.hasPermission();
         }
 
     }

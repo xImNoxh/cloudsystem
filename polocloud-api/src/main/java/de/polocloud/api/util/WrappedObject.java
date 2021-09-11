@@ -15,8 +15,12 @@ public class WrappedObject<T> {
     private final String className;
 
     public WrappedObject(T obj) {
-        this.jsonString = PoloHelper.GSON_INSTANCE.toJson(obj);
-        this.className = obj.getClass().getName();
+        this(PoloHelper.GSON_INSTANCE.toJson(obj), obj == null ? "null" : obj.getClass().getName());
+    }
+
+    public WrappedObject(String jsonString, String className) {
+        this.jsonString = jsonString;
+        this.className = className;
     }
 
     /**
@@ -29,17 +33,20 @@ public class WrappedObject<T> {
         return PoloHelper.GSON_INSTANCE.fromJson(this.jsonString, tClass);
     }
 
+    @Override
+    public String toString() {
+        return this.jsonString;
+    }
+
     /**
      * Unwraps the object if the {@link Class} exists on the received instance
      * If not the object will be returned null
+     *
+     * @throws ClassNotFoundException if the class that was transferred does not exist
      */
-    public T unwrap() {
-        try {
-            Class<T> tClass = (Class<T>) Class.forName(className);
-            return this.unwrap(tClass);
-        } catch (ClassNotFoundException e) {
-            //Ignoring class not found
-        }
-        return null;
+    @Deprecated
+    public T unwrap() throws ClassNotFoundException {
+        Class<T> tClass = (Class<T>) Class.forName(className);
+        return this.unwrap(tClass);
     }
 }

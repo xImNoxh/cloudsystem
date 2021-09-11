@@ -327,12 +327,15 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
         //Extra values
         String motd = this.readString();
+        String versionString = this.readString();
+        String[] playerInfo = this.readStrings();
         GameServerStatus status = this.readEnum();
 
         //Memory
         long memory = this.readLong();
         long startTime = this.readLong();
         int maxPlayers = this.readInt();
+        int onlinePlayers = this.readInt();
         boolean serviceVisibility = this.readBoolean();
         boolean registered = this.readBoolean();
 
@@ -346,6 +349,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         IGameServer gameServer = new SimpleGameServer(id, motd, serviceVisibility, status, snowflake, startTime, memory, port, maxPlayers, template);
         gameServer.setRegistered(registered);
         gameServer.setProperties(properties);
+        gameServer.setServerPing(motd, maxPlayers, onlinePlayers, versionString, playerInfo);
         return gameServer;
     }
 
@@ -363,6 +367,8 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
         //Extra values
         this.writeString(gameServer.getMotd());
+        this.writeString(((SimpleGameServer)gameServer).getVersionString());
+        this.writeStrings(((SimpleGameServer)gameServer).getPlayerInfo());
         this.writeEnum(gameServer.getStatus());
 
         //Memory
@@ -371,6 +377,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         //Other values
         this.writeLong(gameServer.getStartTime());
         this.writeInt(gameServer.getMaxPlayers());
+        this.writeInt(gameServer.getOnlinePlayers());
         this.writeBoolean(gameServer.getServiceVisibility());
         this.writeBoolean(gameServer.isRegistered());
 

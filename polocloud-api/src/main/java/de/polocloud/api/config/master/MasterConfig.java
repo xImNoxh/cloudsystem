@@ -41,7 +41,7 @@ public class MasterConfig implements IConfig, IProtocolObject {
             PoloCloudAPI.getInstance().getGuice().getInstance(IConfigSaver.class).save(this, FileConstants.MASTER_CONFIG_FILE);
             PoloCloudAPI.getInstance().reload();
         } else {
-            PacketMessenger.newInstance().send(new MasterUpdateConfigPacket(this));
+            PacketMessenger.create().send(new MasterUpdateConfigPacket(this));
         }
     }
 

@@ -9,11 +9,13 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.RedirectPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
+import de.polocloud.api.network.packets.gameserver.TemplateUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
 import de.polocloud.api.network.packets.master.MasterStopServerPacket;
 import de.polocloud.api.network.packets.other.PingPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
+import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
@@ -30,6 +32,12 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
                 PoloCloudAPI.getInstance().updateCache();
                 PoloLogger.print(LogLevel.INFO, "Wrapper §3" + gameServer.getWrapper().getName() + " §7stopped " + (gameServer.getTemplate().getTemplateType() == TemplateType.PROXY ? "proxy" : "server") + " §c" + gameServer.getName() + "§7#§4" + gameServer.getSnowflake() + "§7!");
             }
+        });
+
+        //Updating master side
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(TemplateUpdatePacket.class, templateUpdatePacket -> {
+            ITemplate template = templateUpdatePacket.getTemplate();
+            template.update();
         });
 
         new SimplePacketHandler<>(PingPacket.class, packet -> {

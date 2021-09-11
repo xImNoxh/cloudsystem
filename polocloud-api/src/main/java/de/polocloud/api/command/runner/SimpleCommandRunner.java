@@ -167,7 +167,7 @@ public class SimpleCommandRunner implements ICommandRunner {
                 }
             }
             if (!hasPermission) {
-                source.sendMessage("§cYou do not have the appropriate permissions to execute this command. Contact the server administrators if you believe that this is in error.");
+                source.sendMessage("§cYou do not have the appropriate permissions to execute this command!");
                 return;
             }
         }

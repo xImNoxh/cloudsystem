@@ -54,7 +54,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
                 @Override
                 public void accept(Request request) {
                     if (request.getKey().equalsIgnoreCase(key)) {
-                        PacketMessenger.newInstance().blocking().addListener(request::respond).send(request);
+                        PacketMessenger.create().blocking().addListener(request::respond).send(request);
                         PacketMessenger.unregisterHandler(this);
                     }
                 }

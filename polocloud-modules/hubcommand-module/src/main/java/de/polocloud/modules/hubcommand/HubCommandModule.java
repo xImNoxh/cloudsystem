@@ -38,7 +38,7 @@ public class HubCommandModule {
     }
 
     public void forceUpdate(){
-        hubCommandMessageChannel.getMessageChannel().sendMessage(new WrappedObject<>(hubCommandConfig));
+        hubCommandMessageChannel.getMessageChannel().sendMessage(hubCommandConfig);
     }
 
     public void loadConfig(){

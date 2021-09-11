@@ -80,6 +80,11 @@ public interface ITemplate extends PoloObject<ITemplate> {
     void setMaintenance(boolean state);
 
     /**
+     * Updates this template
+     */
+    void update();
+
+    /**
      * Gets all Wrapper names that are allowed
      * to start servers from this template
      *

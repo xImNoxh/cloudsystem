@@ -1,26 +1,31 @@
 package de.polocloud.api.network.packets.other;
 
-import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
-import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
+import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.util.WrappedObject;
+
+import java.io.IOException;
 
 @AutoRegistry
-public class ChannelMessagePacket<T> extends SimplePacket {
+public class ChannelMessagePacket<T> extends Packet {
 
-    @PacketSerializable
-    private final String channel;
+    private String channel;
 
-    @PacketSerializable
-    private final long startTime;
+    private long startTime;
 
-    @PacketSerializable
-    private final T providedObject;
+    private String className;
+
+    private WrappedObject<T> wrappedObject;
 
     public ChannelMessagePacket(String channel, T providedObject) {
         this.channel = channel;
-        this.providedObject = providedObject;
+        this.wrappedObject = new WrappedObject<>(providedObject);
+        this.className = providedObject == null ? "null" : providedObject.getClass().getName();
         this.startTime = System.currentTimeMillis();
     }
+
+
 
     public String getChannel() {
         return channel;
@@ -30,7 +35,34 @@ public class ChannelMessagePacket<T> extends SimplePacket {
         return startTime;
     }
 
+    public WrappedObject<T> getWrappedObject() {
+        return wrappedObject;
+    }
+
     public T getProvidedObject() {
-        return providedObject;
+        try {
+            Class<T> tClass = (Class<T>) Class.forName(className);
+            return wrappedObject.unwrap(tClass);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+
+
+    @Override
+    public void write(IPacketBuffer buf) throws IOException {
+        buf.writeString(channel);
+        buf.writeString(className);
+        buf.writeString(wrappedObject.toString());
+        buf.writeLong(startTime);
+    }
+
+    @Override
+    public void read(IPacketBuffer buf) throws IOException {
+        channel = buf.readString();
+        className = buf.readString();
+        wrappedObject = new WrappedObject<>(buf.readString(), className);
+        startTime = buf.readLong();
     }
 }

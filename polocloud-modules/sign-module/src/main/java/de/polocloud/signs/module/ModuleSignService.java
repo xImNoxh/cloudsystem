@@ -35,8 +35,8 @@ public class ModuleSignService implements ISignService {
        Objects for syncing Configs
      */
     private GlobalConfigClass currentGlobalConfig;
-    private IMessageChannel<WrappedObject<GlobalConfigClass>> channel;
-    private IMessageChannel<WrappedObject<RequestType>> requestChannel;
+    private IMessageChannel<GlobalConfigClass> channel;
+    private IMessageChannel<RequestType> requestChannel;
 
 
     public ModuleSignService(CloudModule module) {
@@ -50,8 +50,8 @@ public class ModuleSignService implements ISignService {
         updateCurrentGlobalConfig();
 
         //Initializes the channels and registers the Listeners
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-transfer-channel");
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-request-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(GlobalConfigClass.class, "sign-transfer-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(RequestType.class, "sign-request-channel");
         this.channel = PoloCloudAPI.getInstance().getMessageManager().getChannel("sign-transfer-channel");
         this.requestChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("sign-request-channel");
         registerListeners();
@@ -74,7 +74,7 @@ public class ModuleSignService implements ISignService {
     @Override
     public void updateSigns() {
         //Send signs to channel
-        channel.sendMessage(new WrappedObject<>(currentGlobalConfig));
+        channel.sendMessage(currentGlobalConfig);
     }
 
     @Override

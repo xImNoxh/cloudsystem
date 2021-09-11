@@ -4,6 +4,7 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.guice.own.Guice;
 import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.util.Task;
+import de.polocloud.api.util.WrappedObject;
 import de.polocloud.modules.permission.InternalPermissionModule;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -15,7 +16,8 @@ import de.polocloud.modules.permission.global.api.impl.SimplePermissionUser;
 public class ModuleTaskHandler implements IMessageListener<Task> {
 
     @Override
-    public void handleMessage(Task task, long startTime) throws Exception {
+    public void handleMessage(WrappedObject<Task> wrappedObject, long startTime) throws Exception {
+        Task task = wrappedObject.unwrap(Task.class);
         String name = task.getName();
         JsonData document = task.getDocument();
 

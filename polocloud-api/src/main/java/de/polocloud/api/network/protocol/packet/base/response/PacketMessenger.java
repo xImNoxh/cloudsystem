@@ -75,7 +75,7 @@ public class PacketMessenger {
      *
      * @return The object
      */
-    public static PacketMessenger newInstance() {
+    public static PacketMessenger create() {
         return new PacketMessenger();
     }
 

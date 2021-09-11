@@ -111,9 +111,8 @@ public class SimpleCachedEventManager implements IEventManager {
     }
 
 
-
     @Override
-    public void fireEvent(CloudEvent event) {
+    public <E extends CloudEvent> E fireEvent(E event) {
         EventData eventData = event.getClass().getAnnotation(EventData.class);
 
         boolean nettyFire = eventData == null || eventData.nettyFire();
@@ -192,10 +191,10 @@ public class SimpleCachedEventManager implements IEventManager {
                     }
                 }
             });
-            if (event instanceof ICancellable) {
-                ((ICancellable) event).isCancelled();
-            }
+            return event;
         } catch (Exception ignored) {
+            return null;
         }
     }
+
 }

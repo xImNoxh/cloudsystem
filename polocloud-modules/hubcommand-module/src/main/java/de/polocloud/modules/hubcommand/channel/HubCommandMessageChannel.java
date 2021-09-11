@@ -7,14 +7,14 @@ import de.polocloud.modules.hubcommand.config.HubCommandConfig;
 
 public class HubCommandMessageChannel {
 
-    private IMessageChannel<WrappedObject<HubCommandConfig>> messageChannel;
+    private IMessageChannel<HubCommandConfig> messageChannel;
 
     public HubCommandMessageChannel() {
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "hubcommand-message-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(HubCommandConfig.class, "hubcommand-message-channel");
         this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("hubcommand-message-channel");
     }
 
-    public IMessageChannel<WrappedObject<HubCommandConfig>> getMessageChannel() {
+    public IMessageChannel<HubCommandConfig> getMessageChannel() {
         return messageChannel;
     }
 }

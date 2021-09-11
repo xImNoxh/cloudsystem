@@ -1,8 +1,10 @@
 package de.polocloud.api.template;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.network.packets.gameserver.TemplateUpdatePacket;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
@@ -98,6 +100,21 @@ public class SimpleTemplate implements ITemplate {
         this.maintenance = maintenance;
 
         PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerMaintenanceUpdateEvent(this, maintenance));
+    }
+
+    @Override
+    public void update() {
+        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+
+            PoloCloudAPI.getInstance().getTemplateManager().getTemplateSaver().save(this);
+
+            for (IGameServer gameServer : this.getServers()) {
+                gameServer.update();
+            }
+
+        } else {
+            PoloCloudAPI.getInstance().sendPacket(new TemplateUpdatePacket(this));
+        }
     }
 
     @Override

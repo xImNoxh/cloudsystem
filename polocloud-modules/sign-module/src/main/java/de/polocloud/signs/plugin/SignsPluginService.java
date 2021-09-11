@@ -25,8 +25,8 @@ public class SignsPluginService implements ISignService {
        Objects for syncing Configs
      */
     private GlobalConfigClass currentGlobalConfig;
-    private IMessageChannel<WrappedObject<GlobalConfigClass>> channel;
-    private IMessageChannel<WrappedObject<RequestType>> requestChannel;
+    private IMessageChannel<GlobalConfigClass> channel;
+    private IMessageChannel<RequestType> requestChannel;
 
     private IGameServerSignManager gameServerSignManager;
     private SignInitializer signInitializer;
@@ -36,8 +36,8 @@ public class SignsPluginService implements ISignService {
 
 
         //Initializes the channels and registers the Listeners
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-transfer-channel");
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "sign-request-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(GlobalConfigClass.class, "sign-transfer-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(RequestType.class, "sign-request-channel");
         this.channel = PoloCloudAPI.getInstance().getMessageManager().getChannel("sign-transfer-channel");
         this.requestChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("sign-request-channel");
 
@@ -64,7 +64,7 @@ public class SignsPluginService implements ISignService {
     public void updateSigns() {
         List<SignLocation> toUpdate = gameServerSignManager.getLoadedSigns().stream().map(IGameServerSign::getSignLocation).collect(Collectors.toList());
         currentGlobalConfig.setLocations(new ArrayList<>(toUpdate));
-        channel.sendMessage(new WrappedObject<>(currentGlobalConfig));
+        channel.sendMessage(currentGlobalConfig);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class SignsPluginService implements ISignService {
 
     public void requestUpdate(){
         if(this.requestChannel != null){
-            this.requestChannel.sendMessage(new WrappedObject<>(RequestType.ALL));
+            this.requestChannel.sendMessage(RequestType.ALL);
         }
     }
 

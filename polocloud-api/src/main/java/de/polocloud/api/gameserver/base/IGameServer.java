@@ -157,6 +157,17 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     void setMotd(String motd);
 
     /**
+     * Updates the ping request infos of this server
+     *
+     * @param motd the motd to display
+     * @param maxPlayers the max players to display
+     * @param onlinePlayers the online players to display
+     * @param versionString the version string to display
+     * @param playerInfo the info to display
+     */
+    void setServerPing(String motd, int maxPlayers, int onlinePlayers, String versionString, String[] playerInfo);
+
+    /**
      * Sets the amount of maxplayers on this server
      *
      * @param players the amount

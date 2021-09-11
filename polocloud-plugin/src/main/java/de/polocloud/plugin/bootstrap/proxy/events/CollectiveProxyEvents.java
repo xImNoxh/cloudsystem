@@ -2,9 +2,12 @@ package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.master.MasterConfig;
+import de.polocloud.api.event.base.IListener;
+import de.polocloud.api.event.impl.other.ProxyServerRequestPingEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
 
@@ -28,6 +31,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.util.UUID;
+
 public class CollectiveProxyEvents implements Listener {
 
     private final NetworkClient networkClient;
@@ -40,8 +45,9 @@ public class CollectiveProxyEvents implements Listener {
     }
 
 
-    @EventHandler (priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void handle(ProxyPingEvent event) {
+
         ServerPing serverPing = event.getResponse();
 
         MasterConfig masterConfig = PoloCloudAPI.getInstance().getMasterConfig();
@@ -56,8 +62,21 @@ public class CollectiveProxyEvents implements Listener {
             onlinePlayers = thisService == null ? 0 : thisService.getOnlinePlayers();
         }
 
-        serverPing.setPlayers(new ServerPing.Players(maxPlayers, onlinePlayers, new ServerPing.PlayerInfo[0]));
-        serverPing.setDescription(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getMotd());
+        String[] maintenancePlayerInfo = thisService == null ? new String[0] : ((SimpleGameServer)thisService).getPlayerInfo();
+        ServerPing.PlayerInfo[] sample = new ServerPing.PlayerInfo[maintenancePlayerInfo.length];
+
+        for (int i = 0; i < maintenancePlayerInfo.length; i++) {
+            sample[i] = new ServerPing.PlayerInfo(maintenancePlayerInfo[i], UUID.randomUUID());
+        }
+
+        serverPing.setPlayers(new ServerPing.Players(maxPlayers, onlinePlayers, sample)); //Setting players
+        if (thisService != null && thisService.getMotd() != null) {
+            serverPing.setDescriptionComponent(new TextComponent(thisService.getMotd())); //Setting motd
+        }
+
+        if (thisService != null && ((SimpleGameServer) thisService).getVersionString() != null && !((SimpleGameServer) thisService).getVersionString().trim().isEmpty()) {
+            serverPing.setVersion(new ServerPing.Protocol(((SimpleGameServer) thisService).getVersionString(), -1)); //Setting version
+        }
 
         event.setResponse(serverPing);
     }

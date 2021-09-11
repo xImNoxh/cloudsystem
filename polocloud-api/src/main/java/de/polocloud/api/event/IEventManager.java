@@ -59,7 +59,7 @@ public interface IEventManager {
      *
      * @param event the event to call
      */
-    void fireEvent(CloudEvent event);
+    <E extends CloudEvent> E fireEvent(E event);
 
     /**
      * Calls an event and fires the consumer after its called
