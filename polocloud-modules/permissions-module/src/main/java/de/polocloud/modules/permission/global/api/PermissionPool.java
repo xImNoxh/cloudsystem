@@ -58,9 +58,8 @@ public interface PermissionPool {
      * and need to be removed from the {@link IPermissionUser}
      *
      * @param uniqueId the uuid of the player
-     * @param accept consumer that accepts all the found permissions
      */
-    void updatePermissions(UUID uniqueId, Consumer<String> accept);
+    List<String> loadPermissions(UUID uniqueId);
 
     /**
      * Gets a list of all {@link IPermissionGroup}

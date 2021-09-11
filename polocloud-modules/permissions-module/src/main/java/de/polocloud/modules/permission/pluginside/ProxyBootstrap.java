@@ -1,6 +1,6 @@
 package de.polocloud.modules.permission.pluginside;
 
-import de.polocloud.modules.permission.PoloCloudPermissionModule;
+import de.polocloud.modules.permission.InternalPermissionModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -21,11 +21,11 @@ import java.util.Map;
 
 public class ProxyBootstrap extends Plugin implements Listener {
 
-    private PoloCloudPermissionModule permissionModule;
+    private InternalPermissionModule permissionModule;
 
     @Override
     public void onLoad() {
-        permissionModule = new PoloCloudPermissionModule(new ModuleBootstrap());
+        permissionModule = new InternalPermissionModule(new ModuleBootstrap());
         permissionModule.load();
 
     }
@@ -44,9 +44,7 @@ public class ProxyBootstrap extends Plugin implements Listener {
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        PermissionPool.getInstance().updatePermissions(player.getUniqueId(), perms -> {
-            //Ignoring just checking if all ranks and perms are still valid
-        });
+        PermissionPool.getInstance().loadPermissions(player.getUniqueId()); //Ignoring just checking if all ranks and perms are still valid
     }
 
     @EventHandler

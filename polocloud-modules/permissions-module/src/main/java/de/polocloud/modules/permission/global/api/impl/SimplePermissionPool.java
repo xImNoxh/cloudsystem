@@ -4,7 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.Task;
-import de.polocloud.modules.permission.PoloCloudPermissionModule;
+import de.polocloud.modules.permission.InternalPermissionModule;
 import de.polocloud.modules.permission.global.api.IPermission;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -38,7 +38,7 @@ public class SimplePermissionPool implements PermissionPool {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
 
             //Updating in database
-            PoloCloudPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
+            InternalPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
         }
     }
 
@@ -49,7 +49,7 @@ public class SimplePermissionPool implements PermissionPool {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
 
             //Updating in database
-            PoloCloudPermissionModule.getInstance().getUserDatabase().delete(permissionUser.getUniqueId().toString());
+            InternalPermissionModule.getInstance().getUserDatabase().delete(permissionUser.getUniqueId().toString());
         }
     }
 
@@ -62,14 +62,14 @@ public class SimplePermissionPool implements PermissionPool {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
 
             //Updating in database
-            PoloCloudPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
+            InternalPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
         }
     }
 
     @Override
     public void createPermissionGroup(IPermissionGroup permissionGroup) {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
-            PoloCloudPermissionModule.getInstance().getGroupDatabase().insert(permissionGroup.getName(), (SimplePermissionGroup) permissionGroup);
+            InternalPermissionModule.getInstance().getGroupDatabase().insert(permissionGroup.getName(), (SimplePermissionGroup) permissionGroup);
             loadPoolFromCache();
             return;
         }
@@ -79,7 +79,7 @@ public class SimplePermissionPool implements PermissionPool {
     @Override
     public void deletePermissionGroup(IPermissionGroup permissionGroup) {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
-            PoloCloudPermissionModule.getInstance().getGroupDatabase().delete(permissionGroup.getName());
+            InternalPermissionModule.getInstance().getGroupDatabase().delete(permissionGroup.getName());
             loadPoolFromCache();
             return;
         }
@@ -92,60 +92,60 @@ public class SimplePermissionPool implements PermissionPool {
             this.permissionGroups.clear();
             this.permissionUsers.clear();
 
-            this.permissionUsers.addAll(PoloCloudPermissionModule.getInstance().getUserDatabase().getEntries());
-            this.permissionGroups.addAll(PoloCloudPermissionModule.getInstance().getGroupDatabase().getEntries());
+            this.permissionUsers.addAll(InternalPermissionModule.getInstance().getUserDatabase().getEntries());
+            this.permissionGroups.addAll(InternalPermissionModule.getInstance().getGroupDatabase().getEntries());
         }
     }
 
     @Override
     public void update() {
-        PoloCloudPermissionModule.getInstance().getMessageChannel().sendMessage(new Task(PoloCloudPermissionModule.TASK_NAME_UPDATE_POOL, new JsonData("pool", this)));
+        InternalPermissionModule.getInstance().getMessageChannel().sendMessage(new Task(InternalPermissionModule.TASK_NAME_UPDATE_POOL, new JsonData("pool", this)));
     }
 
     @Override
-    public void updatePermissions(UUID uniqueId,Consumer<String> accept) {
+    public List<String> loadPermissions(UUID uniqueId) {
+        List<String> permissions = new ArrayList<>();
         IPermissionUser permissionUser = this.getCachedPermissionUser(uniqueId);
 
         if (permissionUser == null) {
-            return;
+            return permissions;
         }
-        AtomicBoolean changedSomething = new AtomicBoolean(false);
+        boolean changedSomething = false;
 
         //Safely iterating through all groups
 
-        permissionUser.getExpiringPermissionGroups().forEach((group, date) -> {
+        for (IPermissionGroup group : permissionUser.getExpiringPermissionGroups().keySet()) {
+            Long date = permissionUser.getExpiringPermissionGroups().get(group);
             if (!group.isStillValid(uniqueId, date)) {
-                changedSomething.set(true);
+                changedSomething = true;
                 permissionUser.removePermissionGroup(group);
             }
-        });
-
+        }
         for (IPermission exclusivePermission : permissionUser.getExclusivePermissions()) {
-            if (!exclusivePermission.isStillValid(uniqueId, exclusivePermission.getExpiringTime())) {
-                changedSomething.set(true);
+            if (exclusivePermission.isTemporary() && !exclusivePermission.isStillValid(uniqueId, exclusivePermission.getExpiringTime())) {
+                changedSomething = true;
                 permissionUser.removePermission(exclusivePermission.getPermission());
             }
         }
 
-        //If a rank has been removed (something changed) we have to update to make all changes sync over the network
-        if (changedSomething.get()) {
+        //If a rank or a permission has been removed (something changed) we have to update to make all changes sync over the network
+        if (changedSomething) {
             permissionUser.update();
         }
-
-        List<String> permissions = new LinkedList<>();
 
         //All inheritances
         for (IPermissionGroup group : permissionUser.getPermissionGroups()) {
             permissions.addAll(group.getPermissions());
-            group.getInheritances().forEach(i -> permissions.addAll(i.getPermissions()));
+            for (IPermissionGroup inheritance : group.getInheritances()) {
+                permissions.addAll(inheritance.getPermissions());
+            }
         }
 
         for (IPermission exclusivePermission : permissionUser.getExclusivePermissions()) {
             permissions.add(exclusivePermission.getPermission());
         }
 
-        //Adding all permissions that he has exclusively
-        permissions.forEach(accept); //Accepting the consumer for all permissions
+        return permissions;
     }
 
     @Override

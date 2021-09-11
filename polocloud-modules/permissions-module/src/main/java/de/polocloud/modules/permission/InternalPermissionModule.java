@@ -24,13 +24,13 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Getter
-public class PoloCloudPermissionModule {
+public class InternalPermissionModule {
 
     /**
      * The instance
      */
     @Getter
-    private static PoloCloudPermissionModule instance;
+    private static InternalPermissionModule instance;
 
     /**
      * The database for all users
@@ -52,7 +52,7 @@ public class PoloCloudPermissionModule {
     public static final String TASK_NAME_UPDATE_USER = "task-update-user";
     public static final String TASK_NAME_UPDATE_GROUP = "task-update-group";
 
-    public PoloCloudPermissionModule(ModuleBootstrap bootstrap) {
+    public InternalPermissionModule(ModuleBootstrap bootstrap) {
         instance = this;
         this.userDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-users", new File(bootstrap.getDataDirectory(), "permission-users"), SimplePermissionUser.class);
         this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);

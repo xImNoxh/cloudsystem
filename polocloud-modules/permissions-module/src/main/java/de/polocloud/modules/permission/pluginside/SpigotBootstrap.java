@@ -2,7 +2,7 @@ package de.polocloud.modules.permission.pluginside;
 
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.modules.permission.PoloCloudPermissionModule;
+import de.polocloud.modules.permission.InternalPermissionModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -25,11 +25,11 @@ import java.util.*;
 
 public class SpigotBootstrap extends JavaPlugin implements Listener {
 
-    private PoloCloudPermissionModule permissionModule;
+    private InternalPermissionModule permissionModule;
 
     @Override
     public void onLoad() {
-        permissionModule = new PoloCloudPermissionModule(new ModuleBootstrap());
+        permissionModule = new InternalPermissionModule(new ModuleBootstrap());
         permissionModule.load();
     }
 
@@ -141,20 +141,14 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
         public void recalculatePermissions() {
             this.perms = new HashMap<>();
 
-            if (player == null || Bukkit.getPlayer(this.player.getName()) == null) {
+            if (player == null || Bukkit.getPlayer(this.player.getName()) == null || !player.isOnline()) {
                 return;
             }
 
             try {
-
-                PermissionPool.getInstance()
-                            .updatePermissions(
-                                    player.getUniqueId(),
-                                    s -> perms
-                                            .put(s,
-                                                new PermissionAttachmentInfo(this, s,
-                                                    new PermissionAttachment(this.pluginInstance, this)
-                                                    , true)));
+                for (String s : PermissionPool.getInstance().loadPermissions(player.getUniqueId())) {
+                    perms.put(s, new PermissionAttachmentInfo(this, s, new PermissionAttachment(this.pluginInstance, this), true));
+                }
             } catch (NullPointerException e) {
                 tries += 1;
                 Scheduler.runtimeScheduler().schedule(this::recalculatePermissions, 5L);

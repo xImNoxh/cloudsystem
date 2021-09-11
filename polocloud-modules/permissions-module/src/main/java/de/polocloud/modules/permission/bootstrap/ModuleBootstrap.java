@@ -5,7 +5,7 @@ import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.module.info.ModuleInfo;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.info.ModuleTask;
-import de.polocloud.modules.permission.PoloCloudPermissionModule;
+import de.polocloud.modules.permission.InternalPermissionModule;
 
 @ModuleInfo(
     main = ModuleBootstrap.class,
@@ -17,14 +17,14 @@ import de.polocloud.modules.permission.PoloCloudPermissionModule;
 )
 public class ModuleBootstrap extends CloudModule {
 
-    private PoloCloudPermissionModule permissionModule;
-
-    public ModuleBootstrap() {
-    }
+    /**
+     * The internal module
+     */
+    private InternalPermissionModule permissionModule;
 
     @ModuleTask(id = 1, state = ModuleState.LOADING)
     public void onLoad() {
-        this.permissionModule = new PoloCloudPermissionModule(this);
+        this.permissionModule = new InternalPermissionModule(this);
         this.permissionModule.load();
     }
 
