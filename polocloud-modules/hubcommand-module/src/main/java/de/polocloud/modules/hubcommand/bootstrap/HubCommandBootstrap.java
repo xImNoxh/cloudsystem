@@ -11,7 +11,7 @@ import de.polocloud.modules.hubcommand.HubCommandModule;
     main = HubCommandBootstrap.class,
     name = "HubCommand",
     version = "1.0",
-    description = "This is a HubCommand Module",
+    description = "Module for sending players back to a fallback",
     authors = "HttpMarco",
     copyTypes = ModuleCopyType.PROXIES
 )

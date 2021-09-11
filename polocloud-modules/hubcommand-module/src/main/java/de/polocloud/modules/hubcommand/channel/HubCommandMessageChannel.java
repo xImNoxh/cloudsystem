@@ -7,7 +7,7 @@ import de.polocloud.modules.hubcommand.config.HubCommandConfig;
 
 public class HubCommandMessageChannel {
 
-    private IMessageChannel<WrappedObject<HubCommandConfig>> messageChannel;
+    private final IMessageChannel<WrappedObject<HubCommandConfig>> messageChannel;
 
     public HubCommandMessageChannel() {
         PoloCloudAPI.getInstance().getMessageManager().registerChannel(WrappedObject.class, "hubcommand-message-channel");
