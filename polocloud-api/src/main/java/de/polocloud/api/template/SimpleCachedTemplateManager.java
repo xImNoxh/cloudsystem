@@ -36,6 +36,13 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
         }
     }
 
+    public void update(ITemplate template) {
+        if (this.templates.stream().anyMatch(t -> t.getName().equalsIgnoreCase(template.getName()))) {
+            this.templates.removeIf(t -> t.getName().equalsIgnoreCase(template.getName()));
+            this.templates.add(template);
+        }
+    }
+
     @Override
     public void addTemplate(ITemplate template) {
         this.templates.add(template);

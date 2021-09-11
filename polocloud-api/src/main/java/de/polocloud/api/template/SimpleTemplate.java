@@ -113,6 +113,8 @@ public class SimpleTemplate implements ITemplate {
             }
 
         } else {
+            SimpleCachedTemplateManager templateManager = (SimpleCachedTemplateManager) PoloCloudAPI.getInstance().getTemplateManager();
+            templateManager.update(this);
             PoloCloudAPI.getInstance().sendPacket(new TemplateUpdatePacket(this));
         }
     }

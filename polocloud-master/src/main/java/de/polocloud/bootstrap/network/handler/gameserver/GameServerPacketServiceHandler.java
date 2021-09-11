@@ -38,6 +38,7 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
         PoloCloudAPI.getInstance().registerSimplePacketHandler(TemplateUpdatePacket.class, templateUpdatePacket -> {
             ITemplate template = templateUpdatePacket.getTemplate();
             template.update();
+            PoloCloudAPI.getInstance().updateCache();
         });
 
         new SimplePacketHandler<>(PingPacket.class, packet -> {
