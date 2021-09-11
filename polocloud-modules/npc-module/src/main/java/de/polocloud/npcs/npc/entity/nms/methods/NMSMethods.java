@@ -20,9 +20,9 @@ public enum NMSMethods {
     NBT_TAG_COMPOUND_SET_SHORT(NMSClassWrapper.NBT_TAG_COMPOUND_CLASS,"setShort", new Class[]{String.class, short.class}),
     NBT_TAG_COMPOUND_SET_STRING(NMSClassWrapper.NBT_TAG_COMPOUND_CLASS,"setString", new Class[]{String.class, String.class});
 
-    private NMSClassWrapper classWrapper;
-    private String methodName;
-    private Class<?>[] methodArgs;
+    private final NMSClassWrapper classWrapper;
+    private final String methodName;
+    private final Class<?>[] methodArgs;
 
     NMSMethods(NMSClassWrapper classWrapper, String methodName, Class<?>[] methodArgs) {
         this.classWrapper = classWrapper;

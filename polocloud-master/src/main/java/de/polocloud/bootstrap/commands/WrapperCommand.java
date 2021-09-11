@@ -20,7 +20,6 @@ public class WrapperCommand implements CommandListener, TabCompletable {
     public WrapperCommand() {
     }
 
-
     @Command(name = "wrapper", description = "Manage a wrapper", aliases = "wrap")
     public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(onlyFirstArgs = {"stop", "shutdown", "info", "list"}, min = 1, max = 2, message = {"----[Wrapper]----", "Use §3wrapper stop/shutdown <wrapper> §7to shutdown a wrapper", "Use §3wrapper list §7to get all connected wrappers", "Use §3wrapper info <wrapper> §7to get information of a wrapper", "----[Wrapper]----"}) String... params) {
         IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();

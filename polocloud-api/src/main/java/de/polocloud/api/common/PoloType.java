@@ -33,7 +33,7 @@ public enum PoloType {
     GENERAL_GAMESERVER,
 
     /**
-     * This should not happen to appear
+     * This should never appear
      */
     NONE;
 

@@ -1,6 +1,5 @@
 package de.polocloud.api.command;
 
-
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;

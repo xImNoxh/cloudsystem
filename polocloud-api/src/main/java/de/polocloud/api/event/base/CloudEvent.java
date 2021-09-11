@@ -16,6 +16,4 @@ public abstract class CloudEvent {
         this.nettyFired = nettyFired;
     }
 
-
-
 }

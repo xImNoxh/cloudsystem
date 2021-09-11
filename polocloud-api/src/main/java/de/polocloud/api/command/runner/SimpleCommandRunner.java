@@ -1,4 +1,3 @@
-
 package de.polocloud.api.command.runner;
 
 import com.esotericsoftware.reflectasm.MethodAccess;

@@ -6,7 +6,7 @@ import de.polocloud.npcs.npc.entity.nms.wrapper.NMSClassWrapper;
 
 public class NMSNBTTag {
 
-    private Object nms;
+    private final Object nms;
 
     public NMSNBTTag() {
         nms = ReflectionProvider.getNewInstanceOfClass(NMSClassWrapper.NBT_TAG_COMPOUND_CLASS.getClazz(), null);

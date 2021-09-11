@@ -1,6 +1,4 @@
-
 package de.polocloud.api.event.handling;
-
 
 public enum EventPriority {
 

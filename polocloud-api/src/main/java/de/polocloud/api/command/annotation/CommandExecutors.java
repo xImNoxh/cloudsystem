@@ -1,6 +1,4 @@
-
 package de.polocloud.api.command.annotation;
-
 
 import de.polocloud.api.command.executor.ExecutorType;
 
@@ -13,6 +11,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandExecutors {
 
+    /**
+     *  The executors who can execute this Command (PLAYER, CONSOLE, etc.
+     *
+     * @return CommandExecutor ({@link ExecutorType}) as Array
+     */
     ExecutorType[] value();
 
 }

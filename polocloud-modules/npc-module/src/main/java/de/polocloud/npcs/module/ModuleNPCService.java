@@ -17,14 +17,14 @@ import java.io.File;
 
 public class ModuleNPCService implements INPCService {
 
-    private CloudModule module;
+    private final CloudModule module;
 
     private NPCMeta metaConfig;
 
     private GlobalConfigClass currentCache;
 
-    private IMessageChannel<WrappedObject<GlobalConfigClass>> transferChannel;
-    private IMessageChannel<WrappedObject<RequestType>> requestChannel;
+    private final IMessageChannel<WrappedObject<GlobalConfigClass>> transferChannel;
+    private final IMessageChannel<WrappedObject<RequestType>> requestChannel;
 
     public ModuleNPCService(CloudModule module) {
         this.module = module;

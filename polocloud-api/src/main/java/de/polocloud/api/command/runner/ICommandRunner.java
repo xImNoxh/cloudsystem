@@ -1,4 +1,3 @@
-
 package de.polocloud.api.command.runner;
 
 import de.polocloud.api.command.annotation.Command;

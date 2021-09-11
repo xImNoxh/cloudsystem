@@ -5,19 +5,24 @@ import de.polocloud.api.command.annotation.Arguments;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
+import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.bootstrap.setup.CreateTemplateSetup;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
-public class TemplateCommand implements CommandListener {
+public class TemplateCommand implements CommandListener, TabCompletable {
 
     private ITemplateManager templateService;
     private IGameServerManager gameServerManager;
@@ -133,5 +138,31 @@ public class TemplateCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maintenance <state (boolean(true, false))> " + ConsoleColors.GRAY + "to set the maintenance mode of a template");
         PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "template edit <template> set maxplayers <amount> " + ConsoleColors.GRAY + "to set the maximal players of a template");
         PoloLogger.print(LogLevel.INFO, "----[/Template]----");
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandExecutor executor, String[] args) {
+        if (args.length == 0) {
+            return Arrays.asList("create", "versions", "info", "shutdown", "edit");
+        }else if(args.length == 1){
+            switch (args[0]) {
+                case "info":
+                case "shutdown":
+                case "edit": {
+                    List<String> strings = new LinkedList<>();
+                    for (ITemplate template : PoloCloudAPI.getInstance().getTemplateManager().getTemplates()) {
+                        strings.add(template.getName());
+                    }
+                    return strings;
+                }
+            }
+        }else if(args.length == 2 && args[0].equals("edit")){
+            return Collections.singletonList("set");
+        }else if(args.length == 3 && (args[0].equals("edit") && args[2].equals("set"))){
+            return Arrays.asList("maintenance", "maxplayers");
+        }else if(args.length == 4 && (args[0].equals("edit") && args[2].equals("set") && args[3].equals("maintenance"))){
+            return Arrays.asList("true", "false");
+        }
+        return new LinkedList<>();
     }
 }

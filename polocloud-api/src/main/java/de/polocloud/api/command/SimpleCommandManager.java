@@ -174,7 +174,7 @@ public class SimpleCommandManager implements ICommandManager {
             if (source == null) {
                 return false;
             }
-            source.sendMessage("An error occurred while executing the command.");
+            source.sendMessage("An internal error occurred while executing the command.");
             ex.printStackTrace();
         }
         return true;
@@ -220,6 +220,5 @@ public class SimpleCommandManager implements ICommandManager {
             throw new UnsupportedOperationException("transformer missing for " + clazz);
         return (T) transformer.apply(input, parameter);
     }
-
 
 }

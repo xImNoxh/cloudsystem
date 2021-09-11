@@ -1,5 +1,6 @@
 package de.polocloud.bootstrap.commands;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
@@ -22,6 +23,6 @@ public class StopCommand implements CommandListener {
     @CommandExecutors(ExecutorType.CONSOLE)
     public void execute(CommandExecutor executor, String[] args) {
         PoloLogger.print(LogLevel.INFO, "Stopping...");
-        Master.getInstance().terminate();
+        PoloCloudAPI.getInstance().terminate();
     }
 }

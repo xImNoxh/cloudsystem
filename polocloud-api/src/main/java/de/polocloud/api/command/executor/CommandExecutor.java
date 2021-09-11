@@ -1,6 +1,4 @@
-
 package de.polocloud.api.command.executor;
-
 
 public interface CommandExecutor {
 
