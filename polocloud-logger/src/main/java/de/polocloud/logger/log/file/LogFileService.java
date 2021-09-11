@@ -21,14 +21,9 @@ public class LogFileService {
         createCurrentLatestLog();
     }
 
-    public static LogFileService getLogFileService() {
-        return logFileService;
-    }
-
-    public void createLogDirectory() {
-        FileConstants.LOGGER_FOLDER.mkdirs();
-    }
-
+    /**
+     * Creates a new file for the Latest-Log
+     */
     public void createCurrentLatestLog() {
         try {
             getLatestLog().createNewFile();
@@ -37,15 +32,26 @@ public class LogFileService {
         }
     }
 
+    /**
+     * Deletes the file for the Latest-Log
+     */
     public void removeLatestLog() {
         File file = getLatestLog();
         if (file.exists()) file.delete();
     }
 
+    /**
+     * Gets the Latest-Log
+     * @return the Latest-Log
+     */
     public File getLatestLog() {
         return new File(FileConstants.LOGGER_FOLDER, FileConstants.LOGGER_LATEST_NAME);
     }
 
+    /**
+     * Gets the current Day-Log
+     * @return the Day-Log
+     */
     public File getCurrentDayLog() {
         new File(FileConstants.LOGGER_FOLDER, PoloHelper.getSimpleDate() + "/").mkdirs();
         File file = new File(PoloHelper.getSimpleDate() + "/services.log");
@@ -61,5 +67,13 @@ public class LogFileService {
 
     public LogFileWriter getLogFileWriter() {
         return logFileWriter;
+    }
+
+    public static LogFileService getLogFileService() {
+        return logFileService;
+    }
+
+    public void createLogDirectory() {
+        FileConstants.LOGGER_FOLDER.mkdirs();
     }
 }
