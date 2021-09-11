@@ -11,8 +11,6 @@ import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class SimplePermissionPool implements PermissionPool {
 
@@ -115,14 +113,14 @@ public class SimplePermissionPool implements PermissionPool {
         //Safely iterating through all groups
 
         for (IPermissionGroup group : permissionUser.getExpiringPermissionGroups().keySet()) {
-            Long date = permissionUser.getExpiringPermissionGroups().get(group);
-            if (!group.isStillValid(uniqueId, date)) {
+            Long expirationDate = permissionUser.getExpiringPermissionGroups().get(group);
+            if (group.hasExpired(expirationDate)) {
                 changedSomething = true;
                 permissionUser.removePermissionGroup(group);
             }
         }
         for (IPermission exclusivePermission : permissionUser.getExclusivePermissions()) {
-            if (exclusivePermission.isTemporary() && !exclusivePermission.isStillValid(uniqueId, exclusivePermission.getExpiringTime())) {
+            if (exclusivePermission.isTemporary() && exclusivePermission.hasExpired(exclusivePermission.getExpiringTime())) {
                 changedSomething = true;
                 permissionUser.removePermission(exclusivePermission.getPermission());
             }

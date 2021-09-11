@@ -10,18 +10,16 @@ public class SignConverter {
     /**
      * List for containing all available placeholders
      */
-    private static final Map<String, ConvertStep> converts = Maps.newConcurrentMap();
+    private static final Map<String, ConvertStep> CONVERTERS = Maps.newConcurrentMap();
 
-    /**
-     * Initializes the placeholders
-     */
-    public SignConverter() {
-        converts.put("%SERVICE%", signService -> signService.getGameServer() == null ? "N/A" : signService.getGameServer().getName());
-        converts.put("%MAX_PLAYERS%", signService ->  signService.getGameServer() == null ? "N/A" : signService.getGameServer().getMaxPlayers());
-        converts.put("%ONLINE_PLAYERS%", signService ->  signService.getGameServer() == null ? "N/A" : signService.getGameServer().getOnlinePlayers());
-        converts.put("%MOTD%", signService ->  signService.getGameServer() == null ? "N/A" :  signService.getGameServer().getMotd());
-        converts.put("%GROUP%", signService ->  signService.getGameServer() == null ? "N/A" : signService.getTemplate().getName());
-        converts.put("%TEMPLATE%", signService ->  signService.getTemplate().getName());
+
+    static {
+        CONVERTERS.put("%SERVICE%", signService -> signService.getGameServer() == null ? "N/A" : signService.getGameServer().getName());
+        CONVERTERS.put("%MAX_PLAYERS%", signService ->  signService.getGameServer() == null ? "N/A" : signService.getGameServer().getMaxPlayers());
+        CONVERTERS.put("%ONLINE_PLAYERS%", signService ->  signService.getGameServer() == null ? "N/A" : signService.getGameServer().getOnlinePlayers());
+        CONVERTERS.put("%MOTD%", signService ->  signService.getGameServer() == null ? "N/A" :  signService.getGameServer().getMotd());
+        CONVERTERS.put("%GROUP%", signService ->  signService.getGameServer() == null ? "N/A" : signService.getTemplate().getName());
+        CONVERTERS.put("%TEMPLATE%", signService ->  signService.getTemplate().getName());
     }
 
     /**
@@ -33,9 +31,9 @@ public class SignConverter {
      */
     public static String convertSignLayout(IGameServerSign sign, String line) {
         String output = line;
-        for (String ids : converts.keySet()) {
+        for (String ids : CONVERTERS.keySet()) {
             if(output.contains(ids)){
-                output = output.replaceAll(ids, converts.get(ids).convert(sign).toString());
+                output = output.replaceAll(ids, CONVERTERS.get(ids).convert(sign).toString());
             }
         }
         return output;

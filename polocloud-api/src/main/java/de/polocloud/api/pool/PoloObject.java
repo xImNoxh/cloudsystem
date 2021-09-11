@@ -25,7 +25,4 @@ public interface PoloObject<V> extends Serializable, INamable {
         });
     }
 
-    default void thenAccept(Consumer<V> consumer) {
-        consumer.accept((V) this);
-    }
 }

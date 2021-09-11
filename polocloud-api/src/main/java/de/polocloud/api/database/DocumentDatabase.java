@@ -102,6 +102,7 @@ public class DocumentDatabase {
         if (document != null) {
             cache.remove(name);
         }
+        assert document != null;
         document.delete();
     }
 

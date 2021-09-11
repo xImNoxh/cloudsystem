@@ -4,7 +4,6 @@ import de.polocloud.api.guice.own.Guice;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 public interface PermissionPool {
 

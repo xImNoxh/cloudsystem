@@ -29,13 +29,9 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
 
     @Override
     public void onLoad() {
+
         permissionModule = new InternalPermissionModule(new ModuleBootstrap());
         permissionModule.load();
-    }
-
-    @Override
-    public void onDisable() {
-        this.permissionModule.shutdown();
     }
 
     @Override
@@ -43,6 +39,11 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
         this.permissionModule.enable();
 
         Bukkit.getPluginManager().registerEvents(this, this);
+    }
+
+    @Override
+    public void onDisable() {
+        this.permissionModule.shutdown();
     }
 
     @EventHandler
