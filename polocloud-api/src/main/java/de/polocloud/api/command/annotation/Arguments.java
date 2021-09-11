@@ -1,4 +1,3 @@
-
 package de.polocloud.api.command.annotation;
 
 import java.lang.annotation.ElementType;

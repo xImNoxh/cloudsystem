@@ -1,5 +1,8 @@
 package de.polocloud.logger.log.types;
 
+/**
+ * Class for declearing the different Types of a log
+ */
 public enum LoggerType {
 
     INFO(ConsoleColors.CYAN, "Info"), WARNING(ConsoleColors.ORANGE, "Warning"),

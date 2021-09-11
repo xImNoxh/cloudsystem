@@ -10,6 +10,10 @@ import java.io.IOException;
 
 public class ConsoleReadThread extends Thread {
 
+    /**
+     * Instance of the {@link ConsoleReader} for reading
+     * the Input of the Console
+     */
     private final ConsoleReader consoleReader;
 
     public ConsoleReadThread(ConsoleReader consoleReader) {

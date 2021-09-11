@@ -26,9 +26,9 @@ public class SimpleEntityNPC implements ICloudNPC {
 
     private CloudNPCMeta meta;
 
-    private Location location;
+    private final Location location;
     private Entity entity;
-    private EntityType entityType;
+    private final EntityType entityType;
 
     private Hologram hologram;
 

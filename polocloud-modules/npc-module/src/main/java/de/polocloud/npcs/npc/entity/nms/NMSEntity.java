@@ -7,7 +7,7 @@ import org.bukkit.entity.Entity;
 
 public class NMSEntity {
 
-    private Object nms;
+    private final Object nms;
 
     public NMSEntity(Entity entity) {
         Object craftEntity = NMSClassWrapper.CRAFT_ENTITY_CLASS.getClazz().cast(entity);

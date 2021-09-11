@@ -22,7 +22,6 @@ public class HelpCommand implements CommandListener {
         aliases = "?"
     )
     public void execute(CommandExecutor sender, String[] rawArgs) {
-
         for (ICommandRunner command : PoloCloudAPI.getInstance().getCommandManager().getCommands().stream().filter(command -> Arrays.asList(command.getAllowedSourceTypes()).contains(ExecutorType.CONSOLE) || Arrays.asList(command.getAllowedSourceTypes()).contains(ExecutorType.ALL)).collect(Collectors.toList())) {
                 PoloLogger.print(LogLevel.INFO, "Command: " + ConsoleColors.LIGHT_BLUE + command.getCommand().name() + ConsoleColors.GRAY
                     + "(" + ConsoleColors.LIGHT_BLUE + String.join(ConsoleColors.GRAY + ", " + ConsoleColors.LIGHT_BLUE, command.getCommand().aliases()) + ConsoleColors.GRAY + ") × " + command.getCommand().description());

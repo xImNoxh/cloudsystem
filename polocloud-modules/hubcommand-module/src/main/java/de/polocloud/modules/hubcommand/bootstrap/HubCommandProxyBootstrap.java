@@ -11,14 +11,12 @@ public class HubCommandProxyBootstrap extends Plugin {
     private static HubCommandProxyBootstrap instance;
 
     private HubCommandConfig hubCommandConfig;
-    private HubCommandMessageChannel hubCommandMessageChannel;
-
 
     @Override
     public void onEnable() {
         instance = this;
-        this.hubCommandMessageChannel = new HubCommandMessageChannel();
-        this.hubCommandMessageChannel.getMessageChannel().registerListener((hubCommandConfigWrappedObject, startTime) ->
+        HubCommandMessageChannel hubCommandMessageChannel = new HubCommandMessageChannel();
+        hubCommandMessageChannel.getMessageChannel().registerListener((hubCommandConfigWrappedObject, startTime) ->
             this.hubCommandConfig = hubCommandConfigWrappedObject.unwrap(HubCommandConfig.class));
 
         PoloCloudAPI.getInstance().getCommandManager().registerCommand(new HubCommand());
@@ -27,7 +25,6 @@ public class HubCommandProxyBootstrap extends Plugin {
     public static HubCommandProxyBootstrap getInstance() {
         return instance;
     }
-
 
     public HubCommandConfig getHubCommandConfig() {
         return hubCommandConfig;

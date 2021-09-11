@@ -6,6 +6,7 @@ import de.polocloud.api.command.annotation.Arguments;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -21,10 +22,13 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-public class GameServerCommand implements CommandListener {
+public class GameServerCommand implements CommandListener, TabCompletable {
 
     @Inject
     private IGameServerManager gameServerManager;
@@ -217,7 +221,26 @@ public class GameServerCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "----[/Gameserver]----");
     }
 
-    private int searchForAvailableID(ITemplate template) throws ExecutionException, InterruptedException {
+    private int searchForAvailableID(ITemplate template) {
         return gameServerManager.getAllCached(template).size() + 1;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandExecutor executor, String[] args) {
+
+        if(args.length == 0){
+            return Arrays.asList("stop", "start", "copy", "info", "execute");
+        }else if(args.length == 1){
+            LinkedList<String> strings = new LinkedList<>();
+            for (IGameServer gameServer : PoloCloudAPI.getInstance().getGameServerManager().getAllCached()) {
+                strings.add(gameServer.getName());
+            }
+            return strings;
+        }else if(args.length == 2){
+            if(args[0].equalsIgnoreCase("copy")){
+                return Arrays.asList("worlds", "entire");
+            }
+        }
+        return new LinkedList<>();
     }
 }

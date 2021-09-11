@@ -7,6 +7,10 @@ import de.polocloud.wrapper.Wrapper;
 
 public class CloudInit {
 
+    /**
+     * Launches the cloud with the different program arguments
+     * @param args the program arguments (master, wrapper, etc.)
+     */
     public CloudInit(String[] args) {
 
         LogBootstrapService logBootstrapService = new LogBootstrapService();

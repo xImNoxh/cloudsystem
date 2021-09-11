@@ -4,14 +4,14 @@ import de.polocloud.api.config.IConfig;
 
 public class HubCommandConfig implements IConfig {
 
-    private String alreadyConnectedAtFallback;
-    private String successfullyConnected;
-    private String noFallbackServerFound;
+    private final String alreadyConnectedAtFallback;
+    private final String successfullyConnected;
+    private final String noFallbackServerFound;
 
     public HubCommandConfig() {
-        this.alreadyConnectedAtFallback = "already on a fallback";
-        this.successfullyConnected = "successfully connected to a fallback";
-        this.noFallbackServerFound = "No fallback server found...";
+        this.alreadyConnectedAtFallback = "§7You are already on a §bfallback§7!";
+        this.successfullyConnected = "§7You were §asuccessfully §7connected to a §bfallback§7!";
+        this.noFallbackServerFound = "§cNo §bfallback §7was found for you...";
     }
 
     public String getAlreadyConnectedAtFallback() {

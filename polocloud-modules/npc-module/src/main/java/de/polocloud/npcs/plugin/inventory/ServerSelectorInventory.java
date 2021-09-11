@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class ServerSelectorInventory {
 
-    private ITemplate template;
-    private Player player;
+    private final ITemplate template;
+    private final Player player;
 
     private Inventory inventory;
 
@@ -93,6 +93,7 @@ public class ServerSelectorInventory {
      * Method for opening the Selector inventory
      */
     public void open(){
+
         if (inventory != null) {
             player.openInventory(inventory);
         }

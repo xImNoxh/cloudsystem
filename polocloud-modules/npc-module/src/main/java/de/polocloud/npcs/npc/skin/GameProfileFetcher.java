@@ -17,7 +17,6 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
-
 /**
  * Class not written from PoloCloud!
  * This class was found on the Internet and was made by Jofkos (https://github.com/Jofkos)
@@ -29,9 +28,9 @@ public class GameProfileFetcher {
     private static final String JSON_SKIN = "{\"timestamp\":%d,\"profileId\":\"%s\",\"profileName\":\"%s\",\"isPublic\":true,\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}";
     private static final String JSON_CAPE = "{\"timestamp\":%d,\"profileId\":\"%s\",\"profileName\":\"%s\",\"isPublic\":true,\"textures\":{\"SKIN\":{\"url\":\"%s\"},\"CAPE\":{\"url\":\"%s\"}}}";
 
-    private static Gson gson = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).registerTypeAdapter(GameProfile.class, new GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).registerTypeAdapter(GameProfile.class, new GameProfileSerializer()).registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer()).create();
 
-    private static HashMap<UUID, CachedProfile> cache = new HashMap<>();
+    private static final HashMap<UUID, CachedProfile> cache = new HashMap<>();
 
     private static long cacheTime = -1;
 
@@ -159,8 +158,8 @@ public class GameProfileFetcher {
 
     private static class CachedProfile {
 
-        private long timestamp = System.currentTimeMillis();
-        private GameProfile profile;
+        private final long timestamp = System.currentTimeMillis();
+        private final GameProfile profile;
 
         public CachedProfile(GameProfile profile) {
             this.profile = profile;

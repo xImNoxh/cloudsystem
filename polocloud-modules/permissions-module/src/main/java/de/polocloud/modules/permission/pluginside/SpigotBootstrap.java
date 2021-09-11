@@ -160,6 +160,5 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
             }
         }
 
-
     }
 }

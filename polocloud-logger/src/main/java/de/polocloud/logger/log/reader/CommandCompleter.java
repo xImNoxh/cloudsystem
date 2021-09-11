@@ -8,6 +8,9 @@ import jline.console.completer.Completer;
 
 import java.util.*;
 
+/**
+ * General class for completing the inputs of a command
+ */
 public class CommandCompleter implements Completer {
 
     @Override

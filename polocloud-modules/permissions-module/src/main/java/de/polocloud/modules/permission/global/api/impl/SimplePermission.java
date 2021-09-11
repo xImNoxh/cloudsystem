@@ -30,4 +30,5 @@ public class SimplePermission implements IPermission {
     public boolean isTemporary() {
         return expiringTime != -1L;
     }
+
 }

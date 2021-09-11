@@ -13,10 +13,24 @@ import java.io.File;
 
 public class HubCommandModule {
 
+    /**
+     * Instance of the HubCommand Module
+     */
     private static HubCommandModule instance;
-    private CloudModule module;
 
-    private HubCommandMessageChannel hubCommandMessageChannel;
+    /**
+     * Instance of CloudModule
+     */
+    private final CloudModule module;
+
+    /**
+     * The {@link de.polocloud.api.messaging.IMessageChannel} instance
+     */
+    private final HubCommandMessageChannel hubCommandMessageChannel;
+
+    /**
+     * The MainConfig
+     */
     private HubCommandConfig hubCommandConfig;
 
     public HubCommandModule(CloudModule module) {
@@ -32,19 +46,31 @@ public class HubCommandModule {
         forceUpdate();
     }
 
+    /**
+     * Reloads the config and sends the Config to every proxy
+     */
     public void reload(){
         loadConfig();
         forceUpdate();
     }
 
+    /**
+     * Sends the {@link HubCommandConfig} over the {@link de.polocloud.api.messaging.IMessageChannel} to everyProxy
+     */
     public void forceUpdate(){
         hubCommandMessageChannel.getMessageChannel().sendMessage(hubCommandConfig);
     }
 
+    /**
+     * Loads all values from of the {@link HubCommandConfig}
+     */
     public void loadConfig(){
         hubCommandConfig = new SimpleConfigLoader().load(HubCommandConfig.class, new File(module.getDataDirectory(), "config.yml"));
     }
 
+    /**
+     * Saves the current state of the {@link HubCommandConfig}
+     */
     public void saveConfig(){
         new SimpleConfigSaver().save(hubCommandConfig, new File(module.getDataDirectory(), "config.yml"));
     }

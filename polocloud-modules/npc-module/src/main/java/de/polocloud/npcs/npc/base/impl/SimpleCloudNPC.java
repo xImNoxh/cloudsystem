@@ -25,9 +25,9 @@ public class SimpleCloudNPC implements ICloudNPC {
 
     private CloudNPCMeta meta;
 
-    private Location location;
+    private final Location location;
 
-    private ItemStack itemInHand;
+    private final ItemStack itemInHand;
 
     private NPC npc;
 

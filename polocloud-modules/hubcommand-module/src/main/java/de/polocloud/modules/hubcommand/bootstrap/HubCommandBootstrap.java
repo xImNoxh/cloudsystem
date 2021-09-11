@@ -11,10 +11,9 @@ import de.polocloud.modules.hubcommand.HubCommandModule;
     main = HubCommandBootstrap.class,
     name = "HubCommand",
     version = "1.0",
-    description = "This is a HubCommand Module",
+    description = "Module for sending players back to a fallback",
     authors = "HttpMarco",
-    copyTypes = ModuleCopyType.PROXIES,
-    reloadable = true
+    copyTypes = ModuleCopyType.PROXIES
 )
 public class HubCommandBootstrap extends CloudModule {
 
@@ -25,19 +24,9 @@ public class HubCommandBootstrap extends CloudModule {
         proxyModule = new HubCommandModule(this);
     }
 
-    @ModuleTask(id = 2, state = ModuleState.STARTING)
-    public void enable() {
-
-    }
-
     @ModuleTask(id = 3, state = ModuleState.RELOADING)
     public void reload() {
         proxyModule.reload();
-    }
-
-    @ModuleTask(id = 4, state = ModuleState.STOPPING)
-    public void stop() {
-
     }
 
 }

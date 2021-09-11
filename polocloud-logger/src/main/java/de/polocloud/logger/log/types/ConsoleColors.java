@@ -2,6 +2,9 @@ package de.polocloud.logger.log.types;
 
 import org.fusesource.jansi.Ansi;
 
+/**
+ * Class for declaring the different Colors of the Console
+ */
 public enum ConsoleColors {
 
     RESET(Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.DEFAULT).boldOff().toString(), 'f'),

@@ -265,6 +265,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         byte[] bytes = s.getBytes(Charsets.UTF_8);
 
         if (bytes.length > 32767) {
+
             throw new EncoderException("String too big (was " + s.length() + " bytes encoded, slots " + 32767 + ")");
         } else {
             this.writeVarInt(bytes.length);
