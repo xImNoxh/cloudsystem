@@ -1,6 +1,7 @@
 package de.polocloud.api.config.saver;
 
 import de.polocloud.api.config.IConfig;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.File;
@@ -15,10 +16,11 @@ public class SimpleConfigSaver implements IConfigSaver {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter writer = new FileWriter(file);
-            PoloHelper.GSON_INSTANCE.toJson(config, writer);
-            writer.flush();
-            writer.close();
+            new JsonData(config).save(file);
+            //FileWriter writer = new FileWriter(file);
+            //PoloHelper.GSON_INSTANCE.toJson(config, writer);
+            //writer.flush();
+            //writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
