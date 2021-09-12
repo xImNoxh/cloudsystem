@@ -75,7 +75,7 @@ public class ProxyConfig implements IConfig {
 
 
         this.tabList = new ProxyTabList(true, " \n     §b§lPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o%ONLINE_PLAYERS%§8/§f%MAX_PLAYERS% " +
-            "\n §7current server §8- §b%SERVICE% \n "," \n §7Join §b§nOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE, iPommes, Lystx \n ");
+            "\n §7current server §8- §b%SERVICE% \n "," \n §7Join §bOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE, iPommes, Lystx \n ");
 
         this.whiteListedPlayers = new ArrayList<>();
     }
@@ -130,9 +130,7 @@ public class ProxyConfig implements IConfig {
      * @param name the name of the player
      */
     public void unWhitelistPlayer(String name) {
-        if (this.whiteListedPlayers.contains(name)) {
-            this.whiteListedPlayers.remove(name);
-        }
+        this.whiteListedPlayers.remove(name);
         this.update();
     }
 
