@@ -11,15 +11,32 @@ import de.polocloud.modules.proxy.ProxyModule;
 public class MotdService implements IReloadable {
 
     /**
-     * Sends the {@link ProxyMotd} to a given {@link IGameServer}
+     * Updates the motd and stuff for a {@link IGameServer}
      *
-     * @param server the server to send it to
+     * @param gameServer the server
      */
-    public void sendMotd(IGameServer server){
+    public void sendMotd(IGameServer gameServer) {
         ProxyConfig proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
 
-      //  server.setMotd(proxyConfig.getMotdBaseOnServer(server).getDescription());
+        if (proxyConfig == null) {
+            return;
+        }
+        ProxyMotd proxyMotd;
+
+        if (gameServer.getTemplate().isMaintenance()) {
+            proxyMotd = proxyConfig.getMaintenanceMotd();
+        } else {
+            proxyMotd = proxyConfig.getOnlineMotd();
+        }
+
+        if (!proxyMotd.isEnabled()) {
+            return;
+        }
+
+        gameServer.setServerPing(proxyMotd.getDescription(), gameServer.getMaxPlayers(), gameServer.getOnlinePlayers(), proxyMotd.getVersionTag(), proxyMotd.getPlayerInfo());
+        gameServer.update();
     }
+
 
     @Override
     public void reload() {

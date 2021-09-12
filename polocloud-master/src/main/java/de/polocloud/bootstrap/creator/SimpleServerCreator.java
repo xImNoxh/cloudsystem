@@ -18,7 +18,7 @@ public class SimpleServerCreator extends ServerCreator {
             return false;
         }
 
-        if (template.getMaxServerCount() <= serversByTemplate.size()) {
+        if (template.getMaxServerCount() != -1 && template.getMaxServerCount() <= serversByTemplate.size()) {
             return false;
         }
 

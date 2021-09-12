@@ -38,11 +38,19 @@ public class MasterConfig implements IConfig, IProtocolObject {
         PoloCloudAPI.getInstance().setMasterConfig(this);
 
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-            PoloCloudAPI.getInstance().getGuice().getInstance(IConfigSaver.class).save(this, FileConstants.MASTER_CONFIG_FILE);
+            PoloCloudAPI.getInstance().getConfigSaver().save(this, FileConstants.MASTER_CONFIG_FILE);
             PoloCloudAPI.getInstance().reload();
         } else {
             PacketMessenger.create().send(new MasterUpdateConfigPacket(this));
         }
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    public void setMessages(Messages messages) {
+        this.messages = messages;
     }
 
     public Properties getProperties() {

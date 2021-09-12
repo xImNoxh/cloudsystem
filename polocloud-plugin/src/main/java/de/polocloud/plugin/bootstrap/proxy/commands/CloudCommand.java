@@ -149,6 +149,10 @@ public class CloudCommand implements CommandListener {
 
                     boolean newState = !template.isMaintenance();
 
+                    if (newState == PoloCloudAPI.getInstance().getTemplateManager().getTemplate(template.getName()).isMaintenance()) {
+                        newState = !newState;
+                    }
+
                     template.setMaintenance(newState);
                     template.update();
 

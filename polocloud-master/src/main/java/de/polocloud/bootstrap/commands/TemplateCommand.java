@@ -11,8 +11,7 @@ import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
-import de.polocloud.api.wrapper.base.IWrapper;
-import de.polocloud.bootstrap.setup.CreateTemplateSetup;
+import de.polocloud.bootstrap.setup.TemplateSetup;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
@@ -35,7 +34,7 @@ public class TemplateCommand implements CommandListener, TabCompletable {
     @Command(name = "template", description = "Manage a template", aliases = "group")
     public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(min = 1, max = 7, message = {"----[Template]----", "Use §btemplate create §7to create a new template", "Use §btemplate versions §7to show all available versions for a template", "Use §btemplate info <template> §7to get information about a template", "Use §btemplate shutdown <template> §7to shutdown a entire template", "Use §btemplate edit <template> set maintenance <state (boolean(true, false))> §7to set the maintenance mode of a template", "Use §btemplate edit <template> set maxplayers <amount> §7to set the maximal players of a template", "----[/Template]----"}) String... params) {
         if(params.length == 1 && params[0].equalsIgnoreCase("create")){
-            new CreateTemplateSetup(templateService).sendSetup();
+            new TemplateSetup(templateService).sendSetup();
             PoloCloudAPI.getInstance().reload();
         }else if(params.length == 1 && params[0].equalsIgnoreCase("versions")){
             PoloLogger.print(LogLevel.INFO, "Available Versions » ");

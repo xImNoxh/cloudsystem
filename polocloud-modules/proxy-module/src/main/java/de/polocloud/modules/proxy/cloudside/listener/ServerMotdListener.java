@@ -14,11 +14,12 @@ public class ServerMotdListener implements IListener {
 
     @EventHandler
     public void handle(GameServerStatusChangeEvent event) {
-        if (!(event.getGameServer().getTemplate().getTemplateType().equals(TemplateType.PROXY) && event.getStatus().equals(GameServerStatus.AVAILABLE))) {
-            return;
+        IGameServer gameServer = event.getGameServer();
+        GameServerStatus status = event.getStatus();
+        if (status == GameServerStatus.AVAILABLE && gameServer.getTemplate().getTemplateType() == TemplateType.PROXY) {
+            ProxyModule.getProxyModule().getMotdService().sendMotd(gameServer);
         }
 
-        ProxyModule.getProxyModule().getMotdService().sendMotd(event.getGameServer());
     }
 
     @EventHandler

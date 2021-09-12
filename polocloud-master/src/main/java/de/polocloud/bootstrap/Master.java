@@ -48,8 +48,10 @@ import de.polocloud.bootstrap.network.SimplePacketService;
 import de.polocloud.bootstrap.network.ports.PortService;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
+import de.polocloud.bootstrap.setup.MasterSetup;
 import de.polocloud.client.PoloCloudClient;
 import de.polocloud.logger.log.Logger;
+import de.polocloud.logger.log.reader.ConsoleReadThread;
 import de.polocloud.logger.log.types.ConsoleColors;
 import jline.console.ConsoleReader;
 
@@ -149,7 +151,23 @@ public class Master extends PoloCloudAPI implements IStartable {
     @Override
     public void start() {
         running = true;
+        PoloHelper.printHeader();
         PoloLogger.print(LogLevel.INFO, "Trying to start the CloudMaster...");
+
+        if (masterConfig.getProperties().getWrapperKey() == null) {
+            PoloLogger.print(LogLevel.INFO, "§cIt seems like you §ehave not §cset up PoloCloud yet! Lets fix this real quick...");
+
+            new MasterSetup().sendSetup();
+            String wrapperKey = UUID.randomUUID() + "@CloudMaster@" + UUID.randomUUID();
+            masterConfig.getProperties().setWrapperKey(wrapperKey);
+            masterConfig.update();
+
+            ConsoleReadThread.ACTIVE = true;
+
+            PoloLogger.print(LogLevel.INFO, "§cThe Master will now §eshutdown§c! You have to restart to apply all changes and confirm that no bugs appear!");
+            System.exit(0);
+
+        }
 
         this.nettyServer = getGuice().getInstance(SimpleNettyServer.class);
         getGuice().getInstance(SimplePacketService.class);
@@ -167,7 +185,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         if (this.templateManager.getTemplates().size() > 0) {
             StringBuilder builder = new StringBuilder();
             this.templateManager.getTemplates().forEach(key -> builder.append(key.getName()).append("(").append(key.getServerCreateThreshold()).append("%), "));
-            PoloLogger.print(LogLevel.INFO, "Found templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 2));
+            PoloLogger.print(LogLevel.INFO, "Loaded templates: " + ConsoleColors.LIGHT_BLUE + builder.substring(0, builder.length() - 2));
 
             this.moduleService.load();
             if (!this.moduleService.getModules().isEmpty()) {
@@ -185,8 +203,6 @@ public class Master extends PoloCloudAPI implements IStartable {
             templateManager.reloadTemplates();
             PoloLogger.print(LogLevel.ERROR, "§7Created §b" + proxy.getName() + " §7as §eProxy-Template §7and §3" + lobby.getName() + " §7as §6Lobby-Template§7!");
             PoloLogger.print(LogLevel.INFO, "§7Registering new created §bLobby-Template §7as §3Fallback§7!");
-
-            masterConfig.getProperties().getFallbacks().add(new SimpleFallback(lobby.getName(), "", true, 1));
             masterConfig.update();
         }
 
@@ -203,6 +219,9 @@ public class Master extends PoloCloudAPI implements IStartable {
 
     @Override
     public void updateCache() {
+        if (this.getConnection() == null) {
+            return;
+        }
         this.getConnection().sendPacket(new GlobalCachePacket());
         this.getConnection().sendPacket(new PropertyCachePacket());
     }

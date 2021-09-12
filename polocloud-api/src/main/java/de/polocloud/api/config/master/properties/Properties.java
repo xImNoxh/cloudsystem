@@ -72,14 +72,7 @@ public class Properties implements IConfig, IProtocolObject {
 
     public Properties() {
 
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 5); i++) {
-            stringBuilder.append(UUID.randomUUID()).append("#");
-        }
-        stringBuilder.append("@PoloCloud");
-
-        this.wrapperKey = stringBuilder.toString();
+        this.wrapperKey = null;
         this.fallbacks = new ArrayList<>();
 
         this.maxSimultaneouslyStartingTemplates = 2;

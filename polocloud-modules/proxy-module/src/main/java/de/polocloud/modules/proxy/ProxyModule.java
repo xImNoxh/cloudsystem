@@ -136,34 +136,6 @@ public class ProxyModule {
     }
 
     /**
-     * Updates the motd and stuff for a {@link IGameServer}
-     *
-     * @param gameServer the server
-     */
-    public void updateMotd(IGameServer gameServer) {
-
-        ProxyConfig proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
-
-        if (proxyConfig == null) {
-            return;
-        }
-        ProxyMotd proxyMotd;
-
-        if (gameServer.getTemplate().isMaintenance()) {
-            proxyMotd = proxyConfig.getMaintenanceMotd();
-        } else {
-            proxyMotd = proxyConfig.getOnlineMotd();
-        }
-
-        if (!proxyMotd.isEnabled()) {
-            return;
-        }
-
-        gameServer.setServerPing(proxyMotd.getDescription(), gameServer.getMaxPlayers(), gameServer.getOnlinePlayers(), proxyMotd.getVersionTag(), proxyMotd.getPlayerInfo());
-        gameServer.update();
-    }
-
-    /**
      * Shuts down this module
      */
     public void shutdown() {

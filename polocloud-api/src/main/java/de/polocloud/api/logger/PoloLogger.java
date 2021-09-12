@@ -32,8 +32,14 @@ public interface PoloLogger extends PoloObject<PoloLogger> {
      * Gets the default Logger instance
      */
     static PoloLogger getInstance() {
+        if (PoloCloudAPI.getInstance() == null) {
+            return null;
+        }
         String defaultLogger = "cloud" + PoloCloudAPI.getInstance().getType().getName();
         PoloLoggerFactory loggerFactory = PoloCloudAPI.getInstance().getLoggerFactory();
+        if (loggerFactory == null) {
+            return null;
+        }
         return loggerFactory.getLoggerOrCreate(defaultLogger);
     }
 

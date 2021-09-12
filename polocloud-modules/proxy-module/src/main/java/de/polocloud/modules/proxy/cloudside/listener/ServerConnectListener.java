@@ -18,7 +18,7 @@ public class ServerConnectListener implements IListener {
 
         IGameServer gameServer = event.getGameServer();
         if ((event.getStatus() == GameServerStatus.AVAILABLE || event.getStatus() == GameServerStatus.STARTING) && gameServer.getTemplate().getTemplateType() == TemplateType.PROXY) {
-            ProxyModule.getProxyModule().updateMotd(gameServer);
+            ProxyModule.getProxyModule().getMotdService().sendMotd(gameServer);
         }
     }
 
@@ -27,7 +27,7 @@ public class ServerConnectListener implements IListener {
         ITemplate template = event.getTemplate();
 
         for (IGameServer server : template.getServers()) {
-            ProxyModule.getProxyModule().updateMotd(server);
+            ProxyModule.getProxyModule().getMotdService().sendMotd(server);
         }
     }
 }

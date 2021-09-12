@@ -1,9 +1,13 @@
 package de.polocloud.api.util.gson;
 
 import com.google.gson.*;
+import de.polocloud.api.APIVersion;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.ExceptionRunnable;
 import de.polocloud.api.common.ExceptionSupplier;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
 import io.netty.channel.ChannelFutureListener;
 
@@ -66,6 +70,46 @@ public class PoloHelper {
         }
         return port;
     }
+
+
+    /**
+     * Prints the header
+     */
+    public static void printHeader() {
+
+        APIVersion version = PoloCloudAPI.class.getAnnotation(APIVersion.class);
+
+        PoloLogger.print(LogLevel.INFO, "\n" +
+            "  _____      _        _____ _                 _ \n" +
+            " |  __ \\    | |      / ____| |               | |\n" +
+            " | |__) |__ | | ___ | |    | | ___  _   _  __| |\n" +
+            " |  ___/ _ \\| |/ _ \\| |    | |/ _ \\| | | |/ _` |\n" +
+            " | |  | (_) | | (_) | |____| | (_) | |_| | (_| |\n" +
+            " |_|   \\___/|_|\\___/ \\_____|_|\\___/ \\__,_|\\__,_|\n" +
+            "                                                \n");
+        PoloLogger.print(LogLevel.INFO, "#This cloud was developed by §b" + Arrays.toString(version.developers()).replace("[", "").replace("]", ""));
+        PoloLogger.print(LogLevel.INFO, "#Version of cloud - §b" + version.version() + " §7(" + version.identifier() + ") | ©opyright by PoloCloud.");
+        PoloLogger.print(LogLevel.INFO, "Problems or questions? Our Discord » §b" + version.discord());
+        PoloLogger.print(LogLevel.INFO, "");
+    }
+
+    /**
+     * Clears the console screen
+     */
+    public static void clearConsole() {
+        try {
+            String os = System.getProperty("os.name");
+
+            if (os.contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Gets a NMS Class for a name
      *
