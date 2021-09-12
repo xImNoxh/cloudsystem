@@ -1,5 +1,7 @@
 package de.polocloud.modules.proxy.api;
 
+import de.polocloud.api.APIVersion;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.IConfig;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.modules.proxy.ProxyModule;
@@ -74,9 +76,19 @@ public class ProxyConfig implements IConfig {
         );
 
 
-        this.tabList = new ProxyTabList(true, " \n     §b§lPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o%ONLINE_PLAYERS%§8/§f%MAX_PLAYERS% " +
-            "\n §7current server §8- §b%SERVICE% \n "," \n §7Join §bOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE, iPommes, Lystx \n ");
-
+        this.tabList = new ProxyTabList(
+            true,
+            60L,
+            new String[]
+                {
+                    " \n     §b§lPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o%ONLINE_PLAYERS%§8/§f%MAX_PLAYERS% \n §7current server §8- §b%SERVICE% \n ",
+                    " \n     §b§lPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o%ONLINE_PLAYERS%§8/§f%MAX_PLAYERS% \n §7current proxy §8- §b%PROXY% \n ",
+                },
+            new String[]
+                {
+                    " \n §7Join §bOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE, iPommes, Lystx \n "
+                   // " \n §7See §bOUR §7website §8» §bpolocloud.de \n §7Version §8» §7%CLOUD_VERSION% \n "
+                });
         this.whiteListedPlayers = new ArrayList<>();
     }
 

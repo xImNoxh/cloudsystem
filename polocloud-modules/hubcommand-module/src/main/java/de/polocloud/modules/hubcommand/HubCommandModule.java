@@ -65,14 +65,14 @@ public class HubCommandModule {
      * Loads all values from of the {@link HubCommandConfig}
      */
     public void loadConfig(){
-        hubCommandConfig = new SimpleConfigLoader().load(HubCommandConfig.class, new File(module.getDataDirectory(), "config.yml"));
+        hubCommandConfig = new SimpleConfigLoader().load(HubCommandConfig.class, new File(module.getDataDirectory(), "config.json"));
     }
 
     /**
      * Saves the current state of the {@link HubCommandConfig}
      */
     public void saveConfig(){
-        new SimpleConfigSaver().save(hubCommandConfig, new File(module.getDataDirectory(), "config.yml"));
+        new SimpleConfigSaver().save(hubCommandConfig, new File(module.getDataDirectory(), "config.json"));
     }
 
     public HubCommandMessageChannel getHubCommandMessageChannel() {

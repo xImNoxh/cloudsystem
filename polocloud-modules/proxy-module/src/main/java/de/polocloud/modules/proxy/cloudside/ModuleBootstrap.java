@@ -12,7 +12,7 @@ import de.polocloud.modules.proxy.ProxyModule;
     name = "PoloCloud-Proxy",
     version = "1.0",
     description = "This is a Proxy Module",
-    authors = "HttpMarco",
+    authors = {"Lystx", "HttpMarco"},
     copyTypes = ModuleCopyType.PROXIES
 )
 public class ModuleBootstrap extends CloudModule {

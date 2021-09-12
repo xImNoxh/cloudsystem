@@ -9,7 +9,7 @@ import de.polocloud.modules.hubcommand.HubCommandModule;
 
 @ModuleInfo(
     main = HubCommandBootstrap.class,
-    name = "HubCommand",
+    name = "PoloCloud-HubCommand",
     version = "1.0",
     description = "Module for sending players back to a fallback",
     authors = "HttpMarco",

@@ -12,13 +12,19 @@ public class ProxyTabList {
     private boolean enabled;
 
     /**
-     * The header
+     * The ticks the tablist should update
+     * (Set to -1 for no animation)
      */
-    private String header;
+    private long updateInterval;
 
     /**
-     * The footer
+     * The header lines (array for animations)
      */
-    private String footer;
+    private String[] headers;
+
+    /**
+     * The footer lines (array for animation)
+     */
+    private String[] footers;
 
 }

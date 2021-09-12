@@ -7,7 +7,7 @@ import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.info.ModuleTask;
 import de.polocloud.npcs.module.ModuleNPCService;
 
-@ModuleInfo(main = ModuleBootstrap.class, name = "NPCsModule", version = "1.0", authors = {"PoloCloud", "iPommes"}, copyTypes = {ModuleCopyType.LOBBIES})
+@ModuleInfo(main = ModuleBootstrap.class, name = "PoloCloud-NPCs", version = "1.0", authors = "iPommes", copyTypes = {ModuleCopyType.LOBBIES})
 public class ModuleBootstrap extends CloudModule {
 
     private ModuleBootstrap instance;
