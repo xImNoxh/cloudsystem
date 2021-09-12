@@ -138,6 +138,21 @@ public class CloudCommand implements CommandListener {
 
                     gameServerManager.startServer(template, 1);
                     player.sendMessage(prefix + "§7Trying to start §bone §7GameServer of template §3" + template.getName() + "§8...");
+                } else if (params[0].equalsIgnoreCase("maintenance")) {
+                    String group = params[1];
+                    ITemplate template = templateManager.getTemplate(group);
+
+                    if (template == null) {
+                        player.sendMessage(prefix + "§cThere is no Template with name '§e" + group + "§c'!");
+                        return;
+                    }
+
+                    boolean newState = !template.isMaintenance();
+
+                    template.setMaintenance(newState);
+                    template.update();
+
+                    player.sendMessage(prefix + "§7Changed Maintenance of template §b" + template.getName() + " §7to " + (newState ? "§aOn" : "§cOff") + "§8!");
                 } else if (params[0].equalsIgnoreCase("list") ) {
                     String type = params[1];
                     if (type.equalsIgnoreCase("wrapper")) {
@@ -326,6 +341,7 @@ public class CloudCommand implements CommandListener {
         player.sendMessage(prefix + "§8» §b/cloud list <server/wrapper/template/player> §7Lists online values");
         player.sendMessage(prefix + "§8» §b/cloud copy <server> worlds/entire §7Copies the temporary files of a server into its template");
         player.sendMessage(prefix + "§8» §b/cloud execute <server> <command> §7Executes a command on a gameserver");
+        player.sendMessage(prefix + "§8» §b/cloud maintenance <template> §7Toggles maintenance of a template");
         player.sendMessage(prefix + "----[/Cloud]----");
     }
 

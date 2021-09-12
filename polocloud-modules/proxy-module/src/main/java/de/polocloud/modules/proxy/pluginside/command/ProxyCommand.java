@@ -83,7 +83,7 @@ public class ProxyCommand implements CommandListener {
                     template.setMaintenance(newState);
                     template.update();
 
-                    executor.sendMessage(prefix + "§7Changed §bmaintenance-state §7to " + (newState ? "§aOn" : "§cOff") + "§8!");
+                    executor.sendMessage(prefix + "§7Changed §bmaintenance-state §7to " + (!newState ? "§aOn" : "§cOff") + "§8!");
 
                 } else if (args[1].equalsIgnoreCase("notify")) {
 

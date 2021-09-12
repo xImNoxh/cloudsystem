@@ -130,6 +130,16 @@ public class SimpleTemplate implements ITemplate {
     }
 
     @Override
+    public boolean isLobby() {
+        return PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().stream().anyMatch(fallback -> fallback.getTemplateName().equalsIgnoreCase(this.getName()));
+    }
+
+    @Override
+    public boolean isDynamic() {
+        return !isStatic();
+    }
+
+    @Override
     public int getMaxPlayers() {
         return maxPlayers;
     }

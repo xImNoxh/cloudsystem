@@ -107,19 +107,19 @@ public interface ITemplate extends PoloObject<ITemplate> {
     boolean isStatic();
 
     /**
+     * Checks if this group is dynamic
+     */
+    boolean isDynamic();
+
+    /**
      * Checks if this {@link ITemplate} is a {@link de.polocloud.api.fallback.base.IFallback} instance
      */
-    default boolean isLobby() {
-        return PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().stream().anyMatch(fallback -> fallback.getTemplateName().equalsIgnoreCase(this.getName()));
-    }
+    boolean isLobby();
 
     /**
      * List of all online {@link IGameServer}
      */
     List<IGameServer> getServers();
 
-    default boolean isDynamic() {
-        return !isStatic();
-    }
 
 }
