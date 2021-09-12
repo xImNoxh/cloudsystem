@@ -4,7 +4,7 @@ import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.npcs.bootstraps.PluginBootstrap;
 import de.polocloud.npcs.npc.base.ICloudNPC;
@@ -16,12 +16,12 @@ import de.polocloud.npcs.npc.base.ICloudNPC;
 public class CollectiveCloudListener implements IListener {
 
     /**
-     *  Handles the PoloCloud-{@link CloudGameServerStatusChangeEvent}
+     *  Handles the PoloCloud-{@link GameServerStatusChangeEvent}
      *  when a gameserver stops or starts all NPCs from this gameserver and its template
      *  will be updated
      */
     @EventHandler
-    public void handle(CloudGameServerStatusChangeEvent event){
+    public void handle(GameServerStatusChangeEvent event){
         for (ICloudNPC npc : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getAllNPCsFromTemplateOrGameServerName(event.getGameServer().getName())) {
             npc.update();
         }

@@ -2,7 +2,8 @@ package de.polocloud.api.template;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.event.impl.server.CloudGameServerMaintenanceUpdateEvent;
+import de.polocloud.api.event.impl.template.TemplateMaintenanceChangeEvent;
+import de.polocloud.api.event.impl.template.TemplateUpdateEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.gameserver.TemplateUpdatePacket;
 import de.polocloud.api.template.helper.GameServerVersion;
@@ -34,6 +35,9 @@ public class SimpleTemplate implements ITemplate {
     private int serverCreateThreshold;
 
     private String[] wrapperNames;
+
+
+    private boolean changedMaintenance;
 
     public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, int serverCreateThreshold, String[] wrapperNames) {
         this.name = name;
@@ -98,12 +102,19 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
-
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerMaintenanceUpdateEvent(this, maintenance));
+        this.changedMaintenance = true;
     }
 
     @Override
     public void update() {
+
+        if (this.changedMaintenance) {
+            this.changedMaintenance = false;
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new TemplateMaintenanceChangeEvent(this, maintenance));
+        }
+
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new TemplateUpdateEvent(this)); //Calling event
+
         SimpleCachedTemplateManager templateManager = (SimpleCachedTemplateManager) PoloCloudAPI.getInstance().getTemplateManager();
         templateManager.update(this);
 

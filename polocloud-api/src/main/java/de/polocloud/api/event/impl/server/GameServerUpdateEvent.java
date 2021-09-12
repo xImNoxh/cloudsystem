@@ -5,11 +5,11 @@ import de.polocloud.api.event.base.ICancellable;
 import de.polocloud.api.gameserver.base.IGameServer;
 
 @EventData(nettyFire = true)
-public class CloudGameServerUpdateEvent extends GameServerEvent implements ICancellable {
+public class GameServerUpdateEvent extends GameServerEvent implements ICancellable {
 
     private boolean cancelled;
 
-    public CloudGameServerUpdateEvent(IGameServer gameServer) {
+    public GameServerUpdateEvent(IGameServer gameServer) {
         super(gameServer);
     }
 

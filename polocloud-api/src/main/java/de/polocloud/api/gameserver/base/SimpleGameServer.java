@@ -2,9 +2,9 @@ package de.polocloud.api.gameserver.base;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.event.impl.server.CloudGameServerPropertyUpdateEvent;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
-import de.polocloud.api.event.impl.server.CloudGameServerUpdateEvent;
+import de.polocloud.api.event.impl.server.GameServerPropertyUpdateEvent;
+import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
+import de.polocloud.api.event.impl.server.GameServerUpdateEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
@@ -151,7 +151,7 @@ public class SimpleGameServer implements IGameServer {
         SimpleProperty property = new SimpleProperty();
         consumer.accept(property);
 
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerPropertyUpdateEvent(this, property), event -> {
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new GameServerPropertyUpdateEvent(this, property), event -> {
             if (!event.isCancelled()) {
                 this.properties.add(event.getProperty());
             }
@@ -399,8 +399,8 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public void update() {
-        PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerUpdateEvent(this), cloudGameServerUpdateEvent -> {
-            if (!cloudGameServerUpdateEvent.isCancelled()) {
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new GameServerUpdateEvent(this), gameServerUpdateEvent -> {
+            if (!gameServerUpdateEvent.isCancelled()) {
                 this.updateInternally();
                 PoloCloudAPI.getInstance().sendPacket(new GameServerUpdatePacket(this));
             }
@@ -412,7 +412,7 @@ public class SimpleGameServer implements IGameServer {
     public void updateInternally() {
         if (statusChanged) {
             statusChanged = false;
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudGameServerStatusChangeEvent(this, this.gameServerStatus));
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new GameServerStatusChangeEvent(this, this.gameServerStatus));
         }
         PoloCloudAPI.getInstance().getGameServerManager().update(this);
     }

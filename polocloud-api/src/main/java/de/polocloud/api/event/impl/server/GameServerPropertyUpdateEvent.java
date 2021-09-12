@@ -7,12 +7,12 @@ import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleProperty;
 
 @EventData(nettyFire = true)
-public class CloudGameServerPropertyUpdateEvent extends GameServerEvent implements ICancellable {
+public class GameServerPropertyUpdateEvent extends GameServerEvent implements ICancellable {
 
     private SimpleProperty property;
     private boolean cancelled;
 
-    public CloudGameServerPropertyUpdateEvent(IGameServer gameServer, SimpleProperty property) {
+    public GameServerPropertyUpdateEvent(IGameServer gameServer, SimpleProperty property) {
         super(gameServer);
         this.property = property;
     }

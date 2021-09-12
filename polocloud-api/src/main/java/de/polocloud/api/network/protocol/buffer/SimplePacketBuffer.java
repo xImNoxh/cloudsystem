@@ -179,20 +179,27 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
     @Override
     public void writeStrings(String[] arr) throws IOException {
-        this.writeInt(arr.length);
-        for (String s : arr) {
-            writeString(s);
+        this.writeBoolean(arr == null);
+        if (arr !=null) {
+            this.writeInt(arr.length);
+            for (String s : arr) {
+                writeString(s);
+            }
         }
     }
 
     @Override
     public String[] readStrings() throws IOException {
-        int length = this.readInt();
-        String[] array = new String[length];
-        for (int i = 0; i < length; i++) {
-            array[i] = readString();
+        boolean nulled = this.readBoolean();
+        if (!nulled) {
+            int length = this.readInt();
+            String[] array = new String[length];
+            for (int i = 0; i < length; i++) {
+                array[i] = readString();
+            }
+            return array;
         }
-        return array;
+        return new String[0];
     }
 
     @Override

@@ -5,11 +5,11 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 
 @EventData(nettyFire = true)
-public class CloudGameServerStatusChangeEvent extends GameServerEvent {
+public class GameServerStatusChangeEvent extends GameServerEvent {
 
     private final GameServerStatus status;
 
-    public CloudGameServerStatusChangeEvent(IGameServer gameServer, GameServerStatus status) {
+    public GameServerStatusChangeEvent(IGameServer gameServer, GameServerStatus status) {
         super(gameServer);
         this.status = status;
     }

@@ -2,7 +2,7 @@ package de.polocloud.modules.proxy.cloudside.listener;
 
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
-import de.polocloud.api.event.impl.server.CloudGameServerStatusChangeEvent;
+import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
 import de.polocloud.modules.proxy.api.ProxyConfig;
 import de.polocloud.modules.proxy.ProxyModule;
 import de.polocloud.modules.proxy.api.notify.NotifyService;
@@ -10,7 +10,7 @@ import de.polocloud.modules.proxy.api.notify.NotifyService;
 public class NotifyListener implements IListener {
 
     @EventHandler
-    public void handle(CloudGameServerStatusChangeEvent event) {
+    public void handle(GameServerStatusChangeEvent event) {
 
         ProxyConfig proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
         NotifyService notifyService = ProxyModule.getProxyModule().getNotifyService();
