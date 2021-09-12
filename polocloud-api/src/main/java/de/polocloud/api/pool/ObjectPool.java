@@ -45,7 +45,7 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
             try {
                 getAllCached().set(index, object);
             } catch (Exception e) {
-                unregister(cachedObject);
+                getAllCached().removeIf(o -> o.getName().equalsIgnoreCase(object.getName()));
                 register(object);
             }
         } else {

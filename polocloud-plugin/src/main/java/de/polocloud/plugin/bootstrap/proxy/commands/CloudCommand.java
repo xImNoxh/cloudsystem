@@ -152,7 +152,7 @@ public class CloudCommand implements CommandListener {
                     template.setMaintenance(newState);
                     template.update();
 
-                    player.sendMessage(prefix + "§7Changed Maintenance of template §b" + template.getName() + " §7to " + (newState ? "§aOn" : "§cOff") + "§8!");
+                    player.sendMessage(prefix + "§7Changed Maintenance of template §b" + template.getName() + " §7to " + (!newState ? "§aOn" : "§cOff") + "§8!");
                 } else if (params[0].equalsIgnoreCase("list") ) {
                     String type = params[1];
                     if (type.equalsIgnoreCase("wrapper")) {
