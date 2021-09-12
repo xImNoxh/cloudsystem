@@ -86,8 +86,8 @@ public class ProxyConfig implements IConfig {
                 },
             new String[]
                 {
-                    " \n §7Join §bOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE, iPommes, Lystx \n "
-                   // " \n §7See §bOUR §7website §8» §bpolocloud.de \n §7Version §8» §7%CLOUD_VERSION% \n "
+                    " \n §7Join §bOUR §7discord §8» §bdc.polocloud.de \n §7Created by §8» §7HttpMarco§8, §7Max_DE, iPommes, Lystx \n ",
+                    " \n §7See §bOUR §7website §8» §bpolocloud.de \n §7Version §8» §7%CLOUD_VERSION% \n "
                 });
         this.whiteListedPlayers = new ArrayList<>();
     }
@@ -122,28 +122,6 @@ public class ProxyConfig implements IConfig {
         notifyConfig.setDisabledMessages(disabledMessages);
 
         return toggled;
-    }
-
-    /**
-     * Adds a player to the whitelist
-     *
-     * @param name the name of the player
-     */
-    public void whitelistPlayer(String name) {
-        if (!this.whiteListedPlayers.contains(name)) {
-            this.whiteListedPlayers.add(name);
-        }
-        this.update();
-    }
-
-    /**
-     * Removes a player from the whitelist
-     *
-     * @param name the name of the player
-     */
-    public void unWhitelistPlayer(String name) {
-        this.whiteListedPlayers.remove(name);
-        this.update();
     }
 
     /**

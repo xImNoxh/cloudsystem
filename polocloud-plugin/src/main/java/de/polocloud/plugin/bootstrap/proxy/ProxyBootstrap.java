@@ -107,6 +107,7 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
                 if (player == null) {
                     return;
                 }
+                player.resetTabHeader();
                 player.setTabHeader(TextComponent.fromLegacyText(header), TextComponent.fromLegacyText(footer));
             }
 

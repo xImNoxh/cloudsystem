@@ -83,7 +83,7 @@ public class ProxyCommand implements CommandListener {
                     template.setMaintenance(newState);
                     template.update();
 
-                    executor.sendMessage(prefix + "§7Changed §bmaintenance-state §7to " + (template.isMaintenance() ? "§aOn" : "§cOff") + "§8!");
+                    executor.sendMessage(prefix + "§7Changed §bmaintenance-state §7to " + (newState ? "§aOn" : "§cOff") + "§8!");
 
                 } else if (args[1].equalsIgnoreCase("notify")) {
 
@@ -125,7 +125,7 @@ public class ProxyCommand implements CommandListener {
                             executor.sendMessage(prefix + "§cThe player §e" + player + " §cis not whitelisted yet!");
                             return;
                         }
-                        whitelist.add(player);
+                        whitelist.remove(player);
                         proxyConfig.setWhiteListedPlayers(whitelist);
                         proxyConfig.update();
                         executor.sendMessage(prefix + "§7You §cremoved §7the player §b" + player + " §7from maintenance§8!");

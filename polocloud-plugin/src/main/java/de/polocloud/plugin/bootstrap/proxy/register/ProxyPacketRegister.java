@@ -77,13 +77,7 @@ public class ProxyPacketRegister {
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUnregisterPacket.class , packet -> ProxyServer.getInstance().getServers().remove(packet.getName()));
 
         //Update tab handler
-        PoloCloudAPI.getInstance().registerSimplePacketHandler(ProxyTablistUpdatePacket.class, packet -> {
-            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getUuid());
-            if (player == null) {
-                return;
-            }
-            player.setTabHeader(new TextComponent(packet.getHeader()), new TextComponent(packet.getFooter()));
-        });
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(ProxyTablistUpdatePacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().sendTabList(packet.getUuid(), packet.getHeader(), packet.getFooter()));
 
     }
 }
