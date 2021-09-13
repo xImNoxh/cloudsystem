@@ -10,8 +10,19 @@ import lombok.Getter;
 @Getter @AllArgsConstructor
 public enum DatabaseType {
 
+    /**
+     * This database uses MySQL to save data
+     */
     MYSQL(MySQLDatabase.class),
+
+    /**
+     * This database uses MongoDB to save data
+     */
     MONGODB(MongoDBDatabase.class),
+
+    /**
+     * This database uses files to save data
+     */
     FILES(FileDatabase.class);
 
     /**

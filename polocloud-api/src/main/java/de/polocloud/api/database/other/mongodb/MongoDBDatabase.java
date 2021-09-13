@@ -1,12 +1,14 @@
 package de.polocloud.api.database.other.mongodb;
 
+import de.polocloud.api.database.IDatabaseManager;
 import de.polocloud.api.database.other.DatabaseType;
 import de.polocloud.api.database.other.IDatabase;
 import de.polocloud.api.database.other.IDatabasePropertyLoader;
 import de.polocloud.api.database.other.IDatabaseTemplateLoader;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 public class MongoDBDatabase implements IDatabase<MongoDBDatabase> {
 
     /**
@@ -19,6 +21,11 @@ public class MongoDBDatabase implements IDatabase<MongoDBDatabase> {
      */
     private final IDatabasePropertyLoader<MongoDBDatabase> propertyLoader;
 
+    /**
+     * The manager (also seen as parent)
+     */
+    private IDatabaseManager manager;
+
     public MongoDBDatabase() {
         this.templateLoader = new MongoDBDatabaseTemplateLoader();
         this.propertyLoader = new MongoDBDatabasePropertyLoader();
@@ -30,6 +37,7 @@ public class MongoDBDatabase implements IDatabase<MongoDBDatabase> {
 
     @Override
     public void connect() throws Exception {
+
 
         //TODO: CONNECT MONGODB
         this.propertyLoader.loadProperties();

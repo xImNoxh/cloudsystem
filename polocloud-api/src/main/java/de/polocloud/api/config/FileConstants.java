@@ -34,6 +34,7 @@ public class FileConstants {
     public static final File MASTER_CONFIG_FILE = new File("config.json");
     public static final File MASTER_TEMPLATE_INFO = new File("templates/");
     public static final File MASTER_PLAYER_PROPERTIES = new File(GLOBAL_FOLDER, "properties");
+    public static final File MASTER_DATABASE_CONFIG = new File(DATABASE_FOLDER, "database.json");
 
     //Logger
     public static final File LOGGER_FOLDER = new File(GLOBAL_FOLDER, "oldLogger/");

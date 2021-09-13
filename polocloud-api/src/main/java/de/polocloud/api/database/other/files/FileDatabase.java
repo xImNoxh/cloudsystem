@@ -1,12 +1,14 @@
 package de.polocloud.api.database.other.files;
 
+import de.polocloud.api.database.IDatabaseManager;
 import de.polocloud.api.database.other.DatabaseType;
 import de.polocloud.api.database.other.IDatabase;
 import de.polocloud.api.database.other.IDatabasePropertyLoader;
 import de.polocloud.api.database.other.IDatabaseTemplateLoader;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 public class FileDatabase implements IDatabase<FileDatabase> {
 
     /**
@@ -18,6 +20,11 @@ public class FileDatabase implements IDatabase<FileDatabase> {
      * The property database loader
      */
     private final IDatabasePropertyLoader<FileDatabase> propertyLoader;
+
+    /**
+     * The manager (also seen as parent)
+     */
+    private IDatabaseManager manager;
 
     public FileDatabase() {
         this.templateLoader = new FileDatabaseTemplateLoader();
@@ -40,4 +47,5 @@ public class FileDatabase implements IDatabase<FileDatabase> {
         this.propertyLoader.saveAll();
         this.templateLoader.saveTemplates();
     }
+
 }

@@ -1,12 +1,14 @@
 package de.polocloud.api.database.other.mysql;
 
+import de.polocloud.api.database.IDatabaseManager;
 import de.polocloud.api.database.other.DatabaseType;
 import de.polocloud.api.database.other.IDatabase;
 import de.polocloud.api.database.other.IDatabasePropertyLoader;
 import de.polocloud.api.database.other.IDatabaseTemplateLoader;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 public class MySQLDatabase implements IDatabase<MySQLDatabase> {
 
     /**
@@ -18,6 +20,11 @@ public class MySQLDatabase implements IDatabase<MySQLDatabase> {
      * The property database loader
      */
     private final IDatabasePropertyLoader<MySQLDatabase> propertyLoader;
+
+    /**
+     * The manager (also seen as parent)
+     */
+    private IDatabaseManager manager;
 
     public MySQLDatabase() {
         this.templateLoader = new MySQLDatabaseTemplateLoader();

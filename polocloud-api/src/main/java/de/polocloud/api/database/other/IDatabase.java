@@ -1,5 +1,7 @@
 package de.polocloud.api.database.other;
 
+import de.polocloud.api.database.IDatabaseManager;
+
 public interface IDatabase<V extends IDatabase<V>> {
 
     /**
@@ -18,6 +20,18 @@ public interface IDatabase<V extends IDatabase<V>> {
      * of different players
      */
     IDatabasePropertyLoader<V> getPropertyLoader();
+
+    /**
+     * The parent of this {@link IDatabase}
+     */
+    IDatabaseManager getManager();
+
+    /**
+     * Sets the manager of this database
+     *
+     * @param databaseManager the manager
+     */
+    void setManager(IDatabaseManager databaseManager);
 
     /**
      * Connects this database
