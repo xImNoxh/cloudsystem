@@ -1,10 +1,8 @@
 package de.polocloud.bootstrap.setup;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.config.master.properties.Properties;
-import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.setup.Setup;
@@ -17,9 +15,8 @@ import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.reader.ConsoleReadThread;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleRunner;
+import de.polocloud.api.console.ConsoleColors;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class MasterSetup extends StepAcceptor implements Setup {
     @Override
     public void sendSetup() {
 
-        ConsoleReadThread.ACTIVE = false;
+        ConsoleRunner.getInstance().setActive(false);
         SetupBuilder setupBuilder = new SetupBuilder(this);
         Step step = setupBuilder.createStep("On what port should the Master run?", isInteger());
 
@@ -88,12 +85,12 @@ public class MasterSetup extends StepAcceptor implements Setup {
                     new TemplateSetup(PoloCloudAPI.getInstance().getTemplateManager()).sendSetup();
                 }
 
-                ConsoleReadThread.ACTIVE = true;
+                ConsoleRunner.getInstance().setActive(true);
                 masterConfig.setProperties(properties);
                 masterConfig.update();
             }
         });
-        setupBuilder.nextQuestion(step, Logger.getConsoleReader());
+        setupBuilder.nextQuestion(step, ConsoleRunner.getInstance().getConsoleReader());
     }
 
     @Override

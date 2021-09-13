@@ -7,8 +7,8 @@ import de.polocloud.api.setup.SetupBuilder;
 import de.polocloud.api.setup.Step;
 import de.polocloud.api.setup.accepter.StepAcceptor;
 import de.polocloud.api.setup.accepter.StepAnswer;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleRunner;
+import de.polocloud.api.console.ConsoleColors;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class WrapperSetup extends StepAcceptor implements Setup {
         });
 
 
-        setupBuilder.nextQuestion(step, Logger.getConsoleReader());
+        setupBuilder.nextQuestion(step, ConsoleRunner.getInstance().getConsoleReader());
     }
 
     @Override

@@ -27,12 +27,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>de.polocloud.logger</groupId>
-      <artifactId>polocloud-logger</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>de.polocloud.updater.client</groupId>
       <artifactId>polocloud-updater-client</artifactId>
       <version>1.0-SNAPSHOT</version>

@@ -6,7 +6,7 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
 public class HelpCommand implements CommandListener {

@@ -19,14 +19,13 @@ import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public class GameServerCommand implements CommandListener, TabCompletable {
 

@@ -1,4 +1,4 @@
-package de.polocloud.logger.log.types;
+package de.polocloud.api.console;
 
 import org.fusesource.jansi.Ansi;
 

@@ -9,7 +9,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 
 public abstract class PlayerPacketServiceController {
 

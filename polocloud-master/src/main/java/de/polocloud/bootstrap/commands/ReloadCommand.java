@@ -12,7 +12,7 @@ import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 
 import java.util.Arrays;
 import java.util.LinkedList;

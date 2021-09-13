@@ -1,16 +1,13 @@
-package de.polocloud.logger.log.reader;
+package de.polocloud.api.console;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.logger.log.types.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 import jline.console.ConsoleReader;
 
 import java.io.IOException;
 
-public class ConsoleReadThread extends Thread {
+public class ConsoleRunner extends Thread {
 
     /**
      * Instance of the {@link ConsoleReader} for reading
@@ -18,18 +15,38 @@ public class ConsoleReadThread extends Thread {
      */
     private final ConsoleReader consoleReader;
 
-    public static boolean ACTIVE = true;
+    /**
+     * The instance of this runner
+     */
+    private static ConsoleRunner instance;
 
-    public ConsoleReadThread(ConsoleReader consoleReader) {
-        this.consoleReader = consoleReader;
-        this.consoleReader.addCompleter(new CommandCompleter());
+    /**
+     * If this runner is active and should check for commands
+     */
+    private boolean active;
+
+    public ConsoleRunner() {
+        instance = this;
+
+        ConsoleReader reader = null;
+
+        try {
+            reader = new ConsoleReader(System.in, System.out);
+            reader.addCompleter(new ConsoleCommandCompleter());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.consoleReader = reader;
+        this.active = false;
+
     }
 
     @Override
     public void run() {
         String line;
+
         while (isAlive()) {
-            if (ACTIVE) {
+            if (isActive()) {
                 try {
                     this.consoleReader.setPrompt("");
                     this.consoleReader.resetPromptLine("", "", 0);
@@ -47,5 +64,21 @@ public class ConsoleReadThread extends Thread {
                 }
             }
         }
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public static ConsoleRunner getInstance() {
+        return instance;
+    }
+
+    public ConsoleReader getConsoleReader() {
+        return consoleReader;
     }
 }

@@ -50,9 +50,8 @@ import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.setup.MasterSetup;
 import de.polocloud.client.PoloCloudClient;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.reader.ConsoleReadThread;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleRunner;
+import de.polocloud.api.console.ConsoleColors;
 import jline.console.ConsoleReader;
 
 import java.io.File;
@@ -162,12 +161,12 @@ public class Master extends PoloCloudAPI implements IStartable {
             masterConfig.getProperties().setWrapperKey(wrapperKey);
             masterConfig.update();
 
-            ConsoleReadThread.ACTIVE = true;
-
             PoloLogger.print(LogLevel.INFO, "§cThe Master will now §eshutdown§c! You have to restart to apply all changes and confirm that no bugs appear!");
             System.exit(0);
 
         }
+
+        ConsoleRunner.getInstance().setActive(true);
 
         this.nettyServer = getGuice().getInstance(SimpleNettyServer.class);
         getGuice().getInstance(SimplePacketService.class);
@@ -259,7 +258,7 @@ public class Master extends PoloCloudAPI implements IStartable {
 
     @Override
     public ConsoleReader getConsoleReader() {
-        return Logger.getConsoleReader();
+        return ConsoleRunner.getInstance().getConsoleReader();
     }
     @Override
     public void reportException(Throwable throwable) {

@@ -9,7 +9,7 @@ import de.polocloud.api.network.packets.master.MasterRequestServerListUpdatePack
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 
 import java.util.List;
 import java.util.function.Consumer;

@@ -10,7 +10,7 @@ import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.wrapper.SimpleMasterWrapper;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 import io.netty.channel.ChannelHandlerContext;
 

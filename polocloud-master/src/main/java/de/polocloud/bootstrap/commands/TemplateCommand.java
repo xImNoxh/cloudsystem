@@ -13,7 +13,7 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.bootstrap.setup.TemplateSetup;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 
 import java.util.Arrays;

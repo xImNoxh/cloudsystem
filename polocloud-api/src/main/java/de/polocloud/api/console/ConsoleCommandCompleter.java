@@ -1,4 +1,4 @@
-package de.polocloud.logger.log.reader;
+package de.polocloud.api.console;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.identifier.CommandListener;
@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * General class for completing the inputs of a command
  */
-public class CommandCompleter implements Completer {
+public class ConsoleCommandCompleter implements Completer {
 
     @Override
     public int complete(String buffer, int cursor, List<CharSequence> candidates) {

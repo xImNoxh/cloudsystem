@@ -2,9 +2,9 @@ package de.polocloud.bootstrap;
 
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.reader.ConsoleReadThread;
+import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.wrapper.Wrapper;
+
 
 public class CloudInit {
 
@@ -14,7 +14,7 @@ public class CloudInit {
      */
     public CloudInit(String[] args) {
 
-        ConsoleReadThread thread = new ConsoleReadThread(Logger.getConsoleReader());
+        ConsoleRunner thread = new ConsoleRunner();
 
         thread.setDaemon(true);
         thread.setPriority(Thread.MIN_PRIORITY);

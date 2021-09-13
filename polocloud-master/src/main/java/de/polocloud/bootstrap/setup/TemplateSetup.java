@@ -8,8 +8,8 @@ import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.wrapper.base.IWrapper;
-import de.polocloud.logger.log.Logger;
-import de.polocloud.logger.log.types.ConsoleColors;
+import de.polocloud.api.console.ConsoleRunner;
+import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.setup.FutureAnswer;
 import de.polocloud.api.setup.Setup;
@@ -87,7 +87,7 @@ public class TemplateSetup extends StepAcceptor implements Setup {
                 PoloLogger.print(LogLevel.INFO, "You " + ConsoleColors.GREEN + "completed " + ConsoleColors.GRAY + "the setup.");
             }
         });
-        setupBuilder.nextQuestion(step, Logger.getConsoleReader());
+        setupBuilder.nextQuestion(step, ConsoleRunner.getInstance().getConsoleReader());
     }
 
     @Override
