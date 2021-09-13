@@ -37,9 +37,11 @@ import de.polocloud.wrapper.manager.module.ModuleCopyService;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 import de.polocloud.wrapper.manager.screen.IScreenManager;
+import de.polocloud.wrapper.setup.WrapperSetup;
 import jline.console.ConsoleReader;
 
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
 
 public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
@@ -115,13 +117,20 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public void start() {
-        if (config.getLoginKey().equalsIgnoreCase("default")) {
+        PoloHelper.printHeader();
+        PoloLogger.print(LogLevel.INFO, "Trying to start the CloudWrapper...");
 
-            PoloLogger.print(LogLevel.ERROR, "§cPlease put the §eWrapperKey §cof the Master into the §7'config.json'§c!");
-            terminate();
+        if (config.getLoginKey().equalsIgnoreCase("default") || config.getLoginKey() == null) {
+            PoloLogger.print(LogLevel.INFO, "§cIt seems like you §ehave not §cset up PoloCloud yet! Lets fix this real quick...");
+
+            new WrapperSetup().sendSetup();
+
+            PoloLogger.print(LogLevel.INFO, "§cThe Wrapper will now §eshutdown§c! You have to restart to apply all changes and confirm that no bugs appear!");
+            System.exit(0);
+
         }
-        PoloLogger.print(LogLevel.INFO, "Trying to start the wrapper...");
 
+        ConsoleRunner.getInstance().setActive(true);
         new Thread(() -> this.nettyClient.start(nettyClient -> {
 
             //Registering handlers

@@ -41,7 +41,7 @@ public class SimpleNettyServer implements INettyServer, IListener {
     /**
      * The port of this server to run on
      */
-    @Inject @Named(value = "setting_server_start_port") private int port;
+    private final int port;
 
     /**
      * The protocol instance for managing handlers
@@ -65,6 +65,8 @@ public class SimpleNettyServer implements INettyServer, IListener {
     public SimpleNettyServer() {
         this.connectedClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         this.connectedInfos = new UniqueMap<>();
+
+        this.port = PoloCloudAPI.getInstance().getMasterConfig().getProperties().getPort();
 
         PoloCloudAPI.getInstance().getEventManager().registerListener(this);
     }
