@@ -4,9 +4,12 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.player.ICloudPlayer;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.IOException;
 
+@Getter @Setter
 public class Messages implements IProtocolObject {
 
     /**
@@ -54,6 +57,12 @@ public class Messages implements IProtocolObject {
      */
     private String networkShutdown;
 
+    /**
+     * When youre trying to connect to a server
+     * that has a higher protocol than your minecraft version
+     */
+    private String wrongMinecraftVersion;
+
     public Messages() {
         this.prefix = "§bPoloCloud §7» ";
 
@@ -67,9 +76,12 @@ public class Messages implements IProtocolObject {
         this.kickedAndNoFallbackServer = "%prefix% §cThe server you were on went down, but no fallback server was found!";
         this.onlyProxyJoin = "%prefix% §cYou can only join on a Proxy§8.";
         this.networkShutdown = "%prefix% §cThe network shut down!";
+        this.wrongMinecraftVersion = "%prefix% §7For server §b%server% §7the version §3%required_version% §7is required §8(§7You§8: §a%your_version%§8)";
     }
 
-
+    public String getWrongMinecraftVersion() {
+        return format(wrongMinecraftVersion);
+    }
     private String format(String s) {
         return s.replace("&", "§").replace("%prefix%", getPrefix());
     }

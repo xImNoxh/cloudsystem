@@ -96,6 +96,10 @@ public enum MinecraftProtocol {
         return this.versionNames[0];
     }
 
+    public String[] getVersionNames() {
+        return versionNames;
+    }
+
     /**
      * Gets the highest version of this version
      * 

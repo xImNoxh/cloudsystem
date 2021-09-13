@@ -2,6 +2,9 @@ package de.polocloud.plugin.bootstrap.proxy.commands;
 
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.chat.ClickAction;
+import de.polocloud.api.chat.CloudComponent;
+import de.polocloud.api.chat.HoverAction;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -52,6 +55,8 @@ public class CloudCommand implements CommandListener {
         String prefix = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix();
 
         if (player.hasPermission("cloud.use")) {
+
+
 
             if (params.length == 1) {
                 if (params[0].equalsIgnoreCase("info")) {

@@ -10,6 +10,8 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.player.extras.IPlayerConnection;
+import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.console.ConsoleColors;
@@ -66,17 +68,23 @@ public class PlayerCommand implements CommandListener, TabCompletable {
             PoloLogger.print(LogLevel.INFO, "§7UUID §7: §b" + cloudPlayer.getUUID());
             PoloLogger.print(LogLevel.INFO, "§7Proxy §7: §b" + (cloudPlayer.getProxyServer() == null ? "Logging in..." : cloudPlayer.getProxyServer().getName()));
             PoloLogger.print(LogLevel.INFO, "§7Server §7: §b" + (cloudPlayer.getMinecraftServer() == null ? "Logging in..." : cloudPlayer.getMinecraftServer().getName()));
-            PoloLogger.print(LogLevel.INFO, "§7Settings §7:");
-            PoloLogger.print(LogLevel.INFO, "  §8> §7Locale §7: §b" + cloudPlayer.getSettings().getLocale().getDisplayName());
-            PoloLogger.print(LogLevel.INFO, "  §8> §7ChatMode §7: §b" + cloudPlayer.getSettings().getChatMode());
-            PoloLogger.print(LogLevel.INFO, "  §8> §7Main-Hand §7: §b" + cloudPlayer.getSettings().getMainHand());
-            PoloLogger.print(LogLevel.INFO, "  §8> §7RenderDistance §7: §b" + cloudPlayer.getSettings().getRenderDistance());
-            PoloLogger.print(LogLevel.INFO, "§7Connection §7:");
-            PoloLogger.print(LogLevel.INFO, "  §8> §7Ping §7: §b" + cloudPlayer.getPing() + "ms");
-            PoloLogger.print(LogLevel.INFO, "  §8> §7Version §7: §b" + cloudPlayer.getConnection().getVersion().getName() + " (Id: " + cloudPlayer.getConnection().getVersion().getProtocolId() + ")");
-            PoloLogger.print(LogLevel.INFO, "  §8> §7Address §7: §b" + cloudPlayer.getConnection().getAddress().getAddress().getHostAddress() + ":" + cloudPlayer.getConnection().getPort());
-            PoloLogger.print(LogLevel.INFO, "  §8> §7OnlineMode §7: §b" + cloudPlayer.getConnection().isOnlineMode());
-            PoloLogger.print(LogLevel.INFO, "  §8> §7Legacy §b" + cloudPlayer.getConnection().isLegacy());
+            IPlayerSettings settings = cloudPlayer.getSettings();
+            if (settings != null) {
+                PoloLogger.print(LogLevel.INFO, "§7Settings §7:");
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Locale §7: §b" + settings.getLocale().getDisplayName());
+                PoloLogger.print(LogLevel.INFO, "  §8> §7ChatMode §7: §b" + settings.getChatMode());
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Main-Hand §7: §b" + settings.getMainHand());
+                PoloLogger.print(LogLevel.INFO, "  §8> §7RenderDistance §7: §b" + settings.getRenderDistance());
+            }
+            IPlayerConnection connection = cloudPlayer.getConnection();
+            if (connection != null) {
+                PoloLogger.print(LogLevel.INFO, "§7Connection §7:");
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Ping §7: §b" + cloudPlayer.getPing() + "ms");
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Version §7: §b" + connection.getVersion().getName() + " (Id: " + connection.getVersion().getProtocolId() + ")");
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Address §7: §b" + connection.getAddress().getAddress().getHostAddress() + ":" +connection.getPort());
+                PoloLogger.print(LogLevel.INFO, "  §8> §7OnlineMode §7: §b" + connection.isOnlineMode());
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Legacy §b" + connection.isLegacy());
+            }
             PoloLogger.print(LogLevel.INFO, "----[/Player]----");
 
         } else if (params.length >= 3) {

@@ -44,7 +44,7 @@ public class MasterSetup extends StepAcceptor implements Setup {
                 int port = steps.get(0).getAnswerAsInt();
                 boolean logPlayerConenctions = steps.get(1).getAnswerAsBoolean();
                 int maxGameServersStart = steps.get(2).getAnswerAsInt();
-                boolean onlineMode = steps.get(3).getAnswerAsBoolean();
+                boolean onlineMode = !steps.get(3).getAnswerAsBoolean();
                 boolean proxyProtocol = steps.get(4).getAnswerAsBoolean();
                 boolean syncProxies = steps.get(5).getAnswerAsBoolean();
                 int startPort = steps.get(6).getAnswerAsInt();

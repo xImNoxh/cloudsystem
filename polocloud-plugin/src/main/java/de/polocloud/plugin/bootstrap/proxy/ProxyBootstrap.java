@@ -2,8 +2,12 @@ package de.polocloud.plugin.bootstrap.proxy;
 
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
+import de.polocloud.api.chat.ClickAction;
+import de.polocloud.api.chat.CloudComponent;
+import de.polocloud.api.chat.HoverAction;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.logger.def.Pair;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.player.def.SimplePlayerSettings;
 import de.polocloud.plugin.CloudPlugin;
@@ -13,6 +17,9 @@ import de.polocloud.plugin.bootstrap.proxy.register.ProxyPacketRegister;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.Title;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -80,6 +87,16 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
                     return;
                 }
                 player.connect(serverInfo);
+            }
+
+            @Override
+            public void sendComponent(UUID uuid, CloudComponent component) {
+
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
+                if (player == null) {
+                    return;
+                }
+                player.sendMessage(createTextComponentFromCloudRecursive(component));
             }
 
             @Override
@@ -176,6 +193,29 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
     @Override
     public synchronized void onDisable() {
 
+    }
+
+
+    /**
+     * Creates a {@link TextComponent} from a {@link CloudComponent}
+     *
+     * @param chatComponent the cloudComponent
+     * @return built md5 textComponent
+     */
+    private TextComponent createTextComponentFromCloudRecursive(CloudComponent chatComponent) {
+        TextComponent textComponent = new TextComponent(chatComponent.getMessage());
+        for (Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
+            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickEvent.getKey().name()), clickEvent.getValue()));
+        }
+
+        for (Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
+            textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverEvent.getKey().name()), new BaseComponent[]{new TextComponent(hoverEvent.getValue())}));
+        }
+
+        for (CloudComponent cloudComponent : chatComponent.getSubComponents()) {
+            textComponent.addExtra(createTextComponentFromCloudRecursive(cloudComponent));
+        }
+        return textComponent;
     }
 
     @Override

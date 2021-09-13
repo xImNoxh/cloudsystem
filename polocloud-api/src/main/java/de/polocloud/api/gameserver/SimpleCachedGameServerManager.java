@@ -84,7 +84,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     public int getFreeId(ITemplate template) {
         int id = 1;
 
-        IGameServer gameServer = this.getAllCached(template.getTemplateType()).stream().max(Comparator.comparingInt(IGameServer::getId)).orElse(null);
+        IGameServer gameServer = this.getAllCached(template).stream().max(Comparator.comparingInt(IGameServer::getId)).orElse(null);
 
         if (gameServer != null) {
             id = (gameServer.getId() + 1);

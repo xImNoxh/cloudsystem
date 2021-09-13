@@ -8,6 +8,7 @@ import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
+import de.polocloud.api.logger.def.Pair;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerRegisterPacket;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUnregisterPacket;
 
@@ -16,6 +17,8 @@ import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.def.SimpleCloudPlayer;
 import de.polocloud.api.player.def.SimplePlayerConnection;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.util.MinecraftProtocol;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.protocol.NetworkClient;
@@ -31,6 +34,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class CollectiveProxyEvents implements Listener {
@@ -136,7 +140,39 @@ public class CollectiveProxyEvents implements Listener {
         event.setCancelled(false);
     }
 
-    @EventHandler
+
+    /**
+     * Checks if the version of a player matches the version of a server
+     *
+     * @param playerProtocolId the protocol id of the player
+     * @param gameServer the server to request
+     * @return pair containing boolean (if event is cancelled) and String (message)
+     */
+    private Pair<Boolean, String> checkVersion(int playerProtocolId, IGameServer gameServer) {
+        GameServerVersion version = gameServer.getTemplate().getVersion();
+        boolean cancelled = false;
+        String msg = null;
+
+        if (version.getProtocolId() != -1) {
+            int serverProtocolId = version.getProtocolId();
+            MinecraftProtocol serverProtocol = MinecraftProtocol.valueOf(serverProtocolId);
+            MinecraftProtocol playerProtocol = MinecraftProtocol.valueOf(playerProtocolId);
+
+
+            if (!Arrays.asList(serverProtocol.getVersionNames()).contains(playerProtocol.getName())) {
+                msg = PoloCloudAPI.getInstance().getMasterConfig().getMessages().getWrongMinecraftVersion();
+
+                msg = msg.replace("%server%", gameServer.getName());
+                msg = msg.replace("%required_version%", serverProtocol.getNewestVersion());
+                msg = msg.replace("%your_version%", playerProtocol.getNewestVersion());
+
+                cancelled = true;
+            }
+        }
+        return new Pair<>(cancelled, msg);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void handle(ServerConnectEvent event) {
         ProxiedPlayer proxiedPlayer = event.getPlayer();
         SimpleCloudPlayer cloudPlayer = (SimpleCloudPlayer) PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName());
@@ -157,8 +193,16 @@ public class CollectiveProxyEvents implements Listener {
 
             //Sending player to fallback
             ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(fallback.getName());
-            event.setCancelled(false);
-            event.setTarget(serverInfo);
+
+            Pair<Boolean, String> eventData = checkVersion(proxiedPlayer.getPendingConnection().getVersion(), fallback);
+
+            if (eventData.getKey()) {
+                event.setCancelled(true);
+                proxiedPlayer.disconnect(TextComponent.fromLegacyText(eventData.getValue()));
+            } else {
+                event.setCancelled(false);
+                event.setTarget(serverInfo);
+            }
 
             //Setting the new Server from the player
             Scheduler.runtimeScheduler().schedule(() -> {
@@ -184,6 +228,15 @@ public class CollectiveProxyEvents implements Listener {
             //Setting new info for the player
             ServerInfo target = event.getTarget();
 
+            IGameServer targetGameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(target.getName());
+            if (targetGameServer != null) {
+                Pair<Boolean, String> eventData = checkVersion(proxiedPlayer.getPendingConnection().getVersion(), targetGameServer);
+
+                if (eventData.getKey()) {
+                    event.setCancelled(true);
+                    proxiedPlayer.sendMessage(TextComponent.fromLegacyText(eventData.getValue()));
+                }
+            }
             IGameServer from = cloudPlayer.getMinecraftServer();
             cloudPlayer.setMinecraftServer(target.getName());
             cloudPlayer.update();

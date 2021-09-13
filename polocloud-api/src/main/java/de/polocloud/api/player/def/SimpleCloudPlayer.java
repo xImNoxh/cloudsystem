@@ -3,6 +3,7 @@ package de.polocloud.api.player.def;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
+import de.polocloud.api.chat.CloudComponent;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.impl.player.CloudPlayerPermissionCheckEvent;
@@ -12,8 +13,10 @@ import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
+import de.polocloud.api.network.packets.master.MasterPlayerSendComponentPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
+import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
@@ -165,6 +168,16 @@ public class SimpleCloudPlayer implements ICloudPlayer {
             return;
         }
         MasterPlayerSendMessagePacket packet = new MasterPlayerSendMessagePacket(this.uniqueId, text);
+        PoloCloudAPI.getInstance().sendPacket(packet);
+    }
+
+    @Override
+    public void sendMessage(CloudComponent component) {
+        if (PoloCloudAPI.getInstance().getPoloBridge() != null && PoloCloudAPI.getInstance().getPoloBridge() instanceof PoloPluginBungeeBridge) {
+            ((PoloPluginBungeeBridge)PoloCloudAPI.getInstance().getPoloBridge()).sendComponent(this.uniqueId, component);
+            return;
+        }
+        Packet packet = new MasterPlayerSendComponentPacket(this.uniqueId, component);
         PoloCloudAPI.getInstance().sendPacket(packet);
     }
 

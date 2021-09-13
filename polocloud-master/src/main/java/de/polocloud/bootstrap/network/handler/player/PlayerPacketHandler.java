@@ -8,6 +8,7 @@ import de.polocloud.api.network.packets.cloudplayer.CloudPlayerUpdatePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.proxy.ProxyTablistUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
+import de.polocloud.api.network.packets.master.MasterPlayerSendComponentPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
 import de.polocloud.api.network.packets.other.RequestPassOnPacket;
@@ -24,6 +25,7 @@ public class PlayerPacketHandler extends PlayerPacketServiceController {
     public PlayerPacketHandler() {
 
         new SimplePacketHandler<>(MasterPlayerSendMessagePacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
+        new SimplePacketHandler<>(MasterPlayerSendComponentPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(MasterPlayerKickPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(ProxyTablistUpdatePacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));
         new SimplePacketHandler<>(MasterPlayerSendToServerPacket.class, packet -> PoloCloudAPI.getInstance().sendPacket(packet));

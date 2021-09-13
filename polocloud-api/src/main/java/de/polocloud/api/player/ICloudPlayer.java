@@ -1,5 +1,6 @@
 package de.polocloud.api.player;
 
+import de.polocloud.api.chat.CloudComponent;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.extras.IPlayerConnection;
@@ -80,6 +81,13 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor,
      * @param reason the reason
      */
     void kick(String reason);
+
+    /**
+     * Sends a {@link CloudComponent} to this player
+     *
+     * @param component the component
+     */
+    void sendMessage(CloudComponent component);
 
     /**
      * Sends this player to a fallback
