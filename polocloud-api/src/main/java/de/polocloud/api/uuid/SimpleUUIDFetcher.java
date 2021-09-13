@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.map.UniqueMap;
 
 import java.io.BufferedReader;
@@ -90,8 +91,9 @@ public class SimpleUUIDFetcher implements IUUIDFetcher {
             connection.setReadTimeout(5000);
             connection.connect();
 
-            JsonElement parse = new JsonParser().parse(new BufferedReader(new InputStreamReader(connection.getInputStream())));
-            
+            //NEU
+            JsonElement parse = PoloHelper.GSON_INSTANCE.fromJson(new BufferedReader(new InputStreamReader(connection.getInputStream())), JsonElement.class);
+
             if (parse.toString().equals("{}")) {
                 return null;
             }

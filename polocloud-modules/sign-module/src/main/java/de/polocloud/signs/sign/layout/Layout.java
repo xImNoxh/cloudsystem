@@ -2,8 +2,8 @@ package de.polocloud.signs.sign.layout;
 
 public class Layout {
 
-    private String[] lines;
-    private BlockLayout blockLayout;
+    private final String[] lines;
+    private final BlockLayout blockLayout;
 
     public Layout(BlockLayout blockLayout, String... lines) {
         this.lines = lines;

@@ -31,10 +31,10 @@ public class ChangelogCommand implements CommandListener, TabCompletable {
                String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getCurrentVersion());
                PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n]\n----[/Changelog]----");
            } else{
-               //Send help
+               sendHelp();
            }
        }else{
-           //Send help
+           sendHelp();
        }
     }
 

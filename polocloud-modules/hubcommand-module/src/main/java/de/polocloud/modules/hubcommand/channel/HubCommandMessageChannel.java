@@ -2,7 +2,6 @@ package de.polocloud.modules.hubcommand.channel;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.messaging.IMessageChannel;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.modules.hubcommand.config.HubCommandConfig;
 
 public class HubCommandMessageChannel {

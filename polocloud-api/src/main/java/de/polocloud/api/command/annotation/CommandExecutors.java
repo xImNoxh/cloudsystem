@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 public @interface CommandExecutors {
 
     /**
-     *  The executors who can execute this Command (PLAYER, CONSOLE, etc.
+     *  The executors who can execute this Command (PLAYER, CONSOLE, etc.)
      *
      * @return CommandExecutor ({@link ExecutorType}) as Array
      */

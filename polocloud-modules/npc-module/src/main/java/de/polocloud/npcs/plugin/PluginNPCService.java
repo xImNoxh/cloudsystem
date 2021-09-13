@@ -3,7 +3,6 @@ package de.polocloud.npcs.plugin;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.npcs.bootstraps.PluginBootstrap;
 import de.polocloud.npcs.manager.ICloudNPCManager;
 import de.polocloud.npcs.manager.impl.SimpleCloudNPCManager;
@@ -22,17 +21,17 @@ import java.util.stream.Collectors;
 
 public class PluginNPCService implements INPCService {
 
-    private NPCLib npcLib;
+    private final NPCLib npcLib;
 
 
-    private ICloudNPCManager cloudNPCManager;
+    private final ICloudNPCManager cloudNPCManager;
 
     private GlobalConfigClass currentCache;
 
-    private IMessageChannel<GlobalConfigClass> transferChannel;
-    private IMessageChannel<RequestType> requestChannel;
+    private final IMessageChannel<GlobalConfigClass> transferChannel;
+    private final IMessageChannel<RequestType> requestChannel;
 
-    private NPCInitializer initializer;
+    private final NPCInitializer initializer;
 
 
     public PluginNPCService() {

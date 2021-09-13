@@ -3,7 +3,6 @@ package de.polocloud.signs.plugin;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.signs.protocol.enumeration.RequestType;
 import de.polocloud.signs.sign.base.IGameServerSign;
 import de.polocloud.signs.manager.IGameServerSignManager;
@@ -44,7 +43,6 @@ public class SignsPluginService implements ISignService {
         this.gameServerSignManager = new SimpleGameServerSignManager();
         this.signInitializer = new SignInitializer();
         this.signAnimator = new SignAnimator();
-        SignConverter signConverter = new SignConverter();
 
         registerListeners();
         Scheduler.runtimeScheduler().async().schedule(this::requestUpdate, () -> PoloCloudAPI.getInstance().getConnection().ctx() != null);

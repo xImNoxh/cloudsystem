@@ -84,7 +84,7 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
             if ((System.currentTimeMillis() - started) > 25000) {
                 PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! Thread timeout after 25 seconds no response");
                 PoloLogger.print(LogLevel.ERROR, "Thread timeout after 25 seconds, while coping files for gameserver " + gameServer.getName() + "! Stopping...");
-                copyThread.stop();
+                copyThread.interrupt();
             }
         }
     }

@@ -13,11 +13,9 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.modules.proxy.ProxyModule;
 import de.polocloud.modules.proxy.api.ProxyConfig;
-import de.polocloud.modules.proxy.api.notify.NotifyConfig;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class ProxyCommand implements CommandListener {
 

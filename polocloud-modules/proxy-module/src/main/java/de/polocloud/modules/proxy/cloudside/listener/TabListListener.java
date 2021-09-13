@@ -7,7 +7,6 @@ import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.modules.proxy.ProxyModule;
-import de.polocloud.modules.proxy.api.tablist.TablistService;
 
 public class TabListListener implements IListener {
 

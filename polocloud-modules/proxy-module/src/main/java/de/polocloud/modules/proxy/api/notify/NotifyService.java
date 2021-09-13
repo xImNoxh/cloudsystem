@@ -3,11 +3,7 @@ package de.polocloud.modules.proxy.api.notify;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.common.IReloadable;
 import de.polocloud.modules.proxy.ProxyModule;
-import de.polocloud.modules.proxy.cloudside.listener.NotifyListener;
-
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class NotifyService  {
 

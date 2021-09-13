@@ -2,7 +2,6 @@ package de.polocloud.modules.proxy.api.tablist;
 
 import com.google.common.collect.Lists;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.logger.helper.MinecraftColor;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.common.IReloadable;
 import de.polocloud.api.scheduler.Scheduler;
