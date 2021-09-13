@@ -3,7 +3,6 @@ package de.polocloud.api.event;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.base.EventData;
-import de.polocloud.api.event.base.ICancellable;
 import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.handling.EventMethod;

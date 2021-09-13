@@ -1,7 +1,5 @@
 package de.polocloud.modules.proxy.api;
 
-import de.polocloud.api.APIVersion;
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.IConfig;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.modules.proxy.ProxyModule;

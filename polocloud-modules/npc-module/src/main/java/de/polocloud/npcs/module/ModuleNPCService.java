@@ -7,7 +7,6 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.npcs.module.config.meta.NPCMeta;
 import de.polocloud.npcs.protocol.GlobalConfigClass;
 import de.polocloud.npcs.protocol.enumeration.RequestType;
@@ -17,14 +16,14 @@ import java.io.File;
 
 public class ModuleNPCService implements INPCService {
 
-    private CloudModule module;
+    private final CloudModule module;
 
     private NPCMeta metaConfig;
 
     private GlobalConfigClass currentCache;
 
-    private IMessageChannel<GlobalConfigClass> transferChannel;
-    private IMessageChannel<RequestType> requestChannel;
+    private final IMessageChannel<GlobalConfigClass> transferChannel;
+    private final IMessageChannel<RequestType> requestChannel;
 
     public ModuleNPCService(CloudModule module) {
         this.module = module;

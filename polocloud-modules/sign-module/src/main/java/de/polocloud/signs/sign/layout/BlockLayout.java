@@ -2,9 +2,9 @@ package de.polocloud.signs.sign.layout;
 
 public class BlockLayout {
 
-    private boolean use = true;
-    private int id;
-    private int subId;
+    private final boolean use = true;
+    private final int id;
+    private final int subId;
 
     public BlockLayout(int id, int subId) {
         this.id = id;

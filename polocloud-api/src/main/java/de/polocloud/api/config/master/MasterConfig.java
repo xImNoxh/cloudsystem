@@ -6,7 +6,6 @@ import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.IConfig;
 import de.polocloud.api.config.master.messages.Messages;
 import de.polocloud.api.config.master.properties.Properties;
-import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.network.packets.master.MasterUpdateConfigPacket;
 import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;

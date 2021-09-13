@@ -2,8 +2,6 @@ package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.master.MasterConfig;
-import de.polocloud.api.event.base.IListener;
-import de.polocloud.api.event.impl.other.ProxyServerRequestPingEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;

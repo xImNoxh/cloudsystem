@@ -8,8 +8,6 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Properties implements IConfig, IProtocolObject {
 

@@ -46,9 +46,9 @@ public enum GameServerVersion implements Serializable {
     SPIGOT_1_8_8("https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar", "Spigot-1.8.8", TemplateType.MINECRAFT),
     ;
 
-    private TemplateType templateType;
-    private String title;
-    private String url;
+    private final TemplateType templateType;
+    private final String title;
+    private final String url;
 
     GameServerVersion(String url, String title, TemplateType templateType) {
         this.title = title;

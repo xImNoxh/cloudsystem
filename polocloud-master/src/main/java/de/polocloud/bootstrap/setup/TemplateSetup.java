@@ -75,7 +75,7 @@ public class TemplateSetup extends StepAcceptor implements Setup {
                 int memory = Integer.parseInt(steps.get(4).getAnswer());
 
                 TemplateType templateType = TemplateType.valueOf(steps.get(5).getAnswer().toUpperCase());
-                GameServerVersion gameServerVersion = Arrays.stream(GameServerVersion.values()).filter(key -> key.getTitle().equalsIgnoreCase(steps.get(6).getAnswer())).findAny().get();
+                GameServerVersion gameServerVersion = Arrays.stream(GameServerVersion.values()).filter(key -> key.getTitle().equalsIgnoreCase(steps.get(6).getAnswer())).findAny().orElse(null);
                 String[] wrappers = steps.get(7).getAnswer().replaceAll(" ", "").split(",");
 
                 boolean isStatic = Boolean.parseBoolean(steps.get(8).getAnswer());

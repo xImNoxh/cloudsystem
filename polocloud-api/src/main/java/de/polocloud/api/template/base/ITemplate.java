@@ -1,6 +1,5 @@
 package de.polocloud.api.template.base;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.template.helper.GameServerVersion;

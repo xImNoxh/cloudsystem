@@ -6,8 +6,6 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class SimpleConfigLoader implements IConfigLoader {
 
@@ -16,15 +14,6 @@ public class SimpleConfigLoader implements IConfigLoader {
         if (!file.exists()) {
             return (T) PoloHelper.getInstance(configClass);
         }
-        //T result = null;
-       // try {
-//
-           // FileReader reader = new FileReader(file);
-           // result = (T) PoloHelper.GSON_INSTANCE.fromJson(reader, configClass);
-         //   reader.close();
-       // } catch (IOException e) {
-        //    e.printStackTrace();
-        //}
         return (T) new JsonData(file).getAs(configClass);
     }
 
@@ -35,14 +24,5 @@ public class SimpleConfigLoader implements IConfigLoader {
             return (T) defaultConfig;
         }
         return (T) new JsonData(file).getAs(configClass);
-        //try {
-            //result = (T) new JsonData(file).getAs(configClass);
-            //FileReader reader = new FileReader(file);
-            //result = (T) PoloHelper.GSON_INSTANCE.fromJson(reader, configClass);
-            //reader.close();
-        //} catch (IOException e) {
-            //e.printStackTrace();
-        //}
-        //return result;
     }
 }

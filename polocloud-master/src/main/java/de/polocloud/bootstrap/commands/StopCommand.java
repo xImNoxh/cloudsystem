@@ -7,7 +7,6 @@ import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.annotation.CommandPermission;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
-import de.polocloud.bootstrap.Master;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 

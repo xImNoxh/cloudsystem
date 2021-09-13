@@ -4,7 +4,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.modules.hubcommand.channel.HubCommandMessageChannel;
 import de.polocloud.modules.hubcommand.config.HubCommandConfig;
 import de.polocloud.modules.hubcommand.events.CloudCollectiveEvents;

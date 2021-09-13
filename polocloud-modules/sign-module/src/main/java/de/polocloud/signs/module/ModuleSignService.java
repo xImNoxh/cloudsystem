@@ -7,7 +7,6 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.module.CloudModule;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.signs.module.config.layout.SignLayoutConfig;
 import de.polocloud.signs.module.config.location.SignLocationConfig;
 import de.polocloud.signs.protocol.enumeration.RequestType;
@@ -22,7 +21,7 @@ public class ModuleSignService implements ISignService {
     /*
        Instance
      */
-    private CloudModule module;
+    private final CloudModule module;
 
     /*
        Configs
@@ -35,8 +34,8 @@ public class ModuleSignService implements ISignService {
        Objects for syncing Configs
      */
     private GlobalConfigClass currentGlobalConfig;
-    private IMessageChannel<GlobalConfigClass> channel;
-    private IMessageChannel<RequestType> requestChannel;
+    private final IMessageChannel<GlobalConfigClass> channel;
+    private final IMessageChannel<RequestType> requestChannel;
 
 
     public ModuleSignService(CloudModule module) {

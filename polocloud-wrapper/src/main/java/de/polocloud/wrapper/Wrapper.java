@@ -41,7 +41,6 @@ import de.polocloud.wrapper.setup.WrapperSetup;
 import jline.console.ConsoleReader;
 
 import java.net.InetSocketAddress;
-import java.util.UUID;
 
 
 public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
