@@ -141,6 +141,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerMasterRequestTerminate());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerFileTransfer());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerTransferModules());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerScreenRequest());
 
             PoloLogger.print(LogLevel.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
 

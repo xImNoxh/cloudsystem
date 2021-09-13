@@ -559,15 +559,15 @@ public class JsonData {
     /**
      * Returns an Object from a given Class
      *
-     * @param jsonObject the source
+     * @param jsonElement the source
      * @param tClass the type of what you want to get
      * @return the object
      */
-    public <T> T getObject(JsonObject jsonObject, Class<T> tClass) {
-        if (jsonObject == null) {
+    public <T> T getObject(JsonElement jsonElement, Class<T> tClass) {
+        if (jsonElement == null) {
             return null;
         }
-        return PoloHelper.GSON_INSTANCE.fromJson(jsonObject, tClass);
+        return PoloHelper.GSON_INSTANCE.fromJson(jsonElement, tClass);
     }
 
 
@@ -593,7 +593,7 @@ public class JsonData {
         if (!this.has(key)) {
             return this.fallbackValue != null && this.fallbackValue.getClass().equals(tClass) ? (T) this.fallbackValue : null;
         }
-        return this.getObject(this.getJsonObject(key), tClass);
+        return this.getObject(this.getElement(key), tClass);
     }
 
 

@@ -110,6 +110,7 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
             this.commandManager.registerCommand(new ChangelogCommand());
             this.commandManager.registerCommand(new MeCommand());
+            this.commandManager.registerCommand(new ScreenCommand());
             this.commandManager.registerCommand(injector.getInstance(GameServerCommand.class));
             this.commandManager.registerCommand(injector.getInstance(WrapperCommand.class));
 
