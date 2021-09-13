@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 public class PermsCommand implements CommandListener {
 
-    //TODO: FINISH COMMAND
     @Command(
         name = "permissions",
         aliases = {"perms", "cloudperms", "poloperms"},

@@ -14,6 +14,9 @@ import java.util.List;
 
 public class SimpleCachedMessageManager implements IMessageManager {
 
+    /**
+     * ALl registered channels
+     */
     private final UniqueMap<Class<?>, IMessageChannel<?>> registeredChannels;
 
     public SimpleCachedMessageManager() {

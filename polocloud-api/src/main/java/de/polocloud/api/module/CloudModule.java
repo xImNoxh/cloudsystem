@@ -4,13 +4,22 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.guice.own.GuiceObject;
 import de.polocloud.api.module.info.ModuleInfo;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 
+@Setter @Getter
 public abstract class CloudModule extends GuiceObject {
 
+    /**
+     * The directory of this module
+     */
     protected File dataDirectory;
 
+    /**
+     * The file of this module
+     */
     protected File moduleFile;
 
     public CloudModule() {
@@ -33,19 +42,4 @@ public abstract class CloudModule extends GuiceObject {
         return getClass().isAnnotationPresent(ModuleInfo.class) ? getClass().getAnnotation(ModuleInfo.class) : null;
     }
 
-    public void setDataDirectory(File dataDirectory) {
-        this.dataDirectory = dataDirectory;
-    }
-
-    public void setModuleFile(File moduleFile) {
-        this.moduleFile = moduleFile;
-    }
-
-    public File getModuleFile() {
-        return moduleFile;
-    }
-
-    public File getDataDirectory() {
-        return dataDirectory;
-    }
 }

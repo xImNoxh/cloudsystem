@@ -11,7 +11,14 @@ import java.util.List;
 
 public class SimpleMessageChannel<T> implements IMessageChannel<T> {
 
+    /**
+     * The name of the channel
+     */
     private final String name;
+
+    /**
+     * The listeners
+     */
     private final List<IMessageListener<T>> listeners;
 
     public SimpleMessageChannel(String name) {
@@ -23,7 +30,6 @@ public class SimpleMessageChannel<T> implements IMessageChannel<T> {
     public String getName() {
         return name;
     }
-
 
     @Override
     public void sendMessage(T t) {

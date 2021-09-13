@@ -1,4 +1,4 @@
-package de.polocloud.api.database;
+package de.polocloud.api.database.api;
 
 
 import de.polocloud.api.config.JsonData;
@@ -7,16 +7,16 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DocumentObjectDatabase<V> extends DocumentDatabase implements IDatabase<V> {
+public class Database<V> extends DatabaseGround {
 
     private final Class<V> vClass;
 
-    public DocumentObjectDatabase(String name, Class<V> vClass) {
+    public Database(String name, Class<V> vClass) {
         super(name);
         this.vClass = vClass;
     }
 
-    public DocumentObjectDatabase(String name, File directory, Class<V> vClass) {
+    public Database(String name, File directory, Class<V> vClass) {
         super(name, directory);
         this.vClass = vClass;
     }
@@ -33,8 +33,7 @@ public class DocumentObjectDatabase<V> extends DocumentDatabase implements IData
         this.insert(document, key);
     }
 
-    @Override
-    public IDatabase<V> directory(File dir) {
+    public Database<V> directory(File dir) {
         this.directory = dir;
         return this;
     }

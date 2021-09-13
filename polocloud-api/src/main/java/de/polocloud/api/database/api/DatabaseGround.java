@@ -1,4 +1,4 @@
-package de.polocloud.api.database;
+package de.polocloud.api.database.api;
 
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DocumentDatabase {
+public class DatabaseGround {
 
     /**
      * The name of this database
@@ -25,14 +25,14 @@ public class DocumentDatabase {
      */
     protected File directory;
 
-    public DocumentDatabase(String name, File directory) {
+    public DatabaseGround(String name, File directory) {
         this.name = name;
         this.cache = new HashMap<>();
         this.directory = directory;
         this.loadCache();
     }
 
-    public DocumentDatabase(String name) {
+    public DatabaseGround(String name) {
         this(name, new File(FileConstants.DATABASE_FOLDER, name + "/"));
     }
 

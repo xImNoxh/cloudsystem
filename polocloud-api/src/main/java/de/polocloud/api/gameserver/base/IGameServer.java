@@ -58,7 +58,6 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * @param host the address as string
      */
     void setHost(String host);
-    //TODO CHECK HOST SETTING WITH MULTI ROOT
 
     /**
      * Gets the amount of players that are allowed

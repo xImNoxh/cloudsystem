@@ -2,8 +2,7 @@ package de.polocloud.modules.permission;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.database.DocumentObjectDatabase;
-import de.polocloud.api.database.IDatabase;
+import de.polocloud.api.database.api.Database;
 import de.polocloud.api.guice.own.Guice;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
@@ -36,12 +35,12 @@ public class InternalPermissionModule {
     /**
      * The database for all users
      */
-    private final IDatabase<SimplePermissionUser> userDatabase;
+    private final Database<SimplePermissionUser> userDatabase;
 
     /**
      * The database for all groups
      */
-    private final IDatabase<SimplePermissionGroup> groupDatabase;
+    private final Database<SimplePermissionGroup> groupDatabase;
 
     /**
      * The message channel to transfer all tasks
@@ -55,8 +54,8 @@ public class InternalPermissionModule {
 
     public InternalPermissionModule(ModuleBootstrap bootstrap) {
         instance = this;
-        this.userDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-users", new File(bootstrap.getDataDirectory(), "permission-users"), SimplePermissionUser.class);
-        this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new DocumentObjectDatabase<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);
+        this.userDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new Database<>("permission-users", new File(bootstrap.getDataDirectory(), "permission-users"), SimplePermissionUser.class);
+        this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new Database<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);
 
         this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(Task.class, "permission-module-tasks");
         this.messageChannel.registerListener(new ModuleTaskHandler());
