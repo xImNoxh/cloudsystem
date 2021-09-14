@@ -129,7 +129,7 @@ public class SimpleCachedEventManager implements IEventManager {
                 allow = true;
             } else if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER && event.isNettyFired()) {
                 allow = true;
-            } else allow = event.isNettyFired();
+            } else allow = !event.isNettyFired();
 
             if (allow) {
                 if (PoloCloudAPI.getInstance().getType().isPlugin()) {

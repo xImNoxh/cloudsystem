@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 public @interface EventData {
 
     /**
-     * If packet should be globally fired
+     * If de.polocloud.modules.smartproxy.packet should be globally fired
      * (Sent across the network via packets)
      */
     boolean nettyFire() default false;

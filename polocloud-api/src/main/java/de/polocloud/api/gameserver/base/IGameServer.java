@@ -11,6 +11,8 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -137,7 +139,7 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     /**
      * Sends a {@link Packet} from this server
      *
-     * @param packet the packet to send
+     * @param packet the de.polocloud.modules.smartproxy.packet to send
      */
     void sendPacket(Packet packet);
 
@@ -188,7 +190,7 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
 
     /**
      * Updates this server in current cache instance
-     * but does not send a packet to all instances
+     * but does not send a de.polocloud.modules.smartproxy.packet to all instances
      * to declare that this service got updated
      */
     void updateInternally();
@@ -262,4 +264,8 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
         this.setMemory(template.getMaxMemory());
     }
 
+    /**
+     * The address of this server
+     */
+    InetSocketAddress getAddress();
 }

@@ -26,7 +26,7 @@ public interface INettyServer extends INetworkConnection {
     /**
      * Sends a {@link Packet} to specific {@link Channel}s only
      *
-     * @param packet the packet
+     * @param packet the de.polocloud.modules.smartproxy.packet
      * @param channels the channels
      */
     void sendPacket(Packet packet, Channel... channels);

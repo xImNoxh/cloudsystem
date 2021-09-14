@@ -1,0 +1,6 @@
+name: PoloCloud-SmartProxy
+version: 1.0
+author: Lystx
+main: de.polocloud.modules.smartproxy.pluginside.BungeeBootstrap
+depend:
+    - PoloCloud-Plugin

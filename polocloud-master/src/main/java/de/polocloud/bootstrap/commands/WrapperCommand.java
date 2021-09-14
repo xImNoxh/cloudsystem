@@ -10,6 +10,8 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
+import lombok.val;
+import lombok.var;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -35,7 +37,8 @@ public class WrapperCommand implements CommandListener, TabCompletable {
             sender.sendMessage("----[/Wrappers]----");
         } else if (params.length == 2 && params[0].equalsIgnoreCase("stop") || params[0].equalsIgnoreCase("shutdown")) {
             try {
-                String wrapperName = params[1];
+                var wrapperName = params[1];
+
                 IWrapper wrapper = wrapperManager.getWrapper(wrapperName);
                 if (wrapper == null) {
                     PoloLogger.print(LogLevel.WARNING, "§cThere is no Wrapper with the name §e" + wrapperName + " §cconnected!");

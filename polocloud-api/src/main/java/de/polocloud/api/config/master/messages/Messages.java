@@ -76,7 +76,7 @@ public class Messages implements IProtocolObject {
         this.kickedAndNoFallbackServer = "%prefix% §cThe server you were on went down, but no fallback server was found!";
         this.onlyProxyJoin = "%prefix% §cYou can only join on a Proxy§8.";
         this.networkShutdown = "%prefix% §cThe network shut down!";
-        this.wrongMinecraftVersion = "%prefix% §7For server §b%server% §7the version §3%required_version% §7is required §8(§7You§8: §a%your_version%§8)";
+        this.wrongMinecraftVersion = "%prefix% §7For Server §b%server% §7the version §3%required_version% §7is required §8(§7You§8: §a%your_version%§8)";
     }
 
     public String getWrongMinecraftVersion() {

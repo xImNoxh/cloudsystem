@@ -96,7 +96,7 @@ public interface IPlayerSettings {
         SHOWN,
 
         /**
-         * Only commands will be shown
+         * Only de.polocloud.modules.smartproxy.moduleside.commands will be shown
          */
         COMMANDS_ONLY,
 

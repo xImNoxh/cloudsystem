@@ -13,14 +13,14 @@ public interface IPacketSender {
      * 'CLOUD/SERVER' -> Will send to all connected clients
      * 'BRIDGE/SPIGOT/PROXY' -> WIll send to the Master
      *
-     * @param packet the packet to send
+     * @param packet the de.polocloud.modules.smartproxy.packet to send
      */
     void sendPacket(Packet packet);
 
     /**
      * Sends a {@link Packet} to only a specified receiver type
      *
-     * @param packet the packet
+     * @param packet the de.polocloud.modules.smartproxy.packet
      * @param receiver the receiver type
      */
     default void sendPacket(Packet packet, PoloType receiver) {}

@@ -19,6 +19,7 @@ import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -406,6 +407,11 @@ public class SimpleGameServer implements IGameServer {
             }
         });
 
+    }
+
+    @Override
+    public InetSocketAddress getAddress() {
+        return new InetSocketAddress(this.host, this.port);
     }
 
     @Override

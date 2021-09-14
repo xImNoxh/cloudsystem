@@ -33,6 +33,7 @@ public class MotdService implements IReloadable {
             return;
         }
 
+
         gameServer.setServerPing(proxyMotd.getDescription(), gameServer.getMaxPlayers(), gameServer.getOnlinePlayers(), proxyMotd.getVersionTag(), proxyMotd.getPlayerInfo());
         gameServer.update();
     }

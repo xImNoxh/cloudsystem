@@ -98,7 +98,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         bootstrap.checkAndDeleteTmpFolder();
         bootstrap.checkPoloCloudAPI();
 
-        //Registering commands
+        //Registering de.polocloud.modules.smartproxy.moduleside.commands
         this.commandManager.registerCommand(new StopCommand());
         this.commandManager.registerCommand(new HelpCommand());
         this.commandManager.registerCommand(new ScreenCommand());

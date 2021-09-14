@@ -102,7 +102,7 @@ public class Master extends PoloCloudAPI implements IStartable {
             //Event handler registering
             this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
 
-            //Registering all commands
+            //Registering all de.polocloud.modules.smartproxy.moduleside.commands
             this.commandManager.registerCommand(new StopCommand());
             this.commandManager.registerCommand(new TemplateCommand(templateManager, gameServerManager));
             this.commandManager.registerCommand(new ReloadCommand());

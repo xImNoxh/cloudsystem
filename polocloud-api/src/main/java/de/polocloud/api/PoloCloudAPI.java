@@ -154,7 +154,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     /**
      * Sends a message to the CloudMaster
-     * If this instance is plugin it will send a packet to the master
+     * If this instance is plugin it will send a de.polocloud.modules.smartproxy.packet to the master
      * otherwise it will just print the message
      *
      * @param message the message to send
@@ -234,7 +234,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     /**
      * The current {@link INetworkConnection} to manage
      * all the networking stuff like sending packets
-     * and registering packet handlers or
+     * and registering de.polocloud.modules.smartproxy.packet handlers or
      * creating and sending requests and responses
      */
     public abstract INetworkConnection getConnection();
@@ -270,7 +270,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * 'CLOUD/SERVER' -> Will send to all connected clients
      * 'BRIDGE/SPIGOT/PROXY' -> WIll send to the Master
      *
-     * @param packet the packet to send
+     * @param packet the de.polocloud.modules.smartproxy.packet to send
      */
     public void sendPacket(Packet packet) {
         this.getConnection().sendPacket(packet);

@@ -32,6 +32,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -49,6 +50,9 @@ public class CollectiveProxyEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle(ProxyPingEvent event) {
+
+        PendingConnection connection = event.getConnection();
+        InetSocketAddress address = connection.getAddress();
 
         ServerPing serverPing = event.getResponse();
 
@@ -68,19 +72,41 @@ public class CollectiveProxyEvents implements Listener {
         ServerPing.PlayerInfo[] sample = new ServerPing.PlayerInfo[maintenancePlayerInfo.length];
 
         for (int i = 0; i < maintenancePlayerInfo.length; i++) {
-            sample[i] = new ServerPing.PlayerInfo(maintenancePlayerInfo[i], UUID.randomUUID());
+            sample[i] = new ServerPing.PlayerInfo(replace(maintenancePlayerInfo[i], thisService, address), UUID.randomUUID());
         }
 
         serverPing.setPlayers(new ServerPing.Players(maxPlayers, onlinePlayers, sample)); //Setting players
         if (thisService != null && thisService.getMotd() != null) {
-            serverPing.setDescriptionComponent(new TextComponent(thisService.getMotd())); //Setting motd
+            serverPing.setDescriptionComponent(new TextComponent(replace(thisService.getMotd(), thisService, address))); //Setting motd
         }
 
         if (thisService != null && ((SimpleGameServer) thisService).getVersionString() != null && !((SimpleGameServer) thisService).getVersionString().trim().isEmpty()) {
-            serverPing.setVersion(new ServerPing.Protocol(((SimpleGameServer) thisService).getVersionString(), -1)); //Setting version
+            serverPing.setVersion(new ServerPing.Protocol(replace(((SimpleGameServer) thisService).getVersionString(), thisService, address), -1)); //Setting version
         }
 
         event.setResponse(serverPing);
+    }
+
+
+    private String replace(String input, IGameServer gameServer, InetSocketAddress address) {
+
+        ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cp -> {
+            System.out.println(cp.getConnection().getHost() + ":" + cp.getConnection().getPort() + " - " + address.getAddress().getHostAddress() + ":" + address.getPort());
+            return cp.getConnection().getHost().equalsIgnoreCase(address.getAddress().getHostAddress()) && cp.getConnection().getPort() == address.getPort();
+        }).findFirst().orElse(null);
+
+        if (cloudPlayer == null) {
+            System.out.println("NULL");
+            input = input.replace("%PROXY%", gameServer.getName());
+        } else {
+            input = input.replace("%PROXY%", cloudPlayer.getProxyServer().getName());
+        }
+
+        input = input.replace("%NUMBER%", String.valueOf(gameServer.getId()));
+        input = input.replace("%MAX_PLAYERS%", String.valueOf(gameServer.getMaxPlayers()));
+        input = input.replace("%ONLINE_PLAYERS%", String.valueOf(gameServer.getOnlinePlayers()));
+
+        return input;
     }
 
     @EventHandler

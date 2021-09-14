@@ -16,6 +16,7 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.channels.ClosedChannelException;
@@ -23,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * This class contains mostly static
@@ -71,6 +73,13 @@ public class PoloHelper {
         return port;
     }
 
+
+    public static InetSocketAddress getAddress(String address) throws Exception {
+        String[] split = address.split(":");
+        String hostname = Arrays.stream(Arrays.copyOfRange(split, 0, split.length - 1)).collect(Collectors.joining(":"));
+        int port = Integer.parseInt(split[split.length-1]);
+        return InetSocketAddress.createUnresolved(hostname, port);
+    }
 
     /**
      * Prints the header
@@ -147,10 +156,10 @@ public class PoloHelper {
     }
 
     /**
-     * Sends a packet to Bukkit player
+     * Sends a de.polocloud.modules.smartproxy.packet to Bukkit player
      *
      * @param to the receiver
-     * @param packet the packet
+     * @param packet the de.polocloud.modules.smartproxy.packet
      */
     public static void sendPacket(Object to, String version, Object packet) {
         try {

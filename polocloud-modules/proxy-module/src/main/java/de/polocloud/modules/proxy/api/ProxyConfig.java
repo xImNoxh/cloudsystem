@@ -47,7 +47,7 @@ public class ProxyConfig implements IConfig {
             true,
             "§8» §cMaintenance",
             "§8»  §bPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o1.8 §8- §f§o1.16",
-            "§8§l» §7This network is in §cmaintenance§8...",
+            "§8§l» §7This network is in §cmaintenance §8[§f%PROXY%§8])",
             new String[]
                 {
                     "§8§m---------------------",
@@ -62,7 +62,7 @@ public class ProxyConfig implements IConfig {
             true,
             null,
             "§8»  §bPoloCloud §8▪§7▪ §7A modern cloudsystem §8» §f§o1.8 §8- §f§o1.16",
-            "§8§l» §7This network is §aonline§8...",
+            "§8§l» §7This network is §aonline §8[§f%PROXY%§8]",
             new String[0]);
 
         this.notifyConfig = new NotifyConfig(true,

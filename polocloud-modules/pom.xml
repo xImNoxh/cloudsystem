@@ -21,6 +21,8 @@
     <module>proxy-module</module>
     <module>example-module</module>
     <module>npc-module</module>
+    <module>hubcommand-module</module>
+    <module>smartproxy-module</module>
   </modules>
 
   <properties>

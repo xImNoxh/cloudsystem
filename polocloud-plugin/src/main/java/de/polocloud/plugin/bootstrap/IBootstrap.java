@@ -17,7 +17,7 @@ public interface IBootstrap {
 
     /**
      * Registers all important
-     * and default packet listeners
+     * and default de.polocloud.modules.smartproxy.packet listeners
      */
     void registerPacketListening();
 

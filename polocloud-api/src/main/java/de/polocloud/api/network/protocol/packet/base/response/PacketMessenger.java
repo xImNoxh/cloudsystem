@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 public class PacketMessenger {
 
     /**
-     * The targets to send the packet to
+     * The targets to send the de.polocloud.modules.smartproxy.packet to
      */
     private final List<Channel> target;
 
@@ -80,7 +80,7 @@ public class PacketMessenger {
     }
 
     /**
-     * Sets the target of this packet to send to
+     * Sets the target of this de.polocloud.modules.smartproxy.packet to send to
      *
      * @param channels The channels
      * @return This
@@ -194,11 +194,11 @@ public class PacketMessenger {
 
     /**
      * Works just like {@link PacketMessenger#send(String, JsonData)} but instead of a {@link Request}
-     * The normal packet will be sent
+     * The normal de.polocloud.modules.smartproxy.packet will be sent
      * Then you have to register an {@link IPacketHandler} and simply use {@link Packet#respond(JsonData)}
      * to respond to the incoming {@link Packet} request
      *
-     * @param packet the packet
+     * @param packet the de.polocloud.modules.smartproxy.packet
      * @return response
      */
     public IResponse send(Packet packet) {
@@ -253,7 +253,7 @@ public class PacketMessenger {
 
     /**
      * All registered handlers to handle incoming {@link Request}
-     * So you don't have to create an extra packet for each request,
+     * So you don't have to create an extra de.polocloud.modules.smartproxy.packet for each request,
      * but you can simply just send a {@link Request} with a key and data
      */
     private static final List<Consumer<Request>> REQUEST_HANDLERS;

@@ -33,7 +33,7 @@ public class MeCommand implements CommandListener {
 
         PoloLogger.newLine();
         PoloLogger.print(LogLevel.INFO, "§7Connected wrappers » §3" + PoloCloudAPI.getInstance().getWrapperManager().getWrappers().size());
-        PoloLogger.print(LogLevel.INFO, "§7Loaded commands » §3" + PoloCloudAPI.getInstance().getCommandManager().getCommands().size());
+        PoloLogger.print(LogLevel.INFO, "§7Loaded de.polocloud.modules.smartproxy.moduleside.commands » §3" + PoloCloudAPI.getInstance().getCommandManager().getCommands().size());
         PoloLogger.print(LogLevel.INFO, "§7Loaded templates » §3" + PoloCloudAPI.getInstance().getTemplateManager().getTemplates().size());
         PoloLogger.print(LogLevel.INFO, "§7Loaded modules » §3" + Master.getInstance().getModuleService().getModules().size());
         PoloLogger.print(LogLevel.INFO, "§7Registered packets » §3" + PacketFactory.REGISTERED_PACKETS.size());

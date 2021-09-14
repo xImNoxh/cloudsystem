@@ -10,7 +10,7 @@ public interface IProtocolObject {
 
 
     /**
-     * This method is called when parsing the packet to the channel-flow of netty
+     * This method is called when parsing the de.polocloud.modules.smartproxy.packet to the channel-flow of netty
      * and writing all its data into a {@link ByteBuf} which is the object netty contains
      * its data in when sending it to other clients/servers
      * A {@link ByteBuf} does not store values under a key or something it just "stacks" them on
@@ -31,7 +31,7 @@ public interface IProtocolObject {
     void write(IPacketBuffer buf) throws IOException;
 
     /**
-     * This method is called when reading the packet from the channel-flow of netty
+     * This method is called when reading the de.polocloud.modules.smartproxy.packet from the channel-flow of netty
      * and re-writing all its data from a {@link ByteBuf} into this {@link Packet}
      * As already in {@link Packet#write(IPacketBuffer)} described you should pay attention
      * to the order you wrote your data in and not confuse the order and try to read a String
