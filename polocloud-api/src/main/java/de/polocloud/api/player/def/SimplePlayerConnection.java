@@ -4,6 +4,8 @@ package de.polocloud.api.player.def;
 import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.util.MinecraftProtocol;
 import de.polocloud.api.util.gson.PoloHelper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -13,8 +15,13 @@ import java.util.UUID;
  * to disconnect the player
  * and send packets
  */
+@Data @AllArgsConstructor
 public class SimplePlayerConnection implements IPlayerConnection {
 
+    /**
+     * The address
+     */
+    private final InetSocketAddress address;
 
     /**
      * The UUId of this connection
@@ -29,12 +36,12 @@ public class SimplePlayerConnection implements IPlayerConnection {
     /**
      * The address (host)
      */
-    private final String host;
+    private String host;
 
     /**
      * The address (port)
      */
-    private final int port;
+    private int port;
 
     /**
      * The protocolVersion
@@ -51,54 +58,15 @@ public class SimplePlayerConnection implements IPlayerConnection {
      */
     private final boolean legacy;
 
-    public SimplePlayerConnection(UUID uniqueId, String name, String host, int port, MinecraftProtocol version, boolean onlineMode, boolean legacy) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-        this.host = host;
-        this.port = port;
-        this.version = version;
-        this.onlineMode = onlineMode;
-        this.legacy = legacy;
-    }
-
     @Override
-    public UUID getUniqueId() {
-        return uniqueId;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getHost() {
-        return host;
-    }
-
-    @Override
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    public MinecraftProtocol getVersion() {
-        return version;
-    }
-
-    @Override
-    public boolean isOnlineMode() {
-        return onlineMode;
-    }
-
-    @Override
-    public boolean isLegacy() {
-        return legacy;
-    }
-
-    @Override
-    public InetSocketAddress getAddress() {
+    public InetSocketAddress constructAddress() {
         return new InetSocketAddress(this.host, this.port);
+    }
+
+    @Override
+    public void injectAddress(InetSocketAddress address) {
+        this.port = address.getPort();
+        this.host = address.getAddress().getHostAddress();
     }
 
     @Override

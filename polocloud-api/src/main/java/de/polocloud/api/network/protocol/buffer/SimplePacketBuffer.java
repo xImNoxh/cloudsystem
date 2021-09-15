@@ -31,6 +31,7 @@ import io.netty.handler.codec.EncoderException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -531,10 +532,11 @@ public class SimplePacketBuffer implements IPacketBuffer {
         String host = this.readString();
         int port = this.readInt();
         int version = this.readInt();
+        InetSocketAddress address = PoloHelper.getAddress(this.readString());
         boolean onlineMode = this.readBoolean();
         boolean legacy = this.readBoolean();
 
-        IPlayerConnection connection = new SimplePlayerConnection(uuid, name, host, port, MinecraftProtocol.valueOf(version), onlineMode, legacy);
+        IPlayerConnection connection = new SimplePlayerConnection(address, uuid, name, host, port, MinecraftProtocol.valueOf(version), onlineMode, legacy);
 
         //Creating player and setting values
         SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(name, uuid, connection);
@@ -560,6 +562,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeString(cloudPlayer.getConnection().getHost());
         this.writeInt(cloudPlayer.getConnection().getPort());
         this.writeInt(cloudPlayer.getConnection().getVersion().getProtocolId());
+        this.writeString(cloudPlayer.getConnection().getAddress().toString());
         this.writeBoolean(cloudPlayer.getConnection().isOnlineMode());
         this.writeBoolean(cloudPlayer.getConnection().isLegacy());
     }

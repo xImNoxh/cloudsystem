@@ -27,6 +27,8 @@ import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,11 +37,12 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@Getter @Setter
 public class SimpleCloudPlayer implements ICloudPlayer {
 
     private final String name;
     private final UUID uniqueId;
-    private final IPlayerConnection connection;
+    private IPlayerConnection connection;
 
     private String minecraftServer;
     private String proxyServer;

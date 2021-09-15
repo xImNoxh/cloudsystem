@@ -81,7 +81,7 @@ public class PlayerCommand implements CommandListener, TabCompletable {
                 PoloLogger.print(LogLevel.INFO, "§7Connection §7:");
                 PoloLogger.print(LogLevel.INFO, "  §8> §7Ping §7: §b" + cloudPlayer.getPing() + "ms");
                 PoloLogger.print(LogLevel.INFO, "  §8> §7Version §7: §b" + connection.getVersion().getName() + " (Id: " + connection.getVersion().getProtocolId() + ")");
-                PoloLogger.print(LogLevel.INFO, "  §8> §7Address §7: §b" + connection.getAddress().getAddress().getHostAddress() + ":" +connection.getPort());
+                PoloLogger.print(LogLevel.INFO, "  §8> §7Address §7: §b" + connection.constructAddress().getAddress().getHostAddress() + ":" +connection.getPort());
                 PoloLogger.print(LogLevel.INFO, "  §8> §7OnlineMode §7: §b" + connection.isOnlineMode());
                 PoloLogger.print(LogLevel.INFO, "  §8> §7Legacy §b" + connection.isLegacy());
             }

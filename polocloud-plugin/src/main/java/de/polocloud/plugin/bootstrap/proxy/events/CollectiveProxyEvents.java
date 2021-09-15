@@ -2,6 +2,7 @@ package de.polocloud.plugin.bootstrap.proxy.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.master.MasterConfig;
+import de.polocloud.api.event.impl.other.ProxyConstructPlayerEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -144,6 +145,7 @@ public class CollectiveProxyEvents implements Listener {
         PendingConnection connection = event.getConnection();
 
         IPlayerConnection playerConnection = new SimplePlayerConnection(
+            connection.getAddress(),
             connection.getUniqueId(),
             connection.getName(),
             connection.getAddress().getAddress().getHostAddress(),
@@ -152,10 +154,14 @@ public class CollectiveProxyEvents implements Listener {
             connection.isOnlineMode(),
             connection.isLegacy()
         );
+        ProxyConstructPlayerEvent playerEvent = PoloCloudAPI.getInstance().getEventManager().fireEvent(new ProxyConstructPlayerEvent(playerConnection));
 
-        SimpleCloudPlayer cloudPlayer = new SimpleCloudPlayer(connection.getName(), connection.getUniqueId(), playerConnection);
+        ICloudPlayer cloudPlayer = playerEvent.getResult();
 
-        cloudPlayer.setProxyServer(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName());
+        if (cloudPlayer == null) {
+            cloudPlayer = new SimpleCloudPlayer(connection.getName(), connection.getUniqueId(), playerConnection);
+            ((SimpleCloudPlayer)cloudPlayer).setProxyServer(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName());
+        }
         cloudPlayer.update();
 
         PoloCloudAPI.getInstance().getCloudPlayerManager().register(cloudPlayer);

@@ -10,6 +10,7 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
 import io.netty.channel.ChannelFutureListener;
+import lombok.SneakyThrows;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -74,7 +75,8 @@ public class PoloHelper {
     }
 
 
-    public static InetSocketAddress getAddress(String address) throws Exception {
+    @SneakyThrows
+    public static InetSocketAddress getAddress(String address)  {
         String[] split = address.split(":");
         String hostname = Arrays.stream(Arrays.copyOfRange(split, 0, split.length - 1)).collect(Collectors.joining(":"));
         int port = Integer.parseInt(split[split.length-1]);

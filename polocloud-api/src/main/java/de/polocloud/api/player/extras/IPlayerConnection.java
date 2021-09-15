@@ -45,6 +45,14 @@ public interface IPlayerConnection {
      *
      * @return socket address
      */
+    InetSocketAddress constructAddress();
+
+    /**
+     * Gets this address as {@link InetSocketAddress}
+     * by host and port
+     *
+     * @return socket address
+     */
     InetSocketAddress getAddress();
 
     /**
@@ -60,4 +68,11 @@ public interface IPlayerConnection {
      * @return boolean
      */
     boolean isLegacy();
+
+    /**
+     * Sets the address of this connection
+     *
+     * @param address the address
+     */
+    void injectAddress(InetSocketAddress address);
 }
