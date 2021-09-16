@@ -1,6 +1,5 @@
 package de.polocloud.bootstrap.commands;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Arguments;
 import de.polocloud.api.command.annotation.Command;

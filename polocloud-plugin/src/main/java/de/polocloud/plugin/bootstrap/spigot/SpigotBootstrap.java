@@ -7,7 +7,6 @@ import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.spigot.events.CollectiveSpigotEvents;
 import de.polocloud.plugin.bootstrap.spigot.register.SpigotPacketRegister;
-import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;

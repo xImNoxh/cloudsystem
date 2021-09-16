@@ -24,6 +24,7 @@ public class ChangelogRequestService {
 
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setDoOutput(true);
+            httpURLConnection.setConnectTimeout(2500);
 
             httpURLConnection.setFixedLengthStreamingMode(postContent.length());
             httpURLConnection.setRequestProperty("Content-Type", "text; charset=UTF-8");

@@ -2,8 +2,6 @@ package de.polocloud.signs.sign.enumeration;
 
 import de.polocloud.api.gameserver.base.IGameServer;
 
-import java.util.Map;
-
 /**
  * Enum class for declaring the current state
  * of the {@link de.polocloud.signs.sign.base.IGameServerSign}

@@ -2,7 +2,6 @@ package de.polocloud.api.uuid;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.map.UniqueMap;

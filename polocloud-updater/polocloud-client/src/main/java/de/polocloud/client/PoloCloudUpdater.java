@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 public class PoloCloudUpdater {
@@ -61,7 +62,10 @@ public class PoloCloudUpdater {
         InputStream inputStream = null;
         try {
             URL url = new URL("http://" + PoloCloudClient.getInstance().getUrl() + ":" + PoloCloudClient.getInstance().getPort() + "/api/v2/update/status");
-            inputStream = url.openConnection().getInputStream();
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(2500);
+            connection.connect();
+            inputStream = connection.getInputStream();
             String stringContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             if (stringContent == null) {
                 return false;

@@ -11,7 +11,6 @@ import de.polocloud.signs.protocol.GlobalConfigClass;
 import de.polocloud.signs.service.ISignService;
 import de.polocloud.signs.sign.animator.SignAnimator;
 import de.polocloud.signs.sign.initializer.SignInitializer;
-import de.polocloud.signs.sign.layout.converter.SignConverter;
 import de.polocloud.signs.sign.location.SignLocation;
 
 import java.util.ArrayList;

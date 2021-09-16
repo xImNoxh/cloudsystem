@@ -2,8 +2,6 @@ package de.polocloud.modules.smartproxy.pluginside;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.messaging.IMessageChannel;
-import de.polocloud.api.messaging.IMessageListener;
-import de.polocloud.api.util.WrappedObject;
 import de.polocloud.modules.smartproxy.api.IpSetter;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;

@@ -10,7 +10,6 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import lombok.val;
 import lombok.var;
 
 import java.util.Arrays;

@@ -3,8 +3,6 @@ package de.polocloud.api.database;
 import de.polocloud.api.database.other.DatabaseType;
 import de.polocloud.api.database.other.IDatabase;
 
-import java.io.IOException;
-
 public interface IDatabaseManager {
 
     /**

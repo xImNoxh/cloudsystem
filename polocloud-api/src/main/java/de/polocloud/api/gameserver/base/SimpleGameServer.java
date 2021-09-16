@@ -14,7 +14,6 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.util.Acceptable;
 import de.polocloud.api.util.gson.Exclude;

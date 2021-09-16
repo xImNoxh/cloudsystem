@@ -8,7 +8,6 @@ import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;

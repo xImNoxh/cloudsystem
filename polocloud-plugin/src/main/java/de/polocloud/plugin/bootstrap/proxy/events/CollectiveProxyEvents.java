@@ -16,7 +16,6 @@ import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.def.SimpleCloudPlayer;
 import de.polocloud.api.player.def.SimplePlayerConnection;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.util.MinecraftProtocol;
 import de.polocloud.plugin.CloudPlugin;

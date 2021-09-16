@@ -5,7 +5,6 @@ import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.ExceptionRunnable;
 import de.polocloud.api.common.ExceptionSupplier;
-import de.polocloud.api.common.PoloType;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
@@ -73,7 +72,7 @@ public class PoloHelper {
     @SneakyThrows
     public static InetSocketAddress getAddress(String address)  {
         String[] split = address.split(":");
-        String hostname = Arrays.stream(Arrays.copyOfRange(split, 0, split.length - 1)).collect(Collectors.joining(":"));
+        String hostname = String.join(":", Arrays.copyOfRange(split, 0, split.length - 1));
         int port = Integer.parseInt(split[split.length-1]);
         return InetSocketAddress.createUnresolved(hostname, port);
     }

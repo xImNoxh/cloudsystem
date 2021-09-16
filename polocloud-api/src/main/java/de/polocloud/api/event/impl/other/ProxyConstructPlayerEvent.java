@@ -6,7 +6,6 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.extras.IPlayerConnection;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)

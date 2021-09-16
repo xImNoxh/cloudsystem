@@ -33,6 +33,7 @@ public class ExceptionReportService {
                 HttpURLConnection http = (HttpURLConnection) con;
                 http.setRequestMethod("POST");
                 http.setDoOutput(true);
+                http.setConnectTimeout(2500);
 
                 http.setFixedLengthStreamingMode(content.length());
                 http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");

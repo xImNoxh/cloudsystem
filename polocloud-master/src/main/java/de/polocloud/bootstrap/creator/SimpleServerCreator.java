@@ -3,8 +3,6 @@ package de.polocloud.bootstrap.creator;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 
 import java.util.List;
 
@@ -22,11 +20,7 @@ public class SimpleServerCreator extends ServerCreator {
             return false;
         }
 
-        if (serversByTemplate.size() < template.getMinServerCount()) {
-            return true;
-        }
-
-        return false;
+        return serversByTemplate.size() < template.getMinServerCount();
 
     }
 

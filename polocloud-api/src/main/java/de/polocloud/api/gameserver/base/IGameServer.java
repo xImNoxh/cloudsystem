@@ -8,14 +8,12 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.IPropertyHolder;
-import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.util.Acceptable;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
