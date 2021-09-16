@@ -7,6 +7,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.player.def.SimpleCloudPlayer;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.spigot.impl.SpigotConsoleSender;
 import org.bukkit.Bukkit;
@@ -18,6 +19,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.server.RemoteServerCommandEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.Plugin;
+
+import java.util.concurrent.TimeUnit;
 
 public class CollectiveSpigotEvents implements Listener {
 
@@ -82,10 +85,19 @@ public class CollectiveSpigotEvents implements Listener {
             }
 
 
-            int percent = thisService.getTemplate().getServerCreateThreshold();
+            if (CloudPlugin.getCloudPluginInstance().isAllowPercentage()) {
+                ITemplate template = thisService.getTemplate();
+                int percent = template.getServerCreateThreshold();
 
-            if (percent <= 100 && (((double) thisService.getPlayers().size()) / (double) thisService.getMaxPlayers()) * 100 >= percent) {
-                PoloCloudAPI.getInstance().getGameServerManager().startServer(thisService.getTemplate(), 1);
+                if (percent <= 100 && (((double) thisService.getPlayers().size()) / (double) thisService.getMaxPlayers()) * 100 >= percent) {
+                    IGameServer[] startedServers = PoloCloudAPI.getInstance().getGameServerManager().startServer(thisService.getTemplate(), 1);
+                    for (IGameServer gameServer : startedServers) {
+                        gameServer.scheduleShutdown(TimeUnit.MINUTES, 5, server -> template.getServers().size() >= template.getMinServerCount() && server.getPlayers().isEmpty());
+                    }
+
+                }
+                //To avoid multiple new server starting from this one
+                CloudPlugin.getCloudPluginInstance().setAllowPercentage(false);
             }
 
         }, () -> PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null);

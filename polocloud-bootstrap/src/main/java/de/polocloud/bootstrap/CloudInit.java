@@ -22,33 +22,49 @@ public class CloudInit {
 
         PoloHelper.clearConsole();
 
+        boolean ignoreUpdater = false;
         boolean devMode = false;
-        if(args.length == 2){
-            if(args[1].equalsIgnoreCase("false") || args[1].equalsIgnoreCase("true")) {
-                devMode = Boolean.parseBoolean(args[1]);
+
+        PoloType poloType = PoloType.NONE;
+
+        for (String arg : args) {
+            if (arg.equalsIgnoreCase("--devMode")) {
+                devMode = true;
+            } else if (arg.equalsIgnoreCase("--ignoreUpdater")) {
+                ignoreUpdater = true;
+            } else {
+                if (arg.equalsIgnoreCase("master")) {
+                    poloType = PoloType.MASTER;
+                } else if (arg.equalsIgnoreCase("wrapper")) {
+                    poloType = PoloType.WRAPPER;
+                } else if (arg.equalsIgnoreCase("both")) {
+                    poloType = PoloType.MASTER_AND_WRAPPER;
+                }
             }
         }
 
-        if (args[0].equalsIgnoreCase("master")) {
-            PoloHelper.PRE_POLO_TYPE = PoloType.MASTER;
+        if (poloType == PoloType.MASTER) {
             //start master
             Master master = new Master();
+            PoloHelper.printHeader();
             master.start();
-
-
-        } else if (args[0].equalsIgnoreCase("wrapper")) {
-            PoloHelper.PRE_POLO_TYPE = PoloType.WRAPPER;
+        } else if (poloType == PoloType.WRAPPER) {
             //start wrapper
-            Wrapper wrapper = new Wrapper(devMode);
+            Wrapper wrapper = new Wrapper(devMode, ignoreUpdater);
+            PoloHelper.printHeader();
             wrapper.start();
-        } else if (args[0].equalsIgnoreCase("both")) {
-            PoloHelper.PRE_POLO_TYPE = PoloType.MASTER_AND_WRAPPER;
+        } else if (poloType == PoloType.MASTER_AND_WRAPPER) {
 
             Master master = new Master();
+            PoloHelper.printHeader();
             master.start();
 
-            Wrapper wrapper = new Wrapper(devMode);
+            Wrapper wrapper = new Wrapper(devMode, ignoreUpdater);
             wrapper.start();
+        } else {
+            System.out.println("Please provide any arguments after '-jar' and tell what process you want to start (Master, Wrapper, Both)");
+            System.exit(0);
         }
+
     }
 }

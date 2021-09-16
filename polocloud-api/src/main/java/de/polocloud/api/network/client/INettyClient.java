@@ -14,5 +14,5 @@ import java.util.function.Consumer;
  */
 public interface INettyClient extends INetworkConnection {
 
-    void start(Consumer<INettyClient> consumer);
+    void start(Consumer<INettyClient> consumer, Consumer<Throwable> error);
 }

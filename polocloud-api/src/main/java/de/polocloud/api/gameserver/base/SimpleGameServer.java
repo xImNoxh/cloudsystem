@@ -13,7 +13,10 @@ import de.polocloud.api.network.protocol.packet.base.other.ForwardingPacket;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleProperty;
+import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.util.Acceptable;
 import de.polocloud.api.util.gson.Exclude;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.Snowflake;
@@ -23,6 +26,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -156,10 +160,30 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
+    public void scheduleShutdown(TimeUnit unit, long l) {
+        Scheduler.runtimeScheduler().schedule(this::terminate, unit.toMillis(l));
+    }
+
+    @Override
+    public void scheduleShutdown(TimeUnit unit, long l, Acceptable<IGameServer> request) {
+        long snowflake = this.snowflake;
+        Scheduler.runtimeScheduler().schedule(() -> {
+            try {
+                if (snowflake == this.snowflake) {
+                    if (request.isAccepted(this)) {
+                        this.terminate();
+                    }
+                }
+            } catch (Exception e) {
+                //Exception
+            }
+        } ,unit.toMillis(l));
+    }
+
+    @Override
     public int getId() {
         return id;
     }
-
 
 
     @Override

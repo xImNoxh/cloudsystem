@@ -49,11 +49,6 @@ public class PoloHelper {
      */
     public static final String CONSOLE_PREFIX = MinecraftColor.LIGHT_BLUE + "PoloCloud " + MinecraftColor.GRAY + "» ";
 
-    /**
-     * The polo type field
-     */
-    public static PoloType PRE_POLO_TYPE = null;
-
     public static String getSimpleTime() {
         return new SimpleDateFormat("HH:mm:ss").format(new Date());
     }

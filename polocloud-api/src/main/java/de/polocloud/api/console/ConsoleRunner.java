@@ -21,7 +21,7 @@ public class ConsoleRunner extends Thread {
     private static ConsoleRunner instance;
 
     /**
-     * If this runner is active and should check for de.polocloud.modules.smartproxy.moduleside.commands
+     * If this runner is active and should check for commands
      */
     private boolean active;
 

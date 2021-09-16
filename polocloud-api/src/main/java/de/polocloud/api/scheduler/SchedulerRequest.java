@@ -12,6 +12,6 @@ public interface SchedulerRequest {
      *
      * @return boolean
      */
-    boolean shouldCancel();
+    boolean isAccepted();
 
 }

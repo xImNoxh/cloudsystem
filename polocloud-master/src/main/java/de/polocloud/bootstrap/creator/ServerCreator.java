@@ -17,7 +17,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class ServerCreator {
 
     public void startServer(ITemplate template) {
-
         //Waiting 5 ticks to avoid starting server before stopping old one
         Scheduler.runtimeScheduler().schedule(() -> {
             try {

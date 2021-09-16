@@ -51,10 +51,10 @@ public class SpigotExtraProperties extends ServiceProperties {
                 "  outdated-client: Outdated client! Please use {0}\n" +
                 "  outdated-server: Outdated service! I'm still on {0}\n" +
                 "  restart: Server is restarting\n" +
-                "de.polocloud.modules.smartproxy.moduleside.commands:\n" +
+                "commands:\n" +
                 "  tab-complete: 0\n" +
                 "  log: true\n" +
-                "  replace-de.polocloud.modules.smartproxy.moduleside.commands:\n" +
+                "  replace-commands:\n" +
                 "    - setblock\n" +
                 "    - summon\n" +
                 "    - testforblock\n" +

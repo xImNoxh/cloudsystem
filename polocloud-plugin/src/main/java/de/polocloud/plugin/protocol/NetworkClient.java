@@ -62,7 +62,7 @@ public class NetworkClient implements INetworkConnection, IEventHandler<ChannelA
 
         new Thread(() -> {
             System.out.println("[CloudPlugin] Trying to connect to Cloud (" + this.address[0] + ":" + this.address[1] + ")");
-            this.client.start(consumer);
+            this.client.start(consumer, Throwable::printStackTrace);
             System.exit(-1);
         }).start();
     }

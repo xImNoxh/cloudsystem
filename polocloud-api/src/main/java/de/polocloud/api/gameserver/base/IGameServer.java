@@ -8,13 +8,16 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.IPropertyHolder;
+import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.util.Acceptable;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, IPropertyHolder {
@@ -61,6 +64,24 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * @param host the address as string
      */
     void setHost(String host);
+
+    /**
+     * Schedules the shutdown for a planned time
+     *
+     * @param unit the unit (e.g. SECONDS)
+     * @param l the var (e.g. 1)
+     */
+    void scheduleShutdown(TimeUnit unit, long l);
+
+    /**
+     * Schedules the shutdown for a planned time
+     * If the provided request returns true
+     *
+     * @param request the request to check
+     * @param unit the unit (e.g. SECONDS)
+     * @param l the var (e.g. 1)
+     */
+    void scheduleShutdown(TimeUnit unit, long l, Acceptable<IGameServer> request);
 
     /**
      * Gets the amount of players that are allowed

@@ -42,8 +42,9 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     }
 
     @Override
-    public void startServer(ITemplate template, int count) throws NoWrapperFoundException {
+    public IGameServer[] startServer(ITemplate template, int count) throws NoWrapperFoundException {
 
+        List<IGameServer> gameServer = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Optional<IWrapper> optionalWrapperClient = PoloCloudAPI.getInstance().getWrapperManager().getWrappers().stream().findAny();
 
@@ -60,7 +61,9 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
             iGameServer.newIdentification();
 
             wrapperClient.startServer(iGameServer);
+            gameServer.add(iGameServer);
         }
+        return gameServer.toArray(new IGameServer[0]);
     }
 
     @Override

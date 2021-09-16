@@ -13,7 +13,7 @@ public class HelpCommand implements CommandListener {
 
     @Command(
         name = "help",
-        description = "Shows all available de.polocloud.modules.smartproxy.moduleside.commands",
+        description = "Shows all available commands",
         usage = "help <no-args>",
         aliases = "?"
     )

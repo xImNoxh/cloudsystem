@@ -53,7 +53,7 @@ public class SimpleSchedulerFuture implements SchedulerFuture {
 		}
 
 		for (SchedulerRequest cancelWhen : this.cancelWhens) {
-			if (cancelWhen.shouldCancel()) {
+			if (cancelWhen.isAccepted()) {
 				this.setCancelled(true);
 			}
 		}

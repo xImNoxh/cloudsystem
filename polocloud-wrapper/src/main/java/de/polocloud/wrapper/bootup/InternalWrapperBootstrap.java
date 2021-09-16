@@ -29,13 +29,19 @@ public class InternalWrapperBootstrap {
     private final boolean devMode;
 
     /**
+     * If updater should be ignored
+     */
+    private final boolean ignoreUpdater;
+
+    /**
      * The PoloCloudClient for the PoloCloudUpdater and
      * the ExceptionReporterService
      */
     private final PoloCloudClient poloCloudClient;
 
-    public InternalWrapperBootstrap(Wrapper wrapper, boolean devMode, InetSocketAddress updaterAddress) {
+    public InternalWrapperBootstrap(Wrapper wrapper, boolean devMode, boolean ignoreUpdater, InetSocketAddress updaterAddress) {
         this.wrapper = wrapper;
+        this.ignoreUpdater = ignoreUpdater;
         this.devMode = devMode;
         this.poloCloudClient = new PoloCloudClient(updaterAddress.getAddress().getHostAddress(), updaterAddress.getPort());
     }
@@ -52,6 +58,9 @@ public class InternalWrapperBootstrap {
             apiJarFile.getParentFile().mkdirs();
         }
 
+        if (ignoreUpdater) {
+            return;
+        }
         String currentVersion;
         boolean forceUpdate;
         if (apiJarFile.exists()) {
@@ -79,7 +88,7 @@ public class InternalWrapperBootstrap {
                     PoloLogger.print(LogLevel.ERROR, "Couldn't download latest build!");
                 }
             }
-        }else if(this.devMode){
+        } else if (this.devMode) {
             PoloLogger.print(LogLevel.DEBUG, "Downloading latest development build...");
             if (updater.download()) {
                 
@@ -87,7 +96,7 @@ public class InternalWrapperBootstrap {
             } else {
                 PoloLogger.print(LogLevel.ERROR, "Couldn't download latest development build!");
             }
-        }else{
+        } else {
             PoloLogger.print(LogLevel.DEBUG, "Searching for regular PoloCloud-API updates...");
             if (updater.check()) {
                 PoloLogger.print(LogLevel.DEBUG, "Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");

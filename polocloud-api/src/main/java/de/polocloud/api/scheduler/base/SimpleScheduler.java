@@ -67,7 +67,7 @@ public class SimpleScheduler implements Scheduler {
 
         boolean[] b = new boolean[] {false};
         return Scheduler.runtimeScheduler().schedule(() -> {
-            if (request.shouldCancel()) {
+            if (request.isAccepted()) {
                 poloRunnable.run();
                 b[0] = true;
             }

@@ -14,7 +14,7 @@ public interface ICommandManager {
 
     /**
      * Enables the filter for this command
-     * to only allow certain de.polocloud.modules.smartproxy.moduleside.commands to be executed
+     * to only allow certain commands to be executed
      *
      * @param filter the "filter"
      */

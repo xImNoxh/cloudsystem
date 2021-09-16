@@ -29,15 +29,6 @@ import java.util.Optional;
 
 public class GameServerCommand implements CommandListener, TabCompletable {
 
-    @Inject
-    private IGameServerManager gameServerManager;
-
-    @Inject
-    private ITemplateManager templateService;
-
-    @Inject
-    private Snowflake snowflake;
-
     public GameServerCommand() {
     }
 
@@ -56,6 +47,8 @@ public class GameServerCommand implements CommandListener, TabCompletable {
                                 "----[Gameserver]----"}
                         ) String... args) {
         IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
+        IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
+        ITemplateManager templateManager = PoloCloudAPI.getInstance().getTemplateManager();
         if (args[0].equalsIgnoreCase("stop") || args[0].equalsIgnoreCase("shutdown")) {
             String name = args[1];
             IGameServer gameServer = gameServerManager.getCached(name);
@@ -73,7 +66,7 @@ public class GameServerCommand implements CommandListener, TabCompletable {
             }
         } else if (args[0].equalsIgnoreCase("start") && args.length == 2) {
             String templateName = args[1];
-            ITemplate template = templateService.getTemplate(templateName);
+            ITemplate template = templateManager.getTemplate(templateName);
             if (template == null) {
                 PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
             } else {
@@ -95,7 +88,7 @@ public class GameServerCommand implements CommandListener, TabCompletable {
                 int id = gameServerManager.getFreeId(template);
 
                 PoloLogger.print(LogLevel.INFO, "Requesting start...");
-                SimpleGameServer gameServer = new SimpleGameServer(id, template.getMotd(), GameServerStatus.STARTING, snowflake.nextId(), System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template), template.getMaxPlayers(), template.getName());
+                SimpleGameServer gameServer = new SimpleGameServer(id, template.getMotd(), GameServerStatus.STARTING, Snowflake.getInstance().nextId(), System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template), template.getMaxPlayers(), template.getName());
                 wrapperClient.startServer(gameServer);
             }
         } else if (args[0].equalsIgnoreCase("info")) {
@@ -116,7 +109,7 @@ public class GameServerCommand implements CommandListener, TabCompletable {
 
         } else if (args[0].equalsIgnoreCase("start") && args.length == 3) {
             String templateName = args[1];
-            ITemplate template = templateService.getTemplate(templateName);
+            ITemplate template = templateManager.getTemplate(templateName);
             if (template == null) {
                 PoloLogger.print(LogLevel.WARNING, "The template » " + ConsoleColors.LIGHT_BLUE + templateName + ConsoleColors.GRAY + " doesn't exists!");
             } else {
@@ -153,7 +146,7 @@ public class GameServerCommand implements CommandListener, TabCompletable {
                 for (int i = 0; i < amount; i++) {
                     PoloLogger.print(LogLevel.INFO, "Requesting start...");
 
-                    SimpleGameServer gameServer = new SimpleGameServer(id, template.getMotd(), GameServerStatus.STARTING, snowflake.nextId(), System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template), template.getMaxPlayers(), template.getName());
+                    SimpleGameServer gameServer = new SimpleGameServer(id, template.getMotd(), GameServerStatus.STARTING, Snowflake.getInstance().nextId(), System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template), template.getMaxPlayers(), template.getName());
                     wrapperClient.startServer(gameServer);
                 }
                 PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully requested start for » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + " servers!");
@@ -176,11 +169,11 @@ public class GameServerCommand implements CommandListener, TabCompletable {
                     return;
                 }
                 PoloLogger.print(LogLevel.INFO, "Copying " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "...");
-                templateService.copyServer(gameServer, ITemplateManager.Type.WORLD);
+                templateManager.copyServer(gameServer, ITemplateManager.Type.WORLD);
 
             } else if (type.equalsIgnoreCase("entire")) {
                 PoloLogger.print(LogLevel.INFO, "Copying " + ConsoleColors.LIGHT_BLUE + gameServer.getName() + ConsoleColors.GRAY + "...");
-                templateService.copyServer(gameServer, ITemplateManager.Type.ENTIRE);
+                templateManager.copyServer(gameServer, ITemplateManager.Type.ENTIRE);
 
             } else {
                 PoloLogger.print(LogLevel.INFO, "Use following command: " + ConsoleColors.LIGHT_BLUE +
@@ -218,10 +211,6 @@ public class GameServerCommand implements CommandListener, TabCompletable {
         PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver info <server> " + ConsoleColors.GRAY + "to get information of a gameserver");
         PoloLogger.print(LogLevel.INFO, "Use " + ConsoleColors.LIGHT_BLUE + "gameserver execute <server> <command> " + ConsoleColors.GRAY + "to execute a command on a gameserver");
         PoloLogger.print(LogLevel.INFO, "----[/Gameserver]----");
-    }
-
-    private int searchForAvailableID(ITemplate template) {
-        return gameServerManager.getAllCached(template).size() + 1;
     }
 
     @Override

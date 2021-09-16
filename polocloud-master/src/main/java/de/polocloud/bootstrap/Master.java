@@ -73,11 +73,12 @@ public class Master extends PoloCloudAPI implements IStartable {
     private final PoloCloudClient client;
     private IPubSubManager pubSubManager;
     private SimpleNettyServer nettyServer;
-    private boolean running = false;
+    private boolean running;
 
     public Master() {
         super(PoloType.MASTER);
 
+        this.running = true;
         this.commandExecutor = new SimpleConsoleExecutor();
 
         this.client = new PoloCloudClient("37.114.60.98", 4542);
@@ -102,7 +103,7 @@ public class Master extends PoloCloudAPI implements IStartable {
             //Event handler registering
             this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
 
-            //Registering all de.polocloud.modules.smartproxy.moduleside.commands
+            //Registering all commands
             this.commandManager.registerCommand(new StopCommand());
             this.commandManager.registerCommand(new TemplateCommand(templateManager, gameServerManager));
             this.commandManager.registerCommand(new ReloadCommand());
@@ -111,13 +112,14 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.commandManager.registerCommand(new ChangelogCommand());
             this.commandManager.registerCommand(new MeCommand());
             this.commandManager.registerCommand(new ScreenCommand());
-            this.commandManager.registerCommand(injector.getInstance(GameServerCommand.class));
-            this.commandManager.registerCommand(injector.getInstance(WrapperCommand.class));
-
+            this.commandManager.registerCommand(new WrapperCommand());
+            this.commandManager.registerCommand(new WrapperCommand());
 
             //Server-Runner thread starting
             new Thread(new ServerCreatorRunner()).start();
 
+        } else {
+            System.out.println("Something went badly wrong while starting Master!");
         }
     }
 
@@ -151,7 +153,6 @@ public class Master extends PoloCloudAPI implements IStartable {
     @Override
     public void start() {
         running = true;
-        PoloHelper.printHeader();
         PoloLogger.print(LogLevel.INFO, "Trying to start the CloudMaster...");
 
         if (masterConfig.getProperties().getWrapperKey() == null) {

@@ -26,10 +26,13 @@ import de.polocloud.plugin.bootstrap.proxy.commands.CloudCommand;
 import de.polocloud.plugin.protocol.NetworkClient;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+@Getter @Setter
 public class CloudPlugin extends PoloCloudAPI {
 
     //The bootstrap
@@ -41,10 +44,13 @@ public class CloudPlugin extends PoloCloudAPI {
     //Managers
     private final IPubSubManager pubSubManager;
 
+    //If new server is allowed to start if full
+    private boolean allowPercentage;
 
     public CloudPlugin(IBootstrap bootstrap) {
         super(bootstrap.getBridge().getEnvironment());
 
+        this.allowPercentage = true;
         this.bootstrap = bootstrap;
         this.networkClient = new NetworkClient(bootstrap);
         this.pubSubManager = new SimplePubSubManager(networkClient);

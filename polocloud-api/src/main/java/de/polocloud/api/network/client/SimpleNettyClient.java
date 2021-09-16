@@ -23,10 +23,12 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.Getter;
 
 import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
+@Getter
 public class SimpleNettyClient implements INettyClient{
 
     @Inject
@@ -36,6 +38,8 @@ public class SimpleNettyClient implements INettyClient{
     @Inject
     @Named("setting_client_port")
     private int port;
+
+    private boolean everConnected;
 
     @Inject
     private IProtocol protocol;
@@ -52,11 +56,12 @@ public class SimpleNettyClient implements INettyClient{
         this.host = host;
         this.port = port;
         this.protocol = protocol;
+        this.everConnected = false;
 
     }
 
     @Override
-    public void start(Consumer<INettyClient> consumer) {
+    public void start(Consumer<INettyClient> consumer, Consumer<Throwable> error) {
 
         MultithreadEventLoopGroup workerGroup = Epoll.isAvailable() ? new EpollEventLoopGroup() : new NioEventLoopGroup();
 
@@ -80,11 +85,17 @@ public class SimpleNettyClient implements INettyClient{
                     }
                 });
                 this.channelFuture = bootstrap.connect(host, port).addListener((ChannelFutureListener) channelFuture -> {
-                    if (consumer != null) {
-                        Scheduler.runtimeScheduler().async().schedule(() -> consumer.accept(SimpleNettyClient.this));
-                    }
                     if (!channelFuture.isSuccess()) {
-                        channelFuture.cause().printStackTrace();
+                        Throwable cause = channelFuture.cause();
+                        //Connection refused
+                        if (error != null) {
+                            error.accept(cause);
+                        }
+                    } else {
+                        everConnected = true;
+                        if (consumer != null) {
+                            Scheduler.runtimeScheduler().async().schedule(() -> consumer.accept(SimpleNettyClient.this));
+                        }
                     }
                 });
                 this.channel = channelFuture.channel();
@@ -95,14 +106,16 @@ public class SimpleNettyClient implements INettyClient{
                 exc.printStackTrace();
             }
         } finally {
-            PoloLogger.print(LogLevel.WARNING, "§7The §bNetty-Thread §7has stopped! Shutting down §3PoloCloud-" + PoloCloudAPI.getInstance().getType().getName() + "§7...");
-            PoloCloudAPI.getInstance().terminate();
+            if (everConnected) {
+                PoloLogger.print(LogLevel.WARNING, "§7The §bNetty-Thread §7has stopped! Shutting down §3PoloCloud-" + PoloCloudAPI.getInstance().getType().getName() + "§7...");
+                PoloCloudAPI.getInstance().terminate();
+            }
         }
     }
 
     @Override
     public void start() {
-        this.start(null);
+        this.start(null, Throwable::printStackTrace);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     /**
      * The connection
      */
-    private SimpleNettyClient nettyClient;
+    private final SimpleNettyClient nettyClient;
 
     /**
      * The Google guice injector
@@ -71,16 +71,14 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     private final IPubSubManager pubSubManager;
 
     /**
-     * The master config
+     * The copy service to handle packet-sent modules
      */
-    private MasterConfig masterConfig;
+    private final ModuleCopyService moduleCopyService;
 
-    private ModuleCopyService moduleCopyService;
-
-    public Wrapper(boolean devMode) {
+    public Wrapper(boolean devMode, boolean ignoreUpdater) {
         super(PoloType.WRAPPER);
                                                                                 //PoloCloudClient reference (Address and port)
-        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, new InetSocketAddress("37.114.60.98", 4542));
+        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater, new InetSocketAddress("37.114.60.98", 4542));
 
         this.screenManager = new SimpleCachedScreenManager();
         this.config = bootstrap.loadWrapperConfig();
@@ -98,7 +96,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         bootstrap.checkAndDeleteTmpFolder();
         bootstrap.checkPoloCloudAPI();
 
-        //Registering de.polocloud.modules.smartproxy.moduleside.commands
+        //Registering commands
         this.commandManager.registerCommand(new StopCommand());
         this.commandManager.registerCommand(new HelpCommand());
         this.commandManager.registerCommand(new ScreenCommand());
@@ -114,10 +112,11 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         sendPacket(new CacheRequestPacket());
     }
 
+    boolean retrying;
+
     @Override
     public void start() {
-        PoloHelper.printHeader();
-        PoloLogger.print(LogLevel.INFO, "Trying to start the CloudWrapper...");
+        PoloLogger.print(LogLevel.INFO, (retrying ? "Retrying" : "Trying") + " to start the CloudWrapper...");
 
         if (config.getLoginKey().equalsIgnoreCase("default") || config.getLoginKey() == null) {
             PoloLogger.print(LogLevel.INFO, "§cIt seems like you §ehave not §cset up PoloCloud yet! Lets fix this real quick...");
@@ -148,6 +147,14 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             //Logging in
             PoloLogger.print(LogLevel.INFO, "§7Trying to log in as §7'§3" + config.getWrapperName() + "§7'!");
             nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
+        }, throwable -> {
+            if (throwable.getClass().getName().equalsIgnoreCase("io.netty.channel.AbstractChannel$AnnotatedConnectException")) {
+                PoloLogger.print(LogLevel.ERROR, "§cCould not connect to §eMaster");
+                retrying = true;
+                Scheduler.runtimeScheduler().schedule(this::start, 20L);
+            } else {
+                throwable.printStackTrace();
+            }
         })).start();
 
     }

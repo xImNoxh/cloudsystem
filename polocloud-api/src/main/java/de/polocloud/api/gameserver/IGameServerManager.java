@@ -78,8 +78,9 @@ public interface IGameServerManager extends ObjectPool<IGameServer> {
      *
      * @param count the amount of servers
      * @param template the template
+     * @return the started server(s)
      */
-    void startServer(ITemplate template, int count) throws NoWrapperFoundException;
+    IGameServer[] startServer(ITemplate template, int count) throws NoWrapperFoundException;
 
     /**
      * Stops an {@link IGameServer}
