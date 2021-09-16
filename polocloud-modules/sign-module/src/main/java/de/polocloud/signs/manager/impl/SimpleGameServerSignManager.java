@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 public class SimpleGameServerSignManager implements IGameServerSignManager {
 
-    private LinkedList<IGameServerSign> loadedSigns;
+    private final LinkedList<IGameServerSign> loadedSigns;
 
     public SimpleGameServerSignManager() {
         this.loadedSigns = new LinkedList<>();
@@ -56,25 +56,38 @@ public class SimpleGameServerSignManager implements IGameServerSignManager {
 
     @Override
     public void updateSignsGameServer(IGameServerSign sign, IGameServer gameServer) {
-        if(sign == null) return;
+        if (sign == null) {
+            return;
+        }
+        int index = this.loadedSigns.indexOf(sign);
         sign.setGameServer(gameServer);
         sign.writeSign(false);
+
+        this.loadedSigns.set(index, sign);
     }
 
     @Override
     public void updateSignsGameServer(IGameServer gameServer) {
         IGameServerSign sign = getSignByGameServer(gameServer);
-        if(sign == null) return;
+        if (sign == null) {
+            return;
+        }
+        int index = this.loadedSigns.indexOf(sign);
         sign.setGameServer(gameServer);
         sign.writeSign(false);
+        this.loadedSigns.set(index, sign);
     }
 
     @Override
     public void setSignToStopped(IGameServer gameServer) {
         IGameServerSign gameServerSign = getSignByGameServer(gameServer);
-        if (gameServerSign == null) return;
+        if (gameServerSign == null) {
+            return;
+        }
+        int index = this.loadedSigns.indexOf(gameServerSign);
         gameServerSign.setGameServer(null);
         gameServerSign.writeSign(false);
+        this.loadedSigns.set(index, gameServerSign);
     }
 
     @Override

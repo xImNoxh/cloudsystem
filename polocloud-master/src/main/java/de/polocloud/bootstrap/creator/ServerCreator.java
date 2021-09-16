@@ -32,7 +32,7 @@ public abstract class ServerCreator {
                 int port = PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template);
                 int intId = PoloCloudAPI.getInstance().getGameServerManager().getFreeId(template);
 
-                wrapper.startServer(new SimpleGameServer(intId, template.getMotd(), true, GameServerStatus.STARTING, id,  System.currentTimeMillis(), template.getMaxMemory(), port, template.getMaxPlayers(), template.getName()));
+                wrapper.startServer(new SimpleGameServer(intId, template.getMotd(), GameServerStatus.STARTING, id,  System.currentTimeMillis(), template.getMaxMemory(), port, template.getMaxPlayers(), template.getName()));
 
             } catch (Exception e) {
                 e.printStackTrace();

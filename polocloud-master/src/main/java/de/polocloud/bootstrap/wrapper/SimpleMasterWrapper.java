@@ -55,7 +55,7 @@ public class SimpleMasterWrapper extends PoloHelper implements IWrapper {
     @Override
     public void stopServer(IGameServer gameServer) {
 
-        for (ICloudPlayer cloudPlayer : gameServer.getCloudPlayers()) {
+        for (ICloudPlayer cloudPlayer : gameServer.getPlayers()) {
             cloudPlayer.sendToFallbackExcept(gameServer.getName());
         }
 

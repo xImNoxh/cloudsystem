@@ -23,7 +23,7 @@ public class PacketFactory {
     /**
      * Registers a {@link Packet} automatically
      *
-     * @param packet the de.polocloud.modules.smartproxy.packet
+     * @param packet the packet
      */
     public static void registerPacket(Class<? extends Packet> packet) {
         int size = REGISTERED_PACKETS.keySet().size();
@@ -33,8 +33,8 @@ public class PacketFactory {
     /**
      * Registers an {@link Packet} with a given id
      *
-     * @param id     the id of the de.polocloud.modules.smartproxy.packet
-     * @param packet the class of the de.polocloud.modules.smartproxy.packet
+     * @param id     the id of the packet
+     * @param packet the class of the packet
      */
     public static void registerPacket(int id, Class<? extends Packet> packet) {
         if (REGISTERED_PACKETS.containsKey(id)) {
@@ -44,17 +44,17 @@ public class PacketFactory {
     }
 
     /**
-     * Gets the de.polocloud.modules.smartproxy.packet id based of the class
+     * Gets the packet id based of the class
      *
      * @param clazz the class
-     * @return de.polocloud.modules.smartproxy.packet id or -1
+     * @return packet id or -1
      */
     public static int getPacketId(Class<? extends Packet> clazz) {
         return REGISTERED_PACKETS.keySet().stream().filter(id -> REGISTERED_PACKETS.get(id).equals(clazz)).findAny().orElse(-1);
     }
 
     /**
-     * Gets the class based of the de.polocloud.modules.smartproxy.packet id
+     * Gets the class based of the packet id
      *
      * @param id the id
      * @return class or null
@@ -69,8 +69,8 @@ public class PacketFactory {
     /**
      * Creates a new {@link Packet} instance by a given id
      *
-     * @param id the de.polocloud.modules.smartproxy.packet id
-     * @return de.polocloud.modules.smartproxy.packet instance
+     * @param id the packet id
+     * @return packet instance
      */
     public static Packet createPacket(int id) {
         if (!REGISTERED_PACKETS.containsKey(id)) {

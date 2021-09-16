@@ -9,7 +9,7 @@ import java.nio.channels.Channel;
 public abstract class MinecraftPacket {
 
     /**
-     * The id of this de.polocloud.modules.smartproxy.packet
+     * The id of this packet
      *
      * @return id as int
      */
@@ -17,14 +17,14 @@ public abstract class MinecraftPacket {
 
 
     /**
-     * Writes the minecraft de.polocloud.modules.smartproxy.packet
+     * Writes the minecraft packet
      *
      * @param buf the buf to write data to
      */
     public abstract void write(MinecraftPacketBuffer buf);
 
     /**
-     * Reads the minecraft de.polocloud.modules.smartproxy.packet
+     * Reads the minecraft packet
      *
      * @param buf the buf to read data from
      */

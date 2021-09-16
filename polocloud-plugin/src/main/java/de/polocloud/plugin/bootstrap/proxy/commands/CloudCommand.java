@@ -2,9 +2,6 @@ package de.polocloud.plugin.bootstrap.proxy.commands;
 
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.chat.ClickAction;
-import de.polocloud.api.chat.CloudComponent;
-import de.polocloud.api.chat.HoverAction;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -13,6 +10,7 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.master.MasterShutdownPacket;
 import de.polocloud.api.network.packets.other.PingPacket;
@@ -114,6 +112,12 @@ public class CloudCommand implements CommandListener {
 
                 } else if (params[0].equalsIgnoreCase("debug") && player.getName().equalsIgnoreCase("Lystx")) {
 
+
+                    IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached("Lobby-2");
+
+                    gameServer.setStatus(GameServerStatus.INVISIBLE);
+                    gameServer.update();
+
                     player.sendMessage(prefix + "§7Debug was §aexecuted§8!");
 
                 } else if (params[0].equalsIgnoreCase("end") || params[0].equalsIgnoreCase("exit")) {
@@ -185,7 +189,7 @@ public class CloudCommand implements CommandListener {
 
                         player.sendMessage(prefix + "----[Servers]----");
                         for (IGameServer gameServer : gameServerManager.getAllCached()) {
-                            player.sendMessage(prefix + "§b" + gameServer.getName() + " §8[§3" + gameServer.getCloudPlayers().size() + " Players§8]");
+                            player.sendMessage(prefix + "§b" + gameServer.getName() + " §8[§3" + gameServer.getPlayers().size() + " Players§8]");
                         }
                         player.sendMessage(prefix + "----[/Servers]----");
 
@@ -229,7 +233,6 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage(prefix + "Id » §b#" + gameServer.getSnowflake());
                     player.sendMessage(prefix + "Registered » §b" + gameServer.isRegistered());
                     player.sendMessage(prefix + "Status » §b" + gameServer.getStatus());
-                    player.sendMessage(prefix + "Visible » §b" + gameServer.getServiceVisibility());
                     player.sendMessage(prefix + "Started time » §b" + gameServer.getStartTime());
                     if (gameServer.getProperties().isEmpty()) {
                         player.sendMessage(prefix + "§7Properties » §cNone");

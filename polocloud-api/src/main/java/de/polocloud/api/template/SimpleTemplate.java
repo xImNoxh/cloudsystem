@@ -6,13 +6,17 @@ import de.polocloud.api.event.impl.template.TemplateMaintenanceChangeEvent;
 import de.polocloud.api.event.impl.template.TemplateUpdateEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.gameserver.TemplateUpdatePacket;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter @NoArgsConstructor
 public class SimpleTemplate implements ITemplate {
 
     private String name;
@@ -38,6 +42,7 @@ public class SimpleTemplate implements ITemplate {
 
 
     private boolean changedMaintenance;
+
 
     public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, int serverCreateThreshold, String[] wrapperNames) {
         this.name = name;
@@ -105,6 +110,16 @@ public class SimpleTemplate implements ITemplate {
         this.changedMaintenance = true;
     }
 
+
+    @Override
+    public ITemplate sync() {
+        if (PoloCloudAPI.getInstance() == null || PoloCloudAPI.getInstance().getTemplateManager() == null) {
+            return this;
+        }
+        return PoloCloudAPI.getInstance().getTemplateManager().getTemplate(this.name);
+    }
+
+
     @Override
     public void update() {
 
@@ -133,6 +148,10 @@ public class SimpleTemplate implements ITemplate {
     @Override
     public List<IGameServer> getServers() {
         return PoloCloudAPI.getInstance().getGameServerManager().stream().filter(gameServer -> gameServer.getTemplate() != null && gameServer.getTemplate().getName().equalsIgnoreCase(this.name)).collect(Collectors.toList());
+    }
+    @Override
+    public List<ICloudPlayer> getPlayers() {
+        return PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cloudPlayer -> (cloudPlayer.getMinecraftServer() != null && cloudPlayer.getMinecraftServer().getTemplate().getName().equalsIgnoreCase(this.name)) || (cloudPlayer.getProxyServer() != null && cloudPlayer.getProxyServer().getTemplate().getName().equalsIgnoreCase(this.name))).collect(Collectors.toList());
     }
 
     @Override

@@ -103,6 +103,16 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         }
     }
 
+
+    @Override
+    public ICloudPlayer sync() {
+        if (PoloCloudAPI.getInstance() == null || PoloCloudAPI.getInstance().getCloudPlayerManager() == null) {
+            return this;
+        }
+        return PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(this.getName());
+    }
+
+
     @Override
     public void update() {
         PoloCloudAPI.getInstance().getCloudPlayerManager().update(this);

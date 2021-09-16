@@ -80,6 +80,14 @@ public class CollectiveSpigotEvents implements Listener {
                 ((SimpleCloudPlayer)cached).setMinecraftServer(thisService.getName());
                 cached.update();
             }
+
+
+            int percent = thisService.getTemplate().getServerCreateThreshold();
+
+            if (percent <= 100 && (((double) thisService.getPlayers().size()) / (double) thisService.getMaxPlayers()) * 100 >= percent) {
+                PoloCloudAPI.getInstance().getGameServerManager().startServer(thisService.getTemplate(), 1);
+            }
+
         }, () -> PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null);
     }
 

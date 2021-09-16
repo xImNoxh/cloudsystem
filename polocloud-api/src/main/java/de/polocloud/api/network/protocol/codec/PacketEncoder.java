@@ -19,8 +19,8 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
         if (id == -1) {
             throw new NullPointerException("Packet with " + packet.getClass().getSimpleName() + " was not registered");
         }
-        buf.writeInt(id); //The de.polocloud.modules.smartproxy.packet id
-        buf.writeLong(packet.getSnowflake()); //The de.polocloud.modules.smartproxy.packet snowflake
+        buf.writeInt(id); //The packet id
+        buf.writeLong(packet.getSnowflake()); //The packet snowflake
 
         packet.write(buf);
 

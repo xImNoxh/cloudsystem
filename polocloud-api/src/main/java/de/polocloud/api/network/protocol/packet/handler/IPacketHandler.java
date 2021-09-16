@@ -20,7 +20,7 @@ public interface IPacketHandler<R extends Packet> {
 
     /**
      * The Class of the {@link Packet} to listen for
-     * to not handle every incoming de.polocloud.modules.smartproxy.packet but just packets
+     * to not handle every incoming packet but just packets
      * of the provided class
      */
     Class<? extends Packet> getPacketClass();

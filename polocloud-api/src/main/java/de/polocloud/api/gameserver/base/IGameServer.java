@@ -1,6 +1,7 @@
 package de.polocloud.api.gameserver.base;
 
 import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.guice.own.Guice;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
@@ -22,8 +23,8 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * Creates a new empty {@link IGameServer}
      * where every field is null and has to be set
      */
-    static IGameServer create() {
-        return new SimpleGameServer();
+    static IGameServer newInstance() {
+        return Guice.getInstance(IGameServer.class);
     }
 
     /**
@@ -73,11 +74,6 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     ChannelHandlerContext ctx();
 
     /**
-     * The visibility state of this server
-     */
-    boolean getServiceVisibility();
-
-    /**
      * The {@link ITemplate} of this server to get all information
      * about the parent-group of this server
      */
@@ -93,13 +89,13 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      *
      * @return wrapper list
      */
-    IWrapper[] getAllWrappers();
+    IWrapper[] getWrappers();
 
     /**
      * All {@link ICloudPlayer}s that are on this game server
      * currently online in a {@link List}
      */
-    List<ICloudPlayer> getCloudPlayers();
+    List<ICloudPlayer> getPlayers();
 
     /**
      * Gets the total memory of this server
@@ -139,10 +135,18 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     /**
      * Sends a {@link Packet} from this server
      *
-     * @param packet the de.polocloud.modules.smartproxy.packet to send
+     * @param packet the packet to send
      */
     void sendPacket(Packet packet);
 
+    /**
+     * Creates a new....
+     *    - PORT
+     *    - SNOWFLAKE
+     *    - ID
+     */
+    void newIdentification();
+    
     /**
      * Sets the {@link GameServerStatus} of this game server
      *
@@ -176,13 +180,6 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     void setMaxPlayers(int players);
 
     /**
-     * Makes this server visible to appear on signs for example
-     *
-     * @param serviceVisibility the visibility state
-     */
-    void setVisible(boolean serviceVisibility);
-
-    /**
      * Updates this server and syncs it all over the network
      * to update the changes in every cache
      */
@@ -190,11 +187,16 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
 
     /**
      * Updates this server in current cache instance
-     * but does not send a de.polocloud.modules.smartproxy.packet to all instances
+     * but does not send a packet to all instances
      * to declare that this service got updated
      */
     void updateInternally();
 
+    /**
+     * Sets a free port of this server
+     */
+    void newPort();
+    
     /**
      * Sets the port of this server
      *
@@ -229,18 +231,16 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
     void newSnowflake();
 
     /**
-     * Sets the {@link ITemplate} of this server
-     *
-     * @param template the template
-     */
-    void setTemplate(String template);
-
-    /**
      * Sets the id of this server
      *
      * @param id the id
      */
     void setId(int id);
+
+    /**
+     * Sets a new auto-generated id for this server
+     */
+    void newId();
 
     /**
      * Sets the {@link IProperty}s of this server
@@ -257,12 +257,14 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      */
     void clone(Consumer<IGameServer> consumer);
 
-    default void applyTemplate(ITemplate template) {
-        this.setTemplate(template.getName());
-        this.setMotd(template.getMotd());
-        this.setMaxPlayers(template.getMaxPlayers());
-        this.setMemory(template.getMaxMemory());
-    }
+    /**
+     * Sets the {@link ITemplate} of this server
+     * and sets all default values like memory, maxplayers
+     * and motd to the values of the template
+     * 
+     * @param template the template to set
+     */
+    void setTemplate(ITemplate template);
 
     /**
      * The address of this server

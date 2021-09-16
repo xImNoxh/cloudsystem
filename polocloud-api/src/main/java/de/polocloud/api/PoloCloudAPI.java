@@ -19,6 +19,8 @@ import de.polocloud.api.fallback.SimpleCachedFallbackManager;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 
+import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.guice.own.Guice;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
@@ -48,6 +50,8 @@ import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.scheduler.base.SimpleScheduler;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.SimpleCachedTemplateManager;
+import de.polocloud.api.template.SimpleTemplate;
+import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.util.system.SystemManager;
@@ -135,6 +139,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
         Guice.bind(IConfigLoader.class).toInstance(new SimpleConfigLoader());
         Guice.bind(IConfigSaver.class).toInstance(new SimpleConfigSaver());
+
+
+        Guice.bind(ITemplate.class).toInstance(new SimpleTemplate());
+        Guice.bind(IGameServer.class).toInstance(new SimpleGameServer());
     }
 
     /**
@@ -154,7 +162,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     /**
      * Sends a message to the CloudMaster
-     * If this instance is plugin it will send a de.polocloud.modules.smartproxy.packet to the master
+     * If this instance is plugin it will send a packet to the master
      * otherwise it will just print the message
      *
      * @param message the message to send
@@ -234,7 +242,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     /**
      * The current {@link INetworkConnection} to manage
      * all the networking stuff like sending packets
-     * and registering de.polocloud.modules.smartproxy.packet handlers or
+     * and registering packet handlers or
      * creating and sending requests and responses
      */
     public abstract INetworkConnection getConnection();
@@ -270,7 +278,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * 'CLOUD/SERVER' -> Will send to all connected clients
      * 'BRIDGE/SPIGOT/PROXY' -> WIll send to the Master
      *
-     * @param packet the de.polocloud.modules.smartproxy.packet to send
+     * @param packet the packet to send
      */
     public void sendPacket(Packet packet) {
         this.getConnection().sendPacket(packet);

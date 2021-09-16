@@ -26,22 +26,6 @@ public class SimpleServerCreator extends ServerCreator {
             return true;
         }
 
-
-        int onlinePlayers = 0;
-        int totalMaxPlayers = serversByTemplate.size() * template.getMaxPlayers();
-
-        float percentage;
-
-        for (IGameServer gameServer : serversByTemplate) {
-            onlinePlayers += gameServer.getOnlinePlayers();
-        }
-
-        percentage = (onlinePlayers * 100.0F) / (totalMaxPlayers);
-
-        if (percentage >= template.getServerCreateThreshold()) {
-            PoloLogger.print(LogLevel.INFO, "Group " + template.getName() + " is " + percentage + "% full! " + "(" + template.getServerCreateThreshold() + "% required)");
-            return true;
-        }
         return false;
 
     }

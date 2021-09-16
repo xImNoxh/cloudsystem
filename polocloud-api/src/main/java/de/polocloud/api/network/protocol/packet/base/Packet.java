@@ -12,13 +12,13 @@ import de.polocloud.api.util.Snowflake;
 import java.util.function.Consumer;
 
 /**
- * The de.polocloud.modules.smartproxy.packet class is used to send data
+ * The packet class is used to send data
  * all over the network within milliseconds
  */
 public abstract class Packet implements IProtocolObject {
 
     /**
-     * The snowflake to identify this de.polocloud.modules.smartproxy.packet
+     * The snowflake to identify this packet
      */
     protected long snowflake = Snowflake.getInstance().nextId();
 
@@ -41,7 +41,7 @@ public abstract class Packet implements IProtocolObject {
     }
 
     /**
-     * Responds to this de.polocloud.modules.smartproxy.packet
+     * Responds to this packet
      *
      * @param response the response to send
      */

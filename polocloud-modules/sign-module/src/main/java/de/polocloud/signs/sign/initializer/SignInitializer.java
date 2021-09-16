@@ -31,6 +31,7 @@ public class SignInitializer {
                     if (gameServerSign != null) {
                         gameServerSign.setGameServer(gameServer);
                         gameServerSign.writeSign(false);
+                        PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(gameServerSign, gameServer);
                     }
                 }
             }

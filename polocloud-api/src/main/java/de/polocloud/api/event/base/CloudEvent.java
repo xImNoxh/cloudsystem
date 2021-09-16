@@ -15,7 +15,7 @@ import lombok.Setter;
 public abstract class CloudEvent {
 
     /**
-     * If this de.polocloud.modules.smartproxy.packet was just sent via netty
+     * If this packet was just sent via netty
      */
     private boolean nettyFired;
 

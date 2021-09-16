@@ -17,11 +17,10 @@ public class CollectivesCloudListener implements IListener {
 
     @EventHandler
     public void handleChange(GameServerStatusChangeEvent event) {
-        if(event.getStatus().equals(GameServerStatus.AVAILABLE)){
-            if(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getSignByGameServer(event.getGameServer()) == null){
-                PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getFreeGameServerSign(event.getGameServer()), event.getGameServer());
-            }
-        }else if(event.getStatus().equals(GameServerStatus.STOPPING)){
+        if(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getSignByGameServer(event.getGameServer()) == null) {
+            PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(PluginBootstrap.getInstance().getSignService().getGameServerSignManager().getFreeGameServerSign(event.getGameServer()), event.getGameServer());
+        }
+        if(event.getStatus().equals(GameServerStatus.STOPPING)){
             PluginBootstrap.getInstance().getSignService().getGameServerSignManager().setSignToStopped(event.getGameServer());
         }
     }

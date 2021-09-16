@@ -31,7 +31,7 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
 
     @Override
     public void copyServer(IGameServer gameServer, Type type) {
-        for (IWrapper wrapper : gameServer.getAllWrappers()) {
+        for (IWrapper wrapper : gameServer.getWrappers()) {
             wrapper.sendPacket(new GameServerCopyPacket(type, gameServer));
         }
     }

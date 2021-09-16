@@ -76,6 +76,11 @@ public class SimplePoloLogger implements PoloLogger {
         return new SimplePoloLog(name, this);
     }
 
+    @Override
+    public PoloLogger sync() {
+        return this;
+    }
+
     private List<PoloLog> loadLogs() {
         List<PoloLog> poloLogs = new ArrayList<>();
 
@@ -91,6 +96,8 @@ public class SimplePoloLogger implements PoloLogger {
         }
         return poloLogs;
     }
+
+
 
 
     @Override

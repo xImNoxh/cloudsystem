@@ -345,7 +345,6 @@ public class SimplePacketBuffer implements IPacketBuffer {
         long startTime = this.readLong();
         int maxPlayers = this.readInt();
         int onlinePlayers = this.readInt();
-        boolean serviceVisibility = this.readBoolean();
         boolean registered = this.readBoolean();
 
         //Properties
@@ -355,7 +354,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
             properties.add(PoloHelper.GSON_INSTANCE.fromJson(this.readString(), SimpleProperty.class));
         }
 
-        IGameServer gameServer = new SimpleGameServer(id, motd, serviceVisibility, status, snowflake, startTime, memory, port, maxPlayers, template);
+        IGameServer gameServer = new SimpleGameServer(id, motd, status, snowflake, startTime, memory, port, maxPlayers, template);
         gameServer.setRegistered(registered);
         gameServer.setProperties(properties);
         gameServer.setServerPing(motd, maxPlayers, onlinePlayers, versionString, playerInfo);
@@ -387,7 +386,6 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeLong(gameServer.getStartTime());
         this.writeInt(gameServer.getMaxPlayers());
         this.writeInt(gameServer.getOnlinePlayers());
-        this.writeBoolean(gameServer.getServiceVisibility());
         this.writeBoolean(gameServer.isRegistered());
 
         //Properties

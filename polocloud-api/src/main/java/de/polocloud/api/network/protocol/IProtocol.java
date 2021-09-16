@@ -21,7 +21,7 @@ public interface IProtocol {
      * {@link ChannelHandlerContext} and the received {@link Packet} object
      *
      * @param ctx the channelHandlerContext
-     * @param packet the de.polocloud.modules.smartproxy.packet object
+     * @param packet the packet object
      */
     void firePacketHandlers(ChannelHandlerContext ctx, Packet packet);
 

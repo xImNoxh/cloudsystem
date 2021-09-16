@@ -5,6 +5,7 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.impl.server.GameServerPropertyUpdateEvent;
 import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
 import de.polocloud.api.event.impl.server.GameServerUpdateEvent;
+import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
@@ -40,11 +41,6 @@ public class SimpleGameServer implements IGameServer {
      * The id of this server
      */
     private int id;
-
-    /**
-     * The visibility state
-     */
-    private boolean serviceVisibility;
 
     /**
      * The status
@@ -116,10 +112,9 @@ public class SimpleGameServer implements IGameServer {
     public SimpleGameServer() {
     }
 
-    public SimpleGameServer(int id, String motd, boolean serviceVisibility, GameServerStatus gameServerStatus, long snowflake, long startedTime, long memory, int port, int maxplayers, String template) {
+    public SimpleGameServer(int id, String motd, GameServerStatus gameServerStatus, long snowflake, long startedTime, long memory, int port, int maxplayers, String template) {
         this.id = id;
         this.motd = motd;
-        this.serviceVisibility = serviceVisibility;
         this.gameServerStatus = gameServerStatus;
         this.snowflake = snowflake;
         this.startedTime = startedTime;
@@ -130,7 +125,7 @@ public class SimpleGameServer implements IGameServer {
         this.registered = false;
         this.host = "127.0.0.1";
         this.properties = new ArrayList<>();
-        this.onlinePlayers = getCloudPlayers().size();
+        this.onlinePlayers = getPlayers().size();
 
         this.versionString = null;
         this.playerInfo = new String[0];
@@ -213,12 +208,14 @@ public class SimpleGameServer implements IGameServer {
     public void setStatus(GameServerStatus status) {
         gameServerStatus = status;
         statusChanged = true;
-        if (status == GameServerStatus.INVISIBLE) {
-            this.setVisible(false);
+    }
+
+    @Override
+    public IGameServer sync() {
+        if (PoloCloudAPI.getInstance() == null || PoloCloudAPI.getInstance().getGameServerManager() == null) {
+            return this;
         }
-        if (status == GameServerStatus.AVAILABLE) {
-            this.setVisible(true);
-        }
+        return PoloCloudAPI.getInstance().getGameServerManager().getCached(this.getName());
     }
 
     @Override
@@ -228,14 +225,14 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public IWrapper getWrapper() {
-        for (IWrapper allWrapper : getAllWrappers()) {
+        for (IWrapper allWrapper : getWrappers()) {
             return allWrapper;
         }
         return null;
     }
 
     @Override
-    public IWrapper[] getAllWrappers() {
+    public IWrapper[] getWrappers() {
         List<IWrapper> wrappers = new ArrayList<>();
         for (String wrapperName : getTemplate().getWrapperNames()) {
             IWrapper get = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(wrapperName);
@@ -272,8 +269,43 @@ public class SimpleGameServer implements IGameServer {
         consumer.accept(gameServer);
     }
 
+    @Override
+    public void newId() {
+        IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
+        if (this.getTemplate() == null) {
+            setId(-1);
+            return;
+        }
+        int freeId = gameServerManager.getFreeId(this.getTemplate());
+        this.setId(freeId);
+    }
+
+    @Override
+    public void newPort() {
+        IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
+        if (this.getTemplate() == null) {
+            setPort(-1);
+            return;
+        }
+        int freePort = gameServerManager.getFreePort(this.getTemplate());
+        this.setPort(freePort);
+    }
+
+    @Override
+    public void newIdentification() {
+        this.newId();
+        this.newSnowflake();
+        this.newPort();
+        this.setStartedTime(System.currentTimeMillis());
+    }
+
+    @Override
     public void setTemplate(ITemplate template) {
         this.template = template.getName();
+
+        this.setMotd(template.getMotd());
+        this.setMaxPlayers(template.getMaxPlayers());
+        this.setMemory(template.getMaxMemory());
     }
 
     @Override
@@ -287,17 +319,12 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public void setTemplate(String template) {
-        this.setTemplate(PoloHelper.sneakyThrows(() -> PoloCloudAPI.getInstance().getTemplateManager().getTemplate(template)));
-    }
-
-    @Override
     public ITemplate getTemplate() {
         return PoloCloudAPI.getInstance().getTemplateManager().getTemplate(this.template);
     }
 
     @Override
-    public List<ICloudPlayer> getCloudPlayers() {
+    public List<ICloudPlayer> getPlayers() {
         return PoloCloudAPI.getInstance().getCloudPlayerManager().getAllCached().stream().filter(cloudPlayer -> cloudPlayer.getMinecraftServer() != null && cloudPlayer.getMinecraftServer().getName().equalsIgnoreCase(this.getName()) || cloudPlayer.getProxyServer() != null && cloudPlayer.getProxyServer().getName().equalsIgnoreCase(this.getName())).collect(Collectors.toList());
     }
 
@@ -345,6 +372,8 @@ public class SimpleGameServer implements IGameServer {
         PoloCloudAPI.getInstance().getConnection().sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.getName(), packet));
     }
 
+
+
     @Override
     public String getMotd() {
         return motd;
@@ -386,16 +415,6 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public void setMaxPlayers(int players) {
         this.maxPlayers = players;
-    }
-
-    @Override
-    public void setVisible(boolean serviceVisibility) {
-        this.serviceVisibility = serviceVisibility;
-    }
-
-    @Override
-    public boolean getServiceVisibility() {
-        return serviceVisibility;
     }
 
     @Override

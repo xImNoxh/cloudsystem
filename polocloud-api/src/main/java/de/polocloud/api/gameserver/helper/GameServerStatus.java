@@ -15,6 +15,16 @@ public enum GameServerStatus implements Serializable {
     INVISIBLE,
 
     /**
+     * The server is in maintenance
+     */
+    MAINTENANCE,
+
+    /**
+     * The server is currently full
+     */
+    FULL,
+
+    /**
      * The server is available to connect to
      */
     AVAILABLE,

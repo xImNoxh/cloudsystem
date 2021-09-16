@@ -7,9 +7,9 @@ public interface IPacketReceiver extends INamable {
 
     /**
      * Makes this receiver receive a certain {@link Packet}
-     * By simply flushing this de.polocloud.modules.smartproxy.packet into its channel or context
+     * By simply flushing this packet into its channel or context
      *
-     * @param packet the de.polocloud.modules.smartproxy.packet
+     * @param packet the packet
      */
     void receivePacket(Packet packet);
 }

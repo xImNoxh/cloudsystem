@@ -139,9 +139,9 @@ public interface IPacketBuffer {
     void writeCustom(Object custom) throws IOException;
 
     /**
-     * Writes a custom de.polocloud.modules.smartproxy.packet to this buffer
+     * Writes a custom packet to this buffer
      *
-     * @param packet the de.polocloud.modules.smartproxy.packet
+     * @param packet the packet
      * @throws IOException if something goes wrong
      */
     void writePacket(Packet packet) throws IOException;

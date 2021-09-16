@@ -1,5 +1,9 @@
 package de.polocloud.signs.sign.enumeration;
 
+import de.polocloud.api.gameserver.base.IGameServer;
+
+import java.util.Map;
+
 /**
  * Enum class for declaring the current state
  * of the {@link de.polocloud.signs.sign.base.IGameServerSign}
@@ -34,6 +38,23 @@ public enum SignState {
      * The {@link de.polocloud.api.gameserver.base.IGameServer} of the {@link de.polocloud.signs.sign.base.IGameServerSign} is online
      * and has one or more players on it
      */
-    PLAYERS()
+    PLAYERS();
+
+
+    public static SignState getStateByServer(IGameServer gameServer) {
+        switch (gameServer.getStatus()) {
+            case AVAILABLE:
+                return (gameServer.getPlayers().isEmpty() ? ONLINE : PLAYERS);
+            case STARTING:
+            case INVISIBLE:
+                return LOADING;
+            case FULL:
+                return FULL;
+            case MAINTENANCE:
+                return MAINTENANCE;
+            default:
+                return null;
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 package de.polocloud.api.template.base;
 
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
@@ -120,5 +121,9 @@ public interface ITemplate extends PoloObject<ITemplate> {
      */
     List<IGameServer> getServers();
 
+    /**
+     * List of all online {@link ICloudPlayer}
+     */
+    List<ICloudPlayer> getPlayers();
 
 }

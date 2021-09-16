@@ -161,7 +161,7 @@ public class SmartProxy extends CloudModule {
      * @param state the login state
      * @param channel the netty channel
      * @param proxy the proxy
-     * @param login the login de.polocloud.modules.smartproxy.packet as buf
+     * @param login the login packet as buf
      */
     public void forwardRequestToNextProxy(Channel channel, IGameServer proxy, ByteBuf login, int state) {
         ForwardDownStream downstreamHandler = channel.attr(SmartProxy.FORWARDING_DOWN).get() == null ? new ForwardDownStream(channel) : channel.attr(SmartProxy.FORWARDING_DOWN).get();
@@ -226,18 +226,18 @@ public class SmartProxy extends CloudModule {
         }
         //Only free proxies
         IGameServer value = null;
-        List<IGameServer> proxies = group.getServers().stream().filter(proxy -> proxy.getCloudPlayers().size() < proxy.getMaxPlayers()).collect(Collectors.toList());
+        List<IGameServer> proxies = group.getServers().stream().filter(proxy -> proxy.getPlayers().size() < proxy.getMaxPlayers()).collect(Collectors.toList());
         if (!proxies.isEmpty()) {
             if (this.smartProxyConfig.getProxySearchMode().equalsIgnoreCase("RANDOM")) {
                 value = proxies.get(new Random().nextInt(proxies.size()));
             } else {
-                proxies.sort(Comparator.comparing(service -> service.getCloudPlayers().size()));
+                proxies.sort(Comparator.comparing(service -> service.getPlayers().size()));
                 if (this.smartProxyConfig.getProxySearchMode().equalsIgnoreCase("BALANCED")) {
                     value = proxies.get(0);
                 } else {
                     for (int i = proxies.size() - 1; i >= 0; i--) {
                         IGameServer server = proxies.get(i);
-                        if (server.getCloudPlayers().size() < server.getMaxPlayers()) {
+                        if (server.getPlayers().size() < server.getMaxPlayers()) {
                             value = server;
                             break;
                         }

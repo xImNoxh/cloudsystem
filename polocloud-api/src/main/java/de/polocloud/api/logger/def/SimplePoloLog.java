@@ -247,4 +247,9 @@ public class SimplePoloLog implements PoloLog {
     public long getSnowflake() {
         return snowflake;
     }
+
+    @Override
+    public PoloLog sync() {
+        return this;
+    }
 }

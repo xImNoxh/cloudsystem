@@ -158,10 +158,10 @@ public class PoloHelper {
     }
 
     /**
-     * Sends a de.polocloud.modules.smartproxy.packet to Bukkit player
+     * Sends a packet to Bukkit player
      *
      * @param to the receiver
-     * @param packet the de.polocloud.modules.smartproxy.packet
+     * @param packet the packet
      */
     public static void sendPacket(Object to, String version, Object packet) {
         try {
