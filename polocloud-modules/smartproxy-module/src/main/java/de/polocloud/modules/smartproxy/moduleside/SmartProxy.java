@@ -217,7 +217,7 @@ public class SmartProxy extends CloudModule {
      * 'BALANCED' will try to balance all proxies
      * 'FILL' will try to fill all proxies
      *
-     * @param group the group youre trying to get proxies of
+     * @param group the group you're trying to get proxies of
      * @return service if found or null
      */
     public IGameServer getFreeProxy(ITemplate group, int state) {

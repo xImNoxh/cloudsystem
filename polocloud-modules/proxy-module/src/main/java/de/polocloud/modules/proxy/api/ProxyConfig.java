@@ -125,7 +125,7 @@ public class ProxyConfig implements IConfig {
     /**
      * Gets the {@link ProxyMotd} based on a provided {@link IGameServer}
      * If the {@link de.polocloud.api.template.base.ITemplate} of the server
-     * is in maintenance it will chose the maintenance motd otherwhise
+     * is in maintenance it will choose the maintenance motd otherwise
      * it will return the online motd
      *
      * @param gameServer the server

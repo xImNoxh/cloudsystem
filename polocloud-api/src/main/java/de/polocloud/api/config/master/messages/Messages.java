@@ -58,7 +58,7 @@ public class Messages implements IProtocolObject {
     private String networkShutdown;
 
     /**
-     * When youre trying to connect to a server
+     * When you're trying to connect to a server
      * that has a higher protocol than your minecraft version
      */
     private String wrongMinecraftVersion;

@@ -65,7 +65,7 @@ public class Master extends PoloCloudAPI implements IStartable {
     private SimpleNettyServer nettyServer;
 
     /**
-     * The google Guice module injector
+     * The Google Guice module injector
      */
     private Injector injector;
 
