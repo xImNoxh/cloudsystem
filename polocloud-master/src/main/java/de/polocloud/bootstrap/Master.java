@@ -39,13 +39,11 @@ import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
-import de.polocloud.bootstrap.fallback.FallbackSearchService;
 import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
 import de.polocloud.bootstrap.listener.NettyExceptionListener;
 import de.polocloud.bootstrap.network.SimplePacketService;
-import de.polocloud.bootstrap.network.ports.PortService;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.setup.MasterSetup;
@@ -53,40 +51,53 @@ import de.polocloud.client.PoloCloudClient;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;
 import jline.console.ConsoleReader;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.*;
 
+@Getter
 public class Master extends PoloCloudAPI implements IStartable {
 
+    /**
+     * The network server to allow clients
+     */
+    private SimpleNettyServer nettyServer;
+
+    /**
+     * The google Guice module injector
+     */
     private Injector injector;
 
-    private final CommandExecutor commandExecutor;
-
-    private final SimpleConfigLoader simpleConfigLoader = new SimpleConfigLoader();
-    private final SimpleConfigSaver simpleConfigSaver = new SimpleConfigSaver();
-
-    private FallbackSearchService fallbackSearchService;
+    /**
+     * The {@link ModuleService} to manage all modules
+     */
     private ModuleService moduleService;
-    private final PortService portService;
-    private MasterConfig masterConfig;
+
+    /**
+     * The updater client
+     */
     private final PoloCloudClient client;
+
+    /**
+     * The {@link IPubSubManager} instance
+     */
     private IPubSubManager pubSubManager;
-    private SimpleNettyServer nettyServer;
+
+    /**
+     * If the master is running
+     */
     private boolean running;
 
     public Master() {
         super(PoloType.MASTER);
 
         this.running = true;
-        this.commandExecutor = new SimpleConsoleExecutor();
 
         this.client = new PoloCloudClient("37.114.60.98", 4542);
-        this.registerUncaughtExceptionListener();
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> reportException(throwable));
 
-        this.portService = new PortService(gameServerManager);
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
-
         this.masterConfig = this.loadConfig();
 
         if (this.propertyManager.loadProperties()) {
@@ -94,11 +105,9 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.injector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateManager, this.cloudPlayerManager));
 
             this.templateManager.loadTemplates(TemplateStorage.FILE);
-
-            this.fallbackSearchService = new FallbackSearchService(masterConfig);
-            this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
-
             this.templateManager.getTemplateLoader().loadTemplates();
+
+            this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
 
             //Event handler registering
             this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
@@ -132,10 +141,17 @@ public class Master extends PoloCloudAPI implements IStartable {
         return this.nettyServer;
     }
 
+    /**
+     * Loads the {@link MasterConfig}
+     * If the file does not exist it will simply put in the
+     * default config and save the file
+     *
+     * @return config object
+     */
     private MasterConfig loadConfig() {
 
         File configFile = FileConstants.MASTER_CONFIG_FILE;
-        MasterConfig masterConfig = simpleConfigLoader.load(MasterConfig.class, configFile);
+        MasterConfig masterConfig = getConfigLoader().load(MasterConfig.class, configFile);
 
         //Registering default fallback
         if (masterConfig.getProperties().getFallbacks().isEmpty()) {
@@ -146,7 +162,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         for (SimpleFallback fallbackProperty : masterConfig.getProperties().getFallbacks()) {
             PoloCloudAPI.getInstance().getFallbackManager().registerFallback(fallbackProperty);
         }
-        simpleConfigSaver.save(masterConfig, configFile);
+        getConfigSaver().save(masterConfig, configFile);
         return masterConfig;
     }
 
@@ -232,35 +248,31 @@ public class Master extends PoloCloudAPI implements IStartable {
         boolean terminate = this.nettyServer != null && this.nettyServer.terminate();
 
         //Kicking all players
-        commandExecutor.sendMessage("§7Kicking §3" + (cloudPlayerManager == null ? "0" : cloudPlayerManager.getAllCached().size()) + " §7CloudPlayers...");
+        getCommandExecutor().sendMessage("§7Kicking §3" + (cloudPlayerManager == null ? "0" : cloudPlayerManager.getAllCached().size()) + " §7CloudPlayers...");
         for (ICloudPlayer cloudPlayer : (cloudPlayerManager == null ? new ArrayList<ICloudPlayer>() : cloudPlayerManager)) {
             cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
         }
 
         //Stopping all servers
-        commandExecutor.sendMessage("§7Stopping §3" + gameServerManager.getAllCached().size() + " §7GameServers...");
+        getCommandExecutor().sendMessage("§7Stopping §3" + gameServerManager.getAllCached().size() + " §7GameServers...");
         for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
             gameServer.terminate();
         }
 
         //Shutting down all modules
-        commandExecutor.sendMessage("§7Disabling §3" + moduleService.getModules().size() + " §7Modules...");
+        getCommandExecutor().sendMessage("§7Disabling §3" + moduleService.getModules().size() + " §7Modules...");
         moduleService.shutdown();
 
         //Stopping process
         Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
 
         //Shutting down loggers
-        commandExecutor.sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
+        getCommandExecutor().sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
         loggerFactory.shutdown();
         return terminate;
     }
 
 
-    @Override
-    public ConsoleReader getConsoleReader() {
-        return ConsoleRunner.getInstance().getConsoleReader();
-    }
     @Override
     public void reportException(Throwable throwable) {
         String logException = Throwables.getStackTraceAsString(throwable);
@@ -275,10 +287,6 @@ public class Master extends PoloCloudAPI implements IStartable {
         PoloLogger.getInstance().noPrefix().log(LogLevel.ERROR,  "§e" + logException);
 
         client.getExceptionReportService().reportException(throwable, "master", getVersion().version());
-    }
-
-    private void registerUncaughtExceptionListener() {
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> reportException(throwable));
     }
 
     @Override
@@ -301,40 +309,13 @@ public class Master extends PoloCloudAPI implements IStartable {
         return pubSubManager;
     }
 
-    public MasterConfig getMasterConfig() {
-        return masterConfig;
-    }
-
-    public ModuleService getModuleService() {
-        return moduleService;
+    @Override
+    public CommandExecutor getCommandExecutor() {
+        return new SimpleConsoleExecutor();
     }
 
     @Override
-    public CommandExecutor getCommandExecutor() {
-        return commandExecutor;
-    }
-
-    public SimpleNettyServer getNettyServer() {
-        return nettyServer;
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public FallbackSearchService getFallbackSearchService() {
-        return fallbackSearchService;
-    }
-
-    public PortService getPortService() {
-        return portService;
-    }
-
-    public PoloCloudClient getClient() {
-        return client;
-    }
-
-    public String getCurrentVersion() {
-        return getVersion().version();
+    public ConsoleReader getConsoleReader() {
+        return ConsoleRunner.getInstance().getConsoleReader();
     }
 }

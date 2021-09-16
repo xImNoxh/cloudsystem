@@ -52,12 +52,12 @@ public class MeCommand implements CommandListener {
 
         PoloLogger.print(LogLevel.INFO, "§7Checking your version...");
         new Thread(() -> {
-            PoloCloudUpdater cloudUpdater = new PoloCloudUpdater(false, Master.getInstance().getCurrentVersion(), "bootstrap", null);
+            PoloCloudUpdater cloudUpdater = new PoloCloudUpdater(false, Master.getInstance().getVersion().version(), "bootstrap", null);
             boolean notUpToDate = cloudUpdater.check();
             if (notUpToDate) {
-                PoloLogger.print(LogLevel.INFO, "§7You are not running the latest version! (you: " + Master.getInstance().getCurrentVersion() + " newest:" + cloudUpdater.getFetchedVersion() + " (date: " + cloudUpdater.getLastUpdate() + "))");
+                PoloLogger.print(LogLevel.INFO, "§7You are not running the latest version! (you: " + Master.getInstance().getVersion().version() + " newest:" + cloudUpdater.getFetchedVersion() + " (date: " + cloudUpdater.getLastUpdate() + "))");
             } else {
-                PoloLogger.print(LogLevel.INFO, "§7You are running the latest version! (" + Master.getInstance().getCurrentVersion() + ")");
+                PoloLogger.print(LogLevel.INFO, "§7You are running the latest version! (" + Master.getInstance().getVersion().version() + ")");
             }
         }).start();
 

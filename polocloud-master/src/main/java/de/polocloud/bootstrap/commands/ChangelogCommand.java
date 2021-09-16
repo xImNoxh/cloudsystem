@@ -23,13 +23,13 @@ public class ChangelogCommand implements CommandListener, TabCompletable {
     public void execute(CommandExecutor sender, String[] fullArgs, @Arguments(onlyFirstArgs = {"bootstrap", "api"}, min = 0, max = 1, message = {"----[Changelog]----", "Use §3changelog §7show the changelog", "Use §3changelog bootstrap/api §7to show the changelog of the specific type", "----[/Changelog]----"}) String... params) {
        if(params.length == 0){
            PoloLogger.print(LogLevel.INFO, "Loading §3changelog§7...");
-           String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getCurrentVersion());
-           PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n----[/Changelog]----");
+           String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getVersion().version());
+           PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getVersion().version() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n----[/Changelog]----");
        }else if(params.length == 1){
            if(params[0].equalsIgnoreCase("bootstrap")){
                PoloLogger.print(LogLevel.INFO, "Loading §3changelog§7...");
-               String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getCurrentVersion());
-               PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getCurrentVersion() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n]\n----[/Changelog]----");
+               String bootstrapChangelog = Master.getInstance().getClient().getChangelogRequestService().getChangelog("bootstrap", Master.getInstance().getVersion().version());
+               PoloLogger.print(LogLevel.INFO, "----[Changelog (§3" + Master.getInstance().getVersion().version() + "§7)]----\n[Bootstrap\n" + bootstrapChangelog + "\n]\n----[/Changelog]----");
            } else{
                sendHelp();
            }
