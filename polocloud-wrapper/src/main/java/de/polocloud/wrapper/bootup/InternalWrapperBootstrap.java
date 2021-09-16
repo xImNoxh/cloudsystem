@@ -12,9 +12,11 @@ import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.WrapperConfig;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.net.InetSocketAddress;
+import java.net.URL;
 
 public class InternalWrapperBootstrap {
 
@@ -58,17 +60,25 @@ public class InternalWrapperBootstrap {
             apiJarFile.getParentFile().mkdirs();
         }
 
-        if (ignoreUpdater) {
-            return;
+        try {
+            URL inputUrl = getClass().getResource("/" + FileConstants.CLOUD_API_NAME);
+            FileUtils.copyURLToFile(inputUrl, apiJarFile);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         String currentVersion;
         boolean forceUpdate;
         if (apiJarFile.exists()) {
             forceUpdate = false;
             currentVersion = wrapper.getConfig().getApiVersion();
         } else {
+
             forceUpdate = true;
             currentVersion = "First download";
+        }
+        if (ignoreUpdater) {
+            return;
         }
         PoloCloudUpdater updater = new PoloCloudUpdater(this.devMode, currentVersion, "api", apiJarFile);
 
