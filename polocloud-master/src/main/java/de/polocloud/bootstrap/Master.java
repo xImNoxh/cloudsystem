@@ -121,7 +121,7 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.commandManager.registerCommand(new ChangelogCommand());
             this.commandManager.registerCommand(new MeCommand());
             this.commandManager.registerCommand(new ScreenCommand());
-            this.commandManager.registerCommand(new WrapperCommand());
+            this.commandManager.registerCommand(new GameServerCommand());
             this.commandManager.registerCommand(new WrapperCommand());
 
             //Server-Runner thread starting
