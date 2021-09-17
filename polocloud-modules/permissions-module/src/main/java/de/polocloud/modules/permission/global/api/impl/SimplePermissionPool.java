@@ -4,7 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.Task;
-import de.polocloud.modules.permission.InternalPermissionModule;
+import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.global.api.IPermission;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -36,7 +36,7 @@ public class SimplePermissionPool implements PermissionPool {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
 
             //Updating in database
-            InternalPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
+            PermsModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
         }
     }
 
@@ -47,7 +47,7 @@ public class SimplePermissionPool implements PermissionPool {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
 
             //Updating in database
-            InternalPermissionModule.getInstance().getUserDatabase().delete(permissionUser.getUniqueId().toString());
+            PermsModule.getInstance().getUserDatabase().delete(permissionUser.getUniqueId().toString());
         }
     }
 
@@ -60,14 +60,14 @@ public class SimplePermissionPool implements PermissionPool {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
 
             //Updating in database
-            InternalPermissionModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
+            PermsModule.getInstance().getUserDatabase().insert(permissionUser.getUniqueId().toString(), (SimplePermissionUser) permissionUser);
         }
     }
 
     @Override
     public void createPermissionGroup(IPermissionGroup permissionGroup) {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
-            InternalPermissionModule.getInstance().getGroupDatabase().insert(permissionGroup.getName(), (SimplePermissionGroup) permissionGroup);
+            PermsModule.getInstance().getGroupDatabase().insert(permissionGroup.getName(), (SimplePermissionGroup) permissionGroup);
             loadPoolFromCache();
             return;
         }
@@ -77,7 +77,7 @@ public class SimplePermissionPool implements PermissionPool {
     @Override
     public void deletePermissionGroup(IPermissionGroup permissionGroup) {
         if (!PoloCloudAPI.getInstance().getType().isPlugin()) {
-            InternalPermissionModule.getInstance().getGroupDatabase().delete(permissionGroup.getName());
+            PermsModule.getInstance().getGroupDatabase().delete(permissionGroup.getName());
             loadPoolFromCache();
             return;
         }
@@ -90,14 +90,14 @@ public class SimplePermissionPool implements PermissionPool {
             this.permissionGroups.clear();
             this.permissionUsers.clear();
 
-            this.permissionUsers.addAll(InternalPermissionModule.getInstance().getUserDatabase().getEntries());
-            this.permissionGroups.addAll(InternalPermissionModule.getInstance().getGroupDatabase().getEntries());
+            this.permissionUsers.addAll(PermsModule.getInstance().getUserDatabase().getEntries());
+            this.permissionGroups.addAll(PermsModule.getInstance().getGroupDatabase().getEntries());
         }
     }
 
     @Override
     public void update() {
-        InternalPermissionModule.getInstance().getMessageChannel().sendMessage(new Task(InternalPermissionModule.TASK_NAME_UPDATE_POOL, new JsonData("pool", this)));
+        PermsModule.getInstance().getMessageChannel().sendMessage(new Task(PermsModule.TASK_NAME_UPDATE_POOL, new JsonData("pool", this)));
     }
 
     @Override

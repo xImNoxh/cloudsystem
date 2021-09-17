@@ -4,7 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.util.Task;
-import de.polocloud.modules.permission.InternalPermissionModule;
+import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.global.api.IPermissionDisplay;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.PermissionPool;
@@ -59,9 +59,9 @@ public class SimplePermissionGroup implements IPermissionGroup {
     @Override
     public void update() {
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-            InternalPermissionModule.getInstance().getGroupDatabase().insert(this.name, this);
+            PermsModule.getInstance().getGroupDatabase().insert(this.name, this);
         } else {
-            InternalPermissionModule.getInstance().getMessageChannel().sendMessage(new Task(InternalPermissionModule.TASK_NAME_UPDATE_GROUP, new JsonData("group", this)));
+            PermsModule.getInstance().getMessageChannel().sendMessage(new Task(PermsModule.TASK_NAME_UPDATE_GROUP, new JsonData("group", this)));
         }
     }
 }

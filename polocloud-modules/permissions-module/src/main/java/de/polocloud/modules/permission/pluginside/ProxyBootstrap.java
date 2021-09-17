@@ -1,6 +1,6 @@
 package de.polocloud.modules.permission.pluginside;
 
-import de.polocloud.modules.permission.InternalPermissionModule;
+import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -18,16 +18,16 @@ import net.md_5.bungee.event.EventHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ProxyBootstrap extends Plugin implements Listener {
 
-    private InternalPermissionModule permissionModule;
+    private PermsModule permissionModule;
 
     @Override
     public void onLoad() {
-        permissionModule = new InternalPermissionModule(new ModuleBootstrap());
+        permissionModule = new PermsModule(new ModuleBootstrap());
         permissionModule.load();
-
     }
 
     @Override
@@ -44,7 +44,13 @@ public class ProxyBootstrap extends Plugin implements Listener {
     @EventHandler
     public void handle(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        PermissionPool.getInstance().loadPermissions(player.getUniqueId()); //Ignoring just checking if all ranks and perms are still valid
+
+        //Ignoring just checking if all ranks and perms are still valid
+        PermissionPool.getInstance().loadPermissions(player.getUniqueId());
+
+        //Just a check to call the PermissionCheckEvent and create a new user if non existent
+        player.hasPermission(UUID.randomUUID().toString());
+
     }
 
     @EventHandler

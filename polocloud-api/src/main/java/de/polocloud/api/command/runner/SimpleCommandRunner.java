@@ -6,6 +6,7 @@ import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.annotation.*;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.config.master.MasterConfig;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -166,7 +167,12 @@ public class SimpleCommandRunner implements ICommandRunner {
                 }
             }
             if (!hasPermission) {
-                source.sendMessage("§cYou do not have the appropriate permissions to execute this command!");
+                String prefix = "";
+                MasterConfig masterConfig = PoloCloudAPI.getInstance().getMasterConfig();
+                if (masterConfig != null) {
+                    prefix = masterConfig.getMessages().getPrefix(source);
+                }
+                source.sendMessage(prefix + "§cYou do not have the appropriate permissions to execute this command!");
                 return;
             }
         }

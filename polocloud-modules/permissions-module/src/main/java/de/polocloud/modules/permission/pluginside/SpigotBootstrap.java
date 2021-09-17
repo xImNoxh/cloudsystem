@@ -2,7 +2,7 @@ package de.polocloud.modules.permission.pluginside;
 
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.modules.permission.InternalPermissionModule;
+import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
@@ -25,12 +25,12 @@ import java.util.*;
 
 public class SpigotBootstrap extends JavaPlugin implements Listener {
 
-    private InternalPermissionModule permissionModule;
+    private PermsModule permissionModule;
 
     @Override
     public void onLoad() {
 
-        permissionModule = new InternalPermissionModule(new ModuleBootstrap());
+        permissionModule = new PermsModule(new ModuleBootstrap());
         permissionModule.load();
     }
 
