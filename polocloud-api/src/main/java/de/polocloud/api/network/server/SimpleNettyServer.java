@@ -1,6 +1,5 @@
 package de.polocloud.api.network.server;
 
-import com.google.inject.Inject;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.base.IListener;
@@ -10,6 +9,7 @@ import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.codec.PacketDecoder;
 import de.polocloud.api.network.protocol.codec.PacketEncoder;
@@ -45,7 +45,7 @@ public class SimpleNettyServer implements INettyServer, IListener {
     /**
      * The protocol instance for managing handlers
      */
-    @Inject private IProtocol protocol;
+    private final IProtocol protocol;
 
     /**
      * The channel
@@ -64,6 +64,7 @@ public class SimpleNettyServer implements INettyServer, IListener {
     public SimpleNettyServer() {
         this.connectedClients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         this.connectedInfos = new UniqueMap<>();
+        this.protocol = new SimpleProtocol();
 
         this.port = PoloCloudAPI.getInstance().getMasterConfig().getProperties().getPort();
 

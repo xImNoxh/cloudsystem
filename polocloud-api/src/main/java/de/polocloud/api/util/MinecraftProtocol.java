@@ -2,7 +2,6 @@ package de.polocloud.api.util;
 
 import com.google.common.cache.AbstractLoadingCache;
 import com.google.common.collect.Maps;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -58,7 +57,7 @@ public enum MinecraftProtocol {
         }
 
         @Override
-        public @Nullable MinecraftProtocol getIfPresent(@NotNull Object o) {
+        public MinecraftProtocol getIfPresent(@NotNull Object o) {
             return Arrays.stream(values()).filter(minecraftProtocol -> minecraftProtocol.equals(o)).findFirst().orElse(null);
         }
     });

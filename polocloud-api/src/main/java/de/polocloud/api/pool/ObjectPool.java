@@ -124,10 +124,20 @@ public interface ObjectPool<V extends PoloObject<V>> extends Iterable<V> {
         return this.getAllCached().stream().filter(v -> v.getSnowflake() == snowflake).findFirst();
     }
 
+    /**
+     * Creates a {@link Stream} for this pool
+     */
     default Stream<V> stream() {
         return getAllCached().stream();
     }
 
+    /**
+     * Does an action until this pool is fully iterated through
+     * then the finish task will be run
+     *
+     * @param consumer the handler
+     * @param finishTask the finished task
+     */
     default void untilEmpty(Consumer<V> consumer, Runnable finishTask) {
         int count = this.getAllCached().size();
         if (count <= 0) {

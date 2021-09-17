@@ -6,6 +6,7 @@ import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerJoinNetworkEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.player.ICloudPlayer;
+import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.modules.proxy.ProxyModule;
 
 public class TabListListener implements IListener {
@@ -15,6 +16,7 @@ public class TabListListener implements IListener {
         ICloudPlayer player = event.getPlayer();
 
         ProxyModule.getProxyModule().getTablistService().updateTabList(player);
+        Scheduler.runtimeScheduler().schedule(() -> ProxyModule.getProxyModule().getTablistService().updateTabList(player), () -> player.sync().getMinecraftServer() != null);
         ProxyModule.getProxyModule().getTablistService().updateTabListIfRequired();
     }
 

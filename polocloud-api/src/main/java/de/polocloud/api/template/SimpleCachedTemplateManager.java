@@ -1,6 +1,5 @@
 package de.polocloud.api.template;
 
-import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.gameserver.GameServerCopyPacket;
 import de.polocloud.api.template.base.ITemplate;
@@ -24,8 +23,8 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
 
     @Override
     public void loadTemplates(TemplateStorage storage) {
-        this.templateLoader = PoloCloudAPI.getInstance().getGuice().getInstance(storage.getTemplateLoader());
-        this.templateSaver = PoloCloudAPI.getInstance().getGuice().getInstance(storage.getTemplateServer());
+        this.templateLoader = storage.getTemplateLoader();
+        this.templateSaver =  storage.getTemplateServer();
         this.reloadTemplates();
     }
 

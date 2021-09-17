@@ -18,6 +18,9 @@ public class MasterPubSubManager {
     }
 
     public static MasterPubSubManager getInstance() {
+        if (instance == null) {
+            instance = new MasterPubSubManager();
+        }
         return instance;
     }
 

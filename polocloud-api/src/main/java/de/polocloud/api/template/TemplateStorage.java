@@ -6,25 +6,16 @@ import de.polocloud.api.template.file.FileTemplateLoader;
 import de.polocloud.api.template.file.FileTemplateSaver;
 import de.polocloud.api.template.sql.SqlTemplateLoader;
 import de.polocloud.api.template.sql.SqlTemplateSaver;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter @AllArgsConstructor
 public enum TemplateStorage {
 
-    FILE(FileTemplateLoader.class, FileTemplateSaver.class),
-    SQL(SqlTemplateLoader.class, SqlTemplateSaver.class);
+    FILE(new FileTemplateLoader(), new FileTemplateSaver()),
+    SQL(new SqlTemplateLoader(), new SqlTemplateSaver());
 
-    private final Class<? extends ITemplateLoader> templateLoader;
-    private final Class<? extends ITemplateSaver> templateServer;
+    private final ITemplateLoader templateLoader;
+    private final ITemplateSaver templateServer;
 
-    TemplateStorage(Class<? extends ITemplateLoader> templateLoader, Class<? extends ITemplateSaver> templateServer) {
-        this.templateLoader = templateLoader;
-        this.templateServer = templateServer;
-    }
-
-    public Class<? extends ITemplateLoader> getTemplateLoader() {
-        return templateLoader;
-    }
-
-    public Class<? extends ITemplateSaver> getTemplateServer() {
-        return templateServer;
-    }
 }

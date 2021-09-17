@@ -1,7 +1,7 @@
 package de.polocloud.modules.permission.global.handler;
 
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.guice.own.Guice;
+import de.polocloud.api.inject.PoloInject;
 import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.util.Task;
 import de.polocloud.api.util.WrappedObject;
@@ -26,7 +26,7 @@ public class ModuleTaskHandler implements IMessageListener<Task> {
         if (name.equalsIgnoreCase(PermsModule.TASK_NAME_UPDATE_POOL)) {
 
             SimplePermissionPool pool = document.getObject("pool", SimplePermissionPool.class);
-            Guice.bind(PermissionPool.class).toInstance(pool);
+            PoloInject.bind(PermissionPool.class).toInstance(pool);
 
         } else if (name.equalsIgnoreCase(PermsModule.TASK_NAME_UPDATE_GROUP)) {
 

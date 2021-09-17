@@ -8,13 +8,10 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class SubscribePacketHandler implements IPacketHandler<Packet> {
 
-    @Inject
-    private MasterPubSubManager pubSubManager;
-
     @Override
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         SubscribePacket packet = (SubscribePacket) obj;
-        pubSubManager.subscribe(ctx, packet.getChannel());
+        MasterPubSubManager.getInstance().subscribe(ctx, packet.getChannel());
     }
 
     @Override

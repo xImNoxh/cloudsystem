@@ -1,6 +1,5 @@
 package de.polocloud.api;
 
-import com.google.inject.Injector;
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
@@ -21,7 +20,7 @@ import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
-import de.polocloud.api.guice.own.Guice;
+import de.polocloud.api.inject.PoloInject;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
 import de.polocloud.api.logger.def.SimplePoloLoggerFactory;
@@ -134,15 +133,15 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.configLoader = new SimpleConfigLoader();
         this.configSaver = new SimpleConfigSaver();
 
-        Guice.bind(Scheduler.class).toInstance(new SimpleScheduler());
-        Guice.bind(Snowflake.class).toInstance(new Snowflake());
+        PoloInject.bind(Scheduler.class).toInstance(new SimpleScheduler());
+        PoloInject.bind(Snowflake.class).toInstance(new Snowflake());
 
-        Guice.bind(IConfigLoader.class).toInstance(new SimpleConfigLoader());
-        Guice.bind(IConfigSaver.class).toInstance(new SimpleConfigSaver());
+        PoloInject.bind(IConfigLoader.class).toInstance(new SimpleConfigLoader());
+        PoloInject.bind(IConfigSaver.class).toInstance(new SimpleConfigSaver());
 
 
-        Guice.bind(ITemplate.class).toInstance(new SimpleTemplate());
-        Guice.bind(IGameServer.class).toInstance(new SimpleGameServer());
+        PoloInject.bind(ITemplate.class).toInstance(new SimpleTemplate());
+        PoloInject.bind(IGameServer.class).toInstance(new SimpleGameServer());
     }
 
     /**
@@ -263,12 +262,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * data-flows and register channel-handlers or send data yourself
      */
     public abstract IPubSubManager getPubSubManager();
-
-    /**
-     * The current {@link Injector} instance
-     * (Google {@link com.google.inject.Guice})
-     */
-    public abstract Injector getGuice();
 
     /**
      * Sends a {@link Packet} to the other connection side

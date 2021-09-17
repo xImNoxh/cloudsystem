@@ -1,6 +1,5 @@
 package de.polocloud.plugin;
 
-import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.common.PoloType;
@@ -198,11 +197,6 @@ public class CloudPlugin extends PoloCloudAPI {
     @Override
     public IPubSubManager getPubSubManager() {
         return pubSubManager;
-    }
-
-    @Override
-    public Injector getGuice() {
-        return null;
     }
 
     @Override

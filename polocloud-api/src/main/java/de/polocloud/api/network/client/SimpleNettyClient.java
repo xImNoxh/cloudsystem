@@ -1,11 +1,10 @@
 package de.polocloud.api.network.client;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.IProtocol;
+import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.codec.PacketDecoder;
 import de.polocloud.api.network.protocol.codec.PacketEncoder;
@@ -29,35 +28,47 @@ import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
 @Getter
-public class SimpleNettyClient implements INettyClient{
+public class SimpleNettyClient implements INettyClient {
 
-    @Inject
-    @Named("setting_client_host")
-    private String host;
+    /**
+     * The host this client connects to
+     */
+    private final String host;
 
-    @Inject
-    @Named("setting_client_port")
-    private int port;
+    /**
+     * The port for the host to form a valid address
+     */
+    private final int port;
 
+    /**
+     * The protocol instance for handling packets
+     */
+    private final IProtocol protocol;
+    /**
+     * If the client has ever connected
+     */
     private boolean everConnected;
 
-    @Inject
-    private IProtocol protocol;
-
+    /**
+     * The channelFuture (netty)
+     */
     private ChannelFuture channelFuture;
+
+    /**
+     * The channel (netty)
+     */
     private Channel channel;
+
+    /**
+     * The context (netty)
+     */
     private ChannelHandlerContext ctx;
-
-    public SimpleNettyClient() {
-
-    }
 
     public SimpleNettyClient(String host, int port, IProtocol protocol) {
         this.host = host;
         this.port = port;
         this.protocol = protocol;
         this.everConnected = false;
-
     }
 
     @Override
@@ -124,11 +135,6 @@ public class SimpleNettyClient implements INettyClient{
     }
 
     @Override
-    public Channel getChannel() {
-        return channel;
-    }
-
-    @Override
     public InetSocketAddress getConnectedAddress() {
         return new InetSocketAddress(this.host, this.port);
     }
@@ -145,11 +151,6 @@ public class SimpleNettyClient implements INettyClient{
     @Override
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
-    }
-
-    @Override
-    public IProtocol getProtocol() {
-        return this.protocol;
     }
 
     @Override

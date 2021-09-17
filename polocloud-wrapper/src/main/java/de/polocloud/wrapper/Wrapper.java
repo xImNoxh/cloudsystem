@@ -1,14 +1,11 @@
 package de.polocloud.wrapper;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
@@ -17,6 +14,7 @@ import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
+import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
@@ -30,7 +28,6 @@ import de.polocloud.wrapper.impl.commands.HelpCommand;
 import de.polocloud.wrapper.impl.commands.ScreenCommand;
 import de.polocloud.wrapper.impl.commands.StopCommand;
 import de.polocloud.wrapper.impl.config.WrapperConfig;
-import de.polocloud.wrapper.impl.guice.WrapperGuiceModule;
 import de.polocloud.wrapper.impl.handler.*;
 import de.polocloud.wrapper.manager.module.ModuleCopyService;
 import de.polocloud.wrapper.manager.screen.IScreen;
@@ -48,11 +45,6 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
      * The connection
      */
     private final SimpleNettyClient nettyClient;
-
-    /**
-     * The Google guice injector
-     */
-    private final Injector injector;
 
     /**
      * The wrapper config object (default)
@@ -81,11 +73,10 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
         this.screenManager = new SimpleCachedScreenManager();
         this.config = bootstrap.loadWrapperConfig();
-        this.injector = Guice.createInjector(new PoloAPIGuiceModule(), new WrapperGuiceModule(config.getMasterAddress().split(":")[0], Integer.parseInt(config.getMasterAddress().split(":")[1])));
 
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
 
-        this.nettyClient = this.injector.getInstance(SimpleNettyClient.class);
+        this.nettyClient = new SimpleNettyClient(config.getMasterAddress().split(":")[0], Integer.parseInt(config.getMasterAddress().split(":")[1]), new SimpleProtocol());
         this.pubSubManager = new SimplePubSubManager(nettyClient);
 
         this.moduleCopyService = new ModuleCopyService();
@@ -211,11 +202,6 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     @Override
     public IPubSubManager getPubSubManager() {
         return pubSubManager;
-    }
-
-    @Override
-    public Injector getGuice() {
-        return injector;
     }
 
 

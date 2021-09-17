@@ -3,7 +3,7 @@ package de.polocloud.modules.permission;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.database.api.Database;
-import de.polocloud.api.guice.own.Guice;
+import de.polocloud.api.inject.PoloInject;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
@@ -71,7 +71,7 @@ public class PermsModule {
             }
             PoloLogger.getInstance().noDisplay().log(LogLevel.INFO, "§7PermissionModule loaded §b" + this.userDatabase.getEntries().size() + " §3PermissionUsers §7and §3" + this.groupDatabase.getEntries().size() + " §3PermissionGroups§7!");
         }
-        Guice.bind(PermissionPool.class).toInstance(new SimplePermissionPool());
+        PoloInject.bind(PermissionPool.class).toInstance(new SimplePermissionPool());
     }
 
     /**

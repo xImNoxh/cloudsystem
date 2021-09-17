@@ -10,10 +10,19 @@ import java.util.function.Consumer;
 
 public class SimpleProperty implements IProperty {
 
+    /**
+     * The name of the property
+     */
     private String name;
 
+    /**
+     * The json base
+     */
     private JsonElement value;
 
+    /**
+     * The appended properties
+     */
     private final List<SimpleProperty> properties;
 
     public SimpleProperty() {

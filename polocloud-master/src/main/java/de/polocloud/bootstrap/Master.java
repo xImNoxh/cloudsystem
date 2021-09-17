@@ -1,8 +1,6 @@
 package de.polocloud.bootstrap;
 
 import com.google.common.base.Throwables;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -14,7 +12,6 @@ import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.event.impl.net.NettyExceptionEvent;
 import de.polocloud.api.fallback.base.SimpleFallback;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.guice.google.PoloAPIGuiceModule;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.loader.ModuleService;
@@ -37,7 +34,6 @@ import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
-import de.polocloud.bootstrap.guice.MasterGuiceModule;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
 import de.polocloud.bootstrap.listener.NettyExceptionListener;
@@ -61,11 +57,6 @@ public class Master extends PoloCloudAPI implements IStartable {
      * The network server to allow clients
      */
     private SimpleNettyServer nettyServer;
-
-    /**
-     * The Google Guice module injector
-     */
-    private Injector injector;
 
     /**
      * The {@link ModuleService} to manage all modules
@@ -99,8 +90,6 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.masterConfig = this.loadConfig();
 
         if (this.propertyManager.loadProperties()) {
-
-            this.injector = Guice.createInjector(new PoloAPIGuiceModule(), new MasterGuiceModule(masterConfig, this, this.gameServerManager, templateManager, this.cloudPlayerManager));
 
             this.templateManager.loadTemplates(TemplateStorage.FILE);
             this.templateManager.getTemplateLoader().loadTemplates();
@@ -184,15 +173,15 @@ public class Master extends PoloCloudAPI implements IStartable {
 
         ConsoleRunner.getInstance().setActive(true);
 
-        this.nettyServer = getGuice().getInstance(SimpleNettyServer.class);
-        getGuice().getInstance(SimplePacketService.class);
+        this.nettyServer = new SimpleNettyServer();
+        new SimplePacketService();
 
-        this.nettyServer.getProtocol().registerPacketHandler(getGuice().getInstance(PublishPacketHandler.class));
-        this.nettyServer.getProtocol().registerPacketHandler(getGuice().getInstance(SubscribePacketHandler.class));
+        this.nettyServer.getProtocol().registerPacketHandler(new PublishPacketHandler());
+        this.nettyServer.getProtocol().registerPacketHandler(new SubscribePacketHandler());
 
         //events
-        getEventManager().registerHandler(ChannelInactiveEvent.class, getGuice().getInstance(ChannelInactiveListener.class));
-        getEventManager().registerHandler(ChannelActiveEvent.class, getGuice().getInstance(ChannelActiveListener.class));
+        getEventManager().registerHandler(ChannelInactiveEvent.class, new ChannelInactiveListener());
+        getEventManager().registerHandler(ChannelActiveEvent.class, new ChannelActiveListener());
 
         this.pubSubManager = new SimplePubSubManager(nettyServer);
         new Thread(() -> nettyServer.start()).start();
@@ -295,11 +284,6 @@ public class Master extends PoloCloudAPI implements IStartable {
     @Override
     public String getName() {
         return getType().name();
-    }
-
-    @Override
-    public Injector getGuice() {
-        return injector;
     }
 
     @Override
