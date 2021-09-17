@@ -1,0 +1,11 @@
+{
+  "id": "poloCloud_Bridge",
+  "name": "PoloCloud-Plugin",
+  "version": "1.0.0.",
+  "description": "CloudBridge for PoloCloud",
+  "url": "https://polocloud.de",
+  "authors": [
+    "Lystx"
+  ],
+  "main": "de.polocloud.plugin.bootstrap.proxy.velocity.VelocityBootstrap"
+}

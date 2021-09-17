@@ -199,7 +199,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         } else {
             PoloLogger.print(LogLevel.ERROR, "§cNo Templates found to be loaded! Creating default Lobby-Template and Proxy-Template...");
 
-            ITemplate proxy = new SimpleTemplate("Proxy", false, 5, 1, TemplateType.PROXY, GameServerVersion.PROXY, 50, 512, false, "A PoloCloud Proxy", 100, new String[]{"Wrapper-1"});
+            ITemplate proxy = new SimpleTemplate("Proxy", false, 5, 1, TemplateType.PROXY, GameServerVersion.BUNGEE, 50, 512, false, "A PoloCloud Proxy", 100, new String[]{"Wrapper-1"});
             ITemplate lobby = new SimpleTemplate("Lobby", false, 5, 1, TemplateType.MINECRAFT, GameServerVersion.SPIGOT_1_8_8, 25, 512, false, "A PoloCloud Lobby", 100, new String[]{"Wrapper-1"});
 
             templateManager.addTemplate(proxy);

@@ -47,12 +47,23 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+
+    <repository>
+      <id>velocity</id>
+      <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+    </repository>
     <repository>
       <id>bungeecord-repo</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </repositories>
   <dependencies>
+
+    <dependency>
+      <groupId>com.velocitypowered</groupId>
+      <artifactId>velocity-api</artifactId>
+      <version>3.0.0</version>
+    </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>

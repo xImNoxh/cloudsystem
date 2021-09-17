@@ -1,4 +1,4 @@
-package de.polocloud.plugin.bootstrap.proxy.events;
+package de.polocloud.plugin.bootstrap.proxy.bungee.events;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.master.MasterConfig;

@@ -9,9 +9,14 @@ import java.util.Arrays;
 @AllArgsConstructor @Getter
 public enum GameServerVersion implements Serializable {
 
-    PROXY("https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar", "BungeeCord", TemplateType.PROXY, -1),
+    //Other bungeecords
+    BUNGEE("https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar", "BungeeCord", TemplateType.PROXY, -1),
     WATERFALL("https://papermc.io/api/v2/projects/waterfall/versions/1.17/builds/448/downloads/waterfall-1.17-448.jar", "Waterfall", TemplateType.PROXY, -1),
 
+    //Velocity
+    VELOCITY_3_0_1("https://versions.velocitypowered.com/download/3.0.1.jar", "Velocity", TemplateType.PROXY, -1),
+
+    //Paper-Spigot
     PAPERSPIGOT_1_16_5("https://papermc.io/api/v2/projects/paper/versions/1.16.5/builds/484/downloads/paper-1.16.5-484.jar", "Paper-1.16.5", TemplateType.MINECRAFT, 754),
     PAPERSPIGOT_1_15_2("https://papermc.io/api/v2/projects/paper/versions/1.15.2/builds/391/downloads/paper-1.15.2-391.jar", "Paper-1.15.2", TemplateType.MINECRAFT, 578),
     PAPERSPIGOT_1_14_4("https://papermc.io/api/v2/projects/paper/versions/1.14.4/builds/243/downloads/paper-1.14.4-243.jar", "Paper-1.14.4", TemplateType.MINECRAFT, 498),
@@ -20,6 +25,7 @@ public enum GameServerVersion implements Serializable {
     PAPERSPIGOT_1_9_4("https://papermc.io/api/v2/projects/paper/versions/1.9.4/builds/773/downloads/paper-1.9.4-773.jar", "Paper-1.9.4", TemplateType.MINECRAFT, 110),
     PAPERSPIGOT_1_8_8("https://papermc.io/api/v2/projects/paper/versions/1.8.8/builds/443/downloads/paper-1.8.8-443.jar", "Paper-1.8.8", TemplateType.MINECRAFT, 47),
 
+    //Normal Spigot
     SPIGOT_1_16_5("https://cdn.getbukkit.org/spigot/spigot-1.16.5.jar", "Spigot-1.16.5", TemplateType.MINECRAFT, 754),
     SPIGOT_1_16_4("https://cdn.getbukkit.org/spigot/spigot-1.16.4.jar", "Spigot-1.16.4", TemplateType.MINECRAFT, 754),
     SPIGOT_1_16_3("https://cdn.getbukkit.org/spigot/spigot-1.16.3.jar", "Spigot-1.16.3", TemplateType.MINECRAFT, 753),

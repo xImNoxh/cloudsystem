@@ -21,7 +21,7 @@ import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 
 import de.polocloud.plugin.bootstrap.IBootstrap;
-import de.polocloud.plugin.bootstrap.proxy.commands.CloudCommand;
+import de.polocloud.plugin.bootstrap.proxy.global.commands.CloudCommand;
 import de.polocloud.plugin.protocol.NetworkClient;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;

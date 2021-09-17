@@ -1,4 +1,4 @@
-package de.polocloud.plugin.bootstrap.proxy;
+package de.polocloud.plugin.bootstrap.proxy.bungee;
 
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
@@ -7,13 +7,12 @@ import de.polocloud.api.chat.CloudComponent;
 import de.polocloud.api.chat.HoverAction;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.logger.def.Pair;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.player.def.SimplePlayerSettings;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
-import de.polocloud.plugin.bootstrap.proxy.events.CollectiveProxyEvents;
-import de.polocloud.plugin.bootstrap.proxy.register.ProxyPacketRegister;
+import de.polocloud.plugin.bootstrap.proxy.bungee.events.CollectiveProxyEvents;
+import de.polocloud.plugin.bootstrap.proxy.bungee.register.ProxyPacketRegister;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.Title;
@@ -27,7 +26,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.UUID;
 
-public class ProxyBootstrap extends Plugin implements IBootstrap {
+public class BungeeBootstrap extends Plugin implements IBootstrap {
 
     private int port = -2;
     private CloudPlugin cloudPlugin;
@@ -204,11 +203,11 @@ public class ProxyBootstrap extends Plugin implements IBootstrap {
      */
     private TextComponent createTextComponentFromCloudRecursive(CloudComponent chatComponent) {
         TextComponent textComponent = new TextComponent(chatComponent.getMessage());
-        for (Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
+        for (javafx.util.Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
             textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickEvent.getKey().name()), clickEvent.getValue()));
         }
 
-        for (Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
+        for (javafx.util.Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
             textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverEvent.getKey().name()), new BaseComponent[]{new TextComponent(hoverEvent.getValue())}));
         }
 

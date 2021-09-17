@@ -1,9 +1,9 @@
 package de.polocloud.api.chat;
 
 
-import de.polocloud.api.logger.def.Pair;
 import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
+import javafx.util.Pair;
 import lombok.Getter;
 
 import java.io.IOException;

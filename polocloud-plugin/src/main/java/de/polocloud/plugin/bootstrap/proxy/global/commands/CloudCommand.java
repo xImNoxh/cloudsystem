@@ -1,4 +1,4 @@
-package de.polocloud.plugin.bootstrap.proxy.commands;
+package de.polocloud.plugin.bootstrap.proxy.global.commands;
 
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;

@@ -1,4 +1,4 @@
-package de.polocloud.plugin.bootstrap.proxy.register;
+package de.polocloud.plugin.bootstrap.proxy.bungee.register;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.bridge.PoloPluginBungeeBridge;
