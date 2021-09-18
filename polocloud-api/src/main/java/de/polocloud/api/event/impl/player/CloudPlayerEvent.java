@@ -4,6 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.player.ICloudPlayer;
+import org.jetbrains.annotations.Nullable;
 
 @EventData(nettyFire = true)
 public abstract class CloudPlayerEvent extends CloudEvent {
@@ -14,6 +15,7 @@ public abstract class CloudPlayerEvent extends CloudEvent {
         this.player = player.getName();
     }
 
+    @Nullable
     public ICloudPlayer getPlayer() {
         return PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(player);
     }

@@ -15,8 +15,12 @@ public class TabListListener implements IListener {
     public void handle(CloudPlayerJoinNetworkEvent event) {
         ICloudPlayer player = event.getPlayer();
 
+        if (player == null) {
+            return;
+        }
+
         ProxyModule.getProxyModule().getTablistService().updateTabList(player);
-        Scheduler.runtimeScheduler().schedule(() -> ProxyModule.getProxyModule().getTablistService().updateTabList(player), () -> player.sync().getMinecraftServer() != null);
+        Scheduler.runtimeScheduler().schedule(() -> ProxyModule.getProxyModule().getTablistService().updateTabList(player), () -> player.sync() != null && player.sync().getMinecraftServer() != null);
         ProxyModule.getProxyModule().getTablistService().updateTabListIfRequired();
     }
 
