@@ -26,17 +26,17 @@ public class PlayerInjectListener implements IEventHandler<ProxyConstructPlayerE
 
     @EventHandler (priority = -128)
     public void onPlayerHandshakeEvent(PlayerHandshakeEvent event) {
-        //this.injectConnection(event.getConnection());
+        this.injectConnection(event.getConnection());
     }
 
     @EventHandler (priority = EventPriority.LOW)
     public void onPreLoginEvent(PreLoginEvent event) {
-        //this.injectConnection(event.getConnection());
+        this.injectConnection(event.getConnection());
     }
 
     @EventHandler (priority = EventPriority.LOW)
     public void onProxyPingEvent(ProxyPingEvent event) {
-        //this.injectConnection(event.getConnection());
+        this.injectConnection(event.getConnection());
     }
 
     /**
@@ -56,11 +56,17 @@ public class PlayerInjectListener implements IEventHandler<ProxyConstructPlayerE
             Field addressField = wrapper.getClass().getDeclaredField("remoteAddress");
             addressField.setAccessible(true);
             addressField.set(wrapper, address);
-
+            ICloudPlayer cloudPlayer;
             if (connection.getName() == null) {
-                return;
+
+                cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cp -> cp.getConnection().getAddress().equals(address)).findFirst().orElse(null);
+
+                if (cloudPlayer == null) {
+                    return;
+                }
             }
-            ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(connection.getName());
+
+            cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(connection.getName());
 
             IPlayerConnection playerConnection = cloudPlayer.getConnection();
 
@@ -69,7 +75,6 @@ public class PlayerInjectListener implements IEventHandler<ProxyConstructPlayerE
                 ((SimplePlayerConnection)playerConnection).setPort(connection.getAddress().getPort());
                 ((SimpleCloudPlayer)cloudPlayer).setConnection(playerConnection);
                 cloudPlayer.update();
-                System.out.println("UPDATED");
             }
 
         } catch (Exception e) {
@@ -79,21 +84,6 @@ public class PlayerInjectListener implements IEventHandler<ProxyConstructPlayerE
 
     @Override
     public void handleEvent(ProxyConstructPlayerEvent event) {
-        var connection = event.getConnection();
-        var address = BungeeBootstrap.getInstance().getAddresses().get(connection.constructAddress());
-
-        if (address == null) {
-            System.out.println("Nulled address requested");
-            return;
-        }
-
-        connection.injectAddress(address);
-
-        var cloudPlayer = new SimpleCloudPlayer(connection.getName(), connection.getUniqueId(), connection);
-        cloudPlayer.setProxyServer(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName());
-        cloudPlayer.setConnection(connection);
-
-        event.setResult(cloudPlayer);
 
     }
 }

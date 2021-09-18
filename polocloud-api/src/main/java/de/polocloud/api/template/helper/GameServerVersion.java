@@ -10,7 +10,7 @@ import java.util.Arrays;
 public enum GameServerVersion implements Serializable {
 
     //Other bungeecords
-    BUNGEE("https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar", "BungeeCord", TemplateType.PROXY, -1),
+    BUNGEE("https://ci.md-5.net/job/BungeeCord/lastBuild/artifact/bootstrap/target/BungeeCord.jar", "BungeeCord", TemplateType.PROXY, -1),
     WATERFALL("https://papermc.io/api/v2/projects/waterfall/versions/1.17/builds/448/downloads/waterfall-1.17-448.jar", "Waterfall", TemplateType.PROXY, -1),
 
     //Velocity
