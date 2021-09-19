@@ -11,15 +11,16 @@ import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimplePermissionPool implements PermissionPool {
 
-    private final List<SimplePermissionGroup> permissionGroups;
-    private final List<SimplePermissionUser> permissionUsers;
+    private final CopyOnWriteArrayList<SimplePermissionGroup> permissionGroups;
+    private final CopyOnWriteArrayList<SimplePermissionUser> permissionUsers;
 
     public SimplePermissionPool() {
-        this.permissionGroups = new ArrayList<>();
-        this.permissionUsers = new ArrayList<>();
+        this.permissionGroups = new CopyOnWriteArrayList<>();
+        this.permissionUsers = new CopyOnWriteArrayList<>();
 
         this.loadPoolFromCache();
     }
