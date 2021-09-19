@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import java.util.UUID;
 
 @Plugin(
-    id = "poloCloud_Bridge",
+    id = "bridge",
     name = "PoloCloud-Plugin",
     version = "1.0.0",
     description = "This is the bridge between cloud and proxy",

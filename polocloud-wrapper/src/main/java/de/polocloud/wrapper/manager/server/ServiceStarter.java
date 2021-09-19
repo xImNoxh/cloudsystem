@@ -9,6 +9,7 @@ import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.console.ConsoleColors;
@@ -40,12 +41,22 @@ public class ServiceStarter {
         this.service = service;
         this.template = service.getTemplate();
 
-        this.serverFile = new File(FileConstants.WRAPPER_STORAGE_VERSIONS, template.getVersion().getTitle() + ".jar");
+
+        GameServerVersion version = template.getVersion();
+        if (version == null) {
+            if (template.getTemplateType() == TemplateType.PROXY) {
+                version = GameServerVersion.BUNGEE;
+            } else {
+                version = GameServerVersion.SPIGOT_1_8_8;
+            }
+        }
+
+        this.serverFile = new File(FileConstants.WRAPPER_STORAGE_VERSIONS, version.getTitle() + ".jar");
         if (!serverFile.exists()) {
-            PoloLogger.print(LogLevel.INFO, "Downloading following jar... (" + template.getVersion().getTitle() + ")...");
+            PoloLogger.print(LogLevel.INFO, "§7Downloading §b" + template.getTemplateType().getDisplayName() + "-Version§7... (§3" + version.getTitle() + ")");
             serverFile.getParentFile().mkdirs();
             try {
-                FileUtils.copyURLToFile(new URL(template.getVersion().getUrl()), serverFile);
+                FileUtils.copyURLToFile(new URL(version.getUrl()), serverFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }

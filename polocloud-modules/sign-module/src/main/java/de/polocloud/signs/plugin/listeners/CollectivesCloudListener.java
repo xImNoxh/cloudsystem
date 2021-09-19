@@ -47,7 +47,11 @@ public class CollectivesCloudListener implements IListener {
     @EventHandler
     public void handle(CloudPlayerDisconnectEvent event) {
         if(event.getPlayer() != null && event.getPlayer().getMinecraftServer() != null){
-            PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getPlayer().getMinecraftServer());
+            try {
+                PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getPlayer().getMinecraftServer());
+            } catch (NullPointerException e) {
+                //
+            }
         }
     }
 

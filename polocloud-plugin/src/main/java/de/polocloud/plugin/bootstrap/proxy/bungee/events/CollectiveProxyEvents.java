@@ -31,8 +31,10 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import net.md_5.bungee.protocol.packet.Chat;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -47,12 +49,11 @@ public class CollectiveProxyEvents implements Listener {
         plugin.getProxy().getPluginManager().registerListener(plugin, this);
     }
 
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void handle(ProxyPingEvent event) {
 
         PendingConnection connection = event.getConnection();
-        InetSocketAddress address = connection.getAddress();
+        InetSocketAddress address = (InetSocketAddress) connection.getSocketAddress();
 
         ServerPing serverPing = event.getResponse();
 
@@ -90,13 +91,9 @@ public class CollectiveProxyEvents implements Listener {
 
     private String replace(String input, IGameServer gameServer, InetSocketAddress address) {
 
-        ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cp -> {
-            System.out.println(cp.getConnection().getHost() + ":" + cp.getConnection().getPort() + " - " + address.getAddress().getHostAddress() + ":" + address.getPort());
-            return cp.getConnection().getHost().equalsIgnoreCase(address.getAddress().getHostAddress()) && cp.getConnection().getPort() == address.getPort();
-        }).findFirst().orElse(null);
+        ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cp -> cp.getConnection().getAddress().equals(address)).findFirst().orElse(null);
 
         if (cloudPlayer == null) {
-            System.out.println("NULL");
             input = input.replace("%PROXY%", gameServer.getName());
         } else {
             input = input.replace("%PROXY%", cloudPlayer.getProxyServer().getName());
@@ -143,12 +140,14 @@ public class CollectiveProxyEvents implements Listener {
     public void handle(LoginEvent event) {
         PendingConnection connection = event.getConnection();
 
+        InetSocketAddress socketAddress = (InetSocketAddress) connection.getSocketAddress();
+
         IPlayerConnection playerConnection = new SimplePlayerConnection(
-            connection.getAddress(),
+            socketAddress,
             connection.getUniqueId(),
             connection.getName(),
-            connection.getAddress().getAddress().getHostAddress(),
-            connection.getAddress().getPort(),
+            socketAddress.getAddress().getHostAddress(),
+            socketAddress.getPort(),
             MinecraftProtocol.valueOf(connection.getVersion()),
             connection.isOnlineMode(),
             connection.isLegacy()
