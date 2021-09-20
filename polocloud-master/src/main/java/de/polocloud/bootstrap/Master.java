@@ -41,7 +41,6 @@ import de.polocloud.bootstrap.network.SimplePacketService;
 import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.setup.MasterSetup;
-import de.polocloud.client.PoloCloudClient;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;
 import jline.console.ConsoleReader;
@@ -64,11 +63,6 @@ public class Master extends PoloCloudAPI implements IStartable {
     private ModuleService moduleService;
 
     /**
-     * The updater client
-     */
-    private final PoloCloudClient client;
-
-    /**
      * The {@link IPubSubManager} instance
      */
     private IPubSubManager pubSubManager;
@@ -83,8 +77,10 @@ public class Master extends PoloCloudAPI implements IStartable {
 
         this.running = true;
 
-        this.client = new PoloCloudClient("37.114.60.98", 4542);
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> reportException(throwable));
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            PoloLogger.print(LogLevel.ERROR, Throwables.getStackTraceAsString(throwable));
+            PoloLogger.print(LogLevel.ERROR, "This is an error. Please report this error at our discord.");
+        });
 
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
         this.masterConfig = this.loadConfig();
@@ -105,7 +101,6 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.commandManager.registerCommand(new ReloadCommand());
             this.commandManager.registerCommand(new HelpCommand());
             this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
-            this.commandManager.registerCommand(new ChangelogCommand());
             this.commandManager.registerCommand(new MeCommand());
             this.commandManager.registerCommand(new ScreenCommand());
             this.commandManager.registerCommand(new GameServerCommand());
@@ -257,23 +252,6 @@ public class Master extends PoloCloudAPI implements IStartable {
         getCommandExecutor().sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
         loggerFactory.shutdown();
         return terminate;
-    }
-
-
-    @Override
-    public void reportException(Throwable throwable) {
-        String logException = Throwables.getStackTraceAsString(throwable);
-
-        PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
-        PoloLogger.getInstance().log(LogLevel.ERROR,"§cUnhandled §eException §coccurred while running §eProcess§c!");
-        PoloLogger.getInstance().log(LogLevel.ERROR,"§cThis was §enot §cintended to §ehappen.");
-        PoloLogger.getInstance().log(LogLevel.ERROR,"§cPlease §ereport §cthis at §e" + PoloCloudAPI.class.getAnnotation(APIVersion.class).discord());
-        PoloLogger.getInstance().log(LogLevel.ERROR, "");
-        PoloLogger.getInstance().log(LogLevel.ERROR,"§cSTACKTRACE");
-        PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
-        PoloLogger.getInstance().noPrefix().log(LogLevel.ERROR,  "§e" + logException);
-
-        client.getExceptionReportService().reportException(throwable, "master", getVersion().version());
     }
 
     @Override

@@ -1,5 +1,4 @@
 name: PoloCloud-Plugin
 version: 1.0.0
-author: Max_DE
-api-version: 1.16
+author: HttpMarco
 main: de.polocloud.plugin.bootstrap.spigot.SpigotBootstrap

@@ -22,7 +22,6 @@ public class SimplePacketService {
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new PropertyInsertPacketHandler());
 
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new EventPacketHandler());
-        PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new ExceptionReportPacketHandler());
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new TextPacketHandler());
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new ConfigPacketHandler());
         PoloCloudAPI.getInstance().getConnection().getProtocol().registerPacketHandler(new ShutdownPacketHandler());

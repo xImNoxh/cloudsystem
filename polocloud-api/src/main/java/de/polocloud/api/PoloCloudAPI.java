@@ -179,15 +179,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      */
     public abstract ConsoleReader getConsoleReader();
 
-    /**
-     * Reports an Exception to the server and automatically
-     * prints it, so you can see it locally and the admins
-     * on the server
-     *
-     * @param throwable the error
-     */
-    public abstract void reportException(Throwable throwable);
-
 
     /**
      * Sets the cache for this api instance

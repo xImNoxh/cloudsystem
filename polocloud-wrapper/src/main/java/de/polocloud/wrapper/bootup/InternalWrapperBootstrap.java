@@ -1,14 +1,11 @@
 package de.polocloud.wrapper.bootup;
 
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.client.PoloCloudClient;
-import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.WrapperConfig;
@@ -35,17 +32,10 @@ public class InternalWrapperBootstrap {
      */
     private final boolean ignoreUpdater;
 
-    /**
-     * The PoloCloudClient for the PoloCloudUpdater and
-     * the ExceptionReporterService
-     */
-    private final PoloCloudClient poloCloudClient;
-
-    public InternalWrapperBootstrap(Wrapper wrapper, boolean devMode, boolean ignoreUpdater, InetSocketAddress updaterAddress) {
+    public InternalWrapperBootstrap(Wrapper wrapper, boolean devMode, boolean ignoreUpdater) {
         this.wrapper = wrapper;
         this.ignoreUpdater = ignoreUpdater;
         this.devMode = devMode;
-        this.poloCloudClient = new PoloCloudClient(updaterAddress.getAddress().getHostAddress(), updaterAddress.getPort());
     }
 
     /**
@@ -80,48 +70,6 @@ public class InternalWrapperBootstrap {
         if (ignoreUpdater) {
             return;
         }
-        PoloCloudUpdater updater = new PoloCloudUpdater(this.devMode, currentVersion, "api", apiJarFile);
-
-        if (forceUpdate) {
-            if (this.devMode){
-                PoloLogger.print(LogLevel.DEBUG, "Downloading latest development build...");
-                if (updater.download()) {
-                    PoloLogger.print(LogLevel.DEBUG, "Successfully downloaded latest development build!");
-                } else {
-                    PoloLogger.print(LogLevel.ERROR, "Couldn't download latest development build!");
-                }
-            }else{
-                PoloLogger.print(LogLevel.DEBUG, "Force update was due to no version of the PoloCloud-API found activated. Downloading latest build...");
-                if (updater.download()) {
-                    PoloLogger.print(LogLevel.DEBUG, "Successfully downloaded latest build!");
-                } else {
-                    PoloLogger.print(LogLevel.ERROR, "Couldn't download latest build!");
-                }
-            }
-        } else if (this.devMode) {
-            PoloLogger.print(LogLevel.DEBUG, "Downloading latest development build...");
-            if (updater.download()) {
-                
-                PoloLogger.print(LogLevel.DEBUG, "Successfully downloaded latest development build!");
-            } else {
-                PoloLogger.print(LogLevel.ERROR, "Couldn't download latest development build!");
-            }
-        } else {
-            PoloLogger.print(LogLevel.DEBUG, "Searching for regular PoloCloud-API updates...");
-            if (updater.check()) {
-                PoloLogger.print(LogLevel.DEBUG, "Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");
-                PoloLogger.print(LogLevel.DEBUG, "downloading...");
-                if (updater.download()) {
-                    wrapper.getConfig().setApiVersion(updater.getFetchedVersion());
-                    new SimpleConfigSaver().save(wrapper.getConfig(), FileConstants.WRAPPER_CONFIG_FILE);
-                    PoloLogger.print(LogLevel.DEBUG, "Successfully downloaded latest version! (" + updater.getFetchedVersion() + ")");
-                } else {
-                    PoloLogger.print(LogLevel.DEBUG, "Couldn't download latest version!");
-                }
-            } else {
-                PoloLogger.print(LogLevel.DEBUG, "You are running the latest version of the PoloCloud-API! (" + currentVersion + ")");
-            }
-        }
 
     }
 
@@ -131,8 +79,10 @@ public class InternalWrapperBootstrap {
      * PoloCloud-Server
      */
     public void registerUncaughtExceptionListener(){
-        String currentVersion = new JsonData(FileConstants.LAUNCHER_FILE).fallback("N/A").getString("version");
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> this.poloCloudClient.getExceptionReportService().reportException(throwable, "wrapper", currentVersion));
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            throwable.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "This is an error. Please report this error at our discord.");
+        });
     }
 
     /**

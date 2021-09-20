@@ -1,5 +1,6 @@
 package de.polocloud.wrapper.impl.handler;
 
+import com.google.common.base.Throwables;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.gameserver.base.IGameServer;
@@ -51,7 +52,7 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
                 } catch (IOException e) {
                     PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! An Unexpected error while copying files occurred! Have a look at the Wrapper-Console!");
                     PoloLogger.print(LogLevel.ERROR, "Unexpected error while copying files for gameserver" + gameServer.getName() + "!\n" + "Please report this error.");
-                    PoloCloudAPI.getInstance().reportException(e);
+                    PoloLogger.print(LogLevel.ERROR, Throwables.getStackTraceAsString(e));
                     return;
                 }
             } else {
@@ -71,7 +72,7 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
                 } catch (IOException e) {
                     PoloCloudAPI.getInstance().messageCloud("§cCouldn't copy §e" + gameServer.getName() + " §cinto its template! Unexpected error while copying files occurred!");
                     PoloLogger.print(LogLevel.ERROR, "Unexpected error while copying files for gameserver" + gameServer.getName() + "!\n" + "Please report this error.");
-                    PoloCloudAPI.getInstance().reportException(e);
+                    PoloLogger.print(LogLevel.ERROR, Throwables.getStackTraceAsString(e));
                     return;
                 }
             }

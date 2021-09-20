@@ -68,8 +68,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     public Wrapper(boolean devMode, boolean ignoreUpdater) {
         super(PoloType.WRAPPER);
-                                                                                //PoloCloudClient reference (Address and port)
-        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater, new InetSocketAddress("37.114.60.98", 4542));
+
+        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater);
 
         this.screenManager = new SimpleCachedScreenManager();
         this.config = bootstrap.loadWrapperConfig();
@@ -173,11 +173,6 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             }
 
         };
-    }
-
-    @Override
-    public void reportException(Throwable throwable) {
-        sendPacket(new MasterReportExceptionPacket(throwable));
     }
 
     @Override

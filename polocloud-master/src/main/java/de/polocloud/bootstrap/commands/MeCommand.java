@@ -9,7 +9,6 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.api.console.ConsoleColors;
 
 import java.util.Arrays;
@@ -49,18 +48,5 @@ public class MeCommand implements CommandListener {
         PoloLogger.print(LogLevel.INFO, "§7Used memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemUsedMemory()));
         PoloLogger.print(LogLevel.INFO, "§7Available memory » §3" + PoloCloudAPI.getInstance().getSystemManager().getResourceConverter().convertLongToSize(PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemFreeMemory()));
         PoloLogger.newLine();
-
-        PoloLogger.print(LogLevel.INFO, "§7Checking your version...");
-        new Thread(() -> {
-            PoloCloudUpdater cloudUpdater = new PoloCloudUpdater(false, Master.getInstance().getVersion().version(), "bootstrap", null);
-            boolean notUpToDate = cloudUpdater.check();
-            if (notUpToDate) {
-                PoloLogger.print(LogLevel.INFO, "§7You are not running the latest version! (you: " + Master.getInstance().getVersion().version() + " newest:" + cloudUpdater.getFetchedVersion() + " (date: " + cloudUpdater.getLastUpdate() + "))");
-            } else {
-                PoloLogger.print(LogLevel.INFO, "§7You are running the latest version! (" + Master.getInstance().getVersion().version() + ")");
-            }
-        }).start();
-
     }
-
 }

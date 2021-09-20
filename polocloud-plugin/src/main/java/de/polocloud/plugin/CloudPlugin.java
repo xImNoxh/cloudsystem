@@ -10,7 +10,6 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
-import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
@@ -163,13 +162,6 @@ public class CloudPlugin extends PoloCloudAPI {
         this.loggerFactory.shutdown();
         return true;
     }
-
-
-    @Override
-    public void reportException(Throwable throwable) {
-        sendPacket(new MasterReportExceptionPacket(throwable));
-    }
-
 
     @Override
     public void updateCache() {
