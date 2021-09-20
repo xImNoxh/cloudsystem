@@ -201,6 +201,7 @@ public class VelocityBootstrap implements IBootstrap {
                 server.shutdown();
             }
         };
+        this.cloudPlugin = new CloudPlugin(this);
         this.cloudPlugin.onEnable();
     }
 
