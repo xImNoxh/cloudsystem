@@ -1,6 +1,5 @@
 package de.polocloud.bootstrap;
 
-
 public class Bootstrap {
 
     /**

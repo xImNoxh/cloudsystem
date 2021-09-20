@@ -9,7 +9,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class ConfigPacketHandler implements IPacketHandler<MasterUpdateConfigPacket> {
 
-
     @Override
     public void handlePacket(ChannelHandlerContext ctx, MasterUpdateConfigPacket packet) {
         MasterConfig masterConfig = packet.getMasterConfig();

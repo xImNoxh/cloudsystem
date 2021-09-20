@@ -5,6 +5,7 @@ import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.config.master.properties.Properties;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.setup.FutureAnswer;
 import de.polocloud.api.setup.Setup;
 import de.polocloud.api.setup.SetupBuilder;
 import de.polocloud.api.setup.Step;
@@ -17,7 +18,11 @@ import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;
+import de.polocloud.client.PoloCloudClient;
+import de.polocloud.client.enumeration.ReportType;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class MasterSetup extends StepAcceptor implements Setup {
@@ -32,6 +37,12 @@ public class MasterSetup extends StepAcceptor implements Setup {
         step.addStep("Should Player-Connections (Connecting / Disconnecting) be displayed in Console?", isBoolean())
             .addStep("How many GameServers are allowed to start at the same time? (-1 for infinite)", isInteger())
             .addStep("Should Cracked-Players be allowed to join the network? (true/false)", isBoolean())
+            .addStep("What information should be sent to our servers? (Mostly Exceptions) (NONE: No information will be sent to us, MINIMAL: Minimal information about a exception will be sent (stacktrace, version, master or wrapper), OPTIONAL: More information will be sent (Java-Version, stacktrace, version, master or wrapper)", new FutureAnswer() {
+            @Override
+            public Object[] findPossibleAnswers(SetupBuilder steps) {
+                return Arrays.stream(ReportType.values()).toArray();
+            }
+            })
             .addStep("Should ProxyProtocol be enabled? (If you don't know what this is, type 'false' !)", isBoolean())
             .addStep("Should the online-players amount be synchronised on all online Proxies? (true/false)", isBoolean())
             .addStep("What is the start range for GameServers to start? (default: 3000)", isInteger())
@@ -42,19 +53,22 @@ public class MasterSetup extends StepAcceptor implements Setup {
             public void callFinishSetup(List<Step> steps) {
 
                 int port = steps.get(0).getAnswerAsInt();
-                boolean logPlayerConenctions = steps.get(1).getAnswerAsBoolean();
+                boolean logPlayerConnections = steps.get(1).getAnswerAsBoolean();
                 int maxGameServersStart = steps.get(2).getAnswerAsInt();
                 boolean onlineMode = !steps.get(3).getAnswerAsBoolean();
-                boolean proxyProtocol = steps.get(4).getAnswerAsBoolean();
-                boolean syncProxies = steps.get(5).getAnswerAsBoolean();
-                int startPort = steps.get(6).getAnswerAsInt();
-                boolean defaultGroups = steps.get(7).getAnswerAsBoolean();
+                ReportType reportType = ReportType.valueOf(steps.get(4).getAnswer().toUpperCase());
+                boolean proxyProtocol = steps.get(5).getAnswerAsBoolean();
+                boolean syncProxies = steps.get(6).getAnswerAsBoolean();
+                int startPort = steps.get(7).getAnswerAsInt();
+                boolean defaultGroups = steps.get(8).getAnswerAsBoolean();
+
+                PoloCloudClient.getInstance().getClientConfig().setReportType(reportType);
 
                 MasterConfig masterConfig = PoloCloudAPI.getInstance().getMasterConfig();
                 Properties properties = masterConfig.getProperties();
 
                 properties.setPort(port);
-                properties.setLogPlayerConnections(logPlayerConenctions);
+                properties.setLogPlayerConnections(logPlayerConnections);
                 properties.setMaxSimultaneouslyStartingTemplates(maxGameServersStart);
                 properties.setProxyOnlineMode(onlineMode);
                 properties.setProxyPingForwarding(proxyProtocol);
@@ -88,6 +102,7 @@ public class MasterSetup extends StepAcceptor implements Setup {
                 ConsoleRunner.getInstance().setActive(true);
                 masterConfig.setProperties(properties);
                 masterConfig.update();
+                PoloCloudAPI.getInstance().getConfigSaver().save(PoloCloudClient.getInstance().getClientConfig(), new File("client.json"));
             }
         });
         setupBuilder.nextQuestion(step, ConsoleRunner.getInstance().getConsoleReader());

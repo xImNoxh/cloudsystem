@@ -261,7 +261,7 @@ public class SimpleCommandRunner implements ICommandRunner {
             }
             invokeArguments[2 + varargsIndex] = arr;
         }
-        if (fullArgs.length >= 2 && (onlyArgs.length > 0 && !Arrays.asList(onlyArgs).contains(fullArgs[1]))) {
+        if (fullArgs.length >= 2 && (onlyArgs.length > 0 && !Arrays.asList(onlyArgs).contains(fullArgs[1].toLowerCase()))) {
             for (String s : message) {
                 source.sendMessage(s.replace("%min%", this.minimumParameters + "").replace("%max%", this.maximumParameters + ""));
             }

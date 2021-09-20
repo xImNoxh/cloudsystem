@@ -1,4 +1,4 @@
-package de.polocloud.server.threaded.exception;
+package de.polocloud.client.threaded.exception;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 
 public class ExceptionWriter {
 
-    public void saveException(String date, String stackTrace) {
+    public static void saveException(String date, String stackTrace) {
         new Thread(() -> {
             try {
-                File file = new File("exceptions/" + "exception-" + date + ".txt");
+                File file = new File("data/reports/" + "exception-" + date + ".txt");
                 if (!file.exists() || stackTrace != null) {
                     file.getParentFile().mkdirs();
                     file.createNewFile();

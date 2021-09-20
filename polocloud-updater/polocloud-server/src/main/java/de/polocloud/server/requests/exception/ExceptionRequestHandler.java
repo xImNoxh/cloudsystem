@@ -16,11 +16,7 @@ public class ExceptionRequestHandler {
         PoloCloudServer.getInstance().getJavalin().post("/api/v2/exception/", context -> {
             new RateLimit(context).requestPerTimeUnit(35, TimeUnit.MINUTES);
             String postData = context.req.getReader().lines().collect(Collectors.joining());
-            String ipAddress = context.req.getHeader("X-FORWARDED-FOR");
-            if (ipAddress == null) {
-                ipAddress = context.req.getRemoteAddr();
-            }
-            PoloCloudServer.getInstance().getThreadProvider().getExceptionWriter().saveException(ipAddress, simpleDateFormat.format(System.currentTimeMillis()), postData);
+            PoloCloudServer.getInstance().getThreadProvider().getExceptionWriter().saveException(simpleDateFormat.format(System.currentTimeMillis()), postData);
         });
     }
 

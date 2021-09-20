@@ -1,5 +1,6 @@
 package de.polocloud.wrapper;
 
+import com.google.common.base.Throwables;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
@@ -37,6 +38,7 @@ import de.polocloud.wrapper.setup.WrapperSetup;
 import jline.console.ConsoleReader;
 
 import java.net.InetSocketAddress;
+import java.util.Objects;
 
 
 public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
@@ -68,8 +70,9 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     public Wrapper(boolean devMode, boolean ignoreUpdater) {
         super(PoloType.WRAPPER);
-                                                                                //PoloCloudClient reference (Address and port)
-        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater, new InetSocketAddress("37.114.60.98", 4542));
+
+        //PoloCloudClient reference (Address and port)
+        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater, new InetSocketAddress("37.114.60.129", 4542));
 
         this.screenManager = new SimpleCachedScreenManager();
         this.config = bootstrap.loadWrapperConfig();
@@ -178,6 +181,15 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
     @Override
     public void reportException(Throwable throwable) {
         sendPacket(new MasterReportExceptionPacket(throwable));
+        String logException = Throwables.getStackTraceAsString(throwable);
+
+        Objects.requireNonNull(PoloLogger.getInstance()).log(LogLevel.ERROR, "§c=======================");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cUnhandled §eException §coccurred while running a §eProcess§c!");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cThis was §enot §cintended to §ehappen.");
+        PoloLogger.getInstance().log(LogLevel.INFO, "§cThe exception was sent to the master. The master will process the exception...");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cSTACKTRACE");
+        PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
+        PoloLogger.getInstance().noPrefix().log(LogLevel.ERROR,  "§e" + logException);
     }
 
     @Override

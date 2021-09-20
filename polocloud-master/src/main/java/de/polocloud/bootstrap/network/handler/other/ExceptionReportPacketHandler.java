@@ -9,7 +9,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class ExceptionReportPacketHandler implements IPacketHandler<MasterReportExceptionPacket> {
 
-
     @Override
     public void handlePacket(ChannelHandlerContext ctx, MasterReportExceptionPacket packet) {
         Throwable throwable = packet.getThrowable();

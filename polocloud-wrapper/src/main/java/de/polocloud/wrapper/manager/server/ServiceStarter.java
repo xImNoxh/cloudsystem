@@ -37,7 +37,6 @@ public class ServiceStarter {
     private final File serverLocation;
 
     public ServiceStarter(IGameServer service) {
-
         this.service = service;
         this.template = service.getTemplate();
 
@@ -53,14 +52,14 @@ public class ServiceStarter {
 
         this.serverFile = new File(FileConstants.WRAPPER_STORAGE_VERSIONS, version.getTitle() + ".jar");
         if (!serverFile.exists()) {
-            PoloLogger.print(LogLevel.INFO, "§7Downloading §b" + template.getTemplateType().getDisplayName() + "-Version§7... (§3" + version.getTitle() + ")");
+            PoloLogger.print(LogLevel.INFO, "§7Downloading §b" + template.getTemplateType().getDisplayName() + "-Version§7... (§3" + version.getTitle() + "§7)");
             serverFile.getParentFile().mkdirs();
             try {
                 FileUtils.copyURLToFile(new URL(version.getUrl()), serverFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            PoloLogger.print(LogLevel.INFO, "Downloading " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "completed.");
+            PoloLogger.print(LogLevel.INFO, "Downloading of (§3" + version.getTitle() + "§7)" + ConsoleColors.GREEN + " successfully " + ConsoleColors.GRAY + "completed.");
         }
 
 

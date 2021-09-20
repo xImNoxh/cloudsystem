@@ -4,16 +4,16 @@ import de.polocloud.api.config.IConfig;
 
 public class PoloCloudServerConfig implements IConfig {
 
-    private double apiVersion = 0.1;
-    private double boostrapVersion = 0.1;
-    private String boostrapFileName = "boostrap.jar";
-    private String apiFileName = "PoloCloud-Plugin.jar";
+    private String apiVersion = "0.1";
+    private String boostrapVersion = "0.1";
+    private String boostrapFileName = "bootstrap.jar";
+    private String apiFileName = "PoloCloud-API.jar";
 
-    public double getApiVersion() {
+    public String getApiVersion() {
         return apiVersion;
     }
 
-    public double getBoostrapVersion() {
+    public String getBoostrapVersion() {
         return boostrapVersion;
     }
 

@@ -106,7 +106,7 @@ public class PoloCloudUpdater {
                 }
                 FileUtils.copyURLToFile(new URL("http://" + PoloCloudClient.getInstance().getUrl() + ":" + PoloCloudClient.getInstance().getPort() + "/api/v2/download/" + (devMode ? "dev/" : "") + type), target);
                 return true;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 return false;
             }
         } else {

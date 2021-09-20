@@ -7,6 +7,9 @@ import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
+import de.polocloud.api.config.master.MasterConfig;
+import de.polocloud.api.console.ConsoleColors;
+import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.event.impl.net.NettyExceptionEvent;
@@ -32,7 +35,6 @@ import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
-import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
 import de.polocloud.bootstrap.listener.ChannelInactiveListener;
@@ -42,8 +44,7 @@ import de.polocloud.bootstrap.pubsub.PublishPacketHandler;
 import de.polocloud.bootstrap.pubsub.SubscribePacketHandler;
 import de.polocloud.bootstrap.setup.MasterSetup;
 import de.polocloud.client.PoloCloudClient;
-import de.polocloud.api.console.ConsoleRunner;
-import de.polocloud.api.console.ConsoleColors;
+import de.polocloud.client.enumeration.ReportType;
 import jline.console.ConsoleReader;
 import lombok.Getter;
 
@@ -83,9 +84,8 @@ public class Master extends PoloCloudAPI implements IStartable {
 
         this.running = true;
 
-        this.client = new PoloCloudClient("37.114.60.98", 4542);
+        this.client = new PoloCloudClient("37.114.60.129", 4542);
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> reportException(throwable));
-
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
         this.masterConfig = this.loadConfig();
 
@@ -110,10 +110,10 @@ public class Master extends PoloCloudAPI implements IStartable {
             this.commandManager.registerCommand(new ScreenCommand());
             this.commandManager.registerCommand(new GameServerCommand());
             this.commandManager.registerCommand(new WrapperCommand());
+            this.commandManager.registerCommand(new CloudReportsCommand());
 
             //Server-Runner thread starting
             new Thread(new ServerCreatorRunner()).start();
-
         } else {
             System.out.println("Something went badly wrong while starting Master!");
         }
@@ -264,16 +264,21 @@ public class Master extends PoloCloudAPI implements IStartable {
     public void reportException(Throwable throwable) {
         String logException = Throwables.getStackTraceAsString(throwable);
 
-        PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
-        PoloLogger.getInstance().log(LogLevel.ERROR,"§cUnhandled §eException §coccurred while running §eProcess§c!");
+        Objects.requireNonNull(PoloLogger.getInstance()).log(LogLevel.ERROR, "§c=======================");
+        PoloLogger.getInstance().log(LogLevel.ERROR,"§cUnhandled §eException §coccurred while running a §eProcess§c!");
         PoloLogger.getInstance().log(LogLevel.ERROR,"§cThis was §enot §cintended to §ehappen.");
-        PoloLogger.getInstance().log(LogLevel.ERROR,"§cPlease §ereport §cthis at §e" + PoloCloudAPI.class.getAnnotation(APIVersion.class).discord());
+        if(client.getClientConfig().getReportType().equals(ReportType.NONE)){
+            PoloLogger.getInstance().log(LogLevel.ERROR,"§cPlease §ereport §cthis at §e" + PoloCloudAPI.class.getAnnotation(APIVersion.class).discord());
+            PoloLogger.getInstance().log(LogLevel.INFO, "§cA copy of the §3exceptions §7was usually saved in the '§3data/reports/§7' folder, you can send this to the report if you want.");
+        }else{
+            PoloLogger.getInstance().log(LogLevel.INFO, "§cThis error was automatically to our servers reported.");
+        }
         PoloLogger.getInstance().log(LogLevel.ERROR, "");
         PoloLogger.getInstance().log(LogLevel.ERROR,"§cSTACKTRACE");
         PoloLogger.getInstance().log(LogLevel.ERROR, "§c=======================");
         PoloLogger.getInstance().noPrefix().log(LogLevel.ERROR,  "§e" + logException);
 
-        client.getExceptionReportService().reportException(throwable, "master", getVersion().version());
+        client.getExceptionReportService().reportException(throwable, "master", getVersion().version(), client.getClientConfig().getReportType());
     }
 
     @Override
