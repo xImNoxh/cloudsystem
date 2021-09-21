@@ -1,6 +1,6 @@
 name: PoloCloud-SyncProxy
 version: 1.0
-author: HttpMarco
-main: de.polocloud.modules.proxy.pluginside.ProxyBootstrap
+author: HttpMarco, Lystx
+main: de.polocloud.modules.proxy.pluginside.bungee.BungeeBootstrap
 depend:
     - PoloCloud-Plugin

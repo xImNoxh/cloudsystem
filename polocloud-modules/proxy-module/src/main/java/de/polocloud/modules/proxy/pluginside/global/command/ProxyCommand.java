@@ -1,4 +1,4 @@
-package de.polocloud.modules.proxy.pluginside.command;
+package de.polocloud.modules.proxy.pluginside.global.command;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.annotation.Command;

@@ -15,6 +15,8 @@ import de.polocloud.modules.proxy.cloudside.listener.NotifyListener;
 import de.polocloud.modules.proxy.cloudside.listener.ServerConnectListener;
 import de.polocloud.modules.proxy.cloudside.listener.ServerMotdListener;
 import de.polocloud.modules.proxy.cloudside.listener.TabListListener;
+import de.polocloud.modules.proxy.pluginside.global.command.ProxyCommand;
+import de.polocloud.modules.proxy.pluginside.global.listener.WhitelistListener;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -117,6 +119,11 @@ public class ProxyModule {
     public void enable() {
         reloaded.add(this.motdService = new MotdService());
         reloaded.add(this.tablistService = new TablistService());
+
+        if (PoloCloudAPI.getInstance().getType().isPlugin()) {
+            PoloCloudAPI.getInstance().getCommandManager().registerCommand(new ProxyCommand());
+            PoloCloudAPI.getInstance().getEventManager().registerListener(new WhitelistListener());
+        }
     }
 
     /**

@@ -1,0 +1,12 @@
+{
+  "id": "proxy",
+  "name": "PoloCloud-Proxy",
+  "version": "1.0.0.",
+  "description": "This is the communication between cloud and proxy",
+  "url": "https://polocloud.de",
+  "authors": [
+    "Lystx",
+    "HttpMarco"
+  ],
+  "main": "de.polocloud.modules.proxy.pluginside.velocity.VelocityBootstrap"
+}

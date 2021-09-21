@@ -1,4 +1,4 @@
-package de.polocloud.modules.proxy.pluginside.listener;
+package de.polocloud.modules.proxy.pluginside.global.listener;
 
 import de.polocloud.api.event.base.IListener;
 import de.polocloud.api.event.handling.EventHandler;
