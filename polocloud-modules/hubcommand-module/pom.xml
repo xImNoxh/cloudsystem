@@ -19,7 +19,20 @@
   </properties>
 
 
+  <repositories>
+
+    <repository>
+      <id>velocity</id>
+      <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+    </repository>
+  </repositories>
   <dependencies>
+
+    <dependency>
+      <groupId>com.velocitypowered</groupId>
+      <artifactId>velocity-api</artifactId>
+      <version>3.0.0</version>
+    </dependency>
     <dependency>
       <groupId>de.polocloud.api</groupId>
       <artifactId>polocloud-api</artifactId>

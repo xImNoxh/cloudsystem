@@ -43,6 +43,11 @@ public class Messages implements IProtocolObject {
     private String noFallbackServer;
 
     /**
+     * If already fallback
+     */
+    private String alreadyOnFallback;
+
+    /**
      * If the player got kicked and no fallback was found
      */
     private String kickedAndNoFallbackServer;
@@ -63,6 +68,11 @@ public class Messages implements IProtocolObject {
      */
     private String wrongMinecraftVersion;
 
+    /**
+     * If a connection was successful
+     */
+    private String successfullyConnected;
+
     public Messages() {
         this.prefix = "§bPoloCloud §7» ";
 
@@ -74,14 +84,26 @@ public class Messages implements IProtocolObject {
 
         this.noFallbackServer = "%prefix% §cCould not find a suitable fallback to connect you to!";
         this.kickedAndNoFallbackServer = "%prefix% §cThe server you were on went down, but no fallback server was found!";
+        this.alreadyOnFallback = "%prefix% §cYou are already on a Fallback!";
+
         this.onlyProxyJoin = "%prefix% §cYou can only join on a Proxy§8.";
         this.networkShutdown = "%prefix% §cThe network shut down!";
         this.wrongMinecraftVersion = "%prefix% §7For Server §b%server% §7the version §3%required_version% §7is required §8(§7You§8: §a%your_version%§8)";
+        this.successfullyConnected = "%prefix% §7Successfully connected to §a%server%§8!";
+    }
+
+    public String getAlreadyOnFallback() {
+        return format(alreadyOnFallback);
     }
 
     public String getWrongMinecraftVersion() {
         return format(wrongMinecraftVersion);
     }
+
+    public String getSuccessfullyConnected() {
+        return format(successfullyConnected);
+    }
+
     private String format(String s) {
         return s.replace("&", "§").replace("%prefix%", getPrefix());
     }

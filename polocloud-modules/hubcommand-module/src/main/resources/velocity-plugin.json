@@ -1,0 +1,11 @@
+{
+  "id": "hub",
+  "name": "PoloCloud-HubCommand",
+  "version": "1.0.0.",
+  "description": "Module for sending players back to a fallback",
+  "url": "https://polocloud.de",
+  "authors": [
+    "HttpMarco"
+  ],
+  "main": "de.polocloud.modules.hubcommand.pluginside.bootstrap.VelocityBootstrap"
+}
