@@ -17,6 +17,7 @@ import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.properties.BungeeProperties;
 import de.polocloud.wrapper.impl.config.properties.SpigotExtraProperties;
 import de.polocloud.wrapper.impl.config.properties.SpigotProperties;
+import de.polocloud.wrapper.impl.config.properties.VelocityProperties;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.impl.SimpleScreen;
 import org.apache.commons.io.FileUtils;
@@ -154,8 +155,11 @@ public class ServiceStarter {
             boolean onlineMode = PoloCloudAPI.getInstance().getMasterConfig().getProperties().isProxyOnlineMode();
             boolean proxyProtocol = PoloCloudAPI.getInstance().getMasterConfig().getProperties().isProxyPingForwarding();
 
-            new BungeeProperties(serverLocation, template.getMaxPlayers(), service.getPort(), template.getMotd(), proxyProtocol, onlineMode);
-
+            if (template.getVersion().getTitle().toLowerCase().contains("velocity")) {
+                new VelocityProperties(serverLocation, template.getMaxPlayers(), service.getPort(), template.getMotd(), proxyProtocol, onlineMode);
+            } else {
+                new BungeeProperties(serverLocation, template.getMaxPlayers(), service.getPort(), template.getMotd(), proxyProtocol, onlineMode);
+            }
         } else {
             FileWriter eula = null;
             try {

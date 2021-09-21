@@ -14,7 +14,7 @@ public enum GameServerVersion implements Serializable {
     WATERFALL("https://papermc.io/api/v2/projects/waterfall/versions/1.17/builds/448/downloads/waterfall-1.17-448.jar", "Waterfall", TemplateType.PROXY, -1),
 
     //Velocity
-    VELOCITY_3_0_1("https://versions.velocitypowered.com/download/3.0.1.jar", "Velocity", TemplateType.PROXY, -1),
+    VELOCITY_3_0_1("https://versions.velocitypowered.com/download/3.0.1.jar", "Velocity-3.0.1", TemplateType.PROXY, -1),
 
     //Paper-Spigot
     PAPERSPIGOT_1_16_5("https://papermc.io/api/v2/projects/paper/versions/1.16.5/builds/484/downloads/paper-1.16.5-484.jar", "Paper-1.16.5", TemplateType.MINECRAFT, 754),

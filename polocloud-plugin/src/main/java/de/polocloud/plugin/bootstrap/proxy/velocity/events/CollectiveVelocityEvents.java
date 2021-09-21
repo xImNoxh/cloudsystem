@@ -9,6 +9,7 @@ import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
+import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
@@ -21,6 +22,8 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.event.impl.other.ProxyConstructPlayerEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
@@ -39,6 +42,7 @@ import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.util.MinecraftProtocol;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.proxy.velocity.VelocityBootstrap;
+import de.polocloud.plugin.bootstrap.proxy.velocity.other.VelocityCommandExecutor;
 import de.polocloud.plugin.protocol.NetworkClient;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -256,6 +260,9 @@ public class CollectiveVelocityEvents  {
 
             //Setting the new Server from the player
             Scheduler.runtimeScheduler().schedule(() -> {
+                if (serverInfo.getServerInfo() == null) {
+                    return;
+                }
                 cloudPlayer.setMinecraftServer(serverInfo.getServerInfo().getName());
                 cloudPlayer.update();
                 PoloCloudAPI.getInstance().getEventManager().fireEvent(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudPlayer.getMinecraftServer(), null), serverEvent -> {
@@ -300,21 +307,25 @@ public class CollectiveVelocityEvents  {
     @Subscribe
     public void handleCommand(CommandExecuteEvent event) {
         String command = event.getCommand();
+        CommandSource source = event.getCommandSource();
 
-        CommandSource commandSource = event.getCommandSource();
+        CommandExecutor executor;
 
-        if (commandSource instanceof Player) {
-            Player player = (Player)commandSource;
-
-            ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(player.getUniqueId());
-            if (PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getCommand().split("/")[1], cloudPlayer)) {
-                event.setResult(CommandExecuteEvent.CommandResult.denied());
-            } else {
-
-                event.setResult(CommandExecuteEvent.CommandResult.allowed());
-            }
+        if (source instanceof Player) {
+            executor = PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(((Player)source).getUniqueId());
+        } else {
+            executor = new VelocityCommandExecutor();
         }
 
+        try {
+            if (PoloCloudAPI.getInstance().getCommandManager().runCommand(command, executor)) {
+                event.setResult(CommandExecuteEvent.CommandResult.denied());
+            } else {
+                event.setResult(CommandExecuteEvent.CommandResult.allowed());
+            }
+        } catch (IndexOutOfBoundsException e) {
+            //Maybe only "/" was entered
+        }
     }
 
 
@@ -333,28 +344,19 @@ public class CollectiveVelocityEvents  {
             player.isOnlineMode(),
             true)
         ));
+        if (fallbackService == null) {
+            player.disconnect(Component.text(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNoFallbackServer()));
+            return;
+        }
+
         RegisteredServer fallbackRegisteredServer = velocity.getServer(fallbackService.getName()).orElse(null);
 
         if (fallbackRegisteredServer == null) {
-            PoloCloudAPI.getInstance().messageCloud("§cVelocity-Bridge couldn't find fallback §e" + fallbackService.getName() + "§c!");
+            player.disconnect(Component.text(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNoFallbackServer()));
             return;
         }
 
         event.setInitialServer(fallbackRegisteredServer);
-    }
-
-    @Subscribe
-    public void handle(com.velocitypowered.api.event.permission.PermissionsSetupEvent event) {
-        PermissionSubject subject = event.getSubject();
-
-        if (subject instanceof Player) {
-            Player player = (Player)subject;
-
-            event.setProvider(subject1 -> s -> {
-                boolean b = VelocityBootstrap.getInstance().getBridge().hasPermission(player.getUniqueId(), s);
-                return Tristate.fromBoolean(b);
-            });
-        }
     }
 
     @Subscribe

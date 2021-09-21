@@ -1,5 +1,5 @@
     name: PoloCloud-Permissions
-    main: de.polocloud.modules.permission.pluginside.SpigotBootstrap
+    main: de.polocloud.modules.permission.pluginside.spigot.SpigotBootstrap
     version: 1.0
     depend:
         - PoloCloud-Plugin

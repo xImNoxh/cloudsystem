@@ -1,5 +1,5 @@
     name: PoloCloud-Permissions
-    main: de.polocloud.modules.permission.pluginside.ProxyBootstrap
+    main: de.polocloud.modules.permission.pluginside.bungee.ProxyBootstrap
     version: "1.0"
     depends:
         - PoloCloud-Plugin

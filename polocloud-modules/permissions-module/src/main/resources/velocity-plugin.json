@@ -1,0 +1,11 @@
+{
+  "id": "perms",
+  "name": "PoloCloud-Permissions",
+  "version": "1.0.0.",
+  "description": "This is the perms communication between cloud and proxy",
+  "url": "https://polocloud.de",
+  "authors": [
+    "Lystx"
+  ],
+  "main": "de.polocloud.modules.permission.pluginside.velocity.VelocityBootstrap"
+}

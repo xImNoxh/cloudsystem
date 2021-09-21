@@ -39,8 +39,8 @@ import java.util.UUID;
 public class VelocityBootstrap implements IBootstrap {
 
     private int port = -2;
-    private CloudPlugin cloudPlugin;
-    private PoloPluginBridge bridge;
+    private final CloudPlugin cloudPlugin;
+    private final PoloPluginBridge bridge;
 
     private final ProxyServer server;
     private final Logger logger;
@@ -50,9 +50,9 @@ public class VelocityBootstrap implements IBootstrap {
 
     @Inject
     public VelocityBootstrap(ProxyServer server, Logger logger) {
+        instance = this;
         this.server = server;
         this.logger = logger;
-
 
         this.bridge = new PoloPluginBungeeBridge() {
             @Override
