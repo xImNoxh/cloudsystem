@@ -215,11 +215,11 @@ public class VelocityBootstrap implements IBootstrap {
      */
     private Component createComponentFromCloudRecursive(CloudComponent chatComponent) {
         Component textComponent = Component.text(chatComponent.getMessage());
-        for (Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
+        for (de.polocloud.api.logger.def.Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
             textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.valueOf(clickEvent.getKey().name()), clickEvent.getValue()));
         }
 
-        for (Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
+        for (de.polocloud.api.logger.def.Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
             switch (hoverEvent.getKey()) {
                 case SHOW_TEXT:
                 case SHOW_ENTITY:

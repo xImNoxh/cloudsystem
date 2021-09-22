@@ -467,13 +467,24 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
         long snowflake = readLong();
         String name = readString();
-        return new SimpleWrapper(name, snowflake, PoloCloudAPI.getInstance().getConnection() == null ? null : PoloCloudAPI.getInstance().getConnection().ctx());
+
+        long memory = readLong();
+        int maxSimultaneouslyStartingServices = readInt();
+        int currentlyStartingServices = readInt();
+        boolean authenticated = readBoolean();
+
+        return new SimpleWrapper(name, snowflake, memory, maxSimultaneouslyStartingServices, currentlyStartingServices, authenticated, PoloCloudAPI.getInstance().getConnection() == null ? null : PoloCloudAPI.getInstance().getConnection().ctx());
     }
 
     @Override
     public void writeWrapper(IWrapper wrapper) throws IOException {
         this.writeLong(wrapper.getSnowflake());
         this.writeString(wrapper.getName());
+
+        this.writeLong(wrapper.getMaxMemory());
+        this.writeInt(wrapper.getMaxSimultaneouslyStartingServices());
+        this.writeInt(wrapper.getCurrentlyStartingServices());
+        this.writeBoolean(wrapper.isAuthenticated());
     }
 
 

@@ -54,11 +54,13 @@ public class SimpleCachedScreenManager implements IScreenManager {
         }
 
         PoloLogger.print(LogLevel.INFO, "§cYou left the §esession §cof the service §e" + this.screen.getScreenName() + "§c!");
-        if (this.screen.getThread().isAlive()) {
-            try {
-                this.screen.stop();
-            } catch (ThreadDeath e) {
-                //Ignoring
+        for (Thread thread : this.screen.getThreads()) {
+            if (thread.isAlive()) {
+                try {
+                    thread.stop();
+                } catch (ThreadDeath e) {
+                    //Ignoring
+                }
             }
         }
         this.screen = null;

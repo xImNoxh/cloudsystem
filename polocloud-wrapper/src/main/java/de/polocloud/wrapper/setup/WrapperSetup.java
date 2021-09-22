@@ -27,6 +27,7 @@ public class WrapperSetup extends StepAcceptor implements Setup {
 
         step.addStep("On What Host does your PoloCloud-Master run? (Ip-Address)")
             .addStep("What should this Wrapper be called?")
+            .addStep("How much memory is this Wrapper allowed to use (In MB)?")
             .addStep("Please enter the WrapperKey from the config.json of the PoloCloud-Master!")
             .addStep("Should Server-Output (Screens) be logged and saved as files? (true / false)", isBoolean());
 
@@ -36,12 +37,14 @@ public class WrapperSetup extends StepAcceptor implements Setup {
                 int port = steps.get(0).getAnswerAsInt();
                 String host = steps.get(1).getAnswer();
                 String name = steps.get(2).getAnswer();
-                String key = steps.get(3).getAnswer();
-                boolean logServerOutput = steps.get(4).getAnswerAsBoolean();
+                int memory = steps.get(3).getAnswerAsInt();
+                String key = steps.get(4).getAnswer();
+                boolean logServerOutput = steps.get(5).getAnswerAsBoolean();
 
 
                 WrapperConfig config = Wrapper.getInstance().getConfig();
 
+                config.setMemory(memory);
                 config.setLoginKey(key);
                 config.setWrapperName(name);
                 config.setLogServerOutput(logServerOutput);

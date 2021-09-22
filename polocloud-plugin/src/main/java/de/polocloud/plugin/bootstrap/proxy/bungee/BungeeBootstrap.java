@@ -7,6 +7,7 @@ import de.polocloud.api.chat.CloudComponent;
 import de.polocloud.api.chat.HoverAction;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.logger.def.Pair;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.player.def.SimplePlayerSettings;
 import de.polocloud.plugin.CloudPlugin;
@@ -203,11 +204,11 @@ public class BungeeBootstrap extends Plugin implements IBootstrap {
      */
     private TextComponent createTextComponentFromCloudRecursive(CloudComponent chatComponent) {
         TextComponent textComponent = new TextComponent(chatComponent.getMessage());
-        for (javafx.util.Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
+        for (Pair<ClickAction, String> clickEvent : chatComponent.getClickEvents()) {
             textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.valueOf(clickEvent.getKey().name()), clickEvent.getValue()));
         }
 
-        for (javafx.util.Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
+        for (Pair<HoverAction, String> hoverEvent : chatComponent.getHoverEvents()) {
             textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(hoverEvent.getKey().name()), new BaseComponent[]{new TextComponent(hoverEvent.getValue())}));
         }
 

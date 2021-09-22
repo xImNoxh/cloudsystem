@@ -5,8 +5,10 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ConsoleExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
+import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
+import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
@@ -15,6 +17,7 @@ import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
+import de.polocloud.api.network.packets.wrapper.WrapperUpdatePacket;
 import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.pubsub.IPubSubManager;
@@ -24,6 +27,8 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;
+import de.polocloud.api.util.system.SystemManager;
+import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.wrapper.bootup.InternalWrapperBootstrap;
 import de.polocloud.wrapper.impl.commands.HelpCommand;
 import de.polocloud.wrapper.impl.commands.ScreenCommand;
@@ -34,14 +39,17 @@ import de.polocloud.wrapper.manager.module.ModuleCopyService;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 import de.polocloud.wrapper.manager.screen.IScreenManager;
+import de.polocloud.wrapper.manager.server.ServiceStarter;
 import de.polocloud.wrapper.setup.WrapperSetup;
+import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Objects;
 
 
-public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
+public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerminatable {
 
     /**
      * The connection
@@ -68,6 +76,17 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
      */
     private final ModuleCopyService moduleCopyService;
 
+    /**
+     * If this wrapper is authenticated
+     */
+    private boolean authenticated;
+
+    /**
+     * The currently starting servers
+     */
+    private int currentlyStartingServices;
+
+
     public Wrapper(boolean devMode, boolean ignoreUpdater) {
         super(PoloType.WRAPPER);
 
@@ -78,6 +97,8 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
         this.config = bootstrap.loadWrapperConfig();
 
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
+        this.authenticated = false;
+        this.currentlyStartingServices = 1;
 
         this.nettyClient = new SimpleNettyClient(config.getMasterAddress().split(":")[0], Integer.parseInt(config.getMasterAddress().split(":")[1]), new SimpleProtocol());
         this.pubSubManager = new SimplePubSubManager(nettyClient);
@@ -134,12 +155,15 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerFileTransfer());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerTransferModules());
             nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerScreenRequest());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerMasterRequestCPU());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerMasterRequestMemory());
+            nettyClient.getProtocol().registerPacketHandler(new WrapperHandlerMasterRequestUnusedMemory());
 
             PoloLogger.print(LogLevel.INFO, "The Wrapper was " + ConsoleColors.GREEN + "successfully " + ConsoleColors.GRAY + "started.");
 
             //Logging in
             PoloLogger.print(LogLevel.INFO, "§7Trying to log in as §7'§3" + config.getWrapperName() + "§7'!");
-            nettyClient.sendPacket(new WrapperLoginPacket(config.getWrapperName(), config.getLoginKey()));
+            nettyClient.sendPacket(new WrapperLoginPacket(this, config.getLoginKey()));
         }, throwable -> {
             if (throwable.getClass().getName().equalsIgnoreCase("io.netty.channel.AbstractChannel$AnnotatedConnectException")) {
                 PoloLogger.print(LogLevel.ERROR, "§cCould not connect to §eMaster");
@@ -154,28 +178,7 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public CommandExecutor getCommandExecutor() {
-        return new ConsoleExecutor() {
-            @Override
-            public void runCommand(String command) {
-                getCommandManager().runCommand(command, this);
-            }
-
-            @Override
-            public void sendMessage(String text) {
-                PoloLogger.print(LogLevel.INFO, ConsoleColors.translateColorCodes('§', text));
-            }
-
-            @Override
-            public ExecutorType getType() {
-                return ExecutorType.CONSOLE;
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return true;
-            }
-
-        };
+        return new SimpleConsoleExecutor();
     }
 
     @Override
@@ -204,8 +207,121 @@ public class Wrapper extends PoloCloudAPI implements IStartable, ITerminatable {
 
     @Override
     public String getName() {
-        return getType().name();
+        return config.getWrapperName();
     }
+
+    @Override
+    public int getMaxSimultaneouslyStartingServices() {
+        return config.getMaxSimultaneouslyStartingServices();
+    }
+
+    @Override
+    public int getCurrentlyStartingServices() {
+        return currentlyStartingServices;
+    }
+
+    @Override
+    public void setCurrentlyStartingServices(int i) {
+        this.currentlyStartingServices = i;
+    }
+
+    @Override
+    public float getCpuUsage() {
+        return (float) PoloCloudAPI.getInstance().getSystemManager().getResourceProvider().getSystemCpuLoad();
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    @Override
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
+
+    @Override
+    public long getSnowflake() {
+        return this.config.getSnowflake();
+    }
+
+    @Override
+    public long getMaxMemory() {
+        return config.getMemory();
+    }
+
+    @Override
+    public boolean isStillConnected() {
+        return true;
+    }
+
+    @Override
+    public List<IGameServer> getServers() {
+        return PoloCloudAPI.getInstance().getGameServerManager().getAllCached(gameServer -> gameServer.getWrapper().getName().equalsIgnoreCase(this.getName()));
+    }
+
+    @Override
+    public ChannelHandlerContext ctx() {
+        return getConnection().ctx();
+    }
+
+    @Override
+    public void update() {
+        WrapperUpdatePacket wrapperUpdatePacket = new WrapperUpdatePacket(this);
+        sendPacket(wrapperUpdatePacket);
+    }
+
+    @Override
+    public void startServer(IGameServer gameServer) {
+
+        Scheduler.runtimeScheduler().schedule(() -> {
+            IGameServer cached = PoloCloudAPI.getInstance().getGameServerManager().getCached(gameServer.getName());
+            if (cached == null) {
+                cached = gameServer;
+            }
+            if (cached.getPort() == -1) {
+                cached.setPort(PoloCloudAPI.getInstance().getGameServerManager().getFreePort(cached.getTemplate()));
+            }
+            ServiceStarter serviceStarter = new ServiceStarter(cached);
+
+            if (serviceStarter.checkWrapper()) {
+                try {
+                    serviceStarter.copyFiles();
+                    serviceStarter.createProperties();
+                    serviceStarter.createCloudFiles();
+                    serviceStarter.start(server -> {
+                        //If in screen not sending message!
+                        if (Wrapper.getInstance().getScreenManager().getScreen() != null && Wrapper.getInstance().getScreenManager().isInScreen()) {
+                            return;
+                        }
+                        PoloLogger.print(LogLevel.INFO, "§7Queued GameServer §b" + server.getName() + " §7[§7Port: §b" + server.getPort() + " §7| §7Mode: §b" + (server.getTemplate().isDynamic() ? "DYNAMIC" : "STATIC") + "_" + server.getTemplate().getTemplateType() + "§7@§3" + server.getTemplate().getVersion().getTitle() + "§7]");
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, 2L);
+    }
+
+    @Override
+    public void stopServer(IGameServer gameServer) {
+        long snowflake = gameServer.getSnowflake();
+        String name = gameServer.getName();
+
+        IScreenManager screenManager = Wrapper.getInstance().getScreenManager();
+
+        IScreen screen = screenManager.getScreen(name);
+        if (screen != null) {
+            Process process = screen.getProcess();
+            if (process != null) {
+                process.destroy();
+            }
+        } else {
+            PoloLogger.print(LogLevel.ERROR, "§cCouldn't stop §e" + name + " §cbecause no Screen was registered!");
+        }
+    }
+
     @Override
     public INetworkConnection getConnection() {
         return this.nettyClient;

@@ -6,6 +6,7 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.ModuleCopyType;
+import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
@@ -13,6 +14,7 @@ import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.console.ConsoleColors;
+import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.properties.BungeeProperties;
 import de.polocloud.wrapper.impl.config.properties.SpigotExtraProperties;
@@ -40,7 +42,6 @@ public class ServiceStarter {
     public ServiceStarter(IGameServer service) {
         this.service = service;
         this.template = service.getTemplate();
-
 
         GameServerVersion version = template.getVersion();
         if (version == null) {
@@ -85,6 +86,38 @@ public class ServiceStarter {
     }
 
     /**
+     * Checks if this wrapper is allowed to start this server
+     */
+    public boolean checkWrapper() {
+        IWrapper wrapper = Wrapper.getInstance();
+
+        boolean allow = true;
+
+        if (wrapper.getMaxSimultaneouslyStartingServices() > 0 && wrapper.getCurrentlyStartingServices() >= wrapper.getMaxSimultaneouslyStartingServices()) {
+            if (!wrapper.hasEnoughMemory(service.getTotalMemory())) {
+                PoloCloudAPI.getInstance().messageCloud("§cThe Wrapper §e" + wrapper.getName() + " §cwasn't able to start §e" + service.getName() + " §cbecause it is starting more servers at once than allowed and it does not have enough memory to start it!");
+            } else {
+                PoloCloudAPI.getInstance().messageCloud("§cThe Wrapper §e" + wrapper.getName() + " §cwasn't able to start §e" + service.getName() + " §cbecause it is starting more servers at once than allowed!");
+            }
+            allow = false;
+        } else if (!wrapper.hasEnoughMemory(service.getTotalMemory())) {
+            PoloCloudAPI.getInstance().messageCloud("§cThe Wrapper §e" + wrapper.getName() + " §cwasn't able to start §e" + service.getName() + " §cbecause it does not have enough memory to start it!");
+            allow = false;
+        }
+
+        if (!allow) {
+            serverLocation.delete();
+            PoloCloudAPI.getInstance().getGameServerManager().unregister(service);
+            PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(service.getSnowflake(), service.getName()));
+        } else {
+            wrapper.setCurrentlyStartingServices((wrapper.getCurrentlyStartingServices() + 1));
+            wrapper.update();
+        }
+
+        return allow;
+    }
+
+    /**
      * Copies all files from the template
      * to the temp directory
      */
@@ -97,8 +130,16 @@ public class ServiceStarter {
             pluginsDirectory.mkdirs();
         }
 
+
+        File versionFile = this.serverFile;
+
         FileUtils.copyDirectory(templateDirectory, serverLocation);
-        FileUtils.copyFile(serverFile, new File(serverLocation, getJarFile()));
+
+        try {
+            FileUtils.copyFile(versionFile, new File(serverLocation, getJarFile()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for (File file : Wrapper.getInstance().getModuleCopyService().getCachedModule().keySet()) {
             List<ModuleCopyType> types = Arrays.asList(Wrapper.getInstance().getModuleCopyService().getCachedModule().get(file));
@@ -123,7 +164,8 @@ public class ServiceStarter {
             FileUtils.copyDirectory(FileConstants.WRAPPER_EVERY_MINECRAFT_TEMPLATE, serverLocation); //Every spigot template
         }
 
-        FileUtils.copyFile(FileConstants.WRAPPER_CLOUD_API, new File(serverLocation + "/plugins/" + FileConstants.CLOUD_API_NAME));
+        File wrapperCloudApi = FileConstants.WRAPPER_CLOUD_API;
+        FileUtils.copyFile(wrapperCloudApi, new File(serverLocation + "/plugins/" + FileConstants.CLOUD_API_NAME));
 
         File serverIcon = new File(serverLocation, "server-icon.png");
 
@@ -136,8 +178,6 @@ public class ServiceStarter {
             }
         }
 
-        //GameServerPrepareFilesEvent event = new GameServerPrepareFilesEvent(this.service, serverLocation);
-        //PoloCloudAPI.getInstance().getEventManager().fireEvent(event);
     }
 
     /**
@@ -252,6 +292,8 @@ public class ServiceStarter {
                     IScreen screen = new SimpleScreen(Thread.currentThread(), process, serverLocation, service.getSnowflake(), service.getName());
                     Wrapper.getInstance().getScreenManager().registerScreen(service.getName(), screen);
                     screen.start();
+
+                    Wrapper.getInstance().setCurrentlyStartingServices((Wrapper.getInstance().getCurrentlyStartingServices() - 1));
 
                     consumer.accept(service);
 

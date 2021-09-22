@@ -1,12 +1,19 @@
 package de.polocloud.wrapper.impl.config;
 
 import de.polocloud.api.config.IConfig;
+import de.polocloud.api.util.Snowflake;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter @Setter
 public class WrapperConfig implements IConfig {
 
     private String loginKey;
     private String masterAddress;
     private String wrapperName;
+    private long memory;
+    private final long snowflake;
+    private int maxSimultaneouslyStartingServices;
     private boolean logServerOutput;
 
     private String apiVersion;
@@ -14,48 +21,12 @@ public class WrapperConfig implements IConfig {
     public WrapperConfig() {
         this.apiVersion = "-1";
         this.wrapperName = "Wrapper-1";
+        this.memory = 5000;
+        this.snowflake = Snowflake.getInstance().nextId();
+        this.maxSimultaneouslyStartingServices = 3;
         this.masterAddress = "127.0.0.1:8869";
         this.loginKey = "default";
         this.logServerOutput = false;
     }
 
-    public boolean isLogServerOutput() {
-        return logServerOutput;
-    }
-
-    public void setLogServerOutput(boolean logServerOutput) {
-        this.logServerOutput = logServerOutput;
-    }
-
-    public void setLoginKey(String loginKey) {
-        this.loginKey = loginKey;
-    }
-
-    public void setMasterAddress(String masterAddress) {
-        this.masterAddress = masterAddress;
-    }
-
-    public void setWrapperName(String wrapperName) {
-        this.wrapperName = wrapperName;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public void setApiVersion(String fetchedVersion) {
-        this.apiVersion = fetchedVersion;
-    }
-
-    public String getWrapperName() {
-        return wrapperName;
-    }
-
-    public String getMasterAddress() {
-        return masterAddress;
-    }
-
-    public String getLoginKey() {
-        return loginKey;
-    }
 }

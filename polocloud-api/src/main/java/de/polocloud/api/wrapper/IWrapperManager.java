@@ -43,6 +43,12 @@ public interface IWrapperManager {
     void registerWrapper(IWrapper wrapper);
 
     /**
+     * Updates a {@link IWrapper} in cache
+     * @param wrapper the wrapper
+     */
+    void updateWrapper(IWrapper wrapper);
+
+    /**
      * Unregisters an {@link IWrapper} in cache
      *
      * @param wrapper the wrapper

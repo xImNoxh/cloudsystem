@@ -22,7 +22,7 @@ public interface IScreen {
     /**
      * The {@link Thread} of this screen
      */
-    Thread getThread();
+    Thread[] getThreads();
 
     /**
      * The {@link Process} of this screen

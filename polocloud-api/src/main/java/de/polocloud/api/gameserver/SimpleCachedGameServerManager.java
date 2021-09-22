@@ -13,10 +13,7 @@ import de.polocloud.api.wrapper.ex.NoWrapperFoundException;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class SimpleCachedGameServerManager implements IGameServerManager {
 
@@ -131,7 +128,11 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
             gameServer.updateInternally();
         }
 
-        cachedObjects.removeIf(gameServer1 -> gameServer1.getName().equalsIgnoreCase(gameServer.getName()));
+        try {
+            cachedObjects.removeIf(gameServer1 -> gameServer1.getName().equalsIgnoreCase(gameServer.getName()));
+        } catch (ConcurrentModificationException e) {
+            //
+        }
 
         if (PoloCloudAPI.getInstance().getType().isCloud()) {
             PoloCloudAPI.getInstance().updateCache();

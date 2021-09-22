@@ -234,28 +234,32 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.running = false;
         boolean terminate = this.nettyServer != null && this.nettyServer.terminate();
 
-        //Kicking all players
-        getCommandExecutor().sendMessage("§7Kicking §3" + (cloudPlayerManager == null ? "0" : cloudPlayerManager.getAllCached().size()) + " §7CloudPlayers...");
-        for (ICloudPlayer cloudPlayer : (cloudPlayerManager == null ? new ArrayList<ICloudPlayer>() : cloudPlayerManager)) {
-            cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
+        try {
+            //Kicking all players
+            getCommandExecutor().sendMessage("§7Kicking §3" + (cloudPlayerManager == null ? "0" : cloudPlayerManager.getAllCached().size()) + " §7CloudPlayers...");
+            for (ICloudPlayer cloudPlayer : (cloudPlayerManager == null ? new ArrayList<ICloudPlayer>() : cloudPlayerManager)) {
+                cloudPlayer.kick(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getNetworkShutdown());
+            }
+
+            //Stopping all servers
+            getCommandExecutor().sendMessage("§7Stopping §3" + gameServerManager.getAllCached().size() + " §7GameServers...");
+            for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
+                gameServer.terminate();
+            }
+
+            //Shutting down all modules
+            getCommandExecutor().sendMessage("§7Disabling §3" + moduleService.getModules().size() + " §7Modules...");
+            moduleService.shutdown();
+
+            //Stopping process
+            Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
+
+            //Shutting down loggers
+            getCommandExecutor().sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
+            loggerFactory.shutdown();
+        } catch (Exception e) {
+            System.out.println("ERROR");
         }
-
-        //Stopping all servers
-        getCommandExecutor().sendMessage("§7Stopping §3" + gameServerManager.getAllCached().size() + " §7GameServers...");
-        for (IGameServer gameServer : new LinkedList<>(gameServerManager.getAllCached())) {
-            gameServer.terminate();
-        }
-
-        //Shutting down all modules
-        getCommandExecutor().sendMessage("§7Disabling §3" + moduleService.getModules().size() + " §7Modules...");
-        moduleService.shutdown();
-
-        //Stopping process
-        Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
-
-        //Shutting down loggers
-        getCommandExecutor().sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
-        loggerFactory.shutdown();
         return terminate;
     }
 

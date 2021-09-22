@@ -37,7 +37,6 @@ public class ServiceStopper {
         }
 
         Process process = screen.getProcess();
-        Thread thread = screen.getThread();
 
         //thread.stop(); //Stopping thread
         process.destroy(); //Shutting down process

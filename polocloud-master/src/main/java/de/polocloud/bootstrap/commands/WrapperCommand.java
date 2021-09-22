@@ -6,6 +6,11 @@ import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.identifier.TabCompletable;
+import de.polocloud.api.network.packets.wrapper.WrapperUpdatePacket;
+import de.polocloud.api.player.extras.IPlayerSettings;
+import de.polocloud.api.util.system.SystemManager;
+import de.polocloud.api.util.system.ressources.IResourceConverter;
+import de.polocloud.api.util.system.ressources.IResourceProvider;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.logger.PoloLogger;
@@ -53,7 +58,33 @@ public class WrapperCommand implements CommandListener, TabCompletable {
             }
 
         } else if (params.length == 2 && params[0].equalsIgnoreCase("info")) {
-            PoloLogger.print(LogLevel.INFO, "Stay tuned?!");
+
+            var name = params[1];
+            var wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(name);
+
+            if (wrapper == null) {
+                PoloLogger.print(LogLevel.WARNING, "§cThere is no Wrapper with the name §e" + name + " §cconnected!");
+                return;
+            }
+
+            sender.sendMessage("----[Wrapper]----");
+            sender.sendMessage("§7Name §7: §b" + wrapper.getName());
+            sender.sendMessage("§7Snowflake §7: §b" + wrapper.getSnowflake());
+            sender.sendMessage("§7Authenticated §7: §b" + wrapper.isAuthenticated());
+            sender.sendMessage("§7Connected §7: §b" + wrapper.isStillConnected());
+
+            sender.sendMessage("§7Data §7:");
+            sender.sendMessage("  §8> §7Max Memory §7: §b" + wrapper.getMaxMemory() + " MB");
+            sender.sendMessage("  §8> §7Used Memory §7: §b" + wrapper.getUsedMemory() + " MB");
+            sender.sendMessage("  §8> §7Free Memory §7: §b" + wrapper.getUnusedMemory() + " MB");
+            sender.sendMessage("  §8> §7CPU-Load §7: §b" + wrapper.getCpuUsage() + "%");
+            sender.sendMessage("§7Settings §7:");
+            sender.sendMessage("  §8> §7Max start §7: §b" + wrapper.getMaxSimultaneouslyStartingServices());
+            sender.sendMessage("§7Info §7:");
+            sender.sendMessage("  §8> §7Servers §7: §b" + wrapper.getServers().size());
+            sender.sendMessage("  §8> §7Players §7: §b" + wrapper.getPlayers().size());
+
+            sender.sendMessage("----[/Wrapper]----");
         }
     }
 

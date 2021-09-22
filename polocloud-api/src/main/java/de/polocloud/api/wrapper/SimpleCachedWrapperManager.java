@@ -41,6 +41,22 @@ public class SimpleCachedWrapperManager implements IWrapperManager {
     }
 
     @Override
+    public void updateWrapper(IWrapper wrapper) {
+        IWrapper safeGet = getWrapper(wrapper.getName());
+        if (safeGet == null) {
+            registerWrapper(wrapper);
+            return;
+        }
+        int i = wrappers.indexOf(safeGet);
+
+        try {
+            this.wrappers.set(i, wrapper);
+        } catch (Exception e) {
+            //Ignoring index exception
+        }
+    }
+
+    @Override
     public void registerWrapper(IWrapper wrapper) {
         if (!this.wrappers.contains(wrapper)) {
             this.wrappers.add(wrapper);

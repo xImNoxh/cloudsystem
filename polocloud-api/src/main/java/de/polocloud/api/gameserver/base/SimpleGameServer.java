@@ -21,9 +21,12 @@ import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -33,12 +36,8 @@ import java.util.stream.Collectors;
  * This is just an info class
  * No Netty instances like {@link ChannelHandlerContext} can be returned
  */
+@NoArgsConstructor @Data
 public class SimpleGameServer implements IGameServer {
-
-    /**
-     * The motd of the server
-     */
-    private String motd;
 
     /**
      * The id of this server
@@ -46,10 +45,18 @@ public class SimpleGameServer implements IGameServer {
     private int id;
 
     /**
+     * The motd of the server
+     */
+    private String motd;
+
+    /**
      * The status
      */
-    private GameServerStatus gameServerStatus;
+    private GameServerStatus status;
 
+    /**
+     * If the status has changed of this server
+     */
     boolean statusChanged;
 
     /**
@@ -108,17 +115,20 @@ public class SimpleGameServer implements IGameServer {
      */
     private List<IProperty> properties;
 
+    /**
+     * The version string to display in motd
+     */
     private String versionString;
 
+    /**
+     * The player info to display in motd
+     */
     private String[] playerInfo;
 
-    public SimpleGameServer() {
-    }
-
-    public SimpleGameServer(int id, String motd, GameServerStatus gameServerStatus, long snowflake, long startedTime, long memory, int port, int maxplayers, String template) {
+    public SimpleGameServer(int id, String motd, GameServerStatus status, long snowflake, long startedTime, long memory, int port, int maxplayers, String template) {
         this.id = id;
         this.motd = motd;
-        this.gameServerStatus = gameServerStatus;
+        this.status = status;
         this.snowflake = snowflake;
         this.startedTime = startedTime;
         this.memory = memory;
@@ -135,15 +145,9 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public List<IProperty> getProperties() {
-        return this.properties;
-    }
-
-    @Override
     public IProperty getProperty(String name) {
         return this.properties.stream().filter(property -> property.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
-
 
     @Override
     public void insertProperty(Consumer<IProperty> consumer) {
@@ -180,56 +184,18 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public int getId() {
-        return id;
-    }
-
-
-    @Override
     public void deleteProperty(String name) {
         this.properties.removeIf(property -> property.getName().equalsIgnoreCase(name));
     }
 
-    @Override
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    @Override
-    public String getHost() {
-        return host;
-    }
-
-    public ChannelHandlerContext getChannelHandlerContext() {
-        return channelHandlerContext;
-    }
-
-    public void setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
-        this.channelHandlerContext = channelHandlerContext;
-    }
-
-    @Override
-    public void setRegistered(boolean registered) {
-        this.registered = registered;
-    }
-
-    @Override
-    public boolean isRegistered() {
-        return registered;
-    }
     @Override
     public String getName() {
         return template + "-" + id;
     }
 
     @Override
-    public GameServerStatus getStatus() {
-        return gameServerStatus;
-    }
-
-    @Override
     public void setStatus(GameServerStatus status) {
-        gameServerStatus = status;
+        this.status = status;
         statusChanged = true;
     }
 
@@ -248,10 +214,7 @@ public class SimpleGameServer implements IGameServer {
 
     @Override
     public IWrapper getWrapper() {
-        for (IWrapper allWrapper : getWrappers()) {
-            return allWrapper;
-        }
-        return null;
+        return Arrays.stream(getWrappers()).findAny().orElse(null);
     }
 
     @Override
@@ -264,26 +227,6 @@ public class SimpleGameServer implements IGameServer {
             }
         }
         return wrappers.toArray(new IWrapper[0]);
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setProperties(List<IProperty> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public void setSnowflake(long snowflake) {
-        this.snowflake = snowflake;
-    }
-
-    @Override
-    public void setStartedTime(long ms) {
-        this.startedTime = ms;
     }
 
     @Override
@@ -332,11 +275,6 @@ public class SimpleGameServer implements IGameServer {
     }
 
     @Override
-    public void setMemory(long memory) {
-        this.memory = memory;
-    }
-
-    @Override
     public void newSnowflake() {
         this.setSnowflake(Snowflake.getInstance().nextId());
     }
@@ -356,25 +294,15 @@ public class SimpleGameServer implements IGameServer {
         return memory;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     @Override
     public int getOnlinePlayers() {
-        return onlinePlayers;
-    }
-
-    @Override
-    public int getPort() {
-        return port;
+        return Math.max(onlinePlayers, getPlayers().size());
     }
 
     @Override
     public long getStartTime() {
         return startedTime;
     }
-
 
     @Override
     public void terminate() {
@@ -395,18 +323,6 @@ public class SimpleGameServer implements IGameServer {
         PoloCloudAPI.getInstance().getConnection().sendPacket(new ForwardingPacket(PoloType.GENERAL_GAMESERVER, this.getName(), packet));
     }
 
-
-
-    @Override
-    public String getMotd() {
-        return motd;
-    }
-
-    @Override
-    public void setMotd(String motd) {
-        this.motd = motd;
-    }
-
     @Override
     public void setServerPing(String motd, int maxPlayers, int onlinePlayers, String versionString, String[] playerInfo) {
         this.motd = motd;
@@ -417,28 +333,11 @@ public class SimpleGameServer implements IGameServer {
         this.playerInfo = playerInfo;
     }
 
-    public String[] getPlayerInfo() {
-        return playerInfo;
-    }
-
-    public String getVersionString() {
-        return versionString;
-    }
-
-    @Override
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
     @Override
     public ChannelHandlerContext ctx() {
-        return null;
+        return channelHandlerContext;
     }
 
-    @Override
-    public void setMaxPlayers(int players) {
-        this.maxPlayers = players;
-    }
 
     @Override
     public void update() {
@@ -460,7 +359,7 @@ public class SimpleGameServer implements IGameServer {
     public void updateInternally() {
         if (statusChanged) {
             statusChanged = false;
-            PoloCloudAPI.getInstance().getEventManager().fireEvent(new GameServerStatusChangeEvent(this, this.gameServerStatus));
+            PoloCloudAPI.getInstance().getEventManager().fireEvent(new GameServerStatusChangeEvent(this, this.status));
         }
         PoloCloudAPI.getInstance().getGameServerManager().update(this);
     }

@@ -144,8 +144,7 @@ public class GameServerCommand implements CommandListener, TabCompletable {
 
                 for (int i = 0; i < amount; i++) {
                     PoloLogger.print(LogLevel.INFO, "Requesting start...");
-
-                    SimpleGameServer gameServer = new SimpleGameServer(id, template.getMotd(), GameServerStatus.STARTING, Snowflake.getInstance().nextId(), System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template), template.getMaxPlayers(), template.getName());
+                    SimpleGameServer gameServer = new SimpleGameServer((id + i), template.getMotd(), GameServerStatus.STARTING, Snowflake.getInstance().nextId(), System.currentTimeMillis(), template.getMaxMemory(), PoloCloudAPI.getInstance().getGameServerManager().getFreePort(template), template.getMaxPlayers(), template.getName());
                     wrapperClient.startServer(gameServer);
                 }
                 PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully requested start for » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + " servers!");

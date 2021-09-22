@@ -12,10 +12,7 @@ import de.polocloud.wrapper.manager.screen.IScreenManager;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 public class SimpleScreen extends Thread implements IScreen {
 
@@ -136,8 +133,8 @@ public class SimpleScreen extends Thread implements IScreen {
     }
 
     @Override
-    public Thread getThread() {
-        return thread;
+    public Thread[] getThreads() {
+        return Arrays.asList(this/*, thread*/).toArray(new Thread[0]);
     }
 
     @Override

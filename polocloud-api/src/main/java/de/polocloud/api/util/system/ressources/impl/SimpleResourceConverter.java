@@ -8,8 +8,10 @@ public class SimpleResourceConverter implements IResourceConverter {
     public String convertLongToSize(long value) {
         final long[] dividers = new long[]{T, G, M, K, 1};
         final String[] units = new String[]{"TB", "GB", "MB", "KB", "B"};
-        if (value < 1)
-            throw new IllegalArgumentException("Invalid size: " + value);
+
+        if (value < 1) {
+            value = 0;
+        }
         String result = null;
         for (int i = 0; i < dividers.length; i++) {
             final long divider = dividers[i];

@@ -20,49 +20,7 @@ public class WrapperHandlerMasterRequestStart implements IPacketHandler<Packet> 
 
         MasterRequestServerStartPacket packet = (MasterRequestServerStartPacket) obj;
         IGameServer gameServer = packet.getGameServer();
-        String serverName = packet.getServerName();
-        int port = packet.getPort();
-
-        this.tryStart(serverName, port, gameServer);
-    }
-
-
-    private void tryStart(String name, int port, IGameServer fallbackIfNull) {
-
-        IGameServer cached = PoloCloudAPI.getInstance().getGameServerManager().getCached(name);
-        if (cached == null) {
-            cached = fallbackIfNull;
-        }
-        if (cached != null) {
-            if (cached.getPort() == -1 && port == -1) {
-                cached.setPort(PoloCloudAPI.getInstance().getGameServerManager().getFreePort(cached.getTemplate()));
-            } else if (port != -1) {
-                cached.setPort(port);
-            }
-            ServiceStarter serviceStarter = new ServiceStarter(cached);
-
-            try {
-                serviceStarter.copyFiles();
-                serviceStarter.createProperties();
-                serviceStarter.createCloudFiles();
-                serviceStarter.start(server -> {
-                    //If in screen not sending message!
-                    if (Wrapper.getInstance().getScreenManager().getScreen() != null && Wrapper.getInstance().getScreenManager().isInScreen()) {
-                        return;
-                    }
-                    PoloLogger.print(LogLevel.INFO, "§7Queued GameServer §b" + server.getName() + " §7[§7Port: §b" + server.getPort() + " §7| §7Mode: §b" + (server.getTemplate().isDynamic() ? "DYNAMIC" : "STATIC") + "_" + server.getTemplate().getTemplateType() + "§7@§3" + server.getTemplate().getVersion().getTitle() + "§7]");
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            PoloLogger.print(LogLevel.ERROR, "§cTried to start GameServer §e" + name + " §calthough it was not registered before!");
-            PoloLogger.print(LogLevel.INFO, "§cRequesting Cache and trying again in §e1 second§c...");
-            PoloCloudAPI.getInstance().updateCache();
-            Scheduler.runtimeScheduler().schedule(() -> this.tryStart(name, port, null), 20L);
-        }
-
+        Wrapper.getInstance().startServer(gameServer);
     }
 
     @Override

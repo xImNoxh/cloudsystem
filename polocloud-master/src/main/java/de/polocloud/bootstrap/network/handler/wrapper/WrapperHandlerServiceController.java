@@ -34,11 +34,16 @@ public abstract class WrapperHandlerServiceController {
     }
 
     public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, IWrapper> response, ChannelHandlerContext ctx) {
-        response.accept(PoloCloudAPI.getInstance().getMasterConfig().getProperties().getWrapperKey().equals(packet.getKey()), new SimpleMasterWrapper(packet.getName(), ctx));
+        IWrapper wrapper = packet.getWrapper();
+
+        SimpleMasterWrapper simpleMasterWrapper = new SimpleMasterWrapper(wrapper.getName(), ctx, wrapper.getMaxMemory(), wrapper.getMaxSimultaneouslyStartingServices());
+        simpleMasterWrapper.setAuthenticated(wrapper.isAuthenticated());
+
+        response.accept(PoloCloudAPI.getInstance().getMasterConfig().getProperties().getWrapperKey().equals(packet.getKey()), simpleMasterWrapper);
     }
 
     public void sendWrapperSuccessfully(IWrapper wrapper, WrapperLoginPacket packet) {
-        PoloLogger.print(LogLevel.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
+        PoloLogger.print(LogLevel.INFO, "The Wrapper " + ConsoleColors.LIGHT_BLUE + packet.getWrapper().getName() + ConsoleColors.GRAY + " is successfully connected to the master.");
         LinkedHashMap<File, ModuleCopyType[]> modulesWithInfo = Master.getInstance().getModuleService().getAllModulesToCopyWithInfo();
         if (!modulesWithInfo.isEmpty()) {
             wrapper.sendPacket(new WrapperTransferModulesPacket(modulesWithInfo));

@@ -15,7 +15,7 @@ public class WrapperPacketHandlerService extends WrapperHandlerServiceController
     @Override
     public void handlePacket(ChannelHandlerContext ctx, WrapperLoginPacket packet) {
         getLoginResponse(packet, (response, client) -> {
-            String name = packet.getName();
+            String name = packet.getWrapper().getName();
             if (wrapperManager.getWrapper(name) != null) {
                 client.sendPacket(new MasterLoginResponsePacket(false, "§cThere is already a Wrapper with the name §e" + name + "§c!"));
             } else {

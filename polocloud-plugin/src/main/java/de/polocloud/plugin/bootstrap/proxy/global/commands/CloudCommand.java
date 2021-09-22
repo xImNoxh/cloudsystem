@@ -78,8 +78,8 @@ public class CloudCommand implements CommandListener {
                     IGameServer lowest = gameServerManager.getAllCached().stream().min(Comparator.comparingInt(IGameServer::getOnlinePlayers)).orElse(null);
 
                     player.sendMessage(prefix + "§7Online Players §8: §3" + cloudPlayerManager.getAllCached().size());
-                    player.sendMessage(prefix + "§7Most Players §8: §3" + (highest == null ? "N/A" : highest.getName() + " §8(§3" + highest.getOnlinePlayers() + "§8)"));
-                    player.sendMessage(prefix + "§7Fewest Players §8: §3" + (lowest == null ? "N/A" : (lowest.getName().equalsIgnoreCase(highest == null ? "" : highest.getName()) ? "Same players" : lowest.getName() + " §8(§3" + lowest.getOnlinePlayers() + "§8)")));
+                    player.sendMessage(prefix + "§7Most Players §8: §3" + (highest == null ? "N/A" : highest.getName() + " §8(§3" + highest.getPlayers().size() + "§8)"));
+                    player.sendMessage(prefix + "§7Fewest Players §8: §3" + (lowest == null ? "N/A" : (lowest.getName().equalsIgnoreCase(highest == null ? "" : highest.getName()) ? "Same players" : lowest.getName() + " §8(§3" + lowest.getPlayers().size() + "§8)")));
 
                     player.sendMessage("§8");
                     player.sendMessage(prefix + "§7OS §8: §3" + resourceProvider.getSystem().getName());

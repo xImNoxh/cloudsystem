@@ -1,5 +1,6 @@
 package de.polocloud.wrapper.impl.handler;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
@@ -16,20 +17,7 @@ public class WrapperHandlerMasterRequestTerminate implements IPacketHandler<Pack
     public void handlePacket(ChannelHandlerContext ctx, Packet obj) {
         MasterRequestsServerTerminatePacket packet = (MasterRequestsServerTerminatePacket) obj;
 
-        long snowflake = packet.getSnowflake();
-        String name = packet.getName();
-
-        IScreenManager screenManager = Wrapper.getInstance().getScreenManager();
-
-        IScreen screen = screenManager.getScreen(name);
-        if (screen != null) {
-            Process process = screen.getProcess();
-            if (process != null) {
-                process.destroy();
-            }
-        } else {
-            PoloLogger.print(LogLevel.ERROR, "§cCouldn't stop §e" + name + " §cbecause no Screen was registered!");
-        }
+        Wrapper.getInstance().stopServer(PoloCloudAPI.getInstance().getGameServerManager().getCached(packet.getName()));
     }
 
     @Override

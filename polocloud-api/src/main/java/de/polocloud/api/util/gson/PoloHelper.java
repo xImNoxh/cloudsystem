@@ -56,18 +56,21 @@ public class PoloHelper {
         return new SimpleDateFormat("dd-MM-yyyy").format(new Date());
     }
 
-    public static int generatePort() {
-        int port = 0;
-        try {
-            ServerSocket socket = new ServerSocket(0);
-            port = socket.getLocalPort();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return port;
+    public static long getMaxMemory() {
+        return Runtime.getRuntime().maxMemory();
     }
 
+    public static long getUsedMemory() {
+        return getMaxMemory() - getFreeMemory();
+    }
+
+    public static long getTotalMemory() {
+        return Runtime.getRuntime().totalMemory();
+    }
+
+    public static long getFreeMemory() {
+        return Runtime.getRuntime().freeMemory();
+    }
 
     @SneakyThrows
     public static InetSocketAddress getAddress(String address)  {

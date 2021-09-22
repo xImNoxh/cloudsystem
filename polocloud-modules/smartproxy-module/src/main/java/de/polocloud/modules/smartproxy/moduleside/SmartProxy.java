@@ -117,7 +117,7 @@ public class SmartProxy extends CloudModule {
 
         if (smartProxyConfig.isEnabled()) {
             if (networkConfig.getProperties().getDefaultProxyStartPort() == 25565) {
-                PoloLogger.print(INFO, "§7Default-Proxy-Port was §b25565 §7had to change to §325566 §7in order to make §bSmartProxy §7work§h!");
+                PoloLogger.print(INFO, "§7Default-Proxy-Port was §b25565 §7had to change to §325566 §7in order to make §bSmartProxy §7work§7!");
 
                 networkConfig.getProperties().setDefaultProxyStartPort(25566);
                 networkConfig.update();
@@ -126,7 +126,7 @@ public class SmartProxy extends CloudModule {
             MINECRAFT_PACKETS.put(0x00, MinecraftPingPacket.class);
         } else {
             if (networkConfig.getProperties().getDefaultProxyStartPort() != 25565) {
-                PoloLogger.print(INFO,"§7SmartProxy is currently §cdisabled§h! §7Setting Default-Proxy-Port §7back to §b25565§h!");
+                PoloLogger.print(INFO,"§7SmartProxy is currently §cdisabled§7! §7Setting Default-Proxy-Port §7back to §b25565§7!");
 
                 networkConfig.getProperties().setDefaultProxyStartPort(25565);
                 networkConfig.update();

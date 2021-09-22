@@ -33,6 +33,7 @@ import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.packets.api.MasterCache;
 import de.polocloud.api.network.packets.other.TextPacket;
+import de.polocloud.api.network.packets.wrapper.WrapperUpdatePacket;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.PacketFactory;
@@ -58,6 +59,7 @@ import de.polocloud.api.uuid.IUUIDFetcher;
 import de.polocloud.api.uuid.SimpleUUIDFetcher;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
+import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
 import org.reflections.Reflections;
@@ -142,6 +144,20 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
         PoloInject.bind(ITemplate.class).toInstance(new SimpleTemplate());
         PoloInject.bind(IGameServer.class).toInstance(new SimpleGameServer());
+
+        this.registerPacketHandler(new IPacketHandler<WrapperUpdatePacket>() {
+
+            @Override
+            public void handlePacket(ChannelHandlerContext ctx, WrapperUpdatePacket packet) {
+                IWrapper wrapper = packet.getWrapper();
+                wrapperManager.updateWrapper(wrapper);
+            }
+
+            @Override
+            public Class<? extends Packet> getPacketClass() {
+                return WrapperUpdatePacket.class;
+            }
+        });
     }
 
     /**
@@ -284,6 +300,10 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * @param packetHandler the handler to register
      */
     public void registerPacketHandler(IPacketHandler<? extends Packet> packetHandler) {
+        if (getConnection() == null) {
+            Scheduler.runtimeScheduler().schedule(() -> registerPacketHandler(packetHandler), () -> getConnection() != null);
+            return;
+        }
         getConnection().getProtocol().registerPacketHandler(packetHandler);
     }
 
