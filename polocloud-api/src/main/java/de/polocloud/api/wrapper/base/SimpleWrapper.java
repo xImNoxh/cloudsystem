@@ -65,12 +65,13 @@ public class SimpleWrapper implements IWrapper {
 
     @Override
     public void sendPacket(Packet packet) {
-        packet = new ForwardingPacket(PoloType.WRAPPER, this.name, packet);
+
+        Packet forwardingPacket = new ForwardingPacket(PoloType.WRAPPER, this.name, packet);
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
             PoloCloudAPI.getInstance().getConnection().getProtocol().firePacketHandlers(ctx, packet);
             return;
         }
-        PoloCloudAPI.getInstance().getConnection().sendPacket(packet);
+        PoloCloudAPI.getInstance().getConnection().sendPacket(forwardingPacket);
     }
 
     @Override

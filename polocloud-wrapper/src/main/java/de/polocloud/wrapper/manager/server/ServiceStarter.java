@@ -9,6 +9,7 @@ import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
@@ -93,16 +94,26 @@ public class ServiceStarter {
 
         boolean allow = true;
 
-        if (wrapper.getMaxSimultaneouslyStartingServices() > 0 && wrapper.getCurrentlyStartingServices() >= wrapper.getMaxSimultaneouslyStartingServices()) {
-            if (!wrapper.hasEnoughMemory(service.getTotalMemory())) {
-                PoloCloudAPI.getInstance().messageCloud("§cThe Wrapper §e" + wrapper.getName() + " §cwasn't able to start §e" + service.getName() + " §cbecause it is starting more servers at once than allowed and it does not have enough memory to start it!");
-            } else {
-                PoloCloudAPI.getInstance().messageCloud("§cThe Wrapper §e" + wrapper.getName() + " §cwasn't able to start §e" + service.getName() + " §cbecause it is starting more servers at once than allowed!");
+        if (template.getServers().size() > template.getMaxServerCount()) {
+            PoloCloudAPI.getInstance().messageCloud("§7Wrapper §6" + wrapper.getName() + " §7could not start §e" + service.getName() + " §7because the maximum servers allowed for template §b" + template.getName() + " §7is currently §3" + template.getMaxServerCount() + "§7!");
+            allow = false;
+        } else {
+
+            if (wrapper.getMaxSimultaneouslyStartingServices() > 0 && wrapper.getCurrentlyStartingServices() >= wrapper.getMaxSimultaneouslyStartingServices()) {
+                if (!wrapper.hasEnoughMemory(service.getTotalMemory())) {
+                    PoloCloudAPI.getInstance().messageCloud("§7Wrapper §6" + wrapper.getName() + " §7wasn't able to start §e" + service.getName() + " §7because it is starting §cmore §7servers at once §cthan allowed §7and also it does §cnot §7have enough §6memory §7to start it!");
+                } else {
+                    PoloCloudAPI.getInstance().messageCloud("§7Wrapper §6" + wrapper.getName() + " §7wasn't able to start §e" + service.getName() + " §7because it is starting §cmore §7servers at once §cthan allowed§7!");
+                    if (Wrapper.getInstance().getConfig().isAddCancelledServicesToQueue()) {
+                        PoloCloudAPI.getInstance().messageCloud("§7Wrapper §6" + wrapper.getName() + " §7added §e" + service.getName() + " §7to queue!");
+                        Scheduler.runtimeScheduler().schedule(() -> Wrapper.getInstance().startServer(service), () -> wrapper.getCurrentlyStartingServices() < wrapper.getMaxSimultaneouslyStartingServices());
+                    }
+                }
+                allow = false;
+            } else if (!wrapper.hasEnoughMemory(service.getTotalMemory())) {
+                PoloCloudAPI.getInstance().messageCloud("§7Wrapper §6" + wrapper.getName() + " §7does §cnot §7have enough §6memory §7to start §e" + service.getName() + "§7!");
+                allow = false;
             }
-            allow = false;
-        } else if (!wrapper.hasEnoughMemory(service.getTotalMemory())) {
-            PoloCloudAPI.getInstance().messageCloud("§cThe Wrapper §e" + wrapper.getName() + " §cwasn't able to start §e" + service.getName() + " §cbecause it does not have enough memory to start it!");
-            allow = false;
         }
 
         if (!allow) {
@@ -288,12 +299,14 @@ public class ServiceStarter {
 
                 if (process.isAlive()) {
 
+                    IWrapper wrapper = Wrapper.getInstance();
+                    wrapper.setCurrentlyStartingServices((wrapper.getCurrentlyStartingServices() - 1));
+                    wrapper.update();
+
                     //Registering screen
                     IScreen screen = new SimpleScreen(Thread.currentThread(), process, serverLocation, service.getSnowflake(), service.getName());
                     Wrapper.getInstance().getScreenManager().registerScreen(service.getName(), screen);
                     screen.start();
-
-                    Wrapper.getInstance().setCurrentlyStartingServices((Wrapper.getInstance().getCurrentlyStartingServices() - 1));
 
                     consumer.accept(service);
 

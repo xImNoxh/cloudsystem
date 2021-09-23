@@ -1,11 +1,14 @@
 package de.polocloud.api.gameserver;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.master.properties.Properties;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.wrapper.base.IWrapper;
@@ -111,7 +114,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
         if (this.getCached(gameServer.getName()) == null) {
             this.cachedObjects.add(gameServer);
 
-            if (PoloCloudAPI.getInstance().getType().isCloud()) {
+            if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
                 PoloCloudAPI.getInstance().updateCache();
             }
         }
@@ -134,9 +137,10 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
             //
         }
 
-        if (PoloCloudAPI.getInstance().getType().isCloud()) {
+        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
             PoloCloudAPI.getInstance().updateCache();
         }
+        PoloCloudAPI.getInstance().sendPacket(new GameServerUnregisterPacket(gameServer.getSnowflake(), gameServer.getName()));
     }
 
     @Override
@@ -152,7 +156,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
 
         IGameServerManager.super.update(object);
 
-        if (PoloCloudAPI.getInstance().getType().isCloud()) {
+        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
             PoloCloudAPI.getInstance().updateCache();
         }
     }

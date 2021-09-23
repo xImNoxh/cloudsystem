@@ -8,6 +8,7 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.RedirectPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.packets.gameserver.TemplateUpdatePacket;
 import de.polocloud.api.network.packets.master.MasterStartServerPacket;
@@ -39,6 +40,15 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             ITemplate template = templateUpdatePacket.getTemplate();
             template.update();
             PoloCloudAPI.getInstance().updateCache();
+        });
+
+        PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerUnregisterPacket.class, gameServerUnregisterPacket -> {
+            String name = gameServerUnregisterPacket.getName();
+            long snowflake = gameServerUnregisterPacket.getSnowflake();
+            IGameServer cached = PoloCloudAPI.getInstance().getGameServerManager().getCached(name);
+            if (cached != null) {
+                PoloCloudAPI.getInstance().getGameServerManager().unregister(cached);
+            }
         });
 
         new SimplePacketHandler<>(PingPacket.class, packet -> {

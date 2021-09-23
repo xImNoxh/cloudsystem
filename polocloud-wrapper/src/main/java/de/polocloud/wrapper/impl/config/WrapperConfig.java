@@ -15,6 +15,7 @@ public class WrapperConfig implements IConfig {
     private final long snowflake;
     private int maxSimultaneouslyStartingServices;
     private boolean logServerOutput;
+    private boolean addCancelledServicesToQueue;
 
     private String apiVersion;
 
@@ -22,6 +23,7 @@ public class WrapperConfig implements IConfig {
         this.apiVersion = "-1";
         this.wrapperName = "Wrapper-1";
         this.memory = 5000;
+        this.addCancelledServicesToQueue = true;
         this.snowflake = Snowflake.getInstance().nextId();
         this.maxSimultaneouslyStartingServices = 3;
         this.masterAddress = "127.0.0.1:8869";

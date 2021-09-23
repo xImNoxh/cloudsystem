@@ -43,12 +43,13 @@ import de.polocloud.wrapper.manager.server.ServiceStarter;
 import de.polocloud.wrapper.setup.WrapperSetup;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
+import lombok.Getter;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
 
-
+@Getter
 public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerminatable {
 
     /**
@@ -98,7 +99,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
 
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
         this.authenticated = false;
-        this.currentlyStartingServices = 1;
+        this.currentlyStartingServices = 0;
 
         this.nettyClient = new SimpleNettyClient(config.getMasterAddress().split(":")[0], Integer.parseInt(config.getMasterAddress().split(":")[1]), new SimpleProtocol());
         this.pubSubManager = new SimplePubSubManager(nettyClient);
@@ -282,8 +283,8 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
             if (cached.getPort() == -1) {
                 cached.setPort(PoloCloudAPI.getInstance().getGameServerManager().getFreePort(cached.getTemplate()));
             }
-            ServiceStarter serviceStarter = new ServiceStarter(cached);
 
+            ServiceStarter serviceStarter = new ServiceStarter(cached);
             if (serviceStarter.checkWrapper()) {
                 try {
                     serviceStarter.copyFiles();
@@ -301,7 +302,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
                 }
 
             }
-        }, 2L);
+        }, 1L);
     }
 
     @Override
@@ -337,9 +338,6 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
     public boolean terminate() {
         boolean terminate = this.nettyClient.terminate();
 
-        PoloHelper.deleteFolder(FileConstants.MASTER_MODULES);
-        PoloHelper.deleteFolder(FileConstants.WRAPPER_DYNAMIC_SERVERS);
-
         for (IScreen screen : screenManager.getScreens()) {
             Process process = screen.getProcess();
             if (process != null) {
@@ -348,23 +346,16 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
         }
 
         this.loggerFactory.shutdown();
+        Scheduler.runtimeScheduler().schedule(() -> {
+            PoloHelper.deleteFolder(FileConstants.MASTER_MODULES);
+            PoloHelper.deleteFolder(FileConstants.WRAPPER_DYNAMIC_SERVERS);
+        }, 10L);
         Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
         return terminate;
-    }
-
-    public WrapperConfig getConfig() {
-        return config;
-    }
-
-    public IScreenManager getScreenManager() {
-        return screenManager;
     }
 
     public static Wrapper getInstance() {
         return (Wrapper) PoloCloudAPI.getInstance();
     }
 
-    public ModuleCopyService getModuleCopyService() {
-        return moduleCopyService;
-    }
 }

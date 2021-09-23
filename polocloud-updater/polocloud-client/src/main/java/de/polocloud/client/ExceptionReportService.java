@@ -35,12 +35,12 @@ public class ExceptionReportService {
                 String content;
                 if(reportType.equals(ReportType.MINIMAL)){
                     content = "Cloud-Type: " + type + "\n Cloud-Version: " + cloudVersion + "\n StackTrace: " + stacktrace;
-                    ExceptionWriter.saveException(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis()), content);
+                    ExceptionWriter.saveException(new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()), content);
                 }else if(reportType.equals(ReportType.OPTIONAL)){
                     content = "Java-Version: " + getJavaVersion() + "\n Type: " + type + "\n Cloud-Version: " + cloudVersion + "\n Excpetion: " + stacktrace;
-                    ExceptionWriter.saveException(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis()), content);
+                    ExceptionWriter.saveException(new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()), content);
                 }else{
-                    ExceptionWriter.saveException(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(System.currentTimeMillis()), "StackTrace: " + stacktrace);
+                    ExceptionWriter.saveException(new SimpleDateFormat("yyyy-MM-dd HH-mm-ss.SSS").format(System.currentTimeMillis()), "StackTrace: " + stacktrace);
                     return;
                 }
 

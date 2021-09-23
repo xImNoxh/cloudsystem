@@ -271,7 +271,7 @@ public class Master extends PoloCloudAPI implements IStartable {
         Objects.requireNonNull(PoloLogger.getInstance()).log(LogLevel.ERROR, "§c=======================");
         PoloLogger.getInstance().log(LogLevel.ERROR,"§cUnhandled §eException §coccurred while running a §eProcess§c!");
         PoloLogger.getInstance().log(LogLevel.ERROR,"§cThis was §enot §cintended to §ehappen.");
-        if(client.getClientConfig().getReportType().equals(ReportType.NONE)){
+        if (client.getClientConfig().getReportType().equals(ReportType.NONE)){
             PoloLogger.getInstance().log(LogLevel.ERROR,"§cPlease §ereport §cthis at §e" + PoloCloudAPI.class.getAnnotation(APIVersion.class).discord());
             PoloLogger.getInstance().log(LogLevel.INFO, "§cA copy of the §3exceptions §7was usually saved in the '§3data/reports/§7' folder, you can send this to the report if you want.");
         }else{

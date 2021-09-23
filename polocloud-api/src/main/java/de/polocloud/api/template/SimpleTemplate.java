@@ -161,7 +161,13 @@ public class SimpleTemplate implements ITemplate {
 
     @Override
     public boolean isLobby() {
-        return PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().stream().anyMatch(fallback -> fallback.getTemplateName().equalsIgnoreCase(this.getName()));
+        if (PoloCloudAPI.getInstance().getFallbackManager() == null) {
+            return false;
+        }
+        if (PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().isEmpty()) {
+            return false;
+        }
+        return PoloCloudAPI.getInstance().getFallbackManager().getAvailableFallbacks().stream().anyMatch(fallback -> fallback != null && fallback.getTemplateName().equalsIgnoreCase(this.getName()));
     }
 
     @Override
