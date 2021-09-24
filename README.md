@@ -1,4 +1,17 @@
-Simple MainServer for PoloCloud
+This is PoloCloud.
+
+What is PoloCloud?
+
+PoloCloud is a new light weight cloudsystem software for Minecraft
+
+It starts and stops automaticly dynamic and static servers.
+
+Our API is powerful and have a ton of features.
+
+<br>
+<br>
+
+PoloCloud | Client
 
 The Server refreshes the config every 30 Seconds. In the config you provide the versions of the "api" and the "
 bootstrap" and also the file name of the "api" and the "bootstrap"
