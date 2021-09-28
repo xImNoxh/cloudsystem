@@ -35,10 +35,10 @@ public class ConsoleRunner extends Thread {
             reader.addCompleter(new ConsoleCommandCompleter());
         } catch (IOException e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
         }
         this.consoleReader = reader;
         this.active = false;
-
     }
 
     @Override

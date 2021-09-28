@@ -1,4 +1,4 @@
-package de.polocloud.api.util.system.ressources;
+package de.polocloud.api.util.system.resources;
 
 import java.lang.management.OperatingSystemMXBean;
 
@@ -12,9 +12,12 @@ public interface IResourceProvider {
 
     long getSystemFreeMemory();
 
+    long getProcessVirtualMemory();
+
     long getSystemUsedMemory();
 
     int getSystemProcessors();
+
 
     OperatingSystemMXBean getSystem();
 

@@ -178,7 +178,7 @@ public class SimpleGameServer implements IGameServer {
                     }
                 }
             } catch (Exception e) {
-                //Exception
+                PoloCloudAPI.getInstance().reportException(e);
             }
         } ,unit.toMillis(l));
     }

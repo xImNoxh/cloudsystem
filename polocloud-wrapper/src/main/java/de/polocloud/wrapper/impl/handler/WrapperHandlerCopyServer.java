@@ -56,11 +56,11 @@ public class WrapperHandlerCopyServer implements IPacketHandler<Packet> {
                 }
             } else {
                 try {
-                    List<File> d = new ArrayList<>(FileUtils.listFilesAndDirs(tmpServerFolder, TrueFileFilter.TRUE, TrueFileFilter.TRUE));
-                    for (File file : d) {
+                    List<File> queuedToCopy = new ArrayList<>(FileUtils.listFilesAndDirs(tmpServerFolder, TrueFileFilter.TRUE, TrueFileFilter.TRUE));
+                    for (File file : queuedToCopy) {
                         if(!file.isDirectory()){
                             String rawPath = file.getPath().replace(tmpServerFolder.getPath(), "");
-                            if (rawPath.contains(FileConstants.CLOUD_JSON_NAME) || (!rawPath.contains("/plugins/") && rawPath.contains(".jar")) || rawPath.contains(FileConstants.CLOUD_API_NAME) || rawPath.contains("proxy.log.0")) {
+                            if (rawPath.contains(FileConstants.CLOUD_JSON_NAME) || (!rawPath.contains("/plugins/") && rawPath.contains(".jar")) || rawPath.contains(FileConstants.CLOUD_API_NAME) || rawPath.contains("proxy.log.0") || rawPath.contains("latest.log")) {
                                 continue;
                             }
                             File tar = new File(targetTemplateFolder.getPath() + rawPath);

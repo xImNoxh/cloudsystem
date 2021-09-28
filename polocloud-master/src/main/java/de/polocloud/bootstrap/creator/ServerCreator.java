@@ -4,6 +4,8 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.util.Snowflake;
@@ -35,6 +37,8 @@ public abstract class ServerCreator {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                PoloLogger.print(LogLevel.ERROR, "An exception was caught while starting a server (template: " + template.getName() + "");
+                PoloCloudAPI.getInstance().reportException(e);
             }
         }, 5L);
     }

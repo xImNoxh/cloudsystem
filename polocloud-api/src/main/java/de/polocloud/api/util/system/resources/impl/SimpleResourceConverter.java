@@ -1,6 +1,6 @@
-package de.polocloud.api.util.system.ressources.impl;
+package de.polocloud.api.util.system.resources.impl;
 
-import de.polocloud.api.util.system.ressources.IResourceConverter;
+import de.polocloud.api.util.system.resources.IResourceConverter;
 
 public class SimpleResourceConverter implements IResourceConverter {
 

@@ -1,5 +1,6 @@
 package de.polocloud.api.logger.def;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLog;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
@@ -62,6 +63,7 @@ public class SimplePoloLoggerFactory implements PoloLoggerFactory {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
         }
 
     }

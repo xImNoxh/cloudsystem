@@ -1,6 +1,9 @@
 package de.polocloud.api.config;
 
 import com.google.gson.*;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.util.gson.PoloHelper;
 
 import java.io.*;
@@ -83,7 +86,7 @@ public class JsonData {
     public JsonData(Reader reader) {
         this();
         try {
-            jsonObject = (JsonObject) parser.parse(reader);
+            jsonObject = (JsonObject) JsonParser.parseReader(reader);
         } catch (Exception e) {
             jsonObject = new JsonObject();
         }
@@ -121,7 +124,7 @@ public class JsonData {
 
         if (file != null && file.exists()) {
             try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-                jsonObject = parser.parse(new BufferedReader(reader)).getAsJsonObject();
+                jsonObject = JsonParser.parseReader(new BufferedReader(reader)).getAsJsonObject();
             } catch (Exception e) {
                 jsonObject = new JsonObject();
             }
@@ -129,7 +132,7 @@ public class JsonData {
 
         if (input != null) {
             try {
-                jsonObject = (JsonObject) parser.parse(input);
+                jsonObject = (JsonObject) JsonParser.parseString(input);
             } catch (Exception e) {
                 jsonObject = new JsonObject();
             }
@@ -151,9 +154,12 @@ public class JsonData {
             uc.addRequestProperty("Cache-Control", "no-cache, no-store, must-revalidate");
             uc.addRequestProperty("Pragma", "no-cache");
             String json = new Scanner(uc.getInputStream(), "UTF-8").useDelimiter("\\A").next();
+
             this.jsonObject = new JsonParser().parse(json).getAsJsonObject();
         } catch (Exception e) {
             e.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "Failed to fetch JSON content from website (" + url.getPath() + ")");
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 

@@ -9,7 +9,6 @@ import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.scheduler.SchedulerRequest;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
@@ -142,12 +141,10 @@ public class ServiceStarter {
         }
 
 
-        File versionFile = this.serverFile;
-
         FileUtils.copyDirectory(templateDirectory, serverLocation);
 
         try {
-            FileUtils.copyFile(versionFile, new File(serverLocation, getJarFile()));
+            FileUtils.copyFile(this.serverFile, new File(serverLocation, getJarFile()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -292,7 +289,6 @@ public class ServiceStarter {
         };
 
         Scheduler.runtimeScheduler().schedule(() -> {
-
             try {
                 ProcessBuilder processBuilder = new ProcessBuilder(command).directory(serverLocation);
                 Process process = processBuilder.start();
@@ -329,6 +325,8 @@ public class ServiceStarter {
                 throw new IllegalStateException("Process terminated itself or couldn't be started");
             } catch (Exception exception) {
                 exception.printStackTrace();
+                PoloLogger.print(LogLevel.ERROR, "An exception was caught while starting a process for the gameserver: " + service.getName() + ". (" + exception.getMessage() + "). This server may hasn't correctly started.");
+                PoloCloudAPI.getInstance().reportException(exception);
             }
         });
     }

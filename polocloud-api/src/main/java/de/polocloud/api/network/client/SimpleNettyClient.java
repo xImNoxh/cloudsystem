@@ -4,7 +4,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.IProtocol;
-import de.polocloud.api.network.protocol.SimpleProtocol;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.codec.PacketDecoder;
 import de.polocloud.api.network.protocol.codec.PacketEncoder;

@@ -1,14 +1,10 @@
 package de.polocloud.wrapper.impl.handler;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.master.MasterRequestsServerTerminatePacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.wrapper.Wrapper;
-import de.polocloud.wrapper.manager.screen.IScreen;
-import de.polocloud.wrapper.manager.screen.IScreenManager;
 import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperHandlerMasterRequestTerminate implements IPacketHandler<Packet> {

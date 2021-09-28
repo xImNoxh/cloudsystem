@@ -1,7 +1,7 @@
-package de.polocloud.api.util.system.ressources.impl;
+package de.polocloud.api.util.system.resources.impl;
 
 import com.sun.management.OperatingSystemMXBean;
-import de.polocloud.api.util.system.ressources.IResourceProvider;
+import de.polocloud.api.util.system.resources.IResourceProvider;
 
 import java.lang.management.ManagementFactory;
 
@@ -35,6 +35,11 @@ public class SimpleResourceProvider implements IResourceProvider {
     @Override
     public int getSystemProcessors() {
         return getSystem().getAvailableProcessors();
+    }
+
+    @Override
+    public long getProcessVirtualMemory() {
+        return getSystem().getCommittedVirtualMemorySize();
     }
 
     @Override

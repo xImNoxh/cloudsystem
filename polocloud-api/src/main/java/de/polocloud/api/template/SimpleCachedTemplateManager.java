@@ -2,7 +2,9 @@ package de.polocloud.api.template;
 
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.gameserver.GameServerCopyPacket;
+import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.template.loading.ITemplateLoader;
 import de.polocloud.api.template.loading.ITemplateSaver;
 import de.polocloud.api.wrapper.base.IWrapper;
@@ -31,6 +33,9 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
     @Override
     public void copyServer(IGameServer gameServer, Type type) {
         for (IWrapper wrapper : gameServer.getWrappers()) {
+            if(gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)){
+                gameServer.sendPacket(new GameServerExecuteCommandPacket("save-all", gameServer.getName()));
+            }
             wrapper.sendPacket(new GameServerCopyPacket(type, gameServer));
         }
     }

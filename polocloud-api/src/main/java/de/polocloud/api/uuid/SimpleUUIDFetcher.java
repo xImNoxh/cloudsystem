@@ -2,7 +2,10 @@ package de.polocloud.api.uuid;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.util.map.UniqueMap;
 
@@ -75,6 +78,8 @@ public class SimpleUUIDFetcher implements IUUIDFetcher {
             this.cache.put(object.getString("name")).toValue(parseUUIDFromString(uuidAsString));
             return parseUUIDFromString(uuidAsString);
         } catch (Exception e) {
+            PoloCloudAPI.getInstance().reportException(e);
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while fetching a uuid for a player (" + playerName + ")!");
             return null;
         }
     }
@@ -106,6 +111,8 @@ public class SimpleUUIDFetcher implements IUUIDFetcher {
             cache.put(name).toValue(id);
             return name;
         } catch (Exception ex) {
+            PoloCloudAPI.getInstance().reportException(ex);
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while fetching a name for a player (" + uuid + ")!");
             ex.printStackTrace();
         }
         return null;

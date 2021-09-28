@@ -46,21 +46,14 @@ public class VelocityPacketRegister {
         PoloCloudAPI.getInstance().registerSimplePacketHandler(MasterPlayerSendToServerPacket.class, packet -> {
             UUID uuid = packet.getUuid();
             if (proxyServer.getPlayer(uuid).orElse(null) != null) {
-                RegisteredServer registeredServer = proxyServer.getServer(packet.getTargetServer()).orElse(null);
-                if (registeredServer != null) {
-                    VelocityBootstrap.getInstance().getBridge().connect(uuid, registeredServer.getServerInfo().getName());
-                }
-
+                proxyServer.getServer(packet.getTargetServer()).ifPresent(registeredServer -> VelocityBootstrap.getInstance().getBridge().connect(uuid, registeredServer.getServerInfo().getName()));
             }
         });
 
         //Messaging handler
         PoloCloudAPI.getInstance().registerSimplePacketHandler(MasterPlayerSendMessagePacket.class, packet -> {
             UUID uuid = packet.getUuid();
-            Player player = proxyServer.getPlayer(uuid).orElse(null);
-            if (player != null) {
-                player.sendMessage(Component.text(packet.getMessage()));
-            }
+            proxyServer.getPlayer(uuid).ifPresent(player -> player.sendMessage(Component.text(packet.getMessage())));
         });
 
         PacketMessenger.registerHandler(request -> {

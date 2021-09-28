@@ -4,8 +4,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.modules.hubcommand.pluginside.commands.HubCommand;
 
-import java.io.File;
-
 public class HubModule {
 
     /**

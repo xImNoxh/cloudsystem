@@ -127,6 +127,7 @@ public class SimpleCommandManager implements ICommandManager {
                 } catch (Throwable ex) {
                     ex.printStackTrace();
                     PoloCloudAPI.getInstance().getCommandExecutor().sendMessage("Error registering command \"" + name + "\" from " + methodSignature + ": " + ex.getMessage());
+                    PoloCloudAPI.getInstance().reportException(ex);
                     continue;
                 }
             } else {
@@ -178,6 +179,7 @@ public class SimpleCommandManager implements ICommandManager {
             }
             source.sendMessage("An internal error occurred while executing the command.");
             ex.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(ex);
         }
         return true;
     }

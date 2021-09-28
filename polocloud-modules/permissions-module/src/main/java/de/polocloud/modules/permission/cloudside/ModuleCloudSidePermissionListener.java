@@ -13,13 +13,14 @@ public class ModuleCloudSidePermissionListener implements IListener {
     public void handle(CloudPlayerPermissionCheckEvent event) {
         String permission = event.getPermission();
         ICloudPlayer player = event.getPlayer();
+        if (player != null) {
+            IPermissionUser cachedPermissionUser = PermissionPool.getInstance().getCachedPermissionUser(player.getUUID());
 
-        IPermissionUser cachedPermissionUser = PermissionPool.getInstance().getCachedPermissionUser(player.getUUID());
-
-        if (cachedPermissionUser == null) {
-            event.setHasPermission(false);
-        } else {
-            event.setHasPermission(cachedPermissionUser.hasPermission(permission));
+            if (cachedPermissionUser == null) {
+                event.setHasPermission(false);
+            } else {
+                event.setHasPermission(cachedPermissionUser.hasPermission(permission));
+            }
         }
     }
 }

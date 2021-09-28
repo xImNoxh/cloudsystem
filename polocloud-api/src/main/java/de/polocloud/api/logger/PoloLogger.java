@@ -33,11 +33,15 @@ public interface PoloLogger extends PoloObject<PoloLogger> {
      */
     static PoloLogger getInstance() {
         if (PoloCloudAPI.getInstance() == null) {
+            System.err.println("Instance of the PoloCloudAPI is nulled! Cannot getInstance() of the Logger then..." +
+                "This may cause serious problems!");
             return null;
         }
         String defaultLogger = "cloud" + PoloCloudAPI.getInstance().getType().getName();
         PoloLoggerFactory loggerFactory = PoloCloudAPI.getInstance().getLoggerFactory();
         if (loggerFactory == null) {
+            System.err.println("Instance of the LoggerFactory for the Logger is nulled! Cannot getInstance() of the Logger then..." +
+                "This may cause serious problems!");
             return null;
         }
         return loggerFactory.getLoggerOrCreate(defaultLogger);

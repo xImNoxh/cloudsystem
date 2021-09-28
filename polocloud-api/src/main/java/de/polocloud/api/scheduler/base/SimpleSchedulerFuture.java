@@ -1,5 +1,8 @@
 package de.polocloud.api.scheduler.base;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.scheduler.SchedulerFuture;
 import de.polocloud.api.scheduler.SchedulerRequest;
 
@@ -67,6 +70,8 @@ public class SimpleSchedulerFuture implements SchedulerFuture {
 		} catch (Exception e) {
 			this.error = true;
 			e.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while running a scheduler!");
+            PoloCloudAPI.getInstance().reportException(e);
 		}
 	}
 

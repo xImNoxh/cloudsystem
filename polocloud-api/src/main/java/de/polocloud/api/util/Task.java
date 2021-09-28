@@ -1,7 +1,6 @@
 package de.polocloud.api.util;
 
 import de.polocloud.api.config.JsonData;
-import lombok.Getter;
 
 public class Task {
 

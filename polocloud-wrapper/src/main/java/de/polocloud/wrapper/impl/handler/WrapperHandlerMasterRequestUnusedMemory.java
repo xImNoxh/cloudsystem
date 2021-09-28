@@ -1,7 +1,6 @@
 package de.polocloud.wrapper.impl.handler;
 
 import de.polocloud.api.network.packets.wrapper.WrapperRequestUnusedMemory;
-import de.polocloud.api.network.packets.wrapper.WrapperRequestUsedMemory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.wrapper.Wrapper;

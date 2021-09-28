@@ -36,11 +36,12 @@ public abstract class MinecraftPacket {
      */
     public abstract void handle();
 
-
+    /**
+     * TODO, this method is currently in work?
+     * @param channel todo
+     */
     public final void send(Channel channel) {
-
     }
-
 
     public int readVarInt(ByteBuf buf) {
         return readVarInt(5, buf);
