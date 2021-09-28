@@ -4,9 +4,11 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.IProtocolObject;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkResponse;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
+import de.polocloud.api.network.protocol.packet.base.response.extra.SimpleNetworkResponse;
 import de.polocloud.api.util.Snowflake;
 
 import java.util.function.Consumer;
@@ -48,6 +50,12 @@ public abstract class Packet implements IProtocolObject {
     public void respond(IResponse response) {
         ((Response)response).setSnowflake(this.snowflake);
         PoloCloudAPI.getInstance().sendPacket((Packet) response);
+    }
+
+    public void createResponse(Consumer<INetworkResponse> response) {
+        SimpleNetworkResponse networkResponse = new SimpleNetworkResponse();
+        response.accept(networkResponse);
+        this.respond(new Response(new JsonData().append("_element", networkResponse.getElement()).append("_throwable", networkResponse.getError()).append("_success", networkResponse.isSuccess()), networkResponse.getStatus()));
     }
 
     public void respond(ResponseState state) {

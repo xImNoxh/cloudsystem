@@ -2,6 +2,8 @@ package de.polocloud.plugin.bootstrap.proxy.global.commands;
 
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.chat.ClickAction;
+import de.polocloud.api.chat.CloudComponent;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -10,16 +12,18 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.master.MasterShutdownPacket;
 import de.polocloud.api.network.packets.other.PingPacket;
+import de.polocloud.api.network.packets.other.TextPacket;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkElement;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.player.def.SimpleCloudPlayer;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
@@ -33,6 +37,7 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class CloudCommand implements CommandListener {
 
@@ -111,12 +116,6 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage("§8");
 
                 } else if (params[0].equalsIgnoreCase("debug") && player.getName().equalsIgnoreCase("Lystx")) {
-
-
-                    IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached("Lobby-2");
-
-                    gameServer.setStatus(GameServerStatus.INVISIBLE);
-                    gameServer.update();
 
                     player.sendMessage(prefix + "§7Debug was §aexecuted§8!");
 

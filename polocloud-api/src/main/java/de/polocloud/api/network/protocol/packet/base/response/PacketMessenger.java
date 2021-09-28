@@ -12,6 +12,8 @@ import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.base.ResponseFutureListener;
 import de.polocloud.api.network.protocol.packet.base.response.def.Request;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkElement;
+import de.polocloud.api.network.protocol.packet.base.response.extra.SimpleNetworkElement;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.server.INettyServer;
 import de.polocloud.api.scheduler.Scheduler;
@@ -80,6 +82,37 @@ public class PacketMessenger {
     }
 
     /**
+     * Creates a new request for an {@link INetworkElement}
+     *
+     * @param packet the packet for the request
+     * @param eClass the type of the element
+     * @param <E> the generic
+     * @return element
+     */
+    public static <E> INetworkElement<E> createElement(Packet packet, Class<E> eClass) {
+        SimpleNetworkElement<E, E> element = new SimpleNetworkElement<>(packet, eClass, eClass);
+        element.execute();
+        return element;
+    }
+
+    /**
+     * Creates a new request for an {@link INetworkElement}
+     * With a given Wrapper-class if the E-class is an interface
+     *
+     * @param packet the packet for the request
+     * @param eClass the type of the element
+     * @param wClass the type of the wrapper
+     * @param <E> the interface generic
+     * @param <W> the wrapper generic
+     * @return element
+     */
+    public static <E, W> INetworkElement<E> createElement(Packet packet, Class<E> eClass, Class<W> wClass) {
+        SimpleNetworkElement<E, W> element = new SimpleNetworkElement<E, W>(packet, eClass, wClass);
+        element.execute();
+        return element;
+    }
+
+    /**
      * Sets the target of this packet to send to
      *
      * @param channels The channels
@@ -130,6 +163,14 @@ public class PacketMessenger {
      */
     public PacketMessenger blocking() {
         this.blocking = true;
+        return this;
+    }
+
+    /**
+     * Disables blocking to return value
+     */
+    public PacketMessenger noBlocking() {
+        this.blocking = false;
         return this;
     }
 
@@ -238,10 +279,12 @@ public class PacketMessenger {
 
         int count = 0;
         while (response[0] == null && count++ < timeOut) {
-            try {
-                Thread.sleep(0, 500000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            if (blocking) {
+                try {
+                    Thread.sleep(0, 500000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
         if (count >= timeOut) {

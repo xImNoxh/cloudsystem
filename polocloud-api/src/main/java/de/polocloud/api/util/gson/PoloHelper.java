@@ -23,6 +23,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,10 @@ public class PoloHelper {
         String hostname = String.join(":", Arrays.copyOfRange(split, 0, split.length - 1));
         int port = Integer.parseInt(split[split.length-1]);
         return InetSocketAddress.createUnresolved(hostname, port);
+    }
+
+    public static boolean randomBoolean() {
+        return ThreadLocalRandom.current().nextBoolean();
     }
 
     /**
