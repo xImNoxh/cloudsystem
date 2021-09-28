@@ -7,6 +7,8 @@ import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.client.INettyClient;
 import de.polocloud.api.network.protocol.IProtocol;
 import de.polocloud.api.network.protocol.SimpleProtocol;
@@ -93,8 +95,9 @@ public class SimpleNettyServer implements INettyServer, IListener {
             }).option(ChannelOption.SO_BACKLOG, 128);
             ChannelFuture channelFuture = serverBootstrap.bind(this.port).addListener((ChannelFutureListener) future -> channel = future.channel()).sync();
             channelFuture.channel().closeFuture().sync();
-        } catch (Exception exc) {
-            exc.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(exception);
         }
     }
 

@@ -47,6 +47,8 @@ public class SetupBuilder {
             consoleReader.resetPromptLine("", "", 0);
         } catch (IOException e) {
             e.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while handling a setup! Trying to cancel this setup...");
+            setup.cancelSetup();
         }
 
         if (answer != null && answer.equalsIgnoreCase("cancel")) {

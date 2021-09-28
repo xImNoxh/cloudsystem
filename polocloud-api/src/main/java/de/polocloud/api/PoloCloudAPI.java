@@ -55,6 +55,8 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.util.AutoRegistry;
 import de.polocloud.api.util.Snowflake;
 import de.polocloud.api.util.system.SystemManager;
+import de.polocloud.api.util.system.resources.IResourceConverter;
+import de.polocloud.api.util.system.resources.IResourceProvider;
 import de.polocloud.api.uuid.IUUIDFetcher;
 import de.polocloud.api.uuid.SimpleUUIDFetcher;
 import de.polocloud.api.wrapper.IWrapperManager;
@@ -187,6 +189,27 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
             sendPacket(new TextPacket(message));
         } else {
             PoloLogger.print(LogLevel.INFO, message);
+        }
+    }
+
+    public void checkRequirements(){
+        //Checks the requirements from PoloCloud
+        IResourceConverter resourceConverter = getSystemManager().getResourceConverter();
+        IResourceProvider resourceProvider = getSystemManager().getResourceProvider();
+        if(resourceProvider.getSystemPhysicalMemory() < 2048){
+            PoloLogger.print(LogLevel.WARNING, "[ResourceWatcher] This system seems to have less than the minimum requirements of memory (Minimal: 2GB, you have " + resourceConverter.convertLongToSize(resourceProvider.getSystemPhysicalMemory()) + ")");
+        }
+        if(resourceProvider.getProcessVirtualMemory() < 2048){
+            PoloLogger.print(LogLevel.WARNING, "[ResourceWatcher] This process seems to have less than the minimum requirements of memory (Minimal: 2GB, you have " + resourceConverter.convertLongToSize(resourceProvider.getSystemPhysicalMemory()) + ")");
+        }
+        if(resourceProvider.getSystemProcessors() < 2){
+            PoloLogger.print(LogLevel.WARNING, "[ResourceWatcher] This system seems to have less than the minimum requirements of CPU-cores (Minimal: 2, you have " + resourceConverter.convertLongToSize(resourceProvider.getSystemProcessors()) + ")");
+        }
+
+        //Checks the user
+        String userName = getSystemManager().getSystemUserName();
+        if(userName.equalsIgnoreCase("admin") || userName.equalsIgnoreCase("administrator") || userName.equalsIgnoreCase("root")){
+            PoloLogger.print(LogLevel.WARNING, "[SystemWatcher] It seems that you running this Instance on a Account with root (administrative) permissions. This isn't very secure.");
         }
     }
 
@@ -427,6 +450,8 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
         } catch (Exception e) {
             e.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while registering the packets. The cloud may not react to a packets.");
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 

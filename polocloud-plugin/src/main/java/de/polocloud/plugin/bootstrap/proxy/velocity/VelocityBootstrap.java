@@ -18,7 +18,6 @@ import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.proxy.velocity.events.CollectiveVelocityEvents;
 import de.polocloud.plugin.bootstrap.proxy.velocity.register.VelocityPacketRegister;
-import javafx.util.Pair;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;

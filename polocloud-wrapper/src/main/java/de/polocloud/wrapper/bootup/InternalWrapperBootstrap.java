@@ -1,7 +1,6 @@
 package de.polocloud.wrapper.bootup;
 
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
 import de.polocloud.api.config.saver.IConfigSaver;
@@ -65,11 +64,15 @@ public class InternalWrapperBootstrap {
         if (!apiJarFile.getParentFile().exists()) {
             apiJarFile.getParentFile().mkdirs();
         }
-        try {
-            URL inputUrl = getClass().getResource("/" + FileConstants.CLOUD_API_NAME);
-            FileUtils.copyURLToFile(inputUrl, apiJarFile);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if(!apiJarFile.exists()){
+            try {
+                URL inputUrl = getClass().getResource("/" + FileConstants.CLOUD_API_NAME);
+                FileUtils.copyURLToFile(inputUrl, apiJarFile);
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         String currentVersion;

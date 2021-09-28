@@ -1,6 +1,8 @@
 package de.polocloud.api.messaging.def;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.messaging.IMessageManager;
 import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.messaging.IMessageListener;
@@ -32,7 +34,8 @@ public class SimpleCachedMessageManager implements IMessageManager {
                         try {
                             listener.handleMessage(packet.getWrappedObject(), packet.getStartTime());
                         } catch (Exception e) {
-                            //Couldn't handle
+                            PoloCloudAPI.getInstance().reportException(e);
+                            PoloLogger.print(LogLevel.ERROR, "An exception was caught while handling a message!");
                         }
                     }
                 }

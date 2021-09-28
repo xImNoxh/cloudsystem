@@ -82,6 +82,8 @@ public class Master extends PoloCloudAPI implements IStartable {
     public Master() {
         super(PoloType.MASTER);
 
+        PoloCloudAPI.getInstance().checkRequirements();
+
         this.running = true;
 
         this.client = new PoloCloudClient("37.114.60.129", 4542);
@@ -258,7 +260,7 @@ public class Master extends PoloCloudAPI implements IStartable {
             getCommandExecutor().sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
             loggerFactory.shutdown();
         } catch (Exception e) {
-            System.out.println("ERROR");
+            System.err.println("An error occurred while shutting down the PoloCloud-Master Instance!");
         }
         return terminate;
     }

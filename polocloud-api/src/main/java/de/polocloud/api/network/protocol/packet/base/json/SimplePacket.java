@@ -1,7 +1,10 @@
 package de.polocloud.api.network.protocol.packet.base.json;
 
 import com.google.gson.JsonElement;
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.packet.base.Packet;
@@ -126,6 +129,8 @@ public abstract class SimplePacket extends Packet {
             buf.writeString(jsonObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while writing a packet!");
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 

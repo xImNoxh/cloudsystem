@@ -50,9 +50,10 @@ public class CollectiveCloudListener implements IListener {
      */
     @EventHandler
     public void handle(CloudPlayerDisconnectEvent event){
-        for (ICloudNPC npc : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getAllNPCsFromTemplateOrGameServerName(event.getPlayer().getMinecraftServer().getName())) {
-            npc.update();
-        }
+        if (event.getPlayer() != null)
+            for (ICloudNPC npc : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getAllNPCsFromTemplateOrGameServerName(event.getPlayer().getMinecraftServer().getName())) {
+                npc.update();
+            }
     }
 
 }

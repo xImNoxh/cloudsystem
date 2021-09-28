@@ -7,7 +7,8 @@ import de.polocloud.api.config.JsonData;
 import de.polocloud.api.config.master.properties.Properties;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
-import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
@@ -49,7 +50,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
             Optional<IWrapper> optionalWrapperClient = PoloCloudAPI.getInstance().getWrapperManager().getWrappers().stream().findAny();
 
             if (!optionalWrapperClient.isPresent()) {
-                throw new NoWrapperFoundException();
+                throw new NoWrapperFoundException("Failed to start the " + (count == 1 ? "one" : count) + " servers for the template " + template.getName() + ". No wrapper was found!");
             }
 
             IWrapper wrapperClient = optionalWrapperClient.get();
@@ -97,7 +98,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
     public void stopServer(IGameServer gameServer) throws NoWrapperFoundException {
         IWrapper wrapper = gameServer.getWrapper();
         if (wrapper == null) {
-            throw new NoWrapperFoundException();
+            throw new NoWrapperFoundException("The wrapper, which is responsible for request to stop the gameserver " + gameServer.getName() + " doesn't exist.");
         }
         wrapper.stopServer(gameServer);
     }
@@ -169,6 +170,7 @@ public class SimpleCachedGameServerManager implements IGameServerManager {
                 return this.getCached(jsonData.getString("GameServer-Name"));
             } catch (Exception e) {
                 e.printStackTrace();
+                PoloCloudAPI.getInstance().reportException(e);
             }
         }
         return null;

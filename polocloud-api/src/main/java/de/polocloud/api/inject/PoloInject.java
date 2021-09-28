@@ -1,5 +1,9 @@
 package de.polocloud.api.inject;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +53,8 @@ public class PoloInject {
                     declaredField.set(instance, PoloInject.getInstance(instanceClass));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+                    PoloLogger.print(LogLevel.ERROR, "Failed to injectFields in (class: " + cls.getName() + " : Objectclass:" + instance.getClass().getName());
+                    PoloCloudAPI.getInstance().reportException(e);
                 }
             } else if (declaredField.getAnnotation(Inject.class) != null) {
                 Class<?> type = declaredField.getType();
@@ -56,6 +62,8 @@ public class PoloInject {
                     declaredField.set(instance, PoloInject.getInstance(type));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+                    PoloLogger.print(LogLevel.ERROR, "Failed to injectFields in (class: " + cls.getName() + " : Objectclass:" + instance.getClass().getName());
+                    PoloCloudAPI.getInstance().reportException(e);
                 }
             }
         }

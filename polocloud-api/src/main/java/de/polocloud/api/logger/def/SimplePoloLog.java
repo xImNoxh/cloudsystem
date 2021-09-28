@@ -59,6 +59,7 @@ public class SimplePoloLog implements PoloLog {
             this.initLog();
         } catch (Exception e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 
@@ -154,6 +155,7 @@ public class SimplePoloLog implements PoloLog {
                 output.close();
             } catch (Exception e) {
                 e.printStackTrace();
+                PoloCloudAPI.getInstance().reportException(e);
             }
         }
 
@@ -190,7 +192,7 @@ public class SimplePoloLog implements PoloLog {
     @Override
     public void delete() throws FileNotFoundException {
         if (!this.file.exists()) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("Cannot delete PoloLog! Temp-File wasn't found.");
         }
         this.file.delete();
         parent.removeLog(this.name);
@@ -220,6 +222,7 @@ public class SimplePoloLog implements PoloLog {
             w.flush();
         } catch (Exception e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 

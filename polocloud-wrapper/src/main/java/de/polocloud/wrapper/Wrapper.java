@@ -3,8 +3,6 @@ package de.polocloud.wrapper;
 import com.google.common.base.Throwables;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
-import de.polocloud.api.command.executor.ConsoleExecutor;
-import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
@@ -27,7 +25,6 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.util.gson.PoloHelper;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;
-import de.polocloud.api.util.system.SystemManager;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.wrapper.bootup.InternalWrapperBootstrap;
 import de.polocloud.wrapper.impl.commands.HelpCommand;
@@ -90,6 +87,8 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
 
     public Wrapper(boolean devMode, boolean ignoreUpdater) {
         super(PoloType.WRAPPER);
+
+        PoloCloudAPI.getInstance().checkRequirements();
 
         //PoloCloudClient reference (Address and port)
         InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater, new InetSocketAddress("37.114.60.129", 4542));

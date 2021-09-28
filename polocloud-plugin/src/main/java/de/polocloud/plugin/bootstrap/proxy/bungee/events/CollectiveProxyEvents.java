@@ -31,10 +31,8 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.md_5.bungee.protocol.packet.Chat;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -43,7 +41,6 @@ public class CollectiveProxyEvents implements Listener {
     private final NetworkClient networkClient;
 
     public CollectiveProxyEvents(Plugin plugin) {
-
         this.networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
 
         plugin.getProxy().getPluginManager().registerListener(plugin, this);

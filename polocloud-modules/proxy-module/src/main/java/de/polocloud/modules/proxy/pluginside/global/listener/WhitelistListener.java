@@ -14,7 +14,7 @@ public class WhitelistListener implements IListener {
     public void handle(CloudPlayerLackMaintenanceEvent event){
 
         ProxyConfig proxyConfig = ProxyModule.getProxyModule().getProxyConfig();
-        if (proxyConfig == null) {
+        if (proxyConfig == null || event.getPlayer() == null) {
             return;
         }
 

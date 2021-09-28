@@ -22,7 +22,6 @@ import de.polocloud.api.network.protocol.packet.base.response.def.Request;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.bootstrap.Master;
 import de.polocloud.bootstrap.network.SimplePacketHandler;
-import de.polocloud.bootstrap.pubsub.MasterPubSubManager;
 
 import java.util.function.Consumer;
 

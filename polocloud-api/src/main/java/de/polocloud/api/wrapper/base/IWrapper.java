@@ -1,22 +1,13 @@
 package de.polocloud.api.wrapper.base;
 
-import de.polocloud.api.common.PoloType;
-import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.helper.ITerminatable;
-import de.polocloud.api.network.packets.wrapper.WrapperRequestUnusedMemory;
-import de.polocloud.api.network.packets.wrapper.WrapperRequestUsedMemory;
 import de.polocloud.api.network.protocol.packet.IPacketSender;
-import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
-import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
-import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.player.ICloudPlayer;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public interface IWrapper extends IPacketSender, ITerminatable {
 

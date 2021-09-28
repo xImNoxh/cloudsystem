@@ -134,7 +134,8 @@ public class SimpleScreen extends Thread implements IScreen {
 
     @Override
     public Thread[] getThreads() {
-        return Arrays.asList(this/*, thread*/).toArray(new Thread[0]);
+        //Old, required? return Arrays.asList(this/*, thread*/).toArray(new Thread[0]);
+        return Collections.singleton(this).toArray(new Thread[0]);
     }
 
     @Override

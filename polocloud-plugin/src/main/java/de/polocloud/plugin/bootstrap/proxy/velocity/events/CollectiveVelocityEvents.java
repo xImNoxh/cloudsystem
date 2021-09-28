@@ -9,12 +9,9 @@ import com.velocitypowered.api.event.connection.LoginEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
-import com.velocitypowered.api.permission.PermissionSubject;
-import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.proxy.InboundConnection;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -23,7 +20,6 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
-import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.event.impl.other.ProxyConstructPlayerEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerLackMaintenanceEvent;
@@ -111,9 +107,7 @@ public class CollectiveVelocityEvents  {
 
     private String replace(String input, IGameServer gameServer, InetSocketAddress address) {
 
-        ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cp -> {
-            return cp.getConnection().getHost().equalsIgnoreCase(address.getAddress().getHostAddress()) && cp.getConnection().getPort() == address.getPort();
-        }).findFirst().orElse(null);
+        ICloudPlayer cloudPlayer = PoloCloudAPI.getInstance().getCloudPlayerManager().stream().filter(cp -> cp.getConnection().getHost().equalsIgnoreCase(address.getAddress().getHostAddress()) && cp.getConnection().getPort() == address.getPort()).findFirst().orElse(null);
 
         if (cloudPlayer == null) {
             input = input.replace("%PROXY%", gameServer.getName());

@@ -4,8 +4,6 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.base.EventData;
 import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.template.base.ITemplate;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @EventData(nettyFire = true)
 public class TemplateMaintenanceChangeEvent extends CloudEvent {

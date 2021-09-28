@@ -3,6 +3,8 @@ package de.polocloud.api.module.loader;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,9 +49,13 @@ public class ModuleHelper {
                 br.close();
                 return builder.toString();
             } catch (Exception e) {
+                PoloLogger.print(LogLevel.ERROR, "An exception was caught while loading a file (" + filename + ") for a module.");
+                PoloCloudAPI.getInstance().reportException(e);
                 return null;
             }
         } catch (IOException e) {
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while loading a file (" + filename + ") for a module.");
+            PoloCloudAPI.getInstance().reportException(e);
             return null;
         }
     }
@@ -73,6 +79,7 @@ public class ModuleHelper {
             return Class.forName(name, true, classLoader());
         } catch (Exception e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
             return null;
         }
     }
@@ -86,6 +93,7 @@ public class ModuleHelper {
             return URLClassLoader.newInstance(new URL[]{ new URL("jar:file:" + file.toPath() +"!/") });
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
         }
         return null;
     }

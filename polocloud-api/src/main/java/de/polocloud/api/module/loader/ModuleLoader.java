@@ -158,6 +158,8 @@ public class ModuleLoader {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while loading all Master-Modules! May some modules won't correctly or isn't loaded.");
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 

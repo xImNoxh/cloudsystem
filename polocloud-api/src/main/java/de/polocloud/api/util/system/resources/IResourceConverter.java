@@ -1,4 +1,4 @@
-package de.polocloud.api.util.system.ressources;
+package de.polocloud.api.util.system.resources;
 
 import java.text.DecimalFormat;
 

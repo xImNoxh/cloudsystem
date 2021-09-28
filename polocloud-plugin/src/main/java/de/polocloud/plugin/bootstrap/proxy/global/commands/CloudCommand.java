@@ -29,8 +29,8 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.api.util.system.ressources.IResourceConverter;
-import de.polocloud.api.util.system.ressources.IResourceProvider;
+import de.polocloud.api.util.system.resources.IResourceConverter;
+import de.polocloud.api.util.system.resources.IResourceProvider;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.wrapper.base.IWrapper;
 

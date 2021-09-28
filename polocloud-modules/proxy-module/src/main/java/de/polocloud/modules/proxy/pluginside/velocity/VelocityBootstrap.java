@@ -2,23 +2,15 @@ package de.polocloud.modules.proxy.pluginside.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyReloadEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.permission.PermissionSubject;
-import com.velocitypowered.api.permission.Tristate;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.polocloud.modules.proxy.ProxyModule;
 import de.polocloud.modules.proxy.cloudside.ModuleBootstrap;
 import lombok.Getter;
 import org.slf4j.Logger;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @Plugin(
     id = "proxy",

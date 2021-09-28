@@ -1,5 +1,6 @@
 package de.polocloud.api.network.packets.api;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.event.base.CloudEvent;
 import de.polocloud.api.util.AutoRegistry;
@@ -61,6 +62,7 @@ public class EventPacket extends Packet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            PoloCloudAPI.getInstance().reportException(e);
         }
     }
 
