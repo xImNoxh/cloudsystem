@@ -42,7 +42,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     private final String name;
     private final UUID uniqueId;
-    private SimplePlayerConnection connection;
+    private IPlayerConnection connection;
 
     private String minecraftServer;
     private String proxyServer;
@@ -50,7 +50,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     public SimpleCloudPlayer(String name, UUID uniqueId, IPlayerConnection connection) {
         this.name = name;
         this.uniqueId = uniqueId;
-        this.connection = (SimplePlayerConnection) connection;
+        this.connection = connection;
     }
 
     @Override
