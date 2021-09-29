@@ -12,8 +12,8 @@ import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.base.ResponseFutureListener;
 import de.polocloud.api.network.protocol.packet.base.response.def.Request;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
-import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkElement;
-import de.polocloud.api.network.protocol.packet.base.response.extra.SimpleNetworkElement;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
+import de.polocloud.api.network.protocol.packet.base.response.extra.SimpleNetworkPromise;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.server.INettyServer;
 import de.polocloud.api.scheduler.Scheduler;
@@ -82,21 +82,21 @@ public class PacketMessenger {
     }
 
     /**
-     * Creates a new request for an {@link INetworkElement}
+     * Creates a new request for an {@link INetworkPromise}
      *
      * @param packet the packet for the request
      * @param eClass the type of the element
      * @param <E> the generic
      * @return element
      */
-    public static <E> INetworkElement<E> createElement(Packet packet, Class<E> eClass) {
-        SimpleNetworkElement<E, E> element = new SimpleNetworkElement<>(packet, eClass, eClass);
+    public static <E> INetworkPromise<E> createElement(Packet packet, Class<E> eClass) {
+        SimpleNetworkPromise<E, E> element = new SimpleNetworkPromise<>(packet, eClass, eClass);
         element.execute();
         return element;
     }
 
     /**
-     * Creates a new request for an {@link INetworkElement}
+     * Creates a new request for an {@link INetworkPromise}
      * With a given Wrapper-class if the E-class is an interface
      *
      * @param packet the packet for the request
@@ -106,11 +106,12 @@ public class PacketMessenger {
      * @param <W> the wrapper generic
      * @return element
      */
-    public static <E, W> INetworkElement<E> createElement(Packet packet, Class<E> eClass, Class<W> wClass) {
-        SimpleNetworkElement<E, W> element = new SimpleNetworkElement<E, W>(packet, eClass, wClass);
+    public static <E, W> INetworkPromise<E> createElement(Packet packet, Class<E> eClass, Class<W> wClass) {
+        SimpleNetworkPromise<E, W> element = new SimpleNetworkPromise<E, W>(packet, eClass, wClass);
         element.execute();
         return element;
     }
+
 
     /**
      * Sets the target of this packet to send to

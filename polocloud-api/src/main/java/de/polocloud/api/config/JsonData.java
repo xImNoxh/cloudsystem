@@ -124,7 +124,7 @@ public class JsonData {
 
         if (file != null && file.exists()) {
             try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-                jsonObject = JsonParser.parseReader(new BufferedReader(reader)).getAsJsonObject();
+                jsonObject = new JsonParser().parse(new BufferedReader(reader)).getAsJsonObject();
             } catch (Exception e) {
                 jsonObject = new JsonObject();
             }
@@ -132,7 +132,7 @@ public class JsonData {
 
         if (input != null) {
             try {
-                jsonObject = (JsonObject) JsonParser.parseString(input);
+                jsonObject = (JsonObject) new JsonParser().parse(input);
             } catch (Exception e) {
                 jsonObject = new JsonObject();
             }

@@ -64,6 +64,7 @@ import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
+import lombok.Getter;
 import org.reflections.Reflections;
 
 import java.util.Optional;
@@ -80,6 +81,7 @@ import java.util.function.Consumer;
     identifier = "@Alpha",
     discord = "https://discord.gg/HyRnsdkUBA"
 )
+@Getter
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     //The instance for this api

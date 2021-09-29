@@ -28,14 +28,10 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
     private PermsModule permissionModule;
 
     @Override
-    public void onLoad() {
-
-        permissionModule = new PermsModule(new ModuleBootstrap());
-        permissionModule.load();
-    }
-
-    @Override
     public void onEnable() {
+        this.permissionModule = new PermsModule(new ModuleBootstrap());
+        this.permissionModule.load();
+
         this.permissionModule.enable();
 
         Bukkit.getPluginManager().registerEvents(this, this);

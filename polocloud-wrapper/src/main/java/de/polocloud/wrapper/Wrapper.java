@@ -91,7 +91,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
         PoloCloudAPI.getInstance().checkRequirements();
 
         //PoloCloudClient reference (Address and port)
-        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap(this, devMode, ignoreUpdater, new InetSocketAddress("37.114.60.129", 4542));
+        InternalWrapperBootstrap bootstrap = new InternalWrapperBootstrap();
 
         this.screenManager = new SimpleCachedScreenManager();
         this.config = bootstrap.loadWrapperConfig();
@@ -108,7 +108,6 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
         //Loading wrapper boot
         bootstrap.registerUncaughtExceptionListener();
         bootstrap.checkAndDeleteTmpFolder();
-        bootstrap.checkPoloCloudAPI();
 
         //Registering commands
         this.commandManager.registerCommand(new StopCommand());

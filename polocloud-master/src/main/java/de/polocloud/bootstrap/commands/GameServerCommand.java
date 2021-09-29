@@ -131,7 +131,7 @@ public class GameServerCommand implements CommandListener, TabCompletable {
                 }
                 PoloLogger.print(LogLevel.INFO, ConsoleColors.GREEN + "Successfully requested start for » " + ConsoleColors.LIGHT_BLUE + amount + ConsoleColors.GRAY + " servers!");
             }
-        } else if (args[0].equalsIgnoreCase("copy")) {
+        } else if (args[0].equalsIgnoreCase("copy") && args.length == 3) {
             String name = args[1];
             String type = args[2];
             IGameServer gameServer = gameServerManager.getCached(name);

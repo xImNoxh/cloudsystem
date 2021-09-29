@@ -20,12 +20,11 @@ import java.util.UUID;
 
 public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
 
-    private CloudPlugin cloudPlugin;
     private PoloPluginBridge bridge;
 
 
     @Override
-    public synchronized void onLoad() {
+    public synchronized void onEnable() {
         this.bridge = new PoloPluginBridge() {
 
             @Override
@@ -195,12 +194,8 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
                 Bukkit.shutdown();
             }
         };
-        this.cloudPlugin = new CloudPlugin(this);
-    }
-
-    @Override
-    public synchronized void onEnable() {
-        this.cloudPlugin.onEnable();
+        CloudPlugin cloudPlugin = new CloudPlugin(this);
+        cloudPlugin.onEnable();
     }
 
     @Override

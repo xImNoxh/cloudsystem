@@ -172,8 +172,13 @@ public class ServiceStarter {
             FileUtils.copyDirectory(FileConstants.WRAPPER_EVERY_MINECRAFT_TEMPLATE, serverLocation); //Every spigot template
         }
 
-        File wrapperCloudApi = FileConstants.WRAPPER_CLOUD_API;
-        FileUtils.copyFile(wrapperCloudApi, new File(serverLocation + "/plugins/" + FileConstants.CLOUD_API_NAME));
+        try {
+            URL inputUrl = getClass().getResource("/" + FileConstants.CLOUD_API_NAME);
+            FileUtils.copyURLToFile(inputUrl, new File(serverLocation + "/plugins/" + FileConstants.CLOUD_API_NAME));
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         File serverIcon = new File(serverLocation, "server-icon.png");
 

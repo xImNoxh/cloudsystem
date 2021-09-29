@@ -1,5 +1,6 @@
 package de.polocloud.api.player;
 
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
 import de.polocloud.api.pool.ObjectPool;
 
 import java.util.Optional;
@@ -16,6 +17,24 @@ public interface ICloudPlayerManager extends ObjectPool<ICloudPlayer> {
         }
         ObjectPool.super.update(object);
     }
+
+    /**
+     * Retrieves an {@link INetworkPromise} containing the requested
+     * {@link ICloudPlayer} searched for by its name
+     *
+     * @param name the name of the player
+     * @return element to handle
+     */
+    INetworkPromise<ICloudPlayer> get(String name);
+
+    /**
+     * Retrieves an {@link INetworkPromise} containing the requested
+     * {@link ICloudPlayer} searched for by its uuid
+     *
+     * @param uniqueId the uuid of the player
+     * @return element to handle
+     */
+    INetworkPromise<ICloudPlayer> get(UUID uniqueId);
 
     /**
      * Gets an {@link ICloudPlayer} by its uuid
@@ -36,24 +55,6 @@ public interface ICloudPlayerManager extends ObjectPool<ICloudPlayer> {
      */
     default Optional<ICloudPlayer> getOptional(UUID uniqueId) {
         return getAllCached().stream().filter(cloudPlayer -> cloudPlayer.getUUID().equals(uniqueId)).findFirst();
-    }
-
-    /**
-     * Checks if an {@link ICloudPlayer} is online
-     *
-     * @param name the name of the player
-     */
-    default boolean isPlayerOnline(String name) {
-        return getCached(name) != null;
-    }
-
-    /**
-     * Checks if an {@link ICloudPlayer} is online
-     *
-     * @param uuid the uuid of the player
-     */
-    default boolean isPlayerOnline(UUID uuid) {
-        return getCached(uuid) != null;
     }
 
 }
