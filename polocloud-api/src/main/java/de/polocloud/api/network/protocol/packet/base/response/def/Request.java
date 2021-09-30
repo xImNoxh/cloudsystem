@@ -3,7 +3,7 @@ package de.polocloud.api.network.protocol.packet.base.response.def;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.common.AutoRegistry;
 
 import java.io.IOException;
 

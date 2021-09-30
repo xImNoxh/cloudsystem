@@ -12,7 +12,7 @@ import de.polocloud.api.network.protocol.codec.prepender.NettyPacketLengthSerial
 import de.polocloud.api.network.protocol.packet.handler.*;
 
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;

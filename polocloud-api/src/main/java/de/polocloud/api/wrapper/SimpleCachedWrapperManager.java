@@ -1,6 +1,7 @@
 package de.polocloud.api.wrapper;
 
 import de.polocloud.api.wrapper.base.IWrapper;
+import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Collections;
@@ -48,6 +49,10 @@ public class SimpleCachedWrapperManager implements IWrapperManager {
             return;
         }
         int i = wrappers.indexOf(safeGet);
+
+        if (safeGet.ctx() != null) {
+            ((SimpleWrapper)wrapper).setCtx(safeGet.ctx());
+        }
 
         try {
             this.wrappers.set(i, wrapper);

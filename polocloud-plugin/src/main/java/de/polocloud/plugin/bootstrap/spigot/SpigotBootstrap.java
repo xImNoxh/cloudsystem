@@ -2,7 +2,7 @@ package de.polocloud.plugin.bootstrap.spigot;
 
 import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.plugin.CloudPlugin;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.spigot.events.CollectiveSpigotEvents;

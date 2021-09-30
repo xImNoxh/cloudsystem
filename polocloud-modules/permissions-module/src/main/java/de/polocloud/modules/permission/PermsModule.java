@@ -8,7 +8,7 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
 import de.polocloud.api.messaging.IMessageChannel;
-import de.polocloud.api.util.Task;
+import de.polocloud.api.util.other.Task;
 import de.polocloud.modules.permission.cloudside.ModuleCloudSidePermissionListener;
 import de.polocloud.modules.permission.cloudside.ModuleCloudSideServerStartListener;
 import de.polocloud.modules.permission.global.handler.ModuleTaskHandler;

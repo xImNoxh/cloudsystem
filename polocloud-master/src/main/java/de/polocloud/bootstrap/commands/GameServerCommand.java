@@ -14,7 +14,7 @@ import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacke
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.other.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
 import de.polocloud.api.logger.PoloLogger;

@@ -10,7 +10,7 @@ import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperServerStoppedPacket;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.console.ConsoleColors;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ServiceStarter {
-
 
     private final IGameServer service;
     private final ITemplate template;

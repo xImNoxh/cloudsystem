@@ -1,6 +1,6 @@
 package de.polocloud.modules.smartproxy.api;
 
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;

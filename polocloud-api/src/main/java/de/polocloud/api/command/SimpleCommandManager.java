@@ -9,8 +9,8 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;
 import de.polocloud.api.command.runner.SimpleCommandRunner;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.util.Acceptable;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.common.Acceptable;
+import de.polocloud.api.util.PoloHelper;
 import lombok.Getter;
 
 import java.lang.reflect.Method;

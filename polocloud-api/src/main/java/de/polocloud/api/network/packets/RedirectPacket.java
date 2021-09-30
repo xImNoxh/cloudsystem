@@ -2,7 +2,7 @@ package de.polocloud.api.network.packets;
 
 import de.polocloud.api.network.protocol.packet.PacketFactory;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.common.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 
 import java.io.IOException;

@@ -7,7 +7,7 @@ import de.polocloud.api.event.impl.template.TemplateUpdateEvent;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.gameserver.TemplateUpdatePacket;
 import de.polocloud.api.player.ICloudPlayer;
-import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import lombok.Getter;

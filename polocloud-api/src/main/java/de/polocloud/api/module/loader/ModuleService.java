@@ -10,7 +10,7 @@ import de.polocloud.api.module.info.ModuleState;
 import de.polocloud.api.module.info.ModuleTask;
 import de.polocloud.api.module.info.ScheduledModuleTask;
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.HandlerMethod;
+import de.polocloud.api.util.other.HandlerMethod;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -67,7 +67,7 @@ public class ModuleService implements IModuleHolder {
             ScheduledModuleTask scheduledModuleTask = m.getAnnotation(ScheduledModuleTask.class);
 
             if (annotation != null) {
-                HandlerMethod<ModuleTask> moduleTaskHandlerMethod = new HandlerMethod<>(objectClass, m, Void.class, annotation);
+                HandlerMethod<ModuleTask> moduleTaskHandlerMethod = new HandlerMethod<>(objectClass, m, Void.class, annotation, null);
                 if (scheduledModuleTask != null) {
                     moduleTaskHandlerMethod.setObjects(new Object[]{scheduledModuleTask});
                 }

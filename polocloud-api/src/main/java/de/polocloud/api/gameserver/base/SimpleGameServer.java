@@ -7,6 +7,7 @@ import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
 import de.polocloud.api.event.impl.server.GameServerUpdateEvent;
 import de.polocloud.api.gameserver.IGameServerManager;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
 import de.polocloud.api.network.protocol.packet.base.other.ForwardingPacket;
@@ -15,10 +16,10 @@ import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.util.Acceptable;
+import de.polocloud.api.common.Acceptable;
 import de.polocloud.api.util.gson.Exclude;
-import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.other.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
@@ -147,6 +148,16 @@ public class SimpleGameServer implements IGameServer {
     @Override
     public IProperty getProperty(String name) {
         return this.properties.stream().filter(property -> property.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    @Override
+    public void executeCommand(String command) {
+        this.sendPacket(new GameServerExecuteCommandPacket(command, this.getName()));
+    }
+
+    @Override
+    public boolean hasProperty(String name) {
+        return this.properties.stream().anyMatch(property -> property.getName().equalsIgnoreCase(name));
     }
 
     @Override

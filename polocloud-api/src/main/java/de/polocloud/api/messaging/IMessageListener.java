@@ -1,6 +1,6 @@
 package de.polocloud.api.messaging;
 
-import de.polocloud.api.util.WrappedObject;
+import de.polocloud.api.util.other.WrappedObject;
 
 public interface IMessageListener<T> {
 

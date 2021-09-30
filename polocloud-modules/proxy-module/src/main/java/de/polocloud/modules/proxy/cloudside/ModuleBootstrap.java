@@ -19,13 +19,10 @@ public class ModuleBootstrap extends CloudModule {
 
     private ProxyModule proxyModule;
 
-    @ModuleTask(id = 1, state = ModuleState.LOADING)
-    public void load() {
-        proxyModule = new ProxyModule(this);
-    }
 
     @ModuleTask(id = 2, state = ModuleState.STARTING)
     public void enable() {
+        proxyModule = new ProxyModule(this);
         proxyModule.enable();
     }
 

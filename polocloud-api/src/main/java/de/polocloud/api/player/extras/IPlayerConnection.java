@@ -1,6 +1,6 @@
 package de.polocloud.api.player.extras;
 
-import de.polocloud.api.util.MinecraftProtocol;
+import de.polocloud.api.gameserver.helper.MinecraftProtocol;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;

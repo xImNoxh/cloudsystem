@@ -4,7 +4,7 @@ import com.google.gson.*;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.*;
 import java.lang.reflect.Type;

@@ -4,8 +4,8 @@ import de.polocloud.api.logger.PoloLog;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.api.util.gson.PoloHelper;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.other.Snowflake;
 
 import java.io.*;
 import java.util.ArrayList;

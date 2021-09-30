@@ -18,14 +18,14 @@ import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
-import de.polocloud.api.network.protocol.packet.base.response.extra.IPromiseFuture;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.util.system.resources.IResourceConverter;
 import de.polocloud.api.util.system.resources.IResourceProvider;
 import de.polocloud.api.wrapper.IWrapperManager;
@@ -34,7 +34,6 @@ import de.polocloud.api.wrapper.base.IWrapper;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class CloudCommand implements CommandListener {
 
@@ -114,25 +113,45 @@ public class CloudCommand implements CommandListener {
 
                 } else if (params[0].equalsIgnoreCase("debug") && player.getName().equalsIgnoreCase("Lystx")) {
 
-                    ICloudPlayerManager playerManager = PoloCloudAPI.getInstance().getCloudPlayerManager();
+                    INetworkPromise<ICloudPlayer> promise = PoloCloudAPI.getInstance().getCloudPlayerManager().get(player.getName());
 
-                    INetworkPromise<ICloudPlayer> promise = playerManager.get("Lystx");
+                    player.sendMessage("§aReceived");
+                    ICloudPlayer cloudPlayer = promise.blocking().orElse(null);
+                    if (cloudPlayer == null) {
+                        player.sendMessage("§cNull");
+                        return;
+                    }
 
-                    promise.nonBlocking(new IPromiseFuture<ICloudPlayer>() {
-                        @Override
-                        public void handle(INetworkPromise<ICloudPlayer> promise) {
-                            ICloudPlayer cloudPlayer = promise.orElse(null);
-                            if (cloudPlayer == null) {
-                                return;
-                            }
 
-                            Throwable cause = promise.cause();
-                            boolean completed = promise.isCompleted();
-                            boolean success = promise.isSuccess();
-                            cloudPlayer.kick("§cDu hurensohn");
+                    ISession session = cloudPlayer.session();
+
+                    cloudPlayer.sendMessage(session.getIdentification());
+                    cloudPlayer.sendMessage(Arrays.toString(session.getBytes()));
+                    cloudPlayer.sendMessage(String.valueOf(session.getSnowflake()));
+                    cloudPlayer.sendMessage(String.valueOf(session.sessionUUID()));
+                    cloudPlayer.sendMessage(session.toString());
+
+                    if (cloudPlayer.hasProperty("test.property")) {
+                        IProperty property = cloudPlayer.getProperty("test.property");
+
+                        player.sendMessage(property.getName());
+                        for (IProperty propertyProperty : property.getProperties()) {
+                            player.sendMessage("§n" + propertyProperty.getName());
                         }
-                    });
-
+                    } else {
+                        cloudPlayer.insertProperty(property -> {
+                            property.setName("test.property");
+                            property.addProperty(property1 -> {
+                                property1.setName("coins");
+                                property1.setValue(349385);
+                            });
+                            property.addProperty(property1 -> {
+                                property1.setName("adult");
+                                property1.setValue(true);
+                            });
+                        });
+                        cloudPlayer.update();
+                    }
 
                     player.sendMessage(prefix + "§7Debug was §aexecuted§8!");
 

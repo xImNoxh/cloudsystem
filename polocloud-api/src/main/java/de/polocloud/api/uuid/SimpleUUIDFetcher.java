@@ -6,7 +6,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.util.map.UniqueMap;
 
 import java.io.BufferedReader;

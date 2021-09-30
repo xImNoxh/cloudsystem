@@ -3,7 +3,7 @@ package de.polocloud.api.command;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.runner.ICommandRunner;
-import de.polocloud.api.util.Acceptable;
+import de.polocloud.api.common.Acceptable;
 
 import java.lang.reflect.Parameter;
 import java.util.List;

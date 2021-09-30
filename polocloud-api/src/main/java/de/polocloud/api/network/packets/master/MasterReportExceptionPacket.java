@@ -2,8 +2,8 @@ package de.polocloud.api.network.packets.master;
 
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.util.AutoRegistry;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.common.AutoRegistry;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.IOException;
 

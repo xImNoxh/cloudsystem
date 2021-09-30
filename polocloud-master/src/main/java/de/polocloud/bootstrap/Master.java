@@ -21,7 +21,6 @@ import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
-import de.polocloud.api.network.packets.api.PropertyCachePacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.player.ICloudPlayer;
@@ -31,9 +30,9 @@ import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.TemplateStorage;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.bootstrap.commands.*;
 import de.polocloud.bootstrap.creator.ServerCreatorRunner;
 import de.polocloud.bootstrap.listener.ChannelActiveListener;
@@ -91,34 +90,31 @@ public class Master extends PoloCloudAPI implements IStartable {
         this.loggerFactory.setGlobalPrefix(PoloHelper.CONSOLE_PREFIX);
         this.masterConfig = this.loadConfig();
 
-        if (this.propertyManager.loadProperties()) {
+        //Loading templates
+        this.templateManager.loadTemplates(TemplateStorage.FILE);
+        this.templateManager.getTemplateLoader().loadTemplates();
 
-            this.templateManager.loadTemplates(TemplateStorage.FILE);
-            this.templateManager.getTemplateLoader().loadTemplates();
+        //Registering modules
+        this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
 
-            this.moduleService = new ModuleService(FileConstants.MASTER_MODULES);
+        //Event handler registering
+        this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
 
-            //Event handler registering
-            this.eventManager.registerHandler(NettyExceptionEvent.class, new NettyExceptionListener());
+        //Registering all commands
+        this.commandManager.registerCommand(new StopCommand());
+        this.commandManager.registerCommand(new TemplateCommand(templateManager, gameServerManager));
+        this.commandManager.registerCommand(new ReloadCommand());
+        this.commandManager.registerCommand(new HelpCommand());
+        this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
+        this.commandManager.registerCommand(new ChangelogCommand());
+        this.commandManager.registerCommand(new MeCommand());
+        this.commandManager.registerCommand(new ScreenCommand());
+        this.commandManager.registerCommand(new GameServerCommand());
+        this.commandManager.registerCommand(new WrapperCommand());
+        this.commandManager.registerCommand(new CloudReportsCommand());
 
-            //Registering all commands
-            this.commandManager.registerCommand(new StopCommand());
-            this.commandManager.registerCommand(new TemplateCommand(templateManager, gameServerManager));
-            this.commandManager.registerCommand(new ReloadCommand());
-            this.commandManager.registerCommand(new HelpCommand());
-            this.commandManager.registerCommand(new PlayerCommand(cloudPlayerManager, gameServerManager));
-            this.commandManager.registerCommand(new ChangelogCommand());
-            this.commandManager.registerCommand(new MeCommand());
-            this.commandManager.registerCommand(new ScreenCommand());
-            this.commandManager.registerCommand(new GameServerCommand());
-            this.commandManager.registerCommand(new WrapperCommand());
-            this.commandManager.registerCommand(new CloudReportsCommand());
-
-            //Server-Runner thread starting
-            new Thread(new ServerCreatorRunner()).start();
-        } else {
-            System.out.println("Something went badly wrong while starting Master!");
-        }
+        //Server-Runner thread starting
+        new Thread(new ServerCreatorRunner()).start();
     }
 
     public static Master getInstance() {
@@ -228,7 +224,6 @@ public class Master extends PoloCloudAPI implements IStartable {
             return;
         }
         this.getConnection().sendPacket(new GlobalCachePacket());
-        this.getConnection().sendPacket(new PropertyCachePacket());
     }
 
     @Override

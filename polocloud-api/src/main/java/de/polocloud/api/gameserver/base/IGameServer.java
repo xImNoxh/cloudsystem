@@ -9,7 +9,7 @@ import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.IPropertyHolder;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.util.Acceptable;
+import de.polocloud.api.common.Acceptable;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -157,6 +157,13 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * @param packet the packet to send
      */
     void sendPacket(Packet packet);
+
+    /**
+     * Makes this server execute a command
+     *
+     * @param command the command
+     */
+    void executeCommand(String command);
 
     /**
      * Creates a new....

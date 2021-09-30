@@ -16,6 +16,7 @@ import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendComponentPacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendMessagePacket;
 import de.polocloud.api.network.packets.master.MasterPlayerSendToServerPacket;
+import de.polocloud.api.network.packets.property.PropertyInsertPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
@@ -27,6 +28,8 @@ import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
+import de.polocloud.api.util.session.ISession;
+import de.polocloud.api.util.session.SimpleSession;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,6 +46,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     private final String name;
     private final UUID uniqueId;
     private SimplePlayerConnection connection;
+    private SimpleSession session;
 
     private String minecraftServer;
     private String proxyServer;
@@ -51,6 +55,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
         this.name = name;
         this.uniqueId = uniqueId;
         this.connection = (SimplePlayerConnection) connection;
+        this.session = (SimpleSession) ISession.randomSession();
     }
 
     @Override
@@ -222,6 +227,10 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
+    public boolean hasProperty(String name) {
+        return this.getProperties().stream().anyMatch(property -> property.getName().equalsIgnoreCase(name));
+    }
+    @Override
     public void insertProperty(Consumer<IProperty> consumer) {
         PoloCloudAPI.getInstance().getPropertyManager().insertProperty(this.uniqueId, consumer);
     }
@@ -233,6 +242,15 @@ public class SimpleCloudPlayer implements ICloudPlayer {
 
     public void setMinecraftServer(String minecraftServer) {
         this.minecraftServer = minecraftServer;
+    }
+
+    public void setSession(SimpleSession session) {
+        this.session = session;
+    }
+
+    @Override
+    public ISession session() {
+        return session;
     }
 
     public void setProxyServer(String proxyServer) {

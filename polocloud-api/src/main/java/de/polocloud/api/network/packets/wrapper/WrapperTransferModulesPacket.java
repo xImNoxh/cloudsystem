@@ -4,7 +4,7 @@ import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.module.ModuleCopyType;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.common.AutoRegistry;
 
 import java.io.File;
 import java.io.IOException;

@@ -22,7 +22,7 @@ import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.wrapper.base.IWrapper;
@@ -42,7 +42,6 @@ import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
 import lombok.Getter;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
 
@@ -135,10 +134,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
             PoloLogger.print(LogLevel.INFO, "§cIt seems like you §ehave not §cset up PoloCloud yet! Lets fix this real quick...");
 
             new WrapperSetup().sendSetup();
-
-            PoloLogger.print(LogLevel.INFO, "§cThe Wrapper will now §eshutdown§c! You have to restart to apply all changes and confirm that no bugs appear!");
-            System.exit(0);
-
+            return;
         }
 
         ConsoleRunner.getInstance().setActive(true);

@@ -7,7 +7,7 @@ import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponseElement;
 import de.polocloud.api.network.protocol.packet.base.response.base.elements.*;
-import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.common.AutoRegistry;
 
 import java.io.IOException;
 

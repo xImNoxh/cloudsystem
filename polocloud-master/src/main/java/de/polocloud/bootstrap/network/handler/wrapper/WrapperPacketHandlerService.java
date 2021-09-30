@@ -8,9 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class WrapperPacketHandlerService extends WrapperHandlerServiceController implements IPacketHandler<WrapperLoginPacket> {
 
-    public WrapperPacketHandlerService() {
-
-    }
 
     @Override
     public void handlePacket(ChannelHandlerContext ctx, WrapperLoginPacket packet) {

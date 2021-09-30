@@ -9,14 +9,12 @@ public class BungeeBootstrap extends Plugin {
     /**
      * The module instance
      */
-    private final ProxyModule proxyModule;
+    private ProxyModule proxyModule;
 
-    public BungeeBootstrap() {
-        this.proxyModule = new ProxyModule(new ModuleBootstrap());
-    }
 
     @Override
     public void onEnable() {
+        this.proxyModule = new ProxyModule(new ModuleBootstrap());
         this.proxyModule.enable();
     }
 

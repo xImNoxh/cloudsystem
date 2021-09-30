@@ -53,6 +53,9 @@ public class SimpleCachedCloudPlayerManager implements ICloudPlayerManager {
     public void register(ICloudPlayer cloudPlayer) {
         if (this.getCached(cloudPlayer.getName()) == null) {
             this.cachedObjects.add(cloudPlayer);
+            if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                PoloCloudAPI.getInstance().getPropertyManager().loadProperties(cloudPlayer.getUUID());
+            }
         }
     }
 

@@ -8,7 +8,7 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.IProtocolObject;
 import de.polocloud.api.network.protocol.packet.base.Packet;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

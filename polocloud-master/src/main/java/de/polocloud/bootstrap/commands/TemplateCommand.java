@@ -8,7 +8,7 @@ import de.polocloud.api.command.identifier.CommandListener;
 import de.polocloud.api.command.identifier.TabCompletable;
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.IGameServerManager;
-import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.bootstrap.setup.TemplateSetup;

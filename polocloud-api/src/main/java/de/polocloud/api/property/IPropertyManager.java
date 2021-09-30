@@ -9,11 +9,12 @@ import java.util.function.Consumer;
 public interface IPropertyManager {
 
     /**
-     * Loads all properties and awaits for the consumer to finish before doing anything else
+     * Loads all properties for a given player with a given {@link UUID}
      *
+     * @param uniqueId the uuid of the player
      * @throws PoloTypeUnsupportedActionException if {@link de.polocloud.api.PoloCloudAPI} instance is plugin or wrapper
      */
-    boolean loadProperties() throws PoloTypeUnsupportedActionException;
+    boolean loadProperties(UUID uniqueId) throws PoloTypeUnsupportedActionException;
 
     /**
      * Gets all {@link IProperty} for a player with a given {@link UUID}

@@ -1,7 +1,7 @@
 package de.polocloud.api.logger.helper;
 
 import de.polocloud.api.logger.PoloLog;
-import de.polocloud.api.util.Cancellable;
+import de.polocloud.api.util.other.Cancellable;
 
 public interface LogHandler {
 

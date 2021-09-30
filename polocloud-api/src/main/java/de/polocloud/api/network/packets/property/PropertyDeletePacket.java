@@ -1,10 +1,12 @@
 package de.polocloud.api.network.packets.property;
 
+import de.polocloud.api.common.AutoRegistry;
 import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
 import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
 
 import java.util.UUID;
 
+@AutoRegistry
 public class PropertyDeletePacket extends SimplePacket {
 
     @PacketSerializable

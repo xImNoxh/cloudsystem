@@ -3,7 +3,7 @@ package de.polocloud.modules.permission.global.api.impl;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.util.Task;
+import de.polocloud.api.util.other.Task;
 import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.global.api.IPermissionDisplay;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;

@@ -8,7 +8,7 @@ import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.other.Snowflake;
 import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.ArrayList;

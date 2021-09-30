@@ -5,7 +5,7 @@ import de.polocloud.api.event.handling.EventHandler;
 import de.polocloud.api.event.impl.player.CloudPlayerDisconnectEvent;
 import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
-import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.common.AutoRegistry;
 import de.polocloud.npcs.bootstraps.PluginBootstrap;
 import de.polocloud.npcs.npc.base.ICloudNPC;
 

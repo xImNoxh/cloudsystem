@@ -24,50 +24,6 @@ public class SimpleProtocol implements IProtocol {
 
     public SimpleProtocol() {
         this.packetHandlers = new HashMap<>();
-
-        this.registerPacketHandler(new IPacketHandler<ForwardingPacket>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, ForwardingPacket obj) {
-                String receiver = obj.getReceiver();
-                Packet forwardingPacket = obj.getPacket();
-                switch (obj.getType()) {
-                    case WRAPPER:
-                        if (PoloCloudAPI.getInstance().getType() == PoloType.WRAPPER) {
-                            PoloCloudAPI.getInstance().receivePacket(forwardingPacket);
-                            return;
-                        }
-                        IWrapperManager wrapperManager = PoloCloudAPI.getInstance().getWrapperManager();
-                        IWrapper wrapper = wrapperManager.getWrapper(receiver);
-                        wrapper.sendPacket(forwardingPacket);
-                        break;
-                    case MASTER:
-                        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
-                            PoloCloudAPI.getInstance().receivePacket(forwardingPacket);
-                            return;
-                        } else {
-                            PoloCloudAPI.getInstance().sendPacket(obj);
-                        }
-                        break;
-                    case PLUGIN_SPIGOT:
-                    case PLUGIN_PROXY:
-                    case GENERAL_GAMESERVER:
-                        if (PoloCloudAPI.getInstance().getType().isPlugin()) {
-                            PoloCloudAPI.getInstance().receivePacket(forwardingPacket);
-                            return;
-                        }
-                        IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
-                        gameServerManager.getCached(receiver).sendPacket(forwardingPacket);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return ForwardingPacket.class;
-            }
-        });
     }
 
     @Override
@@ -87,6 +43,45 @@ public class SimpleProtocol implements IProtocol {
 
     @Override
     public void firePacketHandlers(ChannelHandlerContext ctx, Packet packet) {
+        if (packet instanceof ForwardingPacket) {
+            ForwardingPacket obj = (ForwardingPacket)packet;
+
+            switch (obj.getType()) {
+
+                case WRAPPER:
+                    if (PoloCloudAPI.getInstance().getType() == PoloType.WRAPPER && obj.getReceiver().equalsIgnoreCase(PoloCloudAPI.getInstance().getName())) {
+                        firePacketHandlers(ctx, obj.getPacket());
+                        return;
+                    } else if (PoloCloudAPI.getInstance().getType() != PoloType.WRAPPER) {
+                        IWrapper wrapper = PoloCloudAPI.getInstance().getWrapperManager().getWrapper(obj.getReceiver());
+                        wrapper.sendPacket(obj.getPacket());
+                    }
+                    break;
+
+                case MASTER:
+                    if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                        firePacketHandlers(ctx, obj.getPacket());
+                        return;
+                    } else {
+                        PoloCloudAPI.getInstance().sendPacket(obj);
+                    }
+                    break;
+                case PLUGIN_SPIGOT:
+                case PLUGIN_PROXY:
+                case GENERAL_GAMESERVER:
+                    if (PoloCloudAPI.getInstance().getType().isPlugin()) {
+                        firePacketHandlers(ctx, obj.getPacket());
+                        return;
+                    }
+                    IGameServerManager gameServerManager = PoloCloudAPI.getInstance().getGameServerManager();
+                    gameServerManager.getCached(obj.getReceiver()).sendPacket(obj.getPacket());
+                    break;
+                default:
+                    break;
+            }
+            return;
+        }
+
         if (packetHandlers.containsKey(packet.getClass())) {
 
             List<IPacketHandler<? extends Packet>> iPacketHandlers = packetHandlers.get(packet.getClass());

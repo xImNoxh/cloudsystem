@@ -1,7 +1,7 @@
 package de.polocloud.api.player.def;
 
 import de.polocloud.api.player.extras.IPlayerSettings;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 
 import java.util.Locale;
 

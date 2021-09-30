@@ -3,7 +3,7 @@ package de.polocloud.api.network.packets.master;
 import de.polocloud.api.config.master.MasterConfig;
 import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
 import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
-import de.polocloud.api.util.AutoRegistry;
+import de.polocloud.api.common.AutoRegistry;
 
 @AutoRegistry
 public class MasterUpdateConfigPacket extends SimplePacket {

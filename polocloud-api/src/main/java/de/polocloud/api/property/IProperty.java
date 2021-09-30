@@ -44,9 +44,16 @@ public interface IProperty  {
      * Attaches an {@link IProperty} to this property
      *
      * @param name the name
+     * @param value the value
+     */
+    void addProperty(String name, Object value);
+
+    /**
+     * Attaches an {@link IProperty} to this property
+     *
      * @param property the property
      */
-    void addProperty(String name, Consumer<IProperty> property);
+    void addProperty(Consumer<IProperty> property);
 
     /**
      * Copies all values of an {@link IProperty}

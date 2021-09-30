@@ -1,7 +1,7 @@
 package de.polocloud.bootstrap;
 
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.wrapper.Wrapper;
 

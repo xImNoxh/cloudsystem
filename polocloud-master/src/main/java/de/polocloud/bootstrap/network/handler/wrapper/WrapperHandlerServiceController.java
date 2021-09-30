@@ -7,8 +7,8 @@ import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperTransferModulesPacket;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.IWrapperManager;
+import de.polocloud.api.wrapper.base.SimpleWrapper;
 import de.polocloud.bootstrap.Master;
-import de.polocloud.bootstrap.wrapper.SimpleMasterWrapper;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.logger.helper.LogLevel;
@@ -36,10 +36,11 @@ public abstract class WrapperHandlerServiceController {
     public void getLoginResponse(WrapperLoginPacket packet, BiConsumer<Boolean, IWrapper> response, ChannelHandlerContext ctx) {
         IWrapper wrapper = packet.getWrapper();
 
-        SimpleMasterWrapper simpleMasterWrapper = new SimpleMasterWrapper(wrapper.getName(), ctx, wrapper.getMaxMemory(), wrapper.getMaxSimultaneouslyStartingServices());
-        simpleMasterWrapper.setAuthenticated(wrapper.isAuthenticated());
+        ((SimpleWrapper)wrapper).setCtx(ctx);
 
-        response.accept(PoloCloudAPI.getInstance().getMasterConfig().getProperties().getWrapperKey().equals(packet.getKey()), simpleMasterWrapper);
+        wrapper.setAuthenticated(true);
+
+        response.accept(PoloCloudAPI.getInstance().getMasterConfig().getProperties().getWrapperKey().equals(packet.getKey()), wrapper);
     }
 
     public void sendWrapperSuccessfully(IWrapper wrapper, WrapperLoginPacket packet) {

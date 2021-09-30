@@ -14,7 +14,7 @@ import de.polocloud.api.setup.accepter.StepAnswer;
 import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.console.ConsoleRunner;
 import de.polocloud.api.console.ConsoleColors;

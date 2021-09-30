@@ -79,6 +79,8 @@ public class ProxyModule {
         this.reloaded = new ArrayList<>();
         this.proxyConfig = new ProxyConfig();
         this.notifyService = new NotifyService();
+        reloaded.add(this.motdService = new MotdService());
+        reloaded.add(this.tablistService = new TablistService());
         this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(ProxyConfig.class, "proxy-module");
 
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
@@ -117,8 +119,6 @@ public class ProxyModule {
      * Enables this module
      */
     public void enable() {
-        reloaded.add(this.motdService = new MotdService());
-        reloaded.add(this.tablistService = new TablistService());
 
         if (PoloCloudAPI.getInstance().getType().isPlugin()) {
             PoloCloudAPI.getInstance().getCommandManager().registerCommand(new ProxyCommand());

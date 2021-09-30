@@ -2,7 +2,7 @@ package de.polocloud.api.property.def;
 
 import com.google.gson.JsonElement;
 import de.polocloud.api.property.IProperty;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +42,20 @@ public class SimpleProperty implements IProperty {
         return this.properties.isEmpty();
     }
 
+
     @Override
-    public void addProperty(String name, Consumer<IProperty> property) {
+    public void addProperty(Consumer<IProperty> property) {
         SimpleProperty simpleProperty = new SimpleProperty();
-        simpleProperty.setName(name);
         property.accept(simpleProperty);
         this.properties.add(simpleProperty);
+    }
+
+    @Override
+    public void addProperty(String name, Object value) {
+        this.addProperty(property -> {
+            property.setName(name);
+            property.setValue(value);
+        });
     }
 
     @Override

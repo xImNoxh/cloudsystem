@@ -4,7 +4,9 @@ import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.common.PoloType;
+import de.polocloud.api.util.session.SimpleSession;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.loader.IConfigLoader;
 import de.polocloud.api.config.loader.SimpleConfigLoader;
@@ -52,8 +54,8 @@ import de.polocloud.api.template.ITemplateManager;
 import de.polocloud.api.template.SimpleCachedTemplateManager;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.util.AutoRegistry;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.common.AutoRegistry;
+import de.polocloud.api.util.other.Snowflake;
 import de.polocloud.api.util.system.SystemManager;
 import de.polocloud.api.util.system.resources.IResourceConverter;
 import de.polocloud.api.util.system.resources.IResourceProvider;
@@ -148,6 +150,8 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
         PoloInject.bind(ITemplate.class).toInstance(new SimpleTemplate());
         PoloInject.bind(IGameServer.class).toInstance(new SimpleGameServer());
+
+        PoloInject.bind(ISession.class).toInstance(new SimpleSession());
 
         this.registerPacketHandler(new IPacketHandler<WrapperUpdatePacket>() {
 

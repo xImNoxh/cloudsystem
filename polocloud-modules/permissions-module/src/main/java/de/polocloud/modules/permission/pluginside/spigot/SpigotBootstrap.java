@@ -1,7 +1,7 @@
 package de.polocloud.modules.permission.pluginside.spigot;
 
 import de.polocloud.api.scheduler.Scheduler;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.bootstrap.ModuleBootstrap;
 import de.polocloud.modules.permission.global.api.IPermissionGroup;

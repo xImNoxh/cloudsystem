@@ -73,7 +73,7 @@ public class PlayerInjectListener implements IEventHandler<ProxyConstructPlayerE
             if (playerConnection != null) {
                 ((SimplePlayerConnection)playerConnection).setHost(connection.getAddress().getAddress().getHostAddress());
                 ((SimplePlayerConnection)playerConnection).setPort(connection.getAddress().getPort());
-                ((SimpleCloudPlayer)cloudPlayer).setConnection(playerConnection);
+                ((SimpleCloudPlayer)cloudPlayer).setConnection((SimplePlayerConnection) playerConnection);
                 cloudPlayer.update();
             }
 

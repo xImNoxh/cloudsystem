@@ -7,7 +7,8 @@ import de.polocloud.api.player.extras.IPlayerConnection;
 import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.pool.PoloObject;
 import de.polocloud.api.property.IPropertyHolder;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.other.Snowflake;
+import de.polocloud.api.util.session.ISession;
 
 import java.util.UUID;
 
@@ -22,6 +23,16 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor,
      * Gets the {@link UUID} of this player
      */
     UUID getUUID();
+
+    /**
+     * The Cloud {@link ISession} of this player
+     *
+     * Info:
+     * This session is another way to identify a {@link ICloudPlayer}
+     * like a {@link UUID} with extra identification values in it
+     * This session resets on every join of the player
+     */
+    ISession session();
 
     /**
      * Gets the current proxy-Server as {@link IGameServer}

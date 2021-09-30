@@ -3,7 +3,7 @@ package de.polocloud.api.database.other;
 import de.polocloud.api.database.other.files.FileDatabase;
 import de.polocloud.api.database.other.mongodb.MongoDBDatabase;
 import de.polocloud.api.database.other.mysql.MySQLDatabase;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

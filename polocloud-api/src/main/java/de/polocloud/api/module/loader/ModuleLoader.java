@@ -10,7 +10,7 @@ import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.module.CloudModule;
 import de.polocloud.api.module.info.ModuleInfo;
 import de.polocloud.api.module.info.ModuleState;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.File;
 import java.net.URLClassLoader;

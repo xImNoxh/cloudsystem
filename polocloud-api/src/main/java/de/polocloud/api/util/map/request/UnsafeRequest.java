@@ -2,7 +2,7 @@ package de.polocloud.api.util.map.request;
 
 import com.google.gson.JsonObject;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.util.Acceptable;
+import de.polocloud.api.common.Acceptable;
 import de.polocloud.api.util.map.MapEntry;
 import de.polocloud.api.util.map.UniqueMap;
 

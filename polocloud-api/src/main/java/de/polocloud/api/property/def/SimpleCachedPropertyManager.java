@@ -5,14 +5,17 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.common.PoloTypeUnsupportedActionException;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.network.packets.property.PropertyClearPacket;
 import de.polocloud.api.network.packets.property.PropertyDeletePacket;
 import de.polocloud.api.network.packets.property.PropertyInsertPacket;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.IPropertyManager;
+import de.polocloud.api.scheduler.Scheduler;
 import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarStyle;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -25,56 +28,77 @@ public class SimpleCachedPropertyManager implements IPropertyManager {
 
     public SimpleCachedPropertyManager() {
         this.properties = new ConcurrentHashMap<>();
+
+        Scheduler.runtimeScheduler().schedule(() -> {
+            PoloCloudAPI.getInstance().registerSimplePacketHandler(PropertyInsertPacket.class, packet -> {
+
+                IProperty property = packet.getProperty();
+                UUID uniqueId = packet.getUniqueId();
+
+                List<IProperty> properties = getProperties(uniqueId);
+                properties.add(property);
+                this.properties.put(uniqueId, properties);
+
+                if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                    save(uniqueId);
+                    PoloCloudAPI.getInstance().sendPacket(packet);
+                }
+            });
+
+            PoloCloudAPI.getInstance().registerSimplePacketHandler(PropertyDeletePacket.class, packet -> {
+
+                String property = packet.getName();
+                UUID uniqueId = packet.getUniqueId();
+
+                List<IProperty> properties = getProperties(uniqueId);
+                properties.removeIf(p -> p.getName().equalsIgnoreCase(property));
+                this.properties.put(uniqueId, properties);
+
+                if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                    save(uniqueId);
+                    PoloCloudAPI.getInstance().sendPacket(packet);
+                }
+            });
+
+            PoloCloudAPI.getInstance().registerSimplePacketHandler(PropertyClearPacket.class, packet -> {
+
+                UUID uniqueId = packet.getUniqueId();
+
+                properties.remove(uniqueId);
+                if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+                    PoloCloudAPI.getInstance().sendPacket(packet);
+                }
+            });
+        }, () -> PoloCloudAPI.getInstance().getConnection() != null);
     }
 
+
     @Override
-    public boolean loadProperties() {
-        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+    public boolean loadProperties(UUID uniqueId) throws PoloTypeUnsupportedActionException {
+        File file = new File(FileConstants.MASTER_PLAYER_PROPERTIES, uniqueId + ".json");
+        JsonData jsonData = new JsonData(file);
+        JsonData singleProperties = jsonData.fallback(new JsonData()).getData("singleProperties");
+        JsonData multiProperties = jsonData.fallback(new JsonData()).getData("multiProperties");
 
-            File directory = FileConstants.MASTER_PLAYER_PROPERTIES;
-
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            File[] files = directory.listFiles();
-
-            //Some os mark empty dirs as null
-            if (files == null) {
-                return true;
-            }
-
-            int downloaded = 0;
-            int max = files.length;
-
-
-            ProgressBar pb = new ProgressBar("Loading " + max + " Properties", 100, 1000, System.err, ProgressBarStyle.COLORFUL_UNICODE_BLOCK, "", 1, false, null, ChronoUnit.SECONDS, 0L, Duration.ZERO);
-
-            long start = System.currentTimeMillis();
-            for (File file : files) {
-                List<IProperty> properties = new ArrayList<>();
-
-                UUID uniqueId = UUID.fromString(file.getName().split("\\.")[0]);
-
-                JsonData jsonData = new JsonData(file);
-                JsonData singleProperties = jsonData.fallback(new JsonData()).getData("singleProperties");
-                JsonData multiProperties = jsonData.fallback(new JsonData()).getData("multiProperties");
-
-                for (String key : singleProperties.keySet()) {
-                    JsonData sub = singleProperties.getData(key);
-                    IProperty property = new SimpleProperty(sub.getString("name"), new ArrayList<>(), sub.getElement("value"));
-                    properties.add(property);
-                }
-
-                properties.addAll(this.getProperty(multiProperties));
-
-                downloaded += 1;
-                this.properties.put(uniqueId, properties);
-                pb.stepTo((long) ((downloaded * 100L) / (max * 1.0)));
-            }
-            pb.setExtraMessage("[" + (System.currentTimeMillis() - start) + "ms]");
-            pb.close();
+        List<IProperty> props = new ArrayList<>();
+        for (String key : singleProperties.keySet()) {
+            JsonData sub = singleProperties.getData(key);
+            IProperty property = new SimpleProperty(sub.getString("name"), new ArrayList<>(), sub.getElement("value"));
+            props.add(property);
         }
+
+        props.addAll(this.getProperty(multiProperties));
+
+        //Clearing old properties
+        properties.remove(uniqueId);
+        PoloCloudAPI.getInstance().sendPacket(new PropertyClearPacket(uniqueId));
+
+        for (IProperty prop : props) {
+            PropertyInsertPacket packet = new PropertyInsertPacket(prop, uniqueId);
+            PoloCloudAPI.getInstance().sendPacket(packet);
+        }
+
+        this.properties.put(uniqueId, props);
         return true;
     }
 
@@ -113,7 +137,22 @@ public class SimpleCachedPropertyManager implements IPropertyManager {
 
         File directory = FileConstants.MASTER_PLAYER_PROPERTIES;
 
-        JsonData jsonData = new JsonData(new File(directory, uniqueId + ".json"));
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        File file = new File(directory, uniqueId + ".json");
+
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        JsonData jsonData = new JsonData(file);
         JsonData singleProperties = jsonData.fallback(new JsonData()).getData("singleProperties");
         JsonData multiProperties = jsonData.fallback(new JsonData()).getData("multiProperties");
 
@@ -162,12 +201,7 @@ public class SimpleCachedPropertyManager implements IPropertyManager {
         properties.add(prop);
         this.properties.put(uuid, properties);
 
-        if (PoloCloudAPI.getInstance().getType().isCloud()) {
-            save(uuid);
-            PoloCloudAPI.getInstance().updateCache();
-        } else {
-            PoloCloudAPI.getInstance().sendPacket(new PropertyInsertPacket(prop, uuid));
-        }
+        PoloCloudAPI.getInstance().sendPacket(new PropertyInsertPacket(prop, uuid));
     }
 
 
@@ -176,12 +210,8 @@ public class SimpleCachedPropertyManager implements IPropertyManager {
         List<IProperty> properties = getProperties(uuid);
         properties.removeIf(p -> p.getName().equalsIgnoreCase(property));
         this.properties.put(uuid, properties);
-        if (PoloCloudAPI.getInstance().getType().isCloud()) {
-            save(uuid);
-            PoloCloudAPI.getInstance().updateCache();
-        } else {
-            PoloCloudAPI.getInstance().sendPacket(new PropertyDeletePacket(uuid, property));
-        }
+
+        PoloCloudAPI.getInstance().sendPacket(new PropertyDeletePacket(uuid, property));
     }
 
     public void setProperties(Map<UUID, List<IProperty>> properties) {

@@ -19,10 +19,12 @@ import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleProperty;
 import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
-import de.polocloud.api.template.helper.GameServerVersion;
+import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
-import de.polocloud.api.util.MinecraftProtocol;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.gameserver.helper.MinecraftProtocol;
+import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.session.ISession;
+import de.polocloud.api.util.session.SimpleSession;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.base.SimpleWrapper;
 import io.netty.buffer.ByteBuf;
@@ -541,9 +543,13 @@ public class SimplePacketBuffer implements IPacketBuffer {
         String host = this.readString();
         int port = this.readInt();
         int version = this.readInt();
-        InetSocketAddress address = PoloHelper.getAddress(this.readString());
+
+        InetSocketAddress address = new InetSocketAddress(host, port);
         boolean onlineMode = this.readBoolean();
         boolean legacy = this.readBoolean();
+
+        //Session
+        SimpleSession session = this.readProtocol();
 
         IPlayerConnection connection = new SimplePlayerConnection(address, uuid, name, host, port, MinecraftProtocol.valueOf(version), onlineMode, legacy);
 
@@ -552,6 +558,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
 
         cloudPlayer.setProxyServer(proxy);
         cloudPlayer.setMinecraftServer(minecraft);
+        cloudPlayer.setSession(session);
 
         return cloudPlayer;
     }
@@ -571,9 +578,16 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeString(cloudPlayer.getConnection().getHost());
         this.writeInt(cloudPlayer.getConnection().getPort());
         this.writeInt(cloudPlayer.getConnection().getVersion().getProtocolId());
-        this.writeString(cloudPlayer.getConnection().getAddress().toString());
+
+
+        InetSocketAddress address = cloudPlayer.getConnection().getAddress();
+
+
         this.writeBoolean(cloudPlayer.getConnection().isOnlineMode());
         this.writeBoolean(cloudPlayer.getConnection().isLegacy());
+
+        //Writing the session
+        this.writeProtocol(cloudPlayer.session());
     }
 
     @Override

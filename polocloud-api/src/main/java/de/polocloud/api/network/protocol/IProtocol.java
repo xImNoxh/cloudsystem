@@ -14,6 +14,11 @@ public interface IProtocol {
      */
     void registerPacketHandler(IPacketHandler<? extends Packet> packetHandler);
 
+    /**
+     * Unregisters an {@link IPacketHandler}
+     *
+     * @param packetHandler the handler to unregister
+     */
     void unregisterPacketHandler(IPacketHandler<?> packetHandler);
 
     /**

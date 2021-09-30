@@ -32,9 +32,10 @@ public class SimpleCachedTemplateManager implements ITemplateManager {
 
     @Override
     public void copyServer(IGameServer gameServer, Type type) {
+
         for (IWrapper wrapper : gameServer.getWrappers()) {
-            if(gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)){
-                gameServer.sendPacket(new GameServerExecuteCommandPacket("save-all", gameServer.getName()));
+            if (gameServer.getTemplate().getTemplateType().equals(TemplateType.MINECRAFT)){
+                gameServer.executeCommand("save-all");
             }
             wrapper.sendPacket(new GameServerCopyPacket(type, gameServer));
         }

@@ -1,7 +1,7 @@
 package de.polocloud.wrapper.impl.config;
 
 import de.polocloud.api.config.IConfig;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.other.Snowflake;
 import lombok.Getter;
 import lombok.Setter;
 

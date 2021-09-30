@@ -129,10 +129,10 @@ public class SimpleNetworkPromise<E, W> implements INetworkPromise<E> {
     @Override
     public void nonBlocking(IPromiseFuture<E> promise) {
 
+        handlers.add(promise);
         this.blocking = false;
         this.packetMessenger.noBlocking();
 
-        handlers.add(promise);
     }
     @Override
     public @Nullable Throwable cause() {

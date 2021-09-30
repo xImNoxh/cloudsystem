@@ -21,6 +21,14 @@ public interface IPropertyHolder {
     IProperty getProperty(String name);
 
     /**
+     * Checks if a property is exiting
+     *
+     * @param name the name of the property
+     * @return boolean
+     */
+    boolean hasProperty(String name);
+
+    /**
      * Adds or overrides an {@link IProperty}
      *
      * @param consumer the consumer

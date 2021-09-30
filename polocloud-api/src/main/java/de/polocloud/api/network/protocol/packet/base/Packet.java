@@ -9,7 +9,7 @@ import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.extra.SimpleNetworkResponse;
-import de.polocloud.api.util.Snowflake;
+import de.polocloud.api.util.other.Snowflake;
 
 import java.util.function.Consumer;
 
