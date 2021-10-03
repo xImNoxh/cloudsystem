@@ -34,7 +34,7 @@ public class MasterSetup extends StepAcceptor implements Setup {
         SetupBuilder setupBuilder = new SetupBuilder(this);
         Step step = setupBuilder.createStep("On what port should the Master run?", isInteger());
 
-        step.addStep("Should Player-Connections (Connecting / Disconnecting) be displayed in Console?", isBoolean())
+        step.addStep("Should Player-Connections (Connecting / Disconnecting) be displayed in Console? (true/false)", isBoolean())
             .addStep("How many GameServers are allowed to start at the same time? (-1 for infinite)", isInteger())
             .addStep("Should Cracked-Players be allowed to join the network? (true/false)", isBoolean())
             .addStep("What information should be sent to our servers? (Mostly Exceptions) (NONE: No information will be sent to us, MINIMAL: Minimal information about a exception will be sent (stacktrace, version, master or wrapper), OPTIONAL: More information will be sent (Java-Version, stacktrace, version, master or wrapper)", new FutureAnswer() {
