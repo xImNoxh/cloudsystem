@@ -1,13 +1,13 @@
 package de.polocloud.api.network.packets.api;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.common.AutoRegistry;
 import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 import de.polocloud.api.property.def.SimpleProperty;
-import de.polocloud.api.util.AutoRegistry;
-import de.polocloud.api.util.gson.PoloHelper;
+import de.polocloud.api.util.PoloHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
