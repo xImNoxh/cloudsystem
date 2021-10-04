@@ -10,7 +10,8 @@ import de.polocloud.client.PoloCloudClient;
 import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.launcher.config.LauncherConfig;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -18,7 +19,8 @@ import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
-import static de.polocloud.api.config.FileConstants.*;
+import static de.polocloud.api.config.FileConstants.BOOTSTRAP_FILE;
+import static de.polocloud.api.config.FileConstants.OLD_BOOTSTRAP_FILE;
 
 public class Launcher {
 
@@ -28,7 +30,7 @@ public class Launcher {
 
     private static LauncherConfig launcherConfig;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchMethodException {
 
         //Initializing the PoloCloudClient for the PoloCloudUpdater and for the ExceptionReporterService
         PoloCloudClient client = new PoloCloudClient("37.114.60.129", 4542);
@@ -57,7 +59,7 @@ public class Launcher {
         boolean firstCreation = !new File("launcher.json").exists();
         launcherConfig = loader.load(LauncherConfig.class, new File("launcher.json"));
 
-        if(firstCreation && (args.length == 3 && args[2].equalsIgnoreCase("--ignoreUpdater"))){
+        if (firstCreation && (args.length == 3 && args[2].equalsIgnoreCase("--ignoreUpdater"))) {
             launcherConfig.setUseUpdater(false);
         }
 
@@ -72,7 +74,7 @@ public class Launcher {
 
 
         //Checking for Updates
-        if(launcherConfig.isUseUpdater() || !bootstrapFile.exists()){
+        if (launcherConfig.isUseUpdater() || !bootstrapFile.exists()) {
             checkForUpdates(launcherConfig.getVersion(), forceUpdate);
         }
 
@@ -85,7 +87,7 @@ public class Launcher {
         //Launching the bootstrap.jar File
         try {
             //First attempt
-            launchBootstrap(args);
+            launchBootstrap0(args);
         } catch (ZipException exception) {
             //Failed to launch the jar, maybe the jar is corrupt after bad update
             //Launcher is trying to rescue the cloud with the old-bootstrap.jar backup file
@@ -99,12 +101,12 @@ public class Launcher {
                 System.out.println(PoloCloudClient.PREFIX + ConsoleColors.RED + "Backup File existed and recovered, try to launch...");
                 try {
                     //Second launch try
-                    launchBootstrap(args);
+                    launchBootstrap0(args);
                 } catch (ZipException exception1) {
                     System.out.println(PoloCloudClient.PREFIX + ConsoleColors.RED + "Second attempt failed! Stopping");
                     System.out.println(PoloCloudClient.PREFIX + ConsoleColors.RED + "It seems you bootstrap.jar file is corrupt. Please download the cloud new. If the problem is existing in the future too, contact our support!");
                     System.exit(-1);
-                } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                     client.getExceptionReportService().reportException(e, "launcher - booting bootstrap (" + args[0] + ")", launcherConfig.getVersion(), client.getClientConfig().getReportType());
                 }
@@ -112,39 +114,45 @@ public class Launcher {
                 System.out.println(PoloCloudClient.PREFIX + ConsoleColors.RED + "No Backup version was found! Also it seems you bootstrap.jar file is corrupt. Please download the cloud new. If the problem is existing in the future too, contact our support!");
                 System.exit(-1);
             }
-        } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             client.getExceptionReportService().reportException(e, "launcher - booting bootstrap (" + args[0] + ")", launcherConfig.getVersion(), client.getClientConfig().getReportType());
         }
     }
 
-    private static void launchBootstrap(String[] args) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    private static void launchBootstrap0(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException {
         File bootstrapFile = BOOTSTRAP_FILE;
 
-        //Creating JarFile
-        new JarFile(bootstrapFile);
+        String mainClass;
+        JarFile jarFile = new JarFile(bootstrapFile);
+        mainClass = jarFile.getManifest().getMainAttributes().getValue("Main-Class");
+        if (mainClass == null) {
+            System.err.println("Failed to find Main-Class!");
+            System.exit(-1);
+        }
 
         //JarFile is not corrupt, launcher can clean up backup Jars
-        if(launcherConfig.isUseUpdater()){
+        if (launcherConfig.isUseUpdater() && OLD_BOOTSTRAP_FILE.exists()) {
             System.out.println(PoloCloudClient.PREFIX + "Cleaning up...");
             OLD_BOOTSTRAP_FILE.delete();
             System.out.println(PoloCloudClient.PREFIX + "Done!");
         }
 
-        //Loading mainclass
-        URLClassLoader classLoader = new URLClassLoader(new URL[]{bootstrapFile.toURI().toURL()});
-        URLClassLoader urlClassLoader = new URLClassLoader(((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs());
-        Thread.currentThread().setContextClassLoader(classLoader);
+        //Creating classloader from the file, and search the main-class
+        ClassLoader classLoader = new URLClassLoader(new URL[]{bootstrapFile.toURI().toURL()});
+        Method method = classLoader.loadClass(mainClass).getMethod("main", String[].class);
 
-        String mainClass = "de.polocloud.bootstrap.Bootstrap";
-        Class<?> loadedClass = classLoader.loadClass(mainClass);
-        Method mainMethod = loadedClass.getMethod("main", String[].class);
-
-        final Object[] params = new Object[1];
-        params[0] = args;
-
-        urlClassLoader.close();
-        mainMethod.invoke(null, params);
+        //Starting the Main-Thread
+        Thread thread = new Thread(() -> {
+            try {
+                method.invoke(null, (Object) args);
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
+            }
+        }, "PoloCloud-Main-Thread");
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.setContextClassLoader(classLoader);
+        thread.start();
     }
 
     private static void checkForUpdates(String currentVersion, boolean forceUpdate) {
@@ -153,51 +161,51 @@ public class Launcher {
 
         if (forceUpdate) {
             if (devMode) {
-                System.out.println(PREFIX + "[Updater] Downloading latest development builds...");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] Downloading latest development builds...");
                 bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
                 if (updater.download()) {
-                    System.out.println(PREFIX + "[Updater] Successfully downloaded newest development build!");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Successfully downloaded newest development build!");
                 } else {
-                    System.out.println(PREFIX + "[Updater] Couldn't download latest development build!");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Couldn't download latest development build!");
                 }
             } else {
-                System.out.println(PREFIX + "[Updater] Force update activated. Downloading latest build...");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] Force update activated. Downloading latest build...");
                 bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
                 if (updater.download()) {
                     launcherConfig.setVersion(updater.getFetchedVersion());
                     IConfigSaver saver = new SimpleConfigSaver();
                     saver.save(launcherConfig, new File("launcher.json"));
-                    System.out.println(PREFIX + "[Updater] Successfully downloaded newest build!");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Successfully downloaded newest build!");
                 } else {
-                    System.out.println(PREFIX + "[Updater] Couldn't download latest build!");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Couldn't download latest build!");
                 }
             }
         } else if (devMode) {
-            System.out.println(PREFIX + "[Updater] Downloading latest development builds...");
+            System.out.println(PoloCloudClient.PREFIX + "[Updater] Downloading latest development builds...");
             bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
             if (updater.download()) {
-                System.out.println(PREFIX + "[Updater] Successfully downloaded newest development build!");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] Successfully downloaded newest development build!");
             } else {
-                System.out.println(PREFIX + "[Updater] Couldn't download latest development build!");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] Couldn't download latest development build!");
             }
         } else {
-            System.out.println(PREFIX + "[Updater] Searching for updates...");
+            System.out.println(PoloCloudClient.PREFIX + "[Updater] Searching for updates...");
             if (updater.check()) {
-                System.out.println(PREFIX + "[Updater] Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");
-                System.out.println(PREFIX + "[Updater] downloading...");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] Found a update! (" + currentVersion + " -> " + updater.getFetchedVersion() + " (Upload date: " + updater.getLastUpdate() + "))");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] downloading...");
                 bootstrap.renameTo(OLD_BOOTSTRAP_FILE);
                 if (updater.download()) {
                     launcherConfig.setVersion(updater.getFetchedVersion());
                     IConfigSaver saver = new SimpleConfigSaver();
 
                     saver.save(launcherConfig, new File("launcher.json"));
-                    System.out.println(PREFIX + "[Updater] Successfully downloaded latest version! (" + updater.getFetchedVersion() + ")");
-                    System.out.println(PREFIX + "[Updater] Want to see the latest changes? Use the 'changelog' command!");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Successfully downloaded latest version! (" + updater.getFetchedVersion() + ")");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Want to see the latest changes? Use the 'changelog' command!");
                 } else {
-                    System.out.println(PREFIX + "[Updater] Couldn't download latest version!");
+                    System.out.println(PoloCloudClient.PREFIX + "[Updater] Couldn't download latest version!");
                 }
             } else {
-                System.out.println(PREFIX + "[Updater] You are running the latest version! (" + currentVersion + ")");
+                System.out.println(PoloCloudClient.PREFIX + "[Updater] You are running the latest version! (" + currentVersion + ")");
             }
         }
 
