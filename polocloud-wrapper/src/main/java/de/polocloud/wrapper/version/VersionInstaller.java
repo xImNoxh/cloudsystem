@@ -4,10 +4,6 @@ import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import org.apache.commons.io.FileUtils;
-
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * This class was developed by DasLixou :3
