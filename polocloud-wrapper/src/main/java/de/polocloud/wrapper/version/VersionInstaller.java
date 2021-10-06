@@ -62,8 +62,6 @@ public class VersionInstaller {
                 process = processBuilder.start();
 
                 Scanner errors = new Scanner(process.getErrorStream(), "UTF-8");
-                boolean nextLineStop = false;
-                boolean read = true;
                 while (process.isAlive()) {
                     if(errors.hasNext()) {
                         System.err.println(errors.nextLine());
