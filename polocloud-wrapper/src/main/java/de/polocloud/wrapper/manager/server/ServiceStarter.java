@@ -13,7 +13,6 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.properties.BungeeProperties;
