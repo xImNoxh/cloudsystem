@@ -46,6 +46,7 @@ public class VersionInstaller {
                 "-XX:-UseAdaptiveSizePolicy",
                 "-XX:CompileThreshold=100",
                 "-Dcom.mojang.eula.agree=true",
+                "-Dpaperclip.patchonly=true",
                 "-Dio.netty.recycler.maxCapacity=0",
                 "-Dio.netty.recycler.maxCapacity.default=0",
                 "-Djline.terminal=jline.UnsupportedTerminal",
@@ -60,28 +61,14 @@ public class VersionInstaller {
                 Process process = null;
                 process = processBuilder.start();
 
-                Scanner reader = new Scanner(process.getInputStream(), "UTF-8");
                 Scanner errors = new Scanner(process.getErrorStream(), "UTF-8");
                 boolean nextLineStop = false;
                 boolean read = true;
-                while (read) {
-                    if(reader.hasNext()) {
-                        String line = reader.nextLine();
-                        if (line == null) {
-                            continue;
-                        }
-                        System.out.println(line);
-                        if(nextLineStop) {
-                            read = false;
-                        }
-                        if(line.startsWith("Patching")) {
-                            nextLineStop = true;
-                        }
-                    }
+                while (process.isAlive()) {
                     if(errors.hasNext()) {
                         System.err.println(errors.nextLine());
                     }
-
+                    continue;
                 }
                 process.destroy();
                 patchedFile = Objects.requireNonNull(new File(patchServer, "cache").listFiles((FilenameFilter) (dir, name) -> {
