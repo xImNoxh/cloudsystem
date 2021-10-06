@@ -32,9 +32,7 @@ public class ChannelInactiveListener implements IEventHandler<ChannelInactiveEve
                 //Stopping all servers from the wrapper
                 if (!wrapper.getServers().isEmpty()) {
                     for (IGameServer server : wrapper.getServers()) {
-                        if (server.isRegistered()) {
-                            server.terminate();
-                        }
+                        PoloCloudAPI.getInstance().getGameServerManager().unregister(server);
                     }
                 }
 
