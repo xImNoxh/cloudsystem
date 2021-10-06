@@ -18,6 +18,7 @@ public enum GameServerVersion implements Serializable {
     VELOCITY_3_0_1("https://versions.velocitypowered.com/download/3.0.1.jar", "Velocity-3.0.1", TemplateType.PROXY, -1, false),
 
     //Paper-Spigot
+    PAPERSPIGOT_1_17_1("https://papermc.io/api/v2/projects/paper/versions/1.17.1/builds/311/downloads/paper-1.17.1-311.jar", "Paper-1.17.1", TemplateType.MINECRAFT, 756, true),
     PAPERSPIGOT_1_16_5("https://papermc.io/api/v2/projects/paper/versions/1.16.5/builds/788/downloads/paper-1.16.5-788.jar", "Paper-1.16.5", TemplateType.MINECRAFT, 754, true),
     PAPERSPIGOT_1_15_2("https://papermc.io/api/v2/projects/paper/versions/1.15.2/builds/391/downloads/paper-1.15.2-391.jar", "Paper-1.15.2", TemplateType.MINECRAFT, 578, true),
     PAPERSPIGOT_1_14_4("https://papermc.io/api/v2/projects/paper/versions/1.14.4/builds/243/downloads/paper-1.14.4-243.jar", "Paper-1.14.4", TemplateType.MINECRAFT, 498, true),
