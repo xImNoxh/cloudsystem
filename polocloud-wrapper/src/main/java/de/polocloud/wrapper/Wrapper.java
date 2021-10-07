@@ -107,6 +107,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
         //Loading wrapper boot
         bootstrap.registerUncaughtExceptionListener();
         bootstrap.checkAndDeleteTmpFolder();
+        bootstrap.checkAndDeletePatchFolder();
 
         //Registering commands
         this.commandManager.registerCommand(new StopCommand());
@@ -343,6 +344,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
         Scheduler.runtimeScheduler().schedule(() -> {
             PoloHelper.deleteFolder(FileConstants.MASTER_MODULES);
             PoloHelper.deleteFolder(FileConstants.WRAPPER_DYNAMIC_SERVERS);
+            PoloHelper.deleteFolder(FileConstants.WRAPPER_PATCHER_FOLDER);
         }, 10L);
         Scheduler.runtimeScheduler().schedule(() -> System.exit(0), 20L);
         return terminate;

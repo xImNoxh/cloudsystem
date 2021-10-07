@@ -13,7 +13,6 @@ import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.console.ConsoleColors;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.wrapper.Wrapper;
 import de.polocloud.wrapper.impl.config.properties.BungeeProperties;
@@ -22,6 +21,7 @@ import de.polocloud.wrapper.impl.config.properties.SpigotProperties;
 import de.polocloud.wrapper.impl.config.properties.VelocityProperties;
 import de.polocloud.wrapper.manager.screen.IScreen;
 import de.polocloud.wrapper.manager.screen.impl.SimpleScreen;
+import de.polocloud.wrapper.version.VersionInstaller;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -53,14 +53,7 @@ public class ServiceStarter {
 
         this.serverFile = new File(FileConstants.WRAPPER_STORAGE_VERSIONS, version.getTitle() + ".jar");
         if (!serverFile.exists()) {
-            PoloLogger.print(LogLevel.INFO, "§7Downloading §b" + template.getTemplateType().getDisplayName() + "-Version§7... (§3" + version.getTitle() + "§7)");
-            serverFile.getParentFile().mkdirs();
-            try {
-                FileUtils.copyURLToFile(new URL(version.getUrl()), serverFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            PoloLogger.print(LogLevel.INFO, "Downloading of (§3" + version.getTitle() + "§7)" + ConsoleColors.GREEN + " successfully " + ConsoleColors.GRAY + "completed.");
+            VersionInstaller.installVersion(template.getVersion());
         }
 
 
@@ -282,19 +275,19 @@ public class ServiceStarter {
     public void start(Consumer<IGameServer> consumer) throws Exception {
 
         String[] command = new String[]{
-                        "java",
-                        "-XX:+UseG1GC",
-                        "-XX:MaxGCPauseMillis=50",
-                        "-XX:-UseAdaptiveSizePolicy",
-                        "-XX:CompileThreshold=100",
-                        "-Dcom.mojang.eula.agree=true",
-                        "-Dio.netty.recycler.maxCapacity=0",
-                        "-Dio.netty.recycler.maxCapacity.default=0",
-                        "-Djline.terminal=jline.UnsupportedTerminal",
-                        "-Xmx" + template.getMaxMemory() + "M",
-                        "-jar",
-                        getJarFile(),
-                        service.getTemplate().getTemplateType() == TemplateType.MINECRAFT ? "nogui" : ""
+            "java",
+            "-XX:+UseG1GC",
+            "-XX:MaxGCPauseMillis=50",
+            "-XX:-UseAdaptiveSizePolicy",
+            "-XX:CompileThreshold=100",
+            "-Dcom.mojang.eula.agree=true",
+            "-Dio.netty.recycler.maxCapacity=0",
+            "-Dio.netty.recycler.maxCapacity.default=0",
+            "-Djline.terminal=jline.UnsupportedTerminal",
+            "-Xmx" + template.getMaxMemory() + "M",
+            "-jar",
+            getJarFile(),
+            service.getTemplate().getTemplateType() == TemplateType.MINECRAFT ? "nogui" : ""
         };
 
         Scheduler.runtimeScheduler().schedule(() -> {

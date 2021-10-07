@@ -19,6 +19,7 @@ public class FileConstants {
     public static final File WRAPPER_STORAGE = new File("storage/");
     public static final File WRAPPER_STORAGE_VERSIONS = new File(WRAPPER_STORAGE, "version/");
     public static final File WRAPPER_CONFIG_FILE = new File("config.json");
+    public static final File WRAPPER_PATCHER_FOLDER = new File("patcher/");
 
     //Global stuff
     public static final File GLOBAL_FOLDER = new File("global/");

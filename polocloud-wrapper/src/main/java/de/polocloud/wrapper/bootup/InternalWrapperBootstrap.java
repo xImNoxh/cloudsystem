@@ -7,6 +7,7 @@ import de.polocloud.api.config.saver.IConfigSaver;
 import de.polocloud.api.config.saver.SimpleConfigSaver;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
+import de.polocloud.api.util.PoloHelper;
 import de.polocloud.client.PoloCloudClient;
 import de.polocloud.client.PoloCloudUpdater;
 import de.polocloud.wrapper.Wrapper;
@@ -37,9 +38,19 @@ public class InternalWrapperBootstrap {
      */
     public void checkAndDeleteTmpFolder() {
         File tmpFile = FileConstants.WRAPPER_DYNAMIC_SERVERS;
-        if (!tmpFile.exists()) {
-            tmpFile.mkdirs();
-        }
+        PoloHelper.deleteFolder(tmpFile);
+        tmpFile.mkdirs();
+    }
+
+    /**
+     * Checks for the patcher-folder where downloaded
+     * serverfiles will be patched
+     */
+
+    public void checkAndDeletePatchFolder() {
+        File patcherFolder = FileConstants.WRAPPER_PATCHER_FOLDER;
+        PoloHelper.deleteFolder(patcherFolder);
+        patcherFolder.mkdirs();
     }
 
     /**
@@ -59,6 +70,5 @@ public class InternalWrapperBootstrap {
 
         return wrapperConfig;
     }
-
 
 }
