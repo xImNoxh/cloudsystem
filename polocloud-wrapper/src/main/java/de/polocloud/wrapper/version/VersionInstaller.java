@@ -103,6 +103,7 @@ public class VersionInstaller {
                 for (File file : Objects.requireNonNull(new File(patchServer, "cache").listFiles())) {
                     if(file.getName().contains("patched")){
                         patchedFile = file;
+                        break;
                     }
                 }
             }else{
