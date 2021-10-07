@@ -38,6 +38,8 @@ public class ServiceStarter {
     private final File serverFile;
     private final File serverLocation;
 
+    private final boolean installed;
+
     public ServiceStarter(IGameServer service) {
         this.service = service;
         this.template = service.getTemplate();
@@ -53,7 +55,9 @@ public class ServiceStarter {
 
         this.serverFile = new File(FileConstants.WRAPPER_STORAGE_VERSIONS, version.getTitle() + ".jar");
         if (!serverFile.exists()) {
-            VersionInstaller.installVersion(template.getVersion());
+            installed = VersionInstaller.installVersion(template.getVersion());
+        }else{
+            installed = true;
         }
 
 
@@ -333,4 +337,7 @@ public class ServiceStarter {
         });
     }
 
+    public boolean isInstalled() {
+        return installed;
+    }
 }

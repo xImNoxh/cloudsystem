@@ -38,6 +38,7 @@ import de.polocloud.wrapper.manager.screen.impl.SimpleCachedScreenManager;
 import de.polocloud.wrapper.manager.screen.IScreenManager;
 import de.polocloud.wrapper.manager.server.ServiceStarter;
 import de.polocloud.wrapper.setup.WrapperSetup;
+import de.polocloud.wrapper.version.VersionInstaller;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
 import lombok.Getter;
@@ -280,7 +281,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
             }
 
             ServiceStarter serviceStarter = new ServiceStarter(cached);
-            if (serviceStarter.checkWrapper()) {
+            if (serviceStarter.isInstalled() && serviceStarter.checkWrapper()) {
                 try {
                     serviceStarter.copyFiles();
                     serviceStarter.createProperties();
@@ -340,6 +341,7 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
             }
         }
 
+        VersionInstaller.shutdownPatchers();
         this.loggerFactory.shutdown();
         Scheduler.runtimeScheduler().schedule(() -> {
             PoloHelper.deleteFolder(FileConstants.MASTER_MODULES);
