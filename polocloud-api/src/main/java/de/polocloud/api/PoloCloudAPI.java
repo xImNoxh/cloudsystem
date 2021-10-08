@@ -456,7 +456,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            PoloLogger.print(LogLevel.ERROR, "An exception was caught while registering the packets. The cloud may not react to a packets.");
+            PoloLogger.print(LogLevel.ERROR, "An exception was caught while registering the packets. The cloud may not react to a packet.");
             PoloCloudAPI.getInstance().reportException(e);
         }
     }

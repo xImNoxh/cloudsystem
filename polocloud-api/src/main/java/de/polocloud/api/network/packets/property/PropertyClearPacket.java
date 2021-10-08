@@ -3,8 +3,6 @@ package de.polocloud.api.network.packets.property;
 import de.polocloud.api.common.AutoRegistry;
 import de.polocloud.api.network.protocol.packet.base.json.PacketSerializable;
 import de.polocloud.api.network.protocol.packet.base.json.SimplePacket;
-import de.polocloud.api.property.IProperty;
-import de.polocloud.api.property.def.SimpleProperty;
 
 import java.util.UUID;
 

@@ -46,49 +46,49 @@ public class SimpleCommandManager implements ICommandManager {
             try {
                 return Byte.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter an integer in -128 to 127!");
+                throw new NullPointerException("Invalid input! Expected an integer in range of -128 to 127!");
             }
         });
         this.registerTransformer(short.class, (s, p) -> {
             try {
                 return Short.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter an integer in -65536 to 65535!");
+                throw new NullPointerException("Invalid input! Expected an integer in range of -65536 to 65535!");
             }
         });
         this.registerTransformer(int.class, (s, p) -> {
             try {
                 return Integer.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter an integer!");
+                throw new NullPointerException("Invalid input! Expected an integer!");
             }
         });
         this.registerTransformer(long.class, (s, p) -> {
             try {
                 return Long.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter an integer!");
+                throw new NullPointerException("Invalid input! Expected a long!");
             }
         });
         this.registerTransformer(float.class, (s, p) -> {
             try {
                 return Float.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter a number!");
+                throw new NullPointerException("Invalid input! Expected a number!");
             }
         });
         this.registerTransformer(double.class, (s, p) -> {
             try {
                 return Double.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter a number!");
+                throw new NullPointerException("Invalid input! Expected a number!");
             }
         });
         this.registerTransformer(Number.class, (s, p) -> {
             try {
                 return Double.valueOf(s);
             } catch (Exception ex) {
-                throw new NullPointerException("Invalid input! Enter a number!");
+                throw new NullPointerException("Invalid input! Expected a number!");
             }
         });
         this.registerTransformer(boolean.class, (s, p) -> !s.isEmpty() && (s.charAt(0) == 'y' || s.charAt(0) == 't'));
