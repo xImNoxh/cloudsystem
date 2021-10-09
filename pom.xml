@@ -71,9 +71,6 @@
     </plugins>
   </build>
 
-  <dependencies>
-  </dependencies>
-
   <distributionManagement>
     <snapshotRepository>
       <id>polocloud</id>
