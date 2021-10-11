@@ -10,6 +10,7 @@ import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
+import de.polocloud.api.util.other.Snowflake;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -43,6 +44,7 @@ public class SimpleTemplate implements ITemplate {
 
     private boolean changedMaintenance;
 
+    private long snowflake;
 
     public SimpleTemplate(String name, boolean staticServer, int maxServerCount, int minServerCount, TemplateType templateType, GameServerVersion version, int maxPlayers, int memory, boolean maintenance, String motd, int serverCreateThreshold, String[] wrapperNames) {
         this.name = name;
@@ -57,8 +59,9 @@ public class SimpleTemplate implements ITemplate {
         this.memory = memory;
         this.maintenance = maintenance;
         this.motd = motd;
-    }
 
+        this.snowflake = Snowflake.getInstance().nextId();
+    }
     @Override
     public String getMotd() {
         return motd;

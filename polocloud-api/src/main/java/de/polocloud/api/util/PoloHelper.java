@@ -36,7 +36,9 @@ public class PoloHelper {
     /**
      * The {@link Gson} instance to only instantiate once and do not waste resources
      */
-    public static final Gson GSON_INSTANCE = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).serializeNulls().setPrettyPrinting().create();
+    public static final Gson GSON_INSTANCE = new GsonBuilder()
+        .setExclusionStrategies(new AnnotationExclusionStrategy())
+        .serializeNulls().setPrettyPrinting().create();
 
     /**
      * The date format to format dates with Day-Month-Year and hour:minute:second (28.08.2021 - 23:08:53)
