@@ -1,6 +1,6 @@
 import de.polocloud.api.inject.annotation.Inject;
-import de.polocloud.api.inject.SimpleInjector;
-import de.polocloud.api.inject.base.Injector;
+import de.polocloud.api.inject.base.SimpleInjector;
+import de.polocloud.api.inject.Injector;
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.api.scheduler.base.SimpleScheduler;
 import lombok.Getter;

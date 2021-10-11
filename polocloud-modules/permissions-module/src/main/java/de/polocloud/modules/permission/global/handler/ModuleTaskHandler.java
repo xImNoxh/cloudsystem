@@ -2,7 +2,6 @@ package de.polocloud.modules.permission.global.handler;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.JsonData;
-import de.polocloud.api.inject.SimpleInjector;
 import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.util.other.Task;
 import de.polocloud.api.util.other.WrappedObject;

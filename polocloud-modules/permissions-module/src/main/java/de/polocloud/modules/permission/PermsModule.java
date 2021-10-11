@@ -3,7 +3,6 @@ package de.polocloud.modules.permission;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.database.api.Database;
-import de.polocloud.api.inject.SimpleInjector;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;

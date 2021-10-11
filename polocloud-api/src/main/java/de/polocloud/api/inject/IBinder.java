@@ -1,4 +1,4 @@
-package de.polocloud.api.inject.base;
+package de.polocloud.api.inject;
 
 public interface IBinder<T> {
 

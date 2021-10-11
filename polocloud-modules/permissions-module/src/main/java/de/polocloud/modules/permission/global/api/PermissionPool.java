@@ -1,7 +1,6 @@
 package de.polocloud.modules.permission.global.api;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.inject.SimpleInjector;
 
 import java.util.List;
 import java.util.UUID;

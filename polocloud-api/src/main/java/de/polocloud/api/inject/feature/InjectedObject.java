@@ -1,7 +1,7 @@
 package de.polocloud.api.inject.feature;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.inject.SimpleInjector;
+import de.polocloud.api.inject.base.SimpleInjector;
 import de.polocloud.api.inject.annotation.Inject;
 
 /**

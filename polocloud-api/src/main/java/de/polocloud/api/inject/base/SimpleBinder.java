@@ -1,7 +1,6 @@
-package de.polocloud.api.inject;
+package de.polocloud.api.inject.base;
 
-import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.inject.base.IBinder;
+import de.polocloud.api.inject.IBinder;
 
 public class SimpleBinder<T> implements IBinder<T> {
 

@@ -1,7 +1,6 @@
 package de.polocloud.api.util.session;
 
 import de.polocloud.api.PoloCloudAPI;
-import de.polocloud.api.inject.SimpleInjector;
 import de.polocloud.api.network.protocol.IProtocolObject;
 
 import java.util.UUID;

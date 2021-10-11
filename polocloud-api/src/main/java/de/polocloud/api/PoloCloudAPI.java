@@ -4,8 +4,7 @@ import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
-import de.polocloud.api.inject.annotation.Inject;
-import de.polocloud.api.inject.base.Injector;
+import de.polocloud.api.inject.Injector;
 import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.util.session.SimpleSession;
@@ -24,7 +23,7 @@ import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
-import de.polocloud.api.inject.SimpleInjector;
+import de.polocloud.api.inject.base.SimpleInjector;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
 import de.polocloud.api.logger.def.SimplePoloLoggerFactory;

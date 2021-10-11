@@ -1,9 +1,9 @@
-package de.polocloud.api.inject;
+package de.polocloud.api.inject.base;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.inject.IBinder;
+import de.polocloud.api.inject.Injector;
 import de.polocloud.api.inject.annotation.Inject;
-import de.polocloud.api.inject.base.IBinder;
-import de.polocloud.api.inject.base.Injector;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import lombok.Getter;
