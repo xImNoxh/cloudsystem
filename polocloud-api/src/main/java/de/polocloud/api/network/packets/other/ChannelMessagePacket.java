@@ -25,8 +25,6 @@ public class ChannelMessagePacket<T> extends Packet {
         this.startTime = System.currentTimeMillis();
     }
 
-
-
     public String getChannel() {
         return channel;
     }

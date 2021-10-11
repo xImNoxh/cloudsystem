@@ -1,0 +1,9 @@
+name: PoloCloud-Signs
+version: 1.0
+author: Lystx
+main: de.polocloud.modules.serverselector.pluginside.SignPlugin
+
+depend:
+    - PoloCloud-Plugin
+commands:
+

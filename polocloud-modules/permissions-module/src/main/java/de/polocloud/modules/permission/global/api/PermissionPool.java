@@ -1,6 +1,7 @@
 package de.polocloud.modules.permission.global.api;
 
-import de.polocloud.api.inject.PoloInject;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.inject.SimpleInjector;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +9,7 @@ import java.util.UUID;
 public interface PermissionPool {
 
     static PermissionPool getInstance() {
-        return PoloInject.getInstance(PermissionPool.class);
+        return PoloCloudAPI.getInstance().getInjector().getInstance(PermissionPool.class);
     }
 
     /**

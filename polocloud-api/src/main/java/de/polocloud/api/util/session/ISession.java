@@ -1,6 +1,7 @@
 package de.polocloud.api.util.session;
 
-import de.polocloud.api.inject.PoloInject;
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.inject.SimpleInjector;
 import de.polocloud.api.network.protocol.IProtocolObject;
 
 import java.util.UUID;
@@ -13,7 +14,7 @@ public interface ISession extends IProtocolObject {
      * @return the created session instance
      */
     static ISession randomSession() {
-        ISession session = PoloInject.getInstance(ISession.class);
+        ISession session = PoloCloudAPI.getInstance().getInjector().getInstance(ISession.class);
         session.randomize();
         return session;
     }

@@ -4,6 +4,8 @@ import de.polocloud.api.bridge.PoloPluginBridge;
 import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.inject.annotation.Inject;
+import de.polocloud.api.inject.base.Injector;
 import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.util.session.SimpleSession;
@@ -22,7 +24,7 @@ import de.polocloud.api.gameserver.SimpleCachedGameServerManager;
 
 import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.gameserver.base.SimpleGameServer;
-import de.polocloud.api.inject.PoloInject;
+import de.polocloud.api.inject.SimpleInjector;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.PoloLoggerFactory;
 import de.polocloud.api.logger.def.SimplePoloLoggerFactory;
@@ -103,6 +105,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     protected final IModuleHolder moduleHolder;
     protected final IPropertyManager propertyManager;
     protected final IUUIDFetcher uuidFetcher;
+    protected Injector injector;
     protected final SystemManager systemManager;
 
     //The config managers
@@ -117,9 +120,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     protected PoloCloudAPI(PoloType type) {
         instance = this;
-
-        this.type = type;
-
+        
         this.registerPackets();
 
         this.loggerFactory = new SimplePoloLoggerFactory(FileConstants.POLO_LOGS_FOLDER);
@@ -136,22 +137,24 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.propertyManager = new SimpleCachedPropertyManager();
         this.systemManager = new SystemManager();
         this.uuidFetcher = new SimpleUUIDFetcher(1);
-        this.masterConfig = new MasterConfig();
+        this.injector = new SimpleInjector();
 
         this.configLoader = new SimpleConfigLoader();
         this.configSaver = new SimpleConfigSaver();
 
-        PoloInject.bind(Scheduler.class).toInstance(new SimpleScheduler());
-        PoloInject.bind(Snowflake.class).toInstance(new Snowflake());
+        this.masterConfig = new MasterConfig();
+        this.type = type;
+        
+        injector.bind(Scheduler.class).toInstance(new SimpleScheduler());
+        injector.bind(Snowflake.class).toInstance(new Snowflake());
 
-        PoloInject.bind(IConfigLoader.class).toInstance(new SimpleConfigLoader());
-        PoloInject.bind(IConfigSaver.class).toInstance(new SimpleConfigSaver());
+        injector.bind(IConfigLoader.class).toInstance(new SimpleConfigLoader());
+        injector.bind(IConfigSaver.class).toInstance(new SimpleConfigSaver());
+        
+        injector.bind(ITemplate.class).toInstance(new SimpleTemplate());
+        injector.bind(IGameServer.class).toInstance(new SimpleGameServer());
 
-
-        PoloInject.bind(ITemplate.class).toInstance(new SimpleTemplate());
-        PoloInject.bind(IGameServer.class).toInstance(new SimpleGameServer());
-
-        PoloInject.bind(ISession.class).toInstance(new SimpleSession());
+        injector.bind(ISession.class).toInstance(new SimpleSession());
 
         this.registerPacketHandler(new IPacketHandler<WrapperUpdatePacket>() {
 

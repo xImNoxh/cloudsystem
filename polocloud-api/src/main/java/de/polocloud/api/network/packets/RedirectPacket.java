@@ -7,7 +7,7 @@ import de.polocloud.api.network.protocol.buffer.IPacketBuffer;
 
 import java.io.IOException;
 
-@AutoRegistry//(id = 0x45)
+@AutoRegistry
 public class RedirectPacket extends Packet {
 
     private long snowflake;

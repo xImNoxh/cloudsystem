@@ -2,7 +2,7 @@ package de.polocloud.api.module;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.config.FileConstants;
-import de.polocloud.api.inject.InjectedObject;
+import de.polocloud.api.inject.feature.InjectedObject;
 import de.polocloud.api.module.info.ModuleInfo;
 import lombok.Getter;
 import lombok.Setter;

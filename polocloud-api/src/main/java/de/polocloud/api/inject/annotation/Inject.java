@@ -1,4 +1,4 @@
-package de.polocloud.api.inject;
+package de.polocloud.api.inject.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,18 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.PARAMETER})
 public @interface Inject {
 
     /**
      * The name of the field for binding with names
      */
     String value() default "";
-
-    /**
-     * The injector type
-     */
-    Class<?> injector() default Class.class;
 
     /**
      * If the global registered value should

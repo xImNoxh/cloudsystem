@@ -8,7 +8,6 @@ import de.polocloud.api.gameserver.base.IGameServer;
 import de.polocloud.api.network.packets.api.EventPacket;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.api.MasterCache;
-import de.polocloud.api.network.packets.api.PropertyCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerExecuteCommandPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerShutdownPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
@@ -16,15 +15,11 @@ import de.polocloud.api.network.packets.master.MasterPlayerKickPacket;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.ResponseState;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
-import de.polocloud.api.property.IProperty;
-import de.polocloud.api.property.def.SimpleCachedPropertyManager;
 
 import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class NetworkPluginRegister {
@@ -34,11 +29,6 @@ public class NetworkPluginRegister {
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GlobalCachePacket.class, globalCachePacket -> {
             MasterCache masterCache = globalCachePacket.getMasterCache();
             PoloCloudAPI.getInstance().setCache(masterCache);
-        });
-
-        PoloCloudAPI.getInstance().registerSimplePacketHandler(PropertyCachePacket.class, propertyCachePacket -> {
-            Map<UUID, List<IProperty>> properties = propertyCachePacket.getProperties();
-            ((SimpleCachedPropertyManager)PoloCloudAPI.getInstance().getPropertyManager()).setProperties(properties);
         });
 
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerShutdownPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().shutdown());

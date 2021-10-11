@@ -1,7 +1,8 @@
 package de.polocloud.api.gameserver.base;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
-import de.polocloud.api.inject.PoloInject;
+import de.polocloud.api.inject.SimpleInjector;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.player.ICloudPlayer;
@@ -25,7 +26,7 @@ public interface IGameServer extends PoloObject<IGameServer>, IPacketReceiver, I
      * where every field is null and has to be set
      */
     static IGameServer newInstance() {
-        return PoloInject.getInstance(IGameServer.class);
+        return PoloCloudAPI.getInstance().getInjector().getInstance(IGameServer.class);
     }
 
     /**
