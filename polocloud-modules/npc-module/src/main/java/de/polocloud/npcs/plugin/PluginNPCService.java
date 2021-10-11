@@ -28,8 +28,8 @@ public class PluginNPCService implements INPCService {
 
     private GlobalConfigClass currentCache;
 
-    private final IMessageChannel<GlobalConfigClass> transferChannel;
-    private final IMessageChannel<RequestType> requestChannel;
+    private IMessageChannel<GlobalConfigClass> transferChannel;
+    private IMessageChannel<RequestType> requestChannel;
 
     private final NPCInitializer initializer;
 
@@ -42,8 +42,8 @@ public class PluginNPCService implements INPCService {
         this.cloudNPCManager = new SimpleCloudNPCManager();
         this.initializer = new NPCInitializer();
 
-        PoloCloudAPI.getInstance().getMessageManager().registerChannel(GlobalConfigClass.class, "npc-transfer-channel");
         PoloCloudAPI.getInstance().getMessageManager().registerChannel(RequestType.class, "npc-request-channel");
+        PoloCloudAPI.getInstance().getMessageManager().registerChannel(GlobalConfigClass.class, "npc-transfer-channel");
         this.transferChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("npc-transfer-channel");
         this.requestChannel = PoloCloudAPI.getInstance().getMessageManager().getChannel("npc-request-channel");
 

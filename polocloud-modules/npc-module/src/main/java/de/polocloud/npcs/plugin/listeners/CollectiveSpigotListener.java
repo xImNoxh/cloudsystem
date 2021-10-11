@@ -8,6 +8,7 @@ import de.polocloud.npcs.bootstraps.PluginBootstrap;
 import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.npc.interact.NPCInteractHandler;
 import net.jitse.npclib.api.events.NPCInteractEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,7 +37,7 @@ public class CollectiveSpigotListener implements Listener {
     @EventHandler
     public void handle(PlayerJoinEvent event){
         for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
-            cloudNPC.displayForPlayer(event.getPlayer());
+            Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () -> cloudNPC.displayForPlayer(event.getPlayer()));
         }
     }
 
@@ -47,7 +48,7 @@ public class CollectiveSpigotListener implements Listener {
     @EventHandler
     public void handle(PlayerQuitEvent event){
         for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
-            cloudNPC.hideForPlayer(event.getPlayer());
+            Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () -> cloudNPC.hideForPlayer(event.getPlayer()));
         }
     }
 
@@ -128,7 +129,7 @@ public class CollectiveSpigotListener implements Listener {
     public void handle(InventoryClickEvent event){
         assert event.getWhoClicked() instanceof Player;
         Player player = (Player) event.getWhoClicked();
-        if(event.getClickedInventory().getSize() == 54 && event.getClickedInventory().getTitle().contains("§eSelector")){
+        if(event.getClickedInventory().getSize() == 54 && event.getView().getTitle().contains("§eSelector")){
             event.setCancelled(true);
             if(event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR) && event.getCurrentItem().hasItemMeta()){
                 String gameserverName = event.getCurrentItem().getItemMeta().getDisplayName().split(" ")[0];

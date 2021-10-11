@@ -63,13 +63,7 @@ public class SimpleCloudNPC implements ICloudNPC {
             skinName = meta.getSkinName();
         }
 
-
-        Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () ->{
-            if(!this.location.getChunk().isLoaded()){
-                this.location.getChunk().load();
-            }
-        });
-
+        Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () -> this.location.getChunk().load());
         this.npc = PluginBootstrap.getInstance().getNpcService().getNpcLib().createNPC();
         npc.setLocation(location.add(0.5, 0, 0.5));
         npc.setItem(NPCSlot.MAINHAND, itemInHand == null ? new ItemStack(Material.AIR) : itemInHand);
@@ -96,16 +90,18 @@ public class SimpleCloudNPC implements ICloudNPC {
             Property property = gameProfile.getProperties().get("textures").iterator().next();
             String value = property.getValue();
             String signature = property.getSignature();
-
             npc.setSkin(new Skin(value, signature));
+            this.npc.create();
+
+            Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () ->{
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    displayForPlayer(onlinePlayer);
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        this.npc.create();
-
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            displayForPlayer(onlinePlayer);
+            System.err.println("Failed to spawn NPC, error while fetching Skin!");
         }
     }
 

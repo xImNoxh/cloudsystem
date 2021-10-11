@@ -10,12 +10,14 @@ import de.polocloud.npcs.npc.base.meta.CloudNPCMeta;
 public class NPCInitializer {
 
     public void loadNPCs(){
+
+        System.out.println("loading...");
         for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
             cloudNPC.remove();
         }
         PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().clear();
 
-        Scheduler.runtimeScheduler().schedule(() ->{
+        Scheduler.runtimeScheduler().schedule(() -> Scheduler.runtimeScheduler().schedule(() ->{
             for (CloudNPCMeta meta : PluginBootstrap.getInstance().getNpcService().getCurrentCache().getMetas()) {
                 ICloudNPC npc;
                 if(meta.isEntity()){
@@ -26,7 +28,7 @@ public class NPCInitializer {
                 npc.spawn();
                 PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS().add(npc);
             }
-        }, () -> PluginBootstrap.getInstance().getNpcService().getCurrentCache() != null);
+        }, 25),() -> PluginBootstrap.getInstance().getNpcService().getCurrentCache() != null);
     }
 
 }

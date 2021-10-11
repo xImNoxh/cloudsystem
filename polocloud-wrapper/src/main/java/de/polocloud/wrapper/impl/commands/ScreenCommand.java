@@ -40,14 +40,14 @@ public class ScreenCommand implements CommandListener, TabCompletable {
                 String serverName = args[0];
                 IScreen screen = screenManager.getScreen(serverName);
                 if (screen != null && screen.getCachedLines() != null) {
-                    if (screen.getCachedLines().isEmpty()) {
-                        PoloLogger.print(LogLevel.WARNING, "§7This screen doesn't have anything to §edisplay §7yet!");
-                        return;
-                    }
 
                     screen.setPrinter((ConsoleExecutor) Wrapper.getInstance().getCommandExecutor());
                     PoloCloudAPI.getInstance().getCommandManager().setFilter(iCommandRunner -> iCommandRunner.getListener().equals(ScreenCommand.this));
                     PoloLogger.print(LogLevel.INFO, "§7You joined screen §2" + serverName + " §7!");
+                    if (screen.getCachedLines().isEmpty()) {
+                        PoloLogger.print(LogLevel.WARNING, "§7This screen doesn't contain any messages! §cPlease be aware of this");
+                    }
+
                     screenManager.prepare(screen);
                     for (String cachedLine : new LinkedList<>(screen.getCachedLines())) {
                         PoloLogger.print(LogLevel.INFO, screen.formatLine(cachedLine));

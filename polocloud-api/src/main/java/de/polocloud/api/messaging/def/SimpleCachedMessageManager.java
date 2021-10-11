@@ -67,4 +67,5 @@ public class SimpleCachedMessageManager implements IMessageManager {
     public List<IMessageChannel<?>> getChannels() {
         return this.registeredChannels.get().allValues();
     }
+
 }

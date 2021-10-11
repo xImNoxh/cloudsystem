@@ -1,9 +1,13 @@
 package de.polocloud.npcs.bootstraps;
 
+import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.npcs.npc.base.ICloudNPC;
 import de.polocloud.npcs.plugin.PluginNPCService;
 import de.polocloud.npcs.plugin.commands.NpcCommand;
 import de.polocloud.npcs.plugin.listeners.CollectiveSpigotListener;
+import de.polocloud.npcs.protocol.GlobalConfigClass;
+import de.polocloud.npcs.protocol.enumeration.RequestType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +33,7 @@ public class PluginBootstrap extends JavaPlugin {
         for (ICloudNPC cloudNPC : npcService.getCloudNPCManager().getCloudNPCS()) {
             cloudNPC.remove();
         }
+        instance = null;
     }
 
     public static PluginBootstrap getInstance() {

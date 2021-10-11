@@ -7,6 +7,7 @@ public enum NMSMethods {
 
     ENTITY_INIT_NBT(NMSClassWrapper.BUKKIT_ENTITY_CLASS,"c", new Class[]{NMSClassWrapper.NBT_TAG_COMPOUND_CLASS.getClazz()}),
     ENTITY_SET_NBT(NMSClassWrapper.BUKKIT_ENTITY_CLASS,"f", new Class[]{NMSClassWrapper.NBT_TAG_COMPOUND_CLASS.getClazz()}),
+    ENTITY_LOAD_NBT(NMSClassWrapper.BUKKIT_ENTITY_CLASS, "loadData", new Class[]{NMSClassWrapper.NBT_TAG_COMPOUND_CLASS.getClazz()}),
     ENTITY_GET_BUKKIT_ENTITY(NMSClassWrapper.BUKKIT_ENTITY_CLASS, "getBukkitEntity", null),
     CRAFT_ENTITY_GET_HANDLE(NMSClassWrapper.CRAFT_ENTITY_CLASS, "getHandle", null),
     NBT_TAG_COMPOUND_TO_STRING(NMSClassWrapper.NBT_TAG_COMPOUND_CLASS,"toString", null),

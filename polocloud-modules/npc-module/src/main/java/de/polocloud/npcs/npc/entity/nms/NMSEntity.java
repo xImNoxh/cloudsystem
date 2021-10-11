@@ -1,5 +1,6 @@
 package de.polocloud.npcs.npc.entity.nms;
 
+import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.npcs.npc.entity.nms.methods.NMSMethods;
 import de.polocloud.npcs.npc.entity.nms.nbt.NMSNBTTag;
 import de.polocloud.npcs.npc.entity.nms.wrapper.NMSClassWrapper;
@@ -15,10 +16,17 @@ public class NMSEntity {
     }
 
     public void setNBTTag(NMSNBTTag nbt) {
+        if(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getTemplate().getVersion().getProtocolId() >= 573){
+            NMSMethods.ENTITY_LOAD_NBT.invoke(nms, nbt.asNMS());
+            return;
+        }
         NMSMethods.ENTITY_SET_NBT.invoke(nms, nbt.asNMS());
     }
 
     public void initNBTTag(NMSNBTTag nbt){
+        if(PoloCloudAPI.getInstance().getGameServerManager().getThisService().getTemplate().getVersion().getProtocolId() >= 573){
+            return;
+        }
         NMSMethods.ENTITY_INIT_NBT.invoke(nms, nbt.asNMS());
     }
 

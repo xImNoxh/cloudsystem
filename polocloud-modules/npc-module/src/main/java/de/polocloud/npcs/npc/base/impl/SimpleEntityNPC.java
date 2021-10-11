@@ -38,8 +38,6 @@ public class SimpleEntityNPC implements ICloudNPC {
 
         this.location = new Location(Bukkit.getWorld(meta.getWorld()), meta.getX(), meta.getY(), meta.getZ(), meta.getYaw(), meta.getPitch());
 
-
-
         this.entityType = EntityProvider.getEntityTypeByName(meta.getEntityName());
     }
 

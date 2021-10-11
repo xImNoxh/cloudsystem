@@ -27,4 +27,5 @@ public interface IMessageManager {
      * Gets a list of all registered {@link IMessageChannel}s
      */
     List<IMessageChannel<?>> getChannels();
+
 }
