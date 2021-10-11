@@ -6,11 +6,14 @@ import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
+import de.polocloud.api.logger.PoloLogger;
+import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
+import de.polocloud.api.network.packets.other.TextPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
@@ -81,7 +84,7 @@ public class CloudPlugin extends PoloCloudAPI {
         this.networkClient.getProtocol().registerPacketHandler(new IPacketHandler<GlobalCachePacket>() {
             @Override
             public void handlePacket(ChannelHandlerContext ctx, GlobalCachePacket packet) {
-                PoloCloudAPI.getInstance().setCache(packet.getMasterCache());
+                PoloCloudAPI.getInstance().updateCache(packet.getMasterCache());
 
                 if (!received[0]) {
                     received[0] = true;
@@ -136,6 +139,11 @@ public class CloudPlugin extends PoloCloudAPI {
     }
 
     @Override
+    public void messageCloud(String message) {
+        sendPacket(new TextPacket(message));
+    }
+
+    @Override
     public void receivePacket(Packet packet) {
         networkClient.getProtocol().firePacketHandlers(networkClient.ctx(), packet);
     }
@@ -169,7 +177,6 @@ public class CloudPlugin extends PoloCloudAPI {
     public void reportException(Throwable throwable) {
         sendPacket(new MasterReportExceptionPacket(throwable));
     }
-
 
     @Override
     public void updateCache() {

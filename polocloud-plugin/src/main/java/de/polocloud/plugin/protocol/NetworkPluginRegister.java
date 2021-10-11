@@ -28,7 +28,7 @@ public class NetworkPluginRegister {
 
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GlobalCachePacket.class, globalCachePacket -> {
             MasterCache masterCache = globalCachePacket.getMasterCache();
-            PoloCloudAPI.getInstance().setCache(masterCache);
+            PoloCloudAPI.getInstance().updateCache(masterCache);
         });
 
         PoloCloudAPI.getInstance().registerSimplePacketHandler(GameServerShutdownPacket.class, packet -> PoloCloudAPI.getInstance().getPoloBridge().shutdown());

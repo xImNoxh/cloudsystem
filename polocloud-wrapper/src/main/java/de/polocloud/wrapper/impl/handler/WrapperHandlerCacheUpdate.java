@@ -12,7 +12,7 @@ public class WrapperHandlerCacheUpdate implements IPacketHandler<GlobalCachePack
     @Override
     public void handlePacket(ChannelHandlerContext ctx, GlobalCachePacket packet) {
         MasterCache masterCache = packet.getMasterCache();
-        PoloCloudAPI.getInstance().setCache(masterCache);
+        PoloCloudAPI.getInstance().updateCache(masterCache);
     }
 
     @Override

@@ -13,6 +13,6 @@ import de.polocloud.api.inject.annotation.Inject;
 public abstract class InjectedObject {
 
     protected InjectedObject() {
-        ((SimpleInjector) PoloCloudAPI.getInstance().getInjector()).injectFields(this, getClass());
+        SimpleInjector.instance.injectFields(this, getClass());
     }
 }

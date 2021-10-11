@@ -14,6 +14,7 @@ import de.polocloud.api.network.helper.ITerminatable;
 import de.polocloud.api.network.client.SimpleNettyClient;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.master.MasterReportExceptionPacket;
+import de.polocloud.api.network.packets.other.TextPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperLoginPacket;
 import de.polocloud.api.network.packets.wrapper.WrapperUpdatePacket;
 import de.polocloud.api.network.protocol.SimpleProtocol;
@@ -176,6 +177,11 @@ public class Wrapper extends PoloCloudAPI implements IWrapper, IStartable, ITerm
     @Override
     public CommandExecutor getCommandExecutor() {
         return new SimpleConsoleExecutor();
+    }
+
+    @Override
+    public void messageCloud(String message) {
+        sendPacket(new TextPacket(message));
     }
 
     @Override

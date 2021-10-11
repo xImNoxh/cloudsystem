@@ -21,6 +21,7 @@ import de.polocloud.api.module.loader.ModuleService;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.helper.IStartable;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
+import de.polocloud.api.network.packets.other.TextPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.server.SimpleNettyServer;
 import de.polocloud.api.player.ICloudPlayer;
@@ -224,6 +225,11 @@ public class Master extends PoloCloudAPI implements IStartable {
             return;
         }
         this.getConnection().sendPacket(new GlobalCachePacket());
+    }
+
+    @Override
+    public void messageCloud(String message) {
+        PoloLogger.print(LogLevel.INFO, message);
     }
 
     @Override

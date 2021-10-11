@@ -5,6 +5,7 @@ import de.polocloud.api.command.ICommandManager;
 import de.polocloud.api.command.SimpleCommandManager;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.inject.Injector;
+import de.polocloud.api.network.protocol.packet.handler.ConsumingPacketHandler;
 import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.util.session.SimpleSession;
@@ -88,7 +89,7 @@ import java.util.function.Consumer;
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     //The instance for this api
-    private static PoloCloudAPI instance;
+    @Getter private static PoloCloudAPI instance;
 
     //All manager instances
     protected final ICommandManager commandManager;
@@ -119,7 +120,8 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     protected PoloCloudAPI(PoloType type) {
         instance = this;
-        
+
+        this.type = type;
         this.registerPackets();
 
         this.loggerFactory = new SimplePoloLoggerFactory(FileConstants.POLO_LOGS_FOLDER);
@@ -142,7 +144,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
         this.configSaver = new SimpleConfigSaver();
 
         this.masterConfig = new MasterConfig();
-        this.type = type;
         
         injector.bind(Scheduler.class).toInstance(new SimpleScheduler());
         injector.bind(Snowflake.class).toInstance(new Snowflake());
@@ -168,36 +169,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
                 return WrapperUpdatePacket.class;
             }
         });
-    }
-
-    /**
-     * Gets the current {@link PoloCloudAPI}
-     */
-    public static PoloCloudAPI getInstance() {
-        return instance;
-    }
-
-    /**
-     * Returns an optional instance to maybe check
-     * if the instance is present or something similar
-     */
-    public static Optional<PoloCloudAPI> optionalInstance() {
-        return Optional.ofNullable(instance);
-    }
-
-    /**
-     * Sends a message to the CloudMaster
-     * If this instance is plugin it will send a packet to the master
-     * otherwise it will just print the message
-     *
-     * @param message the message to send
-     */
-    public void messageCloud(String message) {
-        if (type != PoloType.MASTER) {
-            sendPacket(new TextPacket(message));
-        } else {
-            PoloLogger.print(LogLevel.INFO, message);
-        }
     }
 
     public void checkRequirements(){
@@ -235,6 +206,14 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      */
     public abstract void reportException(Throwable throwable);
 
+    /**
+     * Sends a message to the CloudMaster
+     * If this instance is plugin it will send a packet to the master
+     * otherwise it will just print the message
+     *
+     * @param message the message to send
+     */
+    public abstract void messageCloud(String message);
 
     /**
      * Sets the cache for this api instance
@@ -242,7 +221,7 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      *
      * @param cache the cache object
      */
-    public void setCache(MasterCache cache) {
+    public void updateCache(MasterCache cache) {
         this.cloudPlayerManager.setCached(cache.getCloudPlayers());
         this.gameServerManager.setCached(cache.getGameServers());
         this.templateManager.setCachedObjects(cache.getTemplates());
@@ -321,7 +300,12 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * @param packet the packet to send
      */
     public void sendPacket(Packet packet) {
-        this.getConnection().sendPacket(packet);
+        INetworkConnection connection = this.getConnection();
+        if (connection == null) {
+            Scheduler.runtimeScheduler().schedule(() -> sendPacket(packet), () ->getConnection() != null);
+            return;
+        }
+        connection.sendPacket(packet);
     }
 
     /**
@@ -331,26 +315,24 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      * @param packetHandler the handler to register
      */
     public void registerPacketHandler(IPacketHandler<? extends Packet> packetHandler) {
-        if (getConnection() == null) {
+        INetworkConnection connection = this.getConnection();
+        if (connection == null) {
             Scheduler.runtimeScheduler().schedule(() -> registerPacketHandler(packetHandler), () -> getConnection() != null);
             return;
         }
-        getConnection().getProtocol().registerPacketHandler(packetHandler);
+        connection.getProtocol().registerPacketHandler(packetHandler);
     }
 
-
+    /**
+     * Registers a simple forwarding {@link IPacketHandler}
+     * for not having the need to create an extra class to handle a single {@link Packet}
+     *
+     * @param packetClass the class of the packet to listen for
+     * @param handler the handler to handle the packet
+     * @param <T> the generic (has to be an instance of a {@link Packet})
+     */
     public <T extends Packet> void registerSimplePacketHandler(Class<T> packetClass, Consumer<T> handler) {
-        this.registerPacketHandler(new IPacketHandler<T>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, T packet) {
-                handler.accept(packet);
-            }
-
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return packetClass;
-            }
-        });
+        this.registerPacketHandler(new ConsumingPacketHandler<>(packetClass, handler));
     }
 
     public PoloType getType() {
