@@ -1,7 +1,10 @@
 package de.polocloud.api.setup;
 
+import lombok.Setter;
+
 import java.util.function.Predicate;
 
+@Setter
 public class Step {
 
     private final String question;

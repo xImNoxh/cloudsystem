@@ -11,15 +11,12 @@ import java.util.List;
 
 public interface ITemplate extends PoloObject<ITemplate> {
 
+
     /**
      * The minimum amount of servers that
      * must always be online
      */
     int getMinServerCount();
-
-    default long getSnowflake() {
-        return Snowflake.getInstance().nextId();
-    }
 
     /**
      * The maximum amount of servers that

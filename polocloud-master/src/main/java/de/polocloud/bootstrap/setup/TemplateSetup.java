@@ -24,12 +24,6 @@ import java.util.List;
 
 public class TemplateSetup extends StepAcceptor implements Setup {
 
-    private final ITemplateManager templateService;
-
-    public TemplateSetup(ITemplateManager templateService) {
-        this.templateService = templateService;
-    }
-
     @Override
     public void sendSetup() {
         SetupBuilder setupBuilder = new SetupBuilder(this);
@@ -82,8 +76,8 @@ public class TemplateSetup extends StepAcceptor implements Setup {
                 int threshold = Integer.parseInt(steps.get(9).getAnswer());
 
                 ITemplate template = new SimpleTemplate(name, isStatic, maxServerCount, minServerCount, templateType, gameServerVersion, maxPlayers, memory, true, "A default Polo Service", threshold, wrappers);
-                templateService.getTemplateSaver().save(template);
-                templateService.reloadTemplates();
+                PoloCloudAPI.getInstance().getTemplateManager().getTemplateSaver().save(template);
+                PoloCloudAPI.getInstance().getTemplateManager().reloadTemplates();
                 PoloLogger.print(LogLevel.INFO, "You " + ConsoleColors.GREEN + "completed " + ConsoleColors.GRAY + "the setup.");
             }
         });

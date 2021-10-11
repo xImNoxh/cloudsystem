@@ -92,11 +92,11 @@ public class MasterSetup extends StepAcceptor implements Setup {
 
                     //Proxy setup
                     PoloLogger.print(LogLevel.INFO, "Entering setup for §bProxy-Group§7...");
-                    new TemplateSetup(PoloCloudAPI.getInstance().getTemplateManager()).sendSetup();
+                    new TemplateSetup().sendSetup();
 
                     //Lobby setup
                     PoloLogger.print(LogLevel.INFO, "Entering setup for §bLobby-Group§7...");
-                    new TemplateSetup(PoloCloudAPI.getInstance().getTemplateManager()).sendSetup();
+                    new TemplateSetup().sendSetup();
                 }
 
                 ConsoleRunner.getInstance().setActive(true);

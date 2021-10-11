@@ -32,6 +32,12 @@ public class SetupBuilder {
         return this.firstStep;
     }
 
+    public Step createStep(String question, FutureAnswer futureAnswer, String... possibleAnswers) {
+        firstStep = new Step(question, possibleAnswers);
+        firstStep.setFutureAnswer(futureAnswer);
+        return this.firstStep;
+    }
+
     public void nextQuestion(Step currentStep, ConsoleReader consoleReader) {
         if (!hasNextStep(currentStep)) {
             stepAnswer.callFinishSetup(answers);
