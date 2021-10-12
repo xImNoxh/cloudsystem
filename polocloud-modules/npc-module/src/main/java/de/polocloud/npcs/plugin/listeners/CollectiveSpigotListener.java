@@ -36,9 +36,14 @@ public class CollectiveSpigotListener implements Listener {
      */
     @EventHandler
     public void handle(PlayerJoinEvent event){
-        for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
-            Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () -> cloudNPC.displayForPlayer(event.getPlayer()));
-        }
+        Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () ->{
+            for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
+                if(cloudNPC.getNPC() != null){
+                    cloudNPC.getNPC().create();
+                }
+                cloudNPC.displayForPlayer(event.getPlayer());
+            }
+        });
     }
 
     /**
@@ -47,9 +52,11 @@ public class CollectiveSpigotListener implements Listener {
      */
     @EventHandler
     public void handle(PlayerQuitEvent event){
-        for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
-            Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () -> cloudNPC.hideForPlayer(event.getPlayer()));
-        }
+        Bukkit.getScheduler().runTask(PluginBootstrap.getInstance(), () ->{
+            for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
+                cloudNPC.hideForPlayer(event.getPlayer());
+            }
+        });
     }
 
     /**
