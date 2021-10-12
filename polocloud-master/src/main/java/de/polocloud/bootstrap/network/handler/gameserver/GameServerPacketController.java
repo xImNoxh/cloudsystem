@@ -16,11 +16,6 @@ import java.util.function.Consumer;
 
 public abstract class GameServerPacketController {
 
-    public void getRedirectPacketConnection(long snowflake, Packet packetData) {
-        IGameServer iGameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(snowflake);
-        iGameServer.sendPacket(packetData);
-    }
-
     public void updateProxyServerList(IGameServer gameServer) {
         ITemplate template = gameServer.getTemplate();
         if (template.getTemplateType() == TemplateType.MINECRAFT) {

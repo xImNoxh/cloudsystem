@@ -68,6 +68,7 @@ import de.polocloud.api.wrapper.SimpleCachedWrapperManager;
 import de.polocloud.api.wrapper.base.IWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
+import lombok.Data;
 import lombok.Getter;
 import org.reflections.Reflections;
 
@@ -85,7 +86,7 @@ import java.util.function.Consumer;
     identifier = "@Alpha",
     discord = "https://discord.gg/HyRnsdkUBA"
 )
-@Getter
+@Data
 public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
 
     //The instance for this api
@@ -231,16 +232,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     }
 
     /**
-     * Gets the {@link MasterConfig} to get Messages
-     * or properties of it in general
-     *
-     * @return config instance
-     */
-    public MasterConfig getMasterConfig() {
-        return this.masterConfig;
-    }
-
-    /**
      * Terminates this {@link PoloCloudAPI} instance
      * and shuts down all needed manager instances
      *
@@ -333,86 +324,6 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
      */
     public <T extends Packet> void registerSimplePacketHandler(Class<T> packetClass, Consumer<T> handler) {
         this.registerPacketHandler(new ConsumingPacketHandler<>(packetClass, handler));
-    }
-
-    public PoloType getType() {
-        return type;
-    }
-
-    public PoloLoggerFactory getLoggerFactory() {
-        return loggerFactory;
-    }
-
-    public IEventManager getEventManager() {
-        return eventManager;
-    }
-
-    public ICloudPlayerManager getCloudPlayerManager() {
-        return cloudPlayerManager;
-    }
-
-    public IUUIDFetcher getUuidFetcher() {
-        return uuidFetcher;
-    }
-
-    public IPropertyManager getPropertyManager() {
-        return propertyManager;
-    }
-
-    public ICommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    public IPlaceHolderManager getPlaceHolderManager() {
-        return placeHolderManager;
-    }
-
-    public ITemplateManager getTemplateManager() {
-        return templateManager;
-    }
-
-    public IGameServerManager getGameServerManager() {
-        return gameServerManager;
-    }
-
-    public IFallbackManager getFallbackManager() {
-        return fallbackManager;
-    }
-
-    public IWrapperManager getWrapperManager() {
-        return wrapperManager;
-    }
-
-    public IMessageManager getMessageManager() {
-        return messageManager;
-    }
-
-    public IModuleHolder getModuleHolder() {
-        return moduleHolder;
-    }
-
-    public SystemManager getSystemManager() {
-        return systemManager;
-    }
-
-    public PoloPluginBridge getPoloBridge() {
-        return poloBridge;
-    }
-
-    public void setPoloBridge(PoloPluginBridge minecraftBridge) {
-        this.poloBridge = minecraftBridge;
-    }
-
-    public void setMasterConfig(MasterConfig masterConfig) {
-        this.masterConfig = masterConfig;
-    }
-
-    public IConfigLoader getConfigLoader() {
-        return configLoader;
-    }
-
-    public IConfigSaver getConfigSaver() {
-        return configSaver;
     }
 
     /**

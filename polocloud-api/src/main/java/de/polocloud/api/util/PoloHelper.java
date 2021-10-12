@@ -18,9 +18,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -83,6 +88,30 @@ public class PoloHelper {
         String hostname = String.join(":", Arrays.copyOfRange(split, 0, split.length - 1));
         int port = Integer.parseInt(split[split.length-1]);
         return InetSocketAddress.createUnresolved(hostname, port);
+    }
+
+    public static List<URL> listResources(String path, Class<?> accessClass) {
+        List<URL> paths = new ArrayList<>();
+
+        try {
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            URI uri = accessClass.getResource(path).toURI();
+            Path dirPath = Paths.get(uri);
+            Files.list(dirPath).forEach(p -> {
+                try {
+                    paths.add(p.toUri().toURL());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return paths;
     }
 
     public static boolean randomBoolean() {

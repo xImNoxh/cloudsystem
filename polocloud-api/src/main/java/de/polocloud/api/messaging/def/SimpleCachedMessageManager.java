@@ -9,6 +9,7 @@ import de.polocloud.api.messaging.IMessageListener;
 import de.polocloud.api.network.packets.other.ChannelMessagePacket;
 import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.scheduler.Scheduler;
+import de.polocloud.api.util.map.MapEntry;
 import de.polocloud.api.util.map.UniqueMap;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -47,6 +48,17 @@ public class SimpleCachedMessageManager implements IMessageManager {
                 return ChannelMessagePacket.class;
             }
         }), () -> PoloCloudAPI.getInstance().getConnection() != null);
+    }
+
+    @Override
+    public void unregisterChannel(IMessageChannel<?> messageChannel) {
+        for (MapEntry<Class<?>, IMessageChannel<?>> entry : this.registeredChannels.iterable()) {
+            IMessageChannel<?> value = entry.getValue();
+            Class<?> key = entry.getKey();
+            if (value.getSnowflake() == messageChannel.getSnowflake()) {
+                this.registeredChannels.remove().atKey(key);
+            }
+        }
     }
 
     @Override

@@ -19,7 +19,7 @@ public class SimpleSession implements ISession {
     private String identification;
 
     @Override
-    public UUID sessionUUID() {
+    public UUID getUniqueId() {
         return uuid;
     }
 
@@ -42,7 +42,7 @@ public class SimpleSession implements ISession {
             return false;
         } else if (!other.getIdentification().equalsIgnoreCase(getIdentification())) {
             return false;
-        } else if (!other.sessionUUID().equals(sessionUUID())) {
+        } else if (!other.getUniqueId().equals(getUniqueId())) {
             return false;
         } else if (other.getSnowflake() != getSnowflake()) {
             return false;

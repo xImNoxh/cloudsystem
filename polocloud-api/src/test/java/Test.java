@@ -4,6 +4,8 @@ import de.polocloud.api.template.SimpleTemplate;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.util.PoloHelper;
+import de.polocloud.api.util.map.MapEntry;
+import de.polocloud.api.util.map.UniqueMap;
 import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.util.session.SimpleSession;
 

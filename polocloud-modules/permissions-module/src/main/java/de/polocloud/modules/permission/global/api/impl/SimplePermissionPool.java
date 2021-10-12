@@ -3,6 +3,9 @@ package de.polocloud.modules.permission.global.api.impl;
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.JsonData;
+import de.polocloud.api.network.packets.other.DataPacket;
+import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
 import de.polocloud.api.util.other.Task;
 import de.polocloud.modules.permission.PermsModule;
 import de.polocloud.modules.permission.global.api.IPermission;
@@ -10,6 +13,7 @@ import de.polocloud.modules.permission.global.api.IPermissionGroup;
 import de.polocloud.modules.permission.global.api.IPermissionUser;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -145,6 +149,19 @@ public class SimplePermissionPool implements PermissionPool {
         }
 
         return permissions;
+    }
+
+    @Override
+    public INetworkPromise<IPermissionUser> getOfflineUser(UUID uniqueId) {
+        INetworkPromise<IPermissionUser> promise = PacketMessenger.createElement(new DataPacket<>("permission-module-get-user-uuid", uniqueId), IPermissionUser.class, SimplePermissionUser.class);
+        if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
+            File directory = PermsModule.getInstance().getGroupDatabase().getDirectory();
+            File user = new File(directory, uniqueId + ".json");
+            JsonData data = new JsonData(user);
+            promise.dummy(data.getAs(SimplePermissionUser.class));
+        }
+
+        return promise;
     }
 
     @Override

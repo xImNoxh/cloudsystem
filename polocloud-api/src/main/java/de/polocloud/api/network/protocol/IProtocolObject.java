@@ -21,7 +21,7 @@ public interface IProtocolObject {
      * -> 56
      * -> true
      *
-     * And later on when using {@link Packet#read(IPacketBuffer)} you have to first read the name
+     * And later on when using {@link IProtocolObject#read(IPacketBuffer)} you have to first read the name
      * then read the integer and then the boolean
      * If you first try to read the integer it will not work because the first value is a String and not an integer
      *
@@ -33,7 +33,7 @@ public interface IProtocolObject {
     /**
      * This method is called when reading the packet from the channel-flow of netty
      * and re-writing all its data from a {@link ByteBuf} into this {@link Packet}
-     * As already in {@link Packet#write(IPacketBuffer)} described you should pay attention
+     * As already in {@link IProtocolObject#write(IPacketBuffer)} described you should pay attention
      * to the order you wrote your data in and not confuse the order and try to read a String
      * where actually an Integer is stored
      *

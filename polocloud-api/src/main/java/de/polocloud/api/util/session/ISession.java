@@ -37,7 +37,7 @@ public interface ISession extends IProtocolObject {
     /**
      * The session identifier of this {@link ISession} as {@link UUID}
      */
-    UUID sessionUUID();
+    UUID getUniqueId();
 
     /**
      * The identification String to separate {@link ISession}s

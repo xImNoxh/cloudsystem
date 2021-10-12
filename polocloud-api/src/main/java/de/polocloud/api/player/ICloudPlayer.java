@@ -32,7 +32,7 @@ public interface ICloudPlayer extends PoloObject<ICloudPlayer>, CommandExecutor,
      * like a {@link UUID} with extra identification values in it
      * This session resets on every join of the player
      */
-    ISession session();
+    ISession getSession();
 
     /**
      * Gets the current proxy-Server as {@link IGameServer}
