@@ -36,11 +36,12 @@ public class PermsCommand implements CommandListener {
 
         PermissionPool permissionPool = PermissionPool.getInstance();
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("debug")) {
-            INetworkPromise<IPermissionUser> promise = permissionPool.getOfflineUser(PoloCloudAPI.getInstance().getUuidFetcher().getUniqueId("Lystx"));
+        if (args.length == 1 && args[0].equalsIgnoreCase("debug") && executor instanceof ICloudPlayer) {
+            INetworkPromise<IPermissionUser> promise = permissionPool.getOfflineUser(((ICloudPlayer)executor).getUUID());
 
             IPermissionUser permissionUser = promise.blocking().get();
             if (permissionUser == null) {
+                executor.sendMessage(prefix + "§cNulled user!");
                 return;
             }
             executor.sendMessage(prefix + PoloHelper.GSON_INSTANCE.toJson(permissionUser));

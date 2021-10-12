@@ -17,7 +17,6 @@ public class ModuleCloudSideUserListener implements IListener {
     public void handle(PacketReceiveEvent event) {
         Packet packet = event.getPacket();
 
-        System.out.println(packet.getClass().getSimpleName());
         if (packet instanceof DataPacket) {
             DataPacket<?> dataPacket = (DataPacket<?>) packet;
             if (dataPacket.getKey().equalsIgnoreCase("permission-module-get-user-uuid")) {
@@ -35,6 +34,7 @@ public class ModuleCloudSideUserListener implements IListener {
                         iNetworkResponse.setSuccess(true);
                         iNetworkResponse.setElement(permissionUser);
                     }
+                    System.out.println("RESPONSE");
                 });
             }
         }

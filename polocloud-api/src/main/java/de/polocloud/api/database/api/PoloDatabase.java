@@ -7,16 +7,16 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Database<V> extends DatabaseGround {
+public class PoloDatabase<V> extends DocumentedDatabase {
 
     private final Class<V> vClass;
 
-    public Database(String name, Class<V> vClass) {
+    public PoloDatabase(String name, Class<V> vClass) {
         super(name);
         this.vClass = vClass;
     }
 
-    public Database(String name, File directory, Class<V> vClass) {
+    public PoloDatabase(String name, File directory, Class<V> vClass) {
         super(name, directory);
         this.vClass = vClass;
     }
@@ -33,7 +33,7 @@ public class Database<V> extends DatabaseGround {
         this.insert(document, key);
     }
 
-    public Database<V> directory(File dir) {
+    public PoloDatabase<V> directory(File dir) {
         this.directory = dir;
         return this;
     }

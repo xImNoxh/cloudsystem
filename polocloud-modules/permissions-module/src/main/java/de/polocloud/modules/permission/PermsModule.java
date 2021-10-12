@@ -2,7 +2,7 @@ package de.polocloud.modules.permission;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.common.PoloType;
-import de.polocloud.api.database.api.Database;
+import de.polocloud.api.database.api.PoloDatabase;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.logger.helper.MinecraftColor;
@@ -35,12 +35,12 @@ public class PermsModule {
     /**
      * The database for all users
      */
-    private final Database<SimplePermissionUser> userDatabase;
+    private final PoloDatabase<SimplePermissionUser> userDatabase;
 
     /**
      * The database for all groups
      */
-    private final Database<SimplePermissionGroup> groupDatabase;
+    private final PoloDatabase<SimplePermissionGroup> groupDatabase;
 
     /**
      * The message channel to transfer all tasks
@@ -54,8 +54,16 @@ public class PermsModule {
 
     public PermsModule(ModuleBootstrap bootstrap) {
         instance = this;
-        this.userDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new Database<>("permission-users", new File(bootstrap.getDataDirectory(), "permission-users"), SimplePermissionUser.class);
-        this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new Database<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);
+        this.userDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new PoloDatabase<>("permission-users", new File(bootstrap.getDataDirectory(), "permission-users"), SimplePermissionUser.class);
+        this.groupDatabase = PoloCloudAPI.getInstance().getType().isPlugin() ? null : new PoloDatabase<>("permission-groups", new File(bootstrap.getDataDirectory(), "permission-groups"), SimplePermissionGroup.class);
+
+        if (this.groupDatabase != null) {
+            this.groupDatabase.loadCache();
+        }
+        if (this.userDatabase != null) {
+            //TODO: REMOVE TO AVOID LONG LOADING TIMES -> IT LOADS ALL USERS EVEN IF THEY ARE NEVER USED (GSON -> Long loading)
+            this.userDatabase.loadCache();
+        }
 
         this.messageChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(Task.class, "permission-module-tasks");
         this.messageChannel.registerListener(new ModuleTaskHandler());
@@ -107,5 +115,6 @@ public class PermsModule {
      * Shuts down this module
      */
     public void shutdown() {
+        PoloCloudAPI.getInstance().getMessageManager().unregisterChannel(this.messageChannel);
     }
 }

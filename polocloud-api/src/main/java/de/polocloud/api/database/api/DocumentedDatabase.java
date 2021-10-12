@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabaseGround {
+public class DocumentedDatabase {
 
     /**
      * The name of this database
@@ -25,14 +25,13 @@ public class DatabaseGround {
      */
     protected File directory;
 
-    public DatabaseGround(String name, File directory) {
+    public DocumentedDatabase(String name, File directory) {
         this.name = name;
         this.cache = new HashMap<>();
         this.directory = directory;
-        this.loadCache();
     }
 
-    public DatabaseGround(String name) {
+    public DocumentedDatabase(String name) {
         this(name, new File(FileConstants.DATABASE_FOLDER, name + "/"));
     }
 
