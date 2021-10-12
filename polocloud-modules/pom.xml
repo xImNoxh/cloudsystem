@@ -24,6 +24,7 @@
     <module>hubcommand-module</module>
     <module>smartproxy-module</module>
     <module>serverselector-module</module>
+      <module>webinterface</module>
   </modules>
 
   <properties>
