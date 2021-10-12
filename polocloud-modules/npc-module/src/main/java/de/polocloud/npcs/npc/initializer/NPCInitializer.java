@@ -10,8 +10,6 @@ import de.polocloud.npcs.npc.base.meta.CloudNPCMeta;
 public class NPCInitializer {
 
     public void loadNPCs(){
-
-        System.out.println("loading...");
         for (ICloudNPC cloudNPC : PluginBootstrap.getInstance().getNpcService().getCloudNPCManager().getCloudNPCS()) {
             cloudNPC.remove();
         }

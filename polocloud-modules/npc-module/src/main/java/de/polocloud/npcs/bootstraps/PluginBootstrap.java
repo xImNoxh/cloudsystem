@@ -33,6 +33,7 @@ public class PluginBootstrap extends JavaPlugin {
         for (ICloudNPC cloudNPC : npcService.getCloudNPCManager().getCloudNPCS()) {
             cloudNPC.remove();
         }
+        npcService.shutdown();
         instance = null;
     }
 
