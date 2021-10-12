@@ -7,6 +7,7 @@ import de.polocloud.api.command.annotation.CommandPermission;
 import de.polocloud.api.command.executor.CommandExecutor;
 import de.polocloud.api.command.executor.ExecutorType;
 import de.polocloud.api.command.identifier.CommandListener;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.util.PoloHelper;
 import de.polocloud.modules.permission.global.api.IPermission;
@@ -34,6 +35,17 @@ public class PermsCommand implements CommandListener {
         String slash = executor instanceof ICloudPlayer ? "/" : "";
 
         PermissionPool permissionPool = PermissionPool.getInstance();
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("debug")) {
+            INetworkPromise<IPermissionUser> promise = permissionPool.getOfflineUser(PoloCloudAPI.getInstance().getUuidFetcher().getUniqueId("Lystx"));
+
+            IPermissionUser permissionUser = promise.blocking().get();
+            if (permissionUser == null) {
+                return;
+            }
+            executor.sendMessage(prefix + PoloHelper.GSON_INSTANCE.toJson(permissionUser));
+            return;
+        }
 
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("group")) {

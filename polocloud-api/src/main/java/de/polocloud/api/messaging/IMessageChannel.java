@@ -1,9 +1,10 @@
 package de.polocloud.api.messaging;
 
 import de.polocloud.api.common.INamable;
+import de.polocloud.api.common.ISnowflakeable;
 import de.polocloud.api.network.protocol.packet.IPacketReceiver;
 
-public interface IMessageChannel<T> extends INamable {
+public interface IMessageChannel<T> extends INamable, ISnowflakeable {
 
     /**
      * Sends an object from this channel
@@ -29,4 +30,9 @@ public interface IMessageChannel<T> extends INamable {
      * @param listener the listener
      */
     void registerListener(IMessageListener<T> listener);
+
+    /**
+     * Unregisters all listeners
+     */
+    void unregisterAll();
 }

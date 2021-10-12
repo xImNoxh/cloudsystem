@@ -1,6 +1,8 @@
 package de.polocloud.modules.permission.global.api;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.inject.Injector;
+import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
 
 import java.util.List;
 import java.util.UUID;
@@ -72,6 +74,14 @@ public interface PermissionPool {
      * @return group or null if not cached
      */
     IPermissionGroup getCachedPermissionGroup(String name);
+
+    /**
+     * Gets a {@link IPermissionUser} if he's offline
+     * and returns a {@link INetworkPromise} to handle the request
+     *
+     * @param uniqueId the uuid of the player
+     */
+    INetworkPromise<IPermissionUser> getOfflineUser(UUID uniqueId);
 
     /**
      * Gets a cached {@link IPermissionUser} by its uuid

@@ -107,7 +107,7 @@ public class PacketMessenger {
      * @return element
      */
     public static <E, W> INetworkPromise<E> createElement(Packet packet, Class<E> eClass, Class<W> wClass) {
-        SimpleNetworkPromise<E, W> element = new SimpleNetworkPromise<E, W>(packet, eClass, wClass);
+        SimpleNetworkPromise<E, W> element = new SimpleNetworkPromise<>(packet, eClass, wClass);
         element.execute();
         return element;
     }

@@ -4,6 +4,7 @@ import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.event.impl.net.ChannelInactiveEvent;
 import de.polocloud.api.event.impl.net.NettyExceptionEvent;
+import de.polocloud.api.event.impl.net.PacketReceiveEvent;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.scheduler.Scheduler;
@@ -52,6 +53,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Packet packet) {
+        PoloCloudAPI.getInstance().getEventManager().fireEvent(new PacketReceiveEvent(packet));
         Scheduler.runtimeScheduler().schedule(() -> networkConnection.getProtocol().firePacketHandlers(channelHandlerContext, packet));
     }
 

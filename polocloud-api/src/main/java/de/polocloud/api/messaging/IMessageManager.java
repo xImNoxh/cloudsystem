@@ -15,6 +15,13 @@ public interface IMessageManager {
     <T> IMessageChannel<T> registerChannel(Class<T> wrapperClass, String channelName);
 
     /**
+     * Unregisters an {@link IMessageChannel} from the current cache
+     *
+     * @param messageChannel the channel
+     */
+    void unregisterChannel(IMessageChannel<?> messageChannel);
+
+    /**
      * Gets a {@link IMessageChannel} by its name
      *
      * @param channelName the name

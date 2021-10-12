@@ -12,7 +12,10 @@ public interface IPermissionGroup extends INamable, Expireable {
     int getId();
 
     /**
-     * If this group is the default group
+     * When this returns {@code true}
+     * and a new player joins without any ranks
+     * this group will be added to the player
+     * as a "default" group
      */
     boolean isDefaultGroup();
 

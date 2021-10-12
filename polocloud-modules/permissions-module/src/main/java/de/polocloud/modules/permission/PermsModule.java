@@ -10,6 +10,7 @@ import de.polocloud.api.messaging.IMessageChannel;
 import de.polocloud.api.util.other.Task;
 import de.polocloud.modules.permission.cloudside.ModuleCloudSidePermissionListener;
 import de.polocloud.modules.permission.cloudside.ModuleCloudSideServerStartListener;
+import de.polocloud.modules.permission.cloudside.ModuleCloudSideUserListener;
 import de.polocloud.modules.permission.global.handler.ModuleTaskHandler;
 import de.polocloud.modules.permission.global.api.PermissionPool;
 import de.polocloud.modules.permission.global.api.impl.*;
@@ -84,6 +85,7 @@ public class PermsModule {
         }
         if (PoloCloudAPI.getInstance().getType() == PoloType.MASTER) {
             PoloCloudAPI.getInstance().getEventManager().registerListener(new ModuleCloudSideServerStartListener());
+            PoloCloudAPI.getInstance().getEventManager().registerListener(new ModuleCloudSideUserListener());
             PoloCloudAPI.getInstance().getEventManager().registerListener(new ModuleCloudSidePermissionListener());
         }
     }

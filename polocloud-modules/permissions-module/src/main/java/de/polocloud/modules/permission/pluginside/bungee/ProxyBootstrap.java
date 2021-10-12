@@ -24,11 +24,6 @@ public class ProxyBootstrap extends Plugin implements Listener {
 
     private PermsModule permissionModule;
 
-    @Override
-    public void onLoad() {
-        permissionModule = new PermsModule(new ModuleBootstrap());
-        permissionModule.load();
-    }
 
     @Override
     public void onDisable() {
@@ -37,6 +32,8 @@ public class ProxyBootstrap extends Plugin implements Listener {
 
     @Override
     public void onEnable() {
+        permissionModule = new PermsModule(new ModuleBootstrap());
+        permissionModule.load();
         this.permissionModule.enable();
         ProxyServer.getInstance().getPluginManager().registerListener(this, this);
     }
