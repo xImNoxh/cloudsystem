@@ -317,13 +317,30 @@ public abstract class PoloCloudAPI implements IPacketReceiver, ITerminatable {
     /**
      * Registers a simple forwarding {@link IPacketHandler}
      * for not having the need to create an extra class to handle a single {@link Packet}
+     * It unregisters itself after the first packet was received
+     *
+     * @param packetClass the class of the packet to listen for
+     * @param handler the handler to handle the packet
+     * @param <T> the generic (has to be an instance of a {@link Packet})
+     */
+    public <T extends Packet> void registerSelfDestructivePacketHandler(Class<T> packetClass, Consumer<T> handler) {
+        ConsumingPacketHandler<T> packetHandler = new ConsumingPacketHandler<>(packetClass, handler);
+        packetHandler.setDestroyAfterHandle(true);
+        this.registerPacketHandler(packetHandler);
+    }
+
+    /**
+     * Registers a simple forwarding {@link IPacketHandler}
+     * for not having the need to create an extra class to handle a single {@link Packet}
      *
      * @param packetClass the class of the packet to listen for
      * @param handler the handler to handle the packet
      * @param <T> the generic (has to be an instance of a {@link Packet})
      */
     public <T extends Packet> void registerSimplePacketHandler(Class<T> packetClass, Consumer<T> handler) {
-        this.registerPacketHandler(new ConsumingPacketHandler<>(packetClass, handler));
+        ConsumingPacketHandler<T> packetHandler = new ConsumingPacketHandler<>(packetClass, handler);
+        packetHandler.setDestroyAfterHandle(false);
+        this.registerPacketHandler(packetHandler);
     }
 
     /**

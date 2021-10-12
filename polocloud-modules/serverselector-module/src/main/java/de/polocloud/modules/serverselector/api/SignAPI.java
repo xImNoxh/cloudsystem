@@ -38,12 +38,12 @@ public class SignAPI {
     /**
      * The channel to pass around the config
      */
-    private final IMessageChannel<SignConfiguration> configChannel;
+    private IMessageChannel<SignConfiguration> configChannel;
 
     /**
      * The channel to pass around the current sign data
      */
-    private final IMessageChannel<SignData> dataChannel;
+    private IMessageChannel<SignData> dataChannel;
 
     public SignAPI(BukkitSignAPI bukkitSideAPI, CloudSignAPI cloudSideAPI, GlobalSignAPI globalAPI) {
         instance = this;
@@ -51,8 +51,12 @@ public class SignAPI {
         this.bukkitSideAPI = bukkitSideAPI;
         this.cloudSideAPI = cloudSideAPI;
 
-        this.configChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(SignConfiguration.class, "sign-module-config-channel");
-        this.dataChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(SignData.class, "sign-module-data-channel");
+        try {
+            this.configChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(SignConfiguration.class, "sign-module-config-channel");
+            this.dataChannel = PoloCloudAPI.getInstance().getMessageManager().registerChannel(SignData.class, "sign-module-data-channel");
+        } catch (NullPointerException e) {
+            //Null in reload for some reason
+        }
     }
 
 

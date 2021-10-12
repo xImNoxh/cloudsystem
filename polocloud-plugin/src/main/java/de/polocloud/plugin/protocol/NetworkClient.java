@@ -1,6 +1,7 @@
 package de.polocloud.plugin.protocol;
 
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.config.JsonData;
 import de.polocloud.api.event.handling.IEventHandler;
 import de.polocloud.api.event.impl.net.ChannelActiveEvent;
 import de.polocloud.api.network.INetworkConnection;
@@ -36,13 +37,16 @@ public class NetworkClient implements INetworkConnection, IEventHandler<ChannelA
     private final String[] address;
 
     /**
-     * The port to connect to
+     * If connected
      */
-    private int port;
+    private boolean connected;
 
     public NetworkClient(IBootstrap bootstrap) {
+        JsonData jsonData = CloudPlugin.getInstance().getJson() == null ? new JsonData() : CloudPlugin.getInstance().getJson();
+
         this.bootstrap = bootstrap;
-        this.address = CloudPlugin.getCloudPluginInstance().getMasterAddress().split(":");
+        this.connected = false;
+        this.address =  jsonData.fallback("127.0.0.1").getString("Master-Address").split(":");
         this.client = new SimpleNettyClient(address[0], Integer.parseInt(address[1]), new SimpleProtocol());
 
         PoloCloudAPI.getInstance().getEventManager().registerHandler(ChannelActiveEvent.class, this);
@@ -53,16 +57,16 @@ public class NetworkClient implements INetworkConnection, IEventHandler<ChannelA
      * Connects this client to the given port-address
      * And accepts the provided consumer if it was successfully connected
      *
-     * @param port the port of the server
      * @param consumer the consumer to handle
      */
-    public void connect(int port, Consumer<INettyClient> consumer) {
-
-        this.port = port;
+    public void connect(Consumer<INettyClient> consumer) {
 
         new Thread(() -> {
             System.out.println("[CloudPlugin] Trying to connect to Cloud (" + this.address[0] + ":" + this.address[1] + ")");
-            this.client.start(consumer, Throwable::printStackTrace);
+            this.client.start(client -> {
+                connected = true;
+                consumer.accept(client);
+            }, Throwable::printStackTrace);
             System.exit(-1);
         }).start();
     }
@@ -100,6 +104,11 @@ public class NetworkClient implements INetworkConnection, IEventHandler<ChannelA
     @Override
     public IProtocol getProtocol() {
         return this.client.getProtocol();
+    }
+
+    @Override
+    public boolean isConnected() {
+        return connected;
     }
 
     @Override

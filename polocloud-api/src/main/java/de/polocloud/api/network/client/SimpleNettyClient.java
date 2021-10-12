@@ -153,6 +153,14 @@ public class SimpleNettyClient implements INettyClient {
     }
 
     @Override
+    public boolean isConnected() {
+        if (channel == null) {
+            return false;
+        }
+        return channel.isActive();
+    }
+
+    @Override
     public ChannelHandlerContext ctx() {
         return ctx;
     }

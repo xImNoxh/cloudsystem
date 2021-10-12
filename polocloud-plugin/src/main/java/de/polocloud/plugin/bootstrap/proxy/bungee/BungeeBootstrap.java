@@ -187,7 +187,7 @@ public class BungeeBootstrap extends Plugin implements IBootstrap {
 
     @Override
     public synchronized void onEnable() {
-        this.cloudPlugin.onEnable();
+        this.cloudPlugin.connectToCloud();
     }
 
     @Override

@@ -39,6 +39,7 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+
         this.permissionModule.shutdown();
     }
 
@@ -50,7 +51,7 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
             Class<?> clazz = PoloHelper.getCraftBukkitClass("entity.CraftHumanEntity", Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3]);
             Field field = clazz.getDeclaredField("perm");
             field.setAccessible(true);
-            field.set(player, new SpigotPermissible(player, this));
+            field.set(player, new SpigotPermissible(player, this, getDescription().getName()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,9 +80,15 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
          */
         private final JavaPlugin pluginInstance;
 
-        public SpigotPermissible(Player player, JavaPlugin pluginInstance) {
+        /**
+         * The name of the plugin
+         */
+        private final String name;
+
+        public SpigotPermissible(Player player, JavaPlugin pluginInstance, String name) {
             super(player);
             this.pluginInstance = pluginInstance;
+            this.name = name;
             this.perms = new HashMap<>();
             this.player = player;
             this.tries = 0;
@@ -136,6 +143,10 @@ public class SpigotBootstrap extends JavaPlugin implements Listener {
 
         @Override
         public void recalculatePermissions() {
+            if (pluginInstance == null || !pluginInstance.isEnabled()) {
+                Scheduler.runtimeScheduler().schedule(this::recalculatePermissions, () -> Bukkit.getPluginManager().isPluginEnabled(name));
+                return;
+            }
             this.perms = new HashMap<>();
 
             if (player == null || Bukkit.getPlayer(this.player.getName()) == null || !player.isOnline()) {

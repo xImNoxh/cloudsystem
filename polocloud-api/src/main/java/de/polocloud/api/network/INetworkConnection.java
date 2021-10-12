@@ -21,6 +21,11 @@ public interface INetworkConnection extends IStartable, ITerminatable, IPacketSe
     IProtocol getProtocol();
 
     /**
+     * Checks if the current connection is connected
+     */
+    boolean isConnected();
+
+    /**
      * The netty {@link Channel} of this connection
      *
      * @return netty channel instance

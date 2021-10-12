@@ -41,7 +41,7 @@ public class CollectiveProxyEvents implements Listener {
     private final NetworkClient networkClient;
 
     public CollectiveProxyEvents(Plugin plugin) {
-        this.networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
+        this.networkClient = CloudPlugin.getInstance().getNetworkClient();
 
         plugin.getProxy().getPluginManager().registerListener(plugin, this);
     }

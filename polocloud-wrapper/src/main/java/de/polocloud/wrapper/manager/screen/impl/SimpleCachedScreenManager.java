@@ -57,7 +57,7 @@ public class SimpleCachedScreenManager implements IScreenManager {
         for (Thread thread : this.screen.getThreads()) {
             if (thread.isAlive()) {
                 try {
-                    thread.stop();
+                    thread.interrupt();
                 } catch (ThreadDeath e) {
                     //Ignoring
                 }

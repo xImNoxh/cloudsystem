@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.RemoteServerCommandEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -37,9 +38,10 @@ public class CollectiveSpigotEvents implements Listener {
             event.setMotd(thisService.getMotd());
         } else {
             event.setMaxPlayers(-1);
-            event.setMotd("No GameServer for '" + CloudPlugin.getCloudPluginInstance().getName() + "'");
+            event.setMotd("No GameServer for '" + PoloCloudAPI.getInstance().getName() + "'");
         }
     }
+
 
     @EventHandler
     public void handle(PlayerKickEvent event) {
@@ -49,12 +51,14 @@ public class CollectiveSpigotEvents implements Listener {
     }
 
     @EventHandler
-    public void handle(RemoteServerCommandEvent event) {
+    public void handle(ServerCommandEvent event) {
+        System.out.println(1);
         CommandSender sender = event.getSender();
 
         ConsoleExecutor consoleCommandSender = new SpigotConsoleSender(sender);
 
         String command = event.getCommand().split(" ")[0];
+        System.out.println(command);
         event.setCancelled(PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getCommand(), consoleCommandSender));
 
     }
@@ -85,7 +89,7 @@ public class CollectiveSpigotEvents implements Listener {
             }
 
 
-            if (CloudPlugin.getCloudPluginInstance().isAllowPercentage()) {
+            if (CloudPlugin.getInstance().isAllowPercentage()) {
                 ITemplate template = thisService.getTemplate();
                 int percent = template.getServerCreateThreshold();
 
@@ -97,7 +101,7 @@ public class CollectiveSpigotEvents implements Listener {
 
                 }
                 //To avoid multiple new server starting from this one
-                CloudPlugin.getCloudPluginInstance().setAllowPercentage(false);
+                CloudPlugin.getInstance().setAllowPercentage(false);
             }
 
         }, () -> PoloCloudAPI.getInstance().getGameServerManager().getThisService() != null);
@@ -105,6 +109,19 @@ public class CollectiveSpigotEvents implements Listener {
 
     @EventHandler
     public void onCmd(PlayerCommandPreprocessEvent event) {
+
+        String command = event.getMessage().split(" ")[0].substring(1);
+
+        if (command.equalsIgnoreCase("rl") || command.equalsIgnoreCase("reload") || command.equalsIgnoreCase("bukkit:reload") || command.equalsIgnoreCase("bukkit:rl")) {
+            if (CloudPlugin.getInstance().isReloading()) {
+                event.getPlayer().sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "§cServer is already reloading! Please wait!");
+            } else {
+                event.getPlayer().sendMessage(PoloCloudAPI.getInstance().getMasterConfig().getMessages().getPrefix() + "§7Trying to reload §a" + PoloCloudAPI.getInstance().getGameServerManager().getThisService().getName() + "§8...");
+                CloudPlugin.getInstance().setReloading(true);
+                Bukkit.reload();
+            }
+            return;
+        }
 
         try {
             event.setCancelled(PoloCloudAPI.getInstance().getCommandManager().runCommand(event.getMessage(), PoloCloudAPI.getInstance().getCloudPlayerManager().getCached(event.getPlayer().getName())));

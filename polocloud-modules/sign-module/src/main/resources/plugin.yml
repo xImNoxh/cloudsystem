@@ -1,8 +1,6 @@
 name: PoloCloud-Signs
 version: 1.0
-authors:
-    - PoloCloud
-    - iPommes
+author: iPommes
 main: de.polocloud.signs.bootstraps.PluginBootstrap
 
 depend:

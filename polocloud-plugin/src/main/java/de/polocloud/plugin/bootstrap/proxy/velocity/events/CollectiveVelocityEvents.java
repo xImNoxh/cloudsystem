@@ -53,7 +53,7 @@ public class CollectiveVelocityEvents  {
 
     public CollectiveVelocityEvents() {
 
-        this.networkClient = CloudPlugin.getCloudPluginInstance().getNetworkClient();
+        this.networkClient = CloudPlugin.getInstance().getNetworkClient();
         VelocityBootstrap.getInstance().getServer().getEventManager().register(VelocityBootstrap.getInstance(), this);
     }
 

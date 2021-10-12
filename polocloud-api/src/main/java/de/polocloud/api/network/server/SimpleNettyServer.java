@@ -160,6 +160,14 @@ public class SimpleNettyServer implements INettyServer, IListener {
     }
 
     @Override
+    public boolean isConnected() {
+        if (this.channel == null) {
+            return false;
+        }
+        return this.channel.isActive();
+    }
+
+    @Override
     public InetSocketAddress getConnectedAddress() {
         return new InetSocketAddress(this.port);
     }

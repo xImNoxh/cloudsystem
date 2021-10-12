@@ -35,8 +35,8 @@ public class SimpleCachedMessageManager implements IMessageManager {
                         try {
                             listener.handleMessage(packet.getWrappedObject(), packet.getStartTime());
                         } catch (Exception e) {
-                            PoloCloudAPI.getInstance().reportException(e);
                             PoloLogger.print(LogLevel.ERROR, "An exception was caught while handling a message!");
+                            PoloCloudAPI.getInstance().reportException(e);
                         }
                     }
                 }

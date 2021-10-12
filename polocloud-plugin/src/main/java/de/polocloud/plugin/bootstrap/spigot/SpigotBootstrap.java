@@ -98,6 +98,10 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
 
             @Override
             public void executeCommand(String command) {
+                if (!SpigotBootstrap.this.isEnabled()) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    return;
+                }
                 Bukkit.getScheduler().runTask(SpigotBootstrap.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
             }
 
@@ -194,8 +198,9 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
                 Bukkit.shutdown();
             }
         };
+
         CloudPlugin cloudPlugin = new CloudPlugin(this);
-        cloudPlugin.onEnable();
+        cloudPlugin.connectToCloud();
     }
 
     @Override
@@ -220,6 +225,6 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
 
     @Override
     public void registerPacketListening() {
-        new SpigotPacketRegister(CloudPlugin.getCloudPluginInstance());
+        new SpigotPacketRegister(CloudPlugin.getInstance());
     }
 }

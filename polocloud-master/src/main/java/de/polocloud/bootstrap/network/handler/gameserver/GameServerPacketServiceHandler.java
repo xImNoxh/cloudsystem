@@ -64,9 +64,13 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             if (request.getKey().equalsIgnoreCase("server-handshake")) {
                 String name = request.getData().getString("name");
                 IGameServer gameServer = PoloCloudAPI.getInstance().getGameServerManager().getCached(name);
+                if (gameServer.isRegistered()) {
+                    request.respond("handshake", ":true");
+                    return;
+                }
                 gameServer.setRegistered(true);
                 gameServer.update();
-                request.respond("handshake", true);
+                request.respond("handshake", "[CloudPlugin] Authenticated this Server!:true");
             }
         });
 

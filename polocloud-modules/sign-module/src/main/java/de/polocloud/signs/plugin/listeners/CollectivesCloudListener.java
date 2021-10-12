@@ -7,6 +7,7 @@ import de.polocloud.api.event.impl.player.CloudPlayerSwitchServerEvent;
 import de.polocloud.api.event.impl.template.TemplateMaintenanceChangeEvent;
 import de.polocloud.api.event.impl.server.GameServerStatusChangeEvent;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
+import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.signs.bootstraps.PluginBootstrap;
 import de.polocloud.signs.sign.base.IGameServerSign;
 
@@ -46,12 +47,13 @@ public class CollectivesCloudListener implements IListener {
 
     @EventHandler
     public void handle(CloudPlayerDisconnectEvent event) {
-        if(event.getPlayer() != null && event.getPlayer().getMinecraftServer() != null){
-            try {
-                PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(event.getPlayer().getMinecraftServer());
-            } catch (NullPointerException e) {
-                //
+        try {
+            ICloudPlayer player = event.getPlayer();
+            if (player != null && player.getMinecraftServer() != null){
+                PluginBootstrap.getInstance().getSignService().getGameServerSignManager().updateSignsGameServer(player.getMinecraftServer());
             }
+        } catch (Exception e) {
+            //Ignoring
         }
     }
 

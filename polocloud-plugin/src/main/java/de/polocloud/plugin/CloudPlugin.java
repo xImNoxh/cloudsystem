@@ -2,12 +2,11 @@ package de.polocloud.plugin;
 
 import de.polocloud.api.PoloCloudAPI;
 import de.polocloud.api.command.executor.CommandExecutor;
+import de.polocloud.api.command.executor.SimpleConsoleExecutor;
 import de.polocloud.api.common.PoloType;
 import de.polocloud.api.config.FileConstants;
 import de.polocloud.api.config.JsonData;
 import de.polocloud.api.gameserver.base.IGameServer;
-import de.polocloud.api.logger.PoloLogger;
-import de.polocloud.api.logger.helper.LogLevel;
 import de.polocloud.api.network.INetworkConnection;
 import de.polocloud.api.network.packets.api.CacheRequestPacket;
 import de.polocloud.api.network.packets.api.GlobalCachePacket;
@@ -17,16 +16,14 @@ import de.polocloud.api.network.packets.other.TextPacket;
 import de.polocloud.api.network.protocol.packet.base.Packet;
 import de.polocloud.api.network.protocol.packet.base.response.def.Response;
 import de.polocloud.api.network.protocol.packet.base.response.base.IResponse;
-import de.polocloud.api.network.protocol.packet.handler.IPacketHandler;
 import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
-import de.polocloud.api.player.ICloudPlayerManager;
 import de.polocloud.api.pubsub.IPubSubManager;
 import de.polocloud.api.pubsub.SimplePubSubManager;
 
+import de.polocloud.api.scheduler.Scheduler;
 import de.polocloud.plugin.bootstrap.IBootstrap;
 import de.polocloud.plugin.bootstrap.proxy.global.commands.CloudCommand;
 import de.polocloud.plugin.protocol.NetworkClient;
-import io.netty.channel.ChannelHandlerContext;
 import jline.console.ConsoleReader;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,6 +46,16 @@ public class CloudPlugin extends PoloCloudAPI {
     //If new server is allowed to start if full
     private boolean allowPercentage;
 
+
+    /**
+     * Constructs a new instance of this {@link CloudPlugin}
+     * using a specific {@link IBootstrap} for the provided
+     * plugin instance (bukkit, proxy)
+     * The plugin does not connect to the Cloud when constructing
+     * therefore there is the Method {@link CloudPlugin#connectToCloud()}
+     *
+     * @param bootstrap the provided bootstrap
+     */
     public CloudPlugin(IBootstrap bootstrap) {
         super(bootstrap.getBridge().getEnvironment());
 
@@ -61,81 +68,78 @@ public class CloudPlugin extends PoloCloudAPI {
 
     }
 
-    @Override
-    public ConsoleReader getConsoleReader() {
-        return null;
-    }
+    /**
+     * Enables this {@link CloudPlugin} instance
+     * and tries to connect to the CloudMaster
+     *
+     * Checks if the client is already connected
+     * to prevent the plugin from double-connecting
+     */
+    public void connectToCloud() {
 
-    @Override
-    public INetworkConnection getConnection() {
-        return this.networkClient;
-    }
+        //Plugin has not been loaded before
+        if (!this.networkClient.isConnected()) {
+            if (getType() == PoloType.PLUGIN_PROXY) {
+                PoloCloudAPI.getInstance().getCommandManager().setFilter(null);
+                PoloCloudAPI.getInstance().getCommandManager().registerCommand(new CloudCommand());
+            }
 
-    public static CloudPlugin getCloudPluginInstance() {
-        return (CloudPlugin) PoloCloudAPI.getInstance();
-    }
+            this.registerSelfDestructivePacketHandler(GlobalCachePacket.class, packet -> {
 
-    public void onEnable() {
-        if (getType() == PoloType.PLUGIN_PROXY) {
-            PoloCloudAPI.getInstance().getCommandManager().setFilter(null);
-            PoloCloudAPI.getInstance().getCommandManager().registerCommand(new CloudCommand());
-        }
-        final boolean[] received = {false};
-        this.networkClient.getProtocol().registerPacketHandler(new IPacketHandler<GlobalCachePacket>() {
-            @Override
-            public void handlePacket(ChannelHandlerContext ctx, GlobalCachePacket packet) {
                 PoloCloudAPI.getInstance().updateCache(packet.getMasterCache());
 
-                if (!received[0]) {
-                    received[0] = true;
-                    try {
-                        IGameServer thisService = gameServerManager.getThisService();
-                        if (thisService == null) {
-                            System.out.println("[CloudPlugin] Ran into a massive error! MasterCache doesn't contain current GameServer! Couldn't fully register " + getName() + "!");
-                            return;
-                        }
-                        System.out.println("[CloudPlugin] Recognized this GameServer as '" + thisService.getName() + "' (" + thisService.getTemplate().getTemplateType().getDisplayName() + ") !");
-
-                        bootstrap.registerListeners();
-                        thisService.updateInternally();
-
-                        networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(thisService.getName(), thisService.getSnowflake(), bootstrap.getPort()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                try {
+                    IGameServer thisService = gameServerManager.getThisService();
+                    if (thisService == null) {
+                        System.out.println("[CloudPlugin] Ran into a massive error! MasterCache doesn't contain current GameServer! Couldn't fully register " + getName() + "!");
+                        return;
                     }
+                    System.out.println("[CloudPlugin] Recognized this GameServer as '" + thisService.getName() + "' (" + thisService.getTemplate().getTemplateType().getDisplayName() + ") !");
+
+                    bootstrap.registerListeners();
+                    thisService.updateInternally();
+
+                    networkClient.sendPacket(new GameServerSuccessfullyStartedPacket(thisService.getName(), thisService.getSnowflake(), bootstrap.getPort()));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
+            });
 
-            @Override
-            public Class<? extends Packet> getPacketClass() {
-                return GlobalCachePacket.class;
-            }
-        });
-        this.networkClient.connect(bootstrap.getPort(), nettyClient -> {
-            System.out.println("[CloudPlugin] " + getName() + " successfully connected to CloudSystem! (" + nettyClient.getConnectedAddress() + ")");
+            this.networkClient.connect(nettyClient -> {
+                System.out.println("[CloudPlugin] " + getName() + " successfully connected to CloudSystem! (" + nettyClient.getConnectedAddress() + ")");
 
-            IResponse handshake =
-                PacketMessenger
-                    .create()
-                    .blocking()
-                    .timeOutAfter(TimeUnit.SECONDS, 4L)
-                    .target(PoloType.MASTER)
-                    .orElse(new Response("handshake", false))
-                    .send("server-handshake", new JsonData("name", getName()));
+                IResponse handshake =
+                    PacketMessenger
+                        .create()
+                        .blocking()
+                        .timeOutAfter(TimeUnit.SECONDS, 4L)
+                        .target(PoloType.MASTER)
+                        .orElse(new Response("handshake", "[CloudPlugin]Something went wrong!:false"))
+                        .send("server-handshake", new JsonData("name", getName()));
 
-            boolean hs = handshake.get("handshake").getAsBoolean();
+                boolean hs = Boolean.parseBoolean(handshake.get("handshake").getAsString().split(":")[1]);
+                String msg = handshake.get("handshake").getAsString().split(":")[0];
 
-            if (!hs) {
-                System.out.println("=====================");
-                System.out.println("[CloudPlugin] Couldn't get Authentication-Response within 4 Seconds...");
-                System.out.println("[CloudPlugin] This does not have to be bad! Something bad could have happened while reading or writing the HandShake-Request!");
-                System.out.println("[CloudPlugin] But if things start to not work and errors occur, then this is the reason why most of the time!");
-                System.out.println("[CloudPlugin] You should report this error anyways because it should not appear");
-                System.out.println("=====================");
-            } else {
-                System.out.println("[CloudPlugin] Authenticated this Server!");
-            }
-        });
+                if (!hs) {
+                    System.out.println("=====================");
+                    System.out.println("[CloudPlugin] Couldn't get Authentication-Response within 4 Seconds...");
+                    System.out.println("[CloudPlugin] This does not have to be bad! Something bad could have happened while reading or writing the HandShake-Request!");
+                    System.out.println("[CloudPlugin] But if things start to not work and errors occur, then this is the reason why most of the time!");
+                    System.out.println("[CloudPlugin] You should report this error anyways because it should not appear");
+                    System.out.println("=====================");
+                } else {
+                    System.out.println(msg);
+                }
+                Scheduler.runtimeScheduler().schedule(() -> {
+                    setReloading(false);
+                }, 100L);
+
+            });
+
+        } else {
+            //Just a reload
+            System.out.println("[CloudPlugin] Recognized CloudPlugin#Enable as Reload and not as Server initialisation!");
+        }
     }
 
     @Override
@@ -150,28 +154,59 @@ public class CloudPlugin extends PoloCloudAPI {
 
     @Override
     public void reload() {
-        updateCache();
+        this.updateCache();
     }
 
+    /**
+     * Gets the {@link JsonData} where all data about this
+     * server is stored before having received the {@link de.polocloud.api.network.packets.api.MasterCache}
+     */
     public JsonData getJson() {
         try {
             return new JsonData(new File(FileConstants.CLOUD_JSON_NAME));
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
+            return new JsonData();
         }
     }
 
-    public String getMasterAddress() {
-        JsonData jsonData = getJson() == null ? new JsonData() : getJson();
-
-        return jsonData.fallback("127.0.0.1").getString("Master-Address");
+    public void setReloading(boolean reloading) {
+        JsonData json = getJson();
+        json.append("reloading", reloading);
+        json.save();
     }
+
+    public boolean isReloading() {
+        System.out.println(getJson());
+        return getJson().getBoolean("reloading");
+    }
+
     @Override
     public boolean terminate() {
         this.loggerFactory.shutdown();
         return true;
     }
 
+    /**
+     * The {@link CloudPlugin} instance
+     * to access this plugin instance
+     */
+    public static CloudPlugin getInstance() {
+        if (PoloCloudAPI.getInstance() == null) {
+            return null;
+        }
+        return (CloudPlugin) PoloCloudAPI.getInstance();
+    }
+
+    @Override
+    public ConsoleReader getConsoleReader() {
+        return null;
+    }
+
+    @Override
+    public INetworkConnection getConnection() {
+        return this.networkClient;
+    }
 
     @Override
     public void reportException(Throwable throwable) {
@@ -183,27 +218,9 @@ public class CloudPlugin extends PoloCloudAPI {
         sendPacket(new CacheRequestPacket());
     }
 
-    public NetworkClient getNetworkClient() {
-        return networkClient;
-    }
-
-    public IBootstrap getBootstrap() {
-        return bootstrap;
-    }
-
     @Override
     public CommandExecutor getCommandExecutor() {
-        return null;
-    }
-
-    @Override
-    public ICloudPlayerManager getCloudPlayerManager() {
-        return cloudPlayerManager;
-    }
-
-    @Override
-    public IPubSubManager getPubSubManager() {
-        return pubSubManager;
+        return new SimpleConsoleExecutor();
     }
 
     @Override
