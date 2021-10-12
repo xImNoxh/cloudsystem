@@ -177,7 +177,6 @@ public class CloudPlugin extends PoloCloudAPI {
     }
 
     public boolean isReloading() {
-        System.out.println(getJson());
         return getJson().getBoolean("reloading");
     }
 
