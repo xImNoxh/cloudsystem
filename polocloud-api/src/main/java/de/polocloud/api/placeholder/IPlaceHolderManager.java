@@ -4,7 +4,6 @@ import java.util.List;
 
 public interface IPlaceHolderManager {
 
-
     /**
      * All registered {@link IPlaceHolder}s
      */

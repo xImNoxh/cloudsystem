@@ -12,4 +12,6 @@ public class TextPacket extends SimplePacket {
     @PacketSerializable(String.class)
     private final String text;
 
+
+
 }

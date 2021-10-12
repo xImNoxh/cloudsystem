@@ -2,6 +2,9 @@ package de.polocloud.plugin.bootstrap.proxy.global.commands;
 
 import de.polocloud.api.APIVersion;
 import de.polocloud.api.PoloCloudAPI;
+import de.polocloud.api.chat.ClickAction;
+import de.polocloud.api.chat.CloudComponent;
+import de.polocloud.api.chat.HoverAction;
 import de.polocloud.api.command.annotation.Command;
 import de.polocloud.api.command.annotation.CommandExecutors;
 import de.polocloud.api.command.executor.CommandExecutor;
@@ -20,6 +23,8 @@ import de.polocloud.api.network.protocol.packet.base.response.PacketMessenger;
 import de.polocloud.api.network.protocol.packet.base.response.extra.INetworkPromise;
 import de.polocloud.api.player.ICloudPlayer;
 import de.polocloud.api.player.ICloudPlayerManager;
+import de.polocloud.api.player.extras.IPlayerConnection;
+import de.polocloud.api.player.extras.IPlayerSettings;
 import de.polocloud.api.property.IProperty;
 import de.polocloud.api.template.base.ITemplate;
 import de.polocloud.api.template.ITemplateManager;
@@ -33,6 +38,7 @@ import de.polocloud.api.wrapper.base.IWrapper;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class CloudCommand implements CommandListener {
@@ -112,46 +118,6 @@ public class CloudCommand implements CommandListener {
                     player.sendMessage("§8");
 
                 } else if (params[0].equalsIgnoreCase("debug") && player.getName().equalsIgnoreCase("Lystx")) {
-
-                    INetworkPromise<ICloudPlayer> promise = PoloCloudAPI.getInstance().getCloudPlayerManager().get(player.getName());
-
-                    player.sendMessage("§aReceived");
-                    ICloudPlayer cloudPlayer = promise.blocking().orElse(null);
-                    if (cloudPlayer == null) {
-                        player.sendMessage("§cNull");
-                        return;
-                    }
-
-
-                    ISession session = cloudPlayer.session();
-
-                    cloudPlayer.sendMessage(session.getIdentification());
-                    cloudPlayer.sendMessage(Arrays.toString(session.getBytes()));
-                    cloudPlayer.sendMessage(String.valueOf(session.getSnowflake()));
-                    cloudPlayer.sendMessage(String.valueOf(session.sessionUUID()));
-                    cloudPlayer.sendMessage(session.toString());
-
-                    if (cloudPlayer.hasProperty("test.property")) {
-                        IProperty property = cloudPlayer.getProperty("test.property");
-
-                        player.sendMessage(property.getName());
-                        for (IProperty propertyProperty : property.getProperties()) {
-                            player.sendMessage("§n" + propertyProperty.getName());
-                        }
-                    } else {
-                        cloudPlayer.insertProperty(property -> {
-                            property.setName("test.property");
-                            property.addProperty(property1 -> {
-                                property1.setName("coins");
-                                property1.setValue(349385);
-                            });
-                            property.addProperty(property1 -> {
-                                property1.setName("adult");
-                                property1.setValue(true);
-                            });
-                        });
-                        cloudPlayer.update();
-                    }
 
                     player.sendMessage(prefix + "§7Debug was §aexecuted§8!");
 

@@ -47,8 +47,11 @@ import de.polocloud.client.PoloCloudClient;
 import de.polocloud.client.enumeration.ReportType;
 import jline.console.ConsoleReader;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 
 @Getter
@@ -261,7 +264,8 @@ public class Master extends PoloCloudAPI implements IStartable {
             getCommandExecutor().sendMessage("§7Saving §3" + loggerFactory.getLoggers().size() + " §7Loggers...");
             loggerFactory.shutdown();
         } catch (Exception e) {
-            System.err.println("An error occurred while shutting down the PoloCloud-Master Instance!");
+            PoloLogger.print(LogLevel.ERROR, "§cAn error occurred while shutting down the §ePoloCloud-Master§c!");
+            e.printStackTrace();
         }
         return terminate;
     }

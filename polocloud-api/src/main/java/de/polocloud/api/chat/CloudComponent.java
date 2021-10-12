@@ -12,6 +12,7 @@ import java.util.*;
 @Getter
 public class CloudComponent implements IProtocolObject {
 
+
     /**
      * The message of this component
      */
@@ -77,6 +78,15 @@ public class CloudComponent implements IProtocolObject {
     public CloudComponent append(CloudComponent cloudComponent) {
         this.subComponents.add(cloudComponent);
         return this;
+    }
+
+    /**
+     * Appends a spacer to this component
+     *
+     * @return current component
+     */
+    public CloudComponent spacer() {
+        return this.append(new CloudComponent(" "));
     }
 
     @Override

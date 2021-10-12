@@ -76,8 +76,6 @@ public class MasterSetup extends StepAcceptor implements Setup {
                 properties.setDefaultServerStartPort(startPort);
 
                 if (defaultGroups) {
-
-
                     ITemplateManager templateManager = PoloCloudAPI.getInstance().getTemplateManager();
                     ITemplate proxy = new SimpleTemplate("Proxy", false, 5, 1, TemplateType.PROXY, GameServerVersion.BUNGEE, 75, 750, false, "A PoloCloud Proxy", 100, new String[]{"Wrapper-1"});
                     ITemplate lobby = new SimpleTemplate("Lobby", false, 5, 1, TemplateType.MINECRAFT, GameServerVersion.SPIGOT_1_8_8, 30, 512, false, "A PoloCloud Lobby", 100, new String[]{"Wrapper-1"});

@@ -23,7 +23,6 @@ import de.polocloud.api.gameserver.helper.GameServerVersion;
 import de.polocloud.api.template.helper.TemplateType;
 import de.polocloud.api.gameserver.helper.MinecraftProtocol;
 import de.polocloud.api.util.PoloHelper;
-import de.polocloud.api.util.session.ISession;
 import de.polocloud.api.util.session.SimpleSession;
 import de.polocloud.api.wrapper.base.IWrapper;
 import de.polocloud.api.wrapper.base.SimpleWrapper;
@@ -587,7 +586,7 @@ public class SimplePacketBuffer implements IPacketBuffer {
         this.writeBoolean(cloudPlayer.getConnection().isLegacy());
 
         //Writing the session
-        this.writeProtocol(cloudPlayer.session());
+        this.writeProtocol(cloudPlayer.getSession());
     }
 
     @Override

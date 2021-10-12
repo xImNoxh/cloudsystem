@@ -6,7 +6,6 @@ import de.polocloud.api.gameserver.base.SimpleGameServer;
 import de.polocloud.api.gameserver.helper.GameServerStatus;
 import de.polocloud.api.logger.PoloLogger;
 import de.polocloud.api.logger.helper.LogLevel;
-import de.polocloud.api.network.packets.RedirectPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerSuccessfullyStartedPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUnregisterPacket;
 import de.polocloud.api.network.packets.gameserver.GameServerUpdatePacket;
@@ -101,8 +100,6 @@ public class GameServerPacketServiceHandler extends GameServerPacketController {
             sendServerStartLog(gameServer);
             updateProxyServerList(gameServer);
         });
-
-        new SimplePacketHandler<RedirectPacket>(RedirectPacket.class, (ctx, packet) -> getRedirectPacketConnection(packet.getSnowflake(), packet.getPacket()));
 
         new SimplePacketHandler<GameServerUpdatePacket>(GameServerUpdatePacket.class, (ctx, packet) -> {
             PoloCloudAPI.getInstance().getGameServerManager().update(packet.getGameServer());

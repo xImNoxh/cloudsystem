@@ -249,7 +249,7 @@ public class SimpleCloudPlayer implements ICloudPlayer {
     }
 
     @Override
-    public ISession session() {
+    public ISession getSession() {
         return session;
     }
 
