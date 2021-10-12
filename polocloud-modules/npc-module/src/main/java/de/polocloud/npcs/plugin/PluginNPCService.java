@@ -84,6 +84,11 @@ public class PluginNPCService implements INPCService {
         }
     }
 
+    public void shutdown(){
+        this.transferChannel.unregisterAll();
+        this.requestChannel.unregisterAll();
+    }
+
     public NPCLib getNpcLib() {
         return npcLib;
     }
