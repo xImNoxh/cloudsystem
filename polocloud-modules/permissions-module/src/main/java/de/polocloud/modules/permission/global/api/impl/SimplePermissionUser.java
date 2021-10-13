@@ -53,6 +53,15 @@ public class SimplePermissionUser implements IPermissionUser {
 
     @Override
     public boolean hasPermission(String permission) {
+
+        for (IPermission exclusivePermission : this.getExclusivePermissions()) {
+            if(exclusivePermission.equals(permission)) return true;
+
+            for (IPermission iPermission : this.getExclusivePermissions()) {
+                if(iPermission.equals("*")) return true;
+            }
+        }
+
         boolean hasPermission = this.getExclusivePermissions().stream().anyMatch(iPermission -> iPermission.equals(permission)) || this.getExclusivePermissions().stream().anyMatch(iPermission -> iPermission.equals("*"));
 
         //Safely iterating through permissionGroups
