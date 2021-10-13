@@ -82,7 +82,7 @@ public class SpigotBootstrap extends JavaPlugin implements IBootstrap {
                     return;
                 }
 
-                player.kickPlayer(reason);
+                Bukkit.getScheduler().runTask(SpigotBootstrap.this, () -> player.kickPlayer(reason));
             }
 
             @Override
